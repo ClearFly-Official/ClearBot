@@ -23,6 +23,7 @@ async def on_member_join(member):
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
+@commands.has_role(965422406036488282)
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
