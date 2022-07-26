@@ -15,8 +15,8 @@ async def on_ready():
 
 @bot.event 
 async def on_member_join(member):
-     channel=bot.get_channel(1001401783689678868)
-     emb=discord.Embed(description=f"Thanks {member.mention} for joining!")
+     channel = bot.get_channel(1001401783689678868)
+     emb = discord.Embed(description=f"Thanks {member.mention} for joining!")
      emb.set_image(url=userAvatarUrl)
      await channel.send(embed=emb)
 
@@ -25,7 +25,9 @@ async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
     channel = bot.get_channel(1001405648828891187)
-    await channel.message.send
+    emb = discord.Embed(title=ctx.author, "used echo:", description=text)
+    embed.set_image(url=pfp)
+    await channel.send(embed=emb)
     print(ctx.author, "used echo:", text)
 
 
