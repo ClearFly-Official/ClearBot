@@ -25,7 +25,8 @@ async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
     channel = bot.get_channel(1001405648828891187)
-    await channel.message.send and print(ctx.author, "used echo:", text)
+    await channel.message.send
+    print(ctx.author, "used echo:", text)
 
 
 bot.run(os.environ['TOKEN'])
