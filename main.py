@@ -23,7 +23,7 @@ async def on_ready():
 async def on_member_join():
     print("pog")
 
-@bot.event()
+@client.event
 async def on_member_join(member):
     await member.send(f'Welcome to ClearFly, {member.mention}! Read the <#965610363842351144> to become a member and gain full access to the server. Thanks for joining!')
 
