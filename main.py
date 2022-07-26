@@ -10,8 +10,8 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix=',', intents=intents)
-boti = discord.Bot()
+bot = discord.Bot()
+boti = commands.Bot(command_prefix=',', intents=intents)
 
 print("I started up ig")
 
