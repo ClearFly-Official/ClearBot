@@ -15,8 +15,7 @@ async def on_ready():
 
 @bot.event 
 async def on_member_join(member):
-    channel = bot.get_channel(1001401783689678868)
-    await channel.send(f"Welcome {member.mention}! To gain access to the server, read the <#965610363842351144> and react to the messages. Enjoy the server!")
+    print("e oin")
 
 @bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
