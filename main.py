@@ -34,5 +34,17 @@ async def echo(ctx, text):
     await channel.send(embed=emb)
     print(ctx.author, "used echo:", text)
 
+@bot.command(name="embed",description="Send an embed as the bot.(Admin only)")
+@commands.has_role(965422406036488282)
+async def embed(ctx, title, description):
+    await ctx.respond('posted your embed!',ephemeral  = True)
+    emb = discord.Embed(title=title, description=description)
+    await ctx.channel.send(embed=emb)
+    pfp = ctx.author.avatar.url
+    channel2 = bot.get_channel(1001405648828891187)
+    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
+    emb.set_thumbnail(url=pfp)
+    await channel2.send(embed=emb)
+
 
 bot.run(os.environ['TOKEN'])
