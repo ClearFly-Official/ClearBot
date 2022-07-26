@@ -16,9 +16,7 @@ async def on_ready():
 @bot.event 
 async def on_member_join(member):
     channel = bot.get_channel(1001401783689678868)
-    emb = discord.Embed(description=f"Thanks {member.mention} for joining!")
-    emb.set_image(url=member.avatar)
-    await channel.send(embed=emb)
+    await channel.send(f"Welcome {member.mention}! To gain access to the server, read the <#965610363842351144> and react to the messages. Enjoy the server!")
 
 @bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
