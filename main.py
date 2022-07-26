@@ -18,4 +18,10 @@ async def on_member_join(member):
      emb.set_image(url=userAvatarUrl)
      await channel.send(embed=emb)
 
+@bot.command(name="echo",description="Send a message as the bot.")
+async def echo(ctx, text):
+    await ctx.respond('posted your message!',ephemeral  = True)
+    await ctx.channel.send(text)
+    print(ctx.author, "used echo:", text)
+
 bot.run(os.environ['TOKEN'])
