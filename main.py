@@ -11,7 +11,7 @@ client = discord.Client()
 
 
 @client.listen()
-async def on_ready()
+async def on_ready():
     print("I'm ready for usage!")
 
 
