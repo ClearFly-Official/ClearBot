@@ -24,6 +24,7 @@ async def on_member_join(member):
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
+    pfp = author.avatar.url
     channel = bot.get_channel(1001405648828891187)
     emb = discord.Embed(title=f"{ctx.author} used echo:", description=text)
     emb.set_image(url=pfp)
