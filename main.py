@@ -4,7 +4,8 @@
 import discord
 import os
 
-intents = discord.Intents.all()
+intents = discord.Intents.default()
+intents.members = True
 
 bot = discord.Bot()
 client = discord.Client()
@@ -18,6 +19,10 @@ async def on_ready():
 @bot.listen()
 async def on_member_join():
     print("pog")
+
+@bot.listen()
+async def on_member_join(member):
+    await member.send(f'Welcome to ClearFly, {member.mention}! Read the <#965610363842351144> to become a member and gain full access to the server. Thanks for joining!')
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
