@@ -24,7 +24,7 @@ async def on_message(message):
         await message.channel.send("When it's done... Read the FAQ before asking questions please!")
     else:
         if message.content == "will 3D cabin":
-            await message.channel.send"Yes! But read the FAQ before asking questions please!"
+            await message.channel.send("Yes! But read the FAQ before asking questions please!")
         else: 
             if message.content == "will custom FMC":
                 await messsage.channel.send("Most likely, read the FAQ before asking these questions tho!")
