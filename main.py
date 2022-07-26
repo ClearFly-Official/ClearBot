@@ -36,7 +36,7 @@ async def echo(ctx, text):
 
 @bot.command(name="embed",description="Send an embed as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
-async def embed(ctx, title, description, hexc):
+async def embed(ctx, title, description):
     await ctx.respond('posted your embed!',ephemeral  = True)
     emb = discord.Embed(title=title, description=description, color=0x4f93cf)
     await ctx.channel.send(embed=emb)
