@@ -25,7 +25,7 @@ async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
     channel = bot.get_channel(1001405648828891187)
-    emb = discord.Embed(title=ctx.author, "used echo:", description=text)
+    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text)
     embed.set_image(url=pfp)
     await channel.send(embed=emb)
     print(ctx.author, "used echo:", text)
