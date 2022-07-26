@@ -13,9 +13,10 @@ client = discord.Client()
 async def on_ready():
     print("I'm ready for usage!")
 
-@bot.event 
+@bot.listen()
 async def on_member_join(member):
-    print("e oin")
+    print(f"{member} has joined!")
+
 
 @bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
