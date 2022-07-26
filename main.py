@@ -15,13 +15,9 @@ async def on_ready():
     print("I'm ready for usage!")
 
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-
-    if message.content == 'test':
-        await message.channel.send("test works!")
+@bot.listen()
+async def on_member_join():
+    print("pog")
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
