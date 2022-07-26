@@ -18,7 +18,7 @@ async def on_ready()
 @client.listen()
 async def on_message(message):
     if message.content == "hi":
-        message.send("hi")
+        await message.send("hi")
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
