@@ -11,17 +11,18 @@ intents = discord.Intents.default()
 intents.members = True
 
 bot = commands.Bot(command_prefix=',', intents=intents)
+boti = discord.Bot()
 
 print("I started up ig")
 
-@bot.listen()
+@boti.listen()
 async def on_member_join(member):
-    channel = bot.get_channel(965600413376200726)
+    channel = boti.get_channel(965600413376200726)
     emb = discord.Embed(title=f"Welcome to ClearFly, {member}!", description=f"Read the <#965610363842351144> to become a member and gain full access to the server. Thanks for joining!", color = 0x57a4cd)
     await channel.send(embed=emb)
 
 
-@bot.command(name="echo",description="Send a message as the bot.")
+@bot.slash_command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
