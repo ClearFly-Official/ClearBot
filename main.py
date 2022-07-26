@@ -38,7 +38,7 @@ async def echo(ctx, text):
 @commands.has_role(965422406036488282)
 async def embed(ctx, title, description, hexc):
     await ctx.respond('posted your embed!',ephemeral  = True)
-    emb = discord.Embed(title=title, description=description, color=hexc)
+    emb = discord.Embed(title=title, description=description, color=0x4f93cf)
     await ctx.channel.send(embed=emb)
     pfp = ctx.author.avatar.url
     channel2 = bot.get_channel(1001405648828891187)
