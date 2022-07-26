@@ -24,17 +24,14 @@ async def on_member_join(member):
 
 @bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
-    if ctx.author.role_id == 965422406036488282:
-        await ctx.respond('posted your message!',ephemeral  = True)
-        await ctx.channel.send(text)
-        pfp = ctx.author.avatar.url
-        channel = bot.get_channel(1001405648828891187)
-        emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
-        emb.set_thumbnail(url=pfp)
-        await channel.send(embed=emb)
-        print(ctx.author, "used echo:", text)
-    else:
-        await ctx.send("This command is only for the admins, sorry!", ephemeral = True)
+    await ctx.respond('posted your message!',ephemeral  = True)
+    await ctx.channel.send(text)
+    pfp = ctx.author.avatar.url
+    channel = bot.get_channel(1001405648828891187)
+    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
+    emb.set_thumbnail(url=pfp)
+    await channel.send(embed=emb)
+    print(ctx.author, "used echo:", text)
 
 
 bot.run(os.environ['TOKEN'])
