@@ -22,12 +22,12 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 
-@client.command(name="echo",description="Send a message as the bot.")
+@bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
     pfp = ctx.author.avatar.url
-    channel = client.get_channel(1001405648828891187)
+    channel = bot.get_channel(1001405648828891187)
     emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
     emb.set_thumbnail(url=pfp)
     await channel.send(embed=emb)
