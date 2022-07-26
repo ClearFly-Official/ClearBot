@@ -9,13 +9,16 @@ intents = discord.Intents.all()
 bot = discord.Bot()
 client = discord.Client()
 
-@bot.listen('on_ready')
-async def on_ready():
+
+@client.listen()
+async def on_ready()
     print("I'm ready for usage!")
 
-@bot.listen('on_member_join')
-async def on_member_join(member):
-    print(f"{member} has joined!")
+
+@client.listen()
+async def on_message(message):
+    if message.content == "hi":
+        message.send("hi")
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
