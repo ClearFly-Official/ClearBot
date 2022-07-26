@@ -22,7 +22,7 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 
-@bot.command(name="echo",description="Send a message as the bot.")
+@bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
