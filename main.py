@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix=',', intents=intents)
 
 print("I started up ig")
 
-@client.event
+@bot.event
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
     emb = discord.Embed(title=f"Welcome {member.mention} to ClearFly", description=f"Read the <#965610363842351144> to become a member and gain full access to the server. Thanks for joining!", color = 0x57a4cd)
