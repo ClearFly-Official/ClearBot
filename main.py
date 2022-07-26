@@ -4,6 +4,8 @@
 import discord
 import os
 
+intents = discord.Intents.all()
+
 bot = discord.Bot()
 client = discord.Client()
 
@@ -22,6 +24,8 @@ async def on_member_join(member):
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
-    print(ctx.author, "used echo:", text)
+    channel = bot.get_channel(1001405648828891187)
+    await channel.message.send and print(ctx.author, "used echo:", text)
+
 
 bot.run(os.environ['TOKEN'])
