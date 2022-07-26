@@ -3,6 +3,9 @@
 ########################
 import discord
 import os
+from discord.ext import commands, tasks
+from discord.ext.commands import (BadArgument, Bot, BucketType,
+                                  clean_content, command, cooldown)
 
 intents = discord.Intents.default()
 intents.members = True
