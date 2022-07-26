@@ -10,8 +10,8 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix=',', intents=intents)
-bot2 = discord.Bot()
+client = commands.Bot(command_prefix=',', intents=intents)
+bot = discord.Bot()
 
 print("I started up ig")
 
@@ -22,7 +22,7 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 
-@bot2.command(name="echo",description="Send a message as the bot.")
+@bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
