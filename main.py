@@ -13,7 +13,7 @@ client = discord.Client()
 async def on_ready():
     print("I'm ready for usage!")
 
-@bot.listen()
+@bot.listen
 async def on_member_join(member):
     print(f"{member} has joined!")
 
