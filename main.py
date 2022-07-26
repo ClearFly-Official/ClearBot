@@ -10,12 +10,12 @@ bot = discord.Bot()
 client = discord.Client()
 
 
-@client.listen()
+@bot.listen()
 async def on_ready():
     print("I'm ready for usage!")
 
 
-@client.listen()
+@bot.listen()
 async def on_message(message):
     if message.content == "hi":
         await message.send("hi")
