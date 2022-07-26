@@ -21,6 +21,15 @@ async def on_member_join(member):
     emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#965610363842351144> to become a member and gain full access to the sever! Thanks for joining!", color = 0x57a4cd)
     await channel.send(embed=emb)
 
+@bot.listen()
+async def on_reaction_add(reaction, user):
+    Channel = bot.get_channel(1001514035868610702)
+    if reaction.message.channel.id != Channel.id:
+        return
+    if reaction.emoji == "👍":
+      Role = discord.utils.get(user.server.roles, name="test role")
+      await user.add_roles(Role)
+
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
