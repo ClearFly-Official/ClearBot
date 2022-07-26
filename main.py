@@ -26,7 +26,7 @@ async def echo(ctx, text):
     await ctx.channel.send(text)
     channel = bot.get_channel(1001405648828891187)
     emb = discord.Embed(title=f"{ctx.author} used echo:", description=text)
-    embed.set_image(url=pfp)
+    emb.set_image(url=pfp)
     await channel.send(embed=emb)
     print(ctx.author, "used echo:", text)
 
