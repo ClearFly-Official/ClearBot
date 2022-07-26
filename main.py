@@ -20,10 +20,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content == "When release":
-        await message.channel.send("When it's done... Read the FAQ before asking questions please!")
-    else:
-        return
+    if message.content == 'test':
+        await message.channel.send("test works!")
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
