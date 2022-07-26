@@ -15,7 +15,7 @@ async def on_ready():
     print("I'm ready for usage!")
 
 
-@bot.listen()
+@bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
