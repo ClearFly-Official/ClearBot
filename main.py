@@ -17,8 +17,9 @@ async def on_ready():
 
 @bot.listen()
 async def on_message(message):
-    if message.content == "hi":
-        await message.send("hi")
+    if message.author == bot.user:
+        return
+    await message.channel.send('hi')
 
 
 @bot.command(name="echo",description="Send a message as the bot.")
