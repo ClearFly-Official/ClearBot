@@ -9,11 +9,11 @@ intents = discord.Intents.all()
 bot = discord.Bot()
 client = discord.Client()
 
-@bot.event
+@bot.listen('on_ready')
 async def on_ready():
     print("I'm ready for usage!")
 
-@bot.listen
+@bot.listen('on_member_join')
 async def on_member_join(member):
     print(f"{member} has joined!")
 
