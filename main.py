@@ -22,7 +22,7 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 
-@client.slash_command(name="echo",description="Send a message as the bot.")
+@client.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
