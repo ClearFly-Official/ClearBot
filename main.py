@@ -25,24 +25,6 @@ async def on_message(message):
     else:
         return
 
-@bot.listen()
-async def on_message(message):
-    if message.author == bot.user:
-        return
-    if message.content == "will 3D cabin":
-        await message.channel.send("Yes! But read the FAQ before asking questions please!")
-    else: 
-        return
-        
-@bot.listen()
-async def on_message(message):
-    if message.author == bot.user:
-        return
-    if message.content == "will custom FMC":
-        await messsage.channel.send("Most likely, read the FAQ before asking these questions tho!")
-    else:
-        return
-
 
 @bot.command(name="echo",description="Send a message as the bot.")
 async def echo(ctx, text):
