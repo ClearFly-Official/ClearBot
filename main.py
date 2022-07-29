@@ -31,7 +31,7 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 @bot.listen()
-async def on_raw_reaction_add(reaction, user, member):
+async def on_raw_reaction_add():
   print("eeeeeeeeeeeeeee")
 
 @bot.listen()
