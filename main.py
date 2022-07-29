@@ -68,7 +68,7 @@ async def embed(ctx):
 ```
   """, color = 0x4f93cf)
 
-    embed.add_field(
+    emb.add_field(
             name="**Available commands(Admin only)**",
             value=f"""
 ```yaml
@@ -77,6 +77,7 @@ async def embed(ctx):
 ```
             """
       )
+    await ctx.respond(embed=emb)
 
 ##############################
 ##no more commands down here##
