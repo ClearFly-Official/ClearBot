@@ -46,9 +46,9 @@ async def on_message_delete(message):
   msgcnl = message.channel.mention
   pfp = message.author.avatar.url
   emb = discord.Embed(title="Message Deleted:", color=0x4f93cf)
-  emb.add_field(title="Content:", value=f"{msgdel}")
-  emb.add_field(title="Author:", value=f"{msgatr}")
-  emb.add_field(title="Content:", value=f"{msgcnl}")
+  emb.add_field(name="Content:", value=f"{msgdel}")
+  emb.add_field(name="Author:", value=f"{msgatr}")
+  emb.add_field(name="Content:", value=f"{msgcnl}")
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
 
