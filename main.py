@@ -55,23 +55,41 @@ async def embed(ctx, title, description):
     await ctx.channel.send(embed=emb)
     pfp = ctx.author.avatar.url
     channel2 = bot.get_channel(1001405648828891187)
-    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
-    emb.set_thumbnail(url=pfp)
-    await channel2.send(embed=emb)
+    embed = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
+    embed.set_thumbnail(url=pfp)
+    await channel2.send(embed=embed)
 
+@bot.command(name="help", description="Help command for the bot.")
+async def embed(ctx):
+    emb = discord.Embed(title = "Available commands(more to come soon!)", description =    f"""
+```yaml
+**/stats** : Show statistics about the bot and server.
+**/ping** : Shows the latency speed of the bot.
+```
+  """, color = 0x4f93cf)
+
+    embed.add_field(
+            name="**Available commands(Admin only)**",
+            value=f"""
+```yaml
+**/echo** : Send a message as the bot.
+**/embed** : Send an embed as the bot.
+```
+            """
+      )
 
 ##############################
 ##no more commands down here##
 ##############################
 
-@bot.command(name="ping",description="It tells the latency speed of the bot.")
+@bot.command(name="ping",description="Shows the latency speed of the bot.")
 async def ping(ctx):
     emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}ms!", color=0x4f93cf)
     await ctx.respond(embed=emb)
 
 bot.launch_time = datetime.utcnow()
 
-@bot.command(name="stats",description="Stats and info about this bot.")
+@bot.command(name="stats",description="Show statistics about the bot and server.")
 async def stats(ctx):
   delta_uptime = datetime.utcnow() - bot.launch_time
   hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
