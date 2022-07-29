@@ -43,7 +43,7 @@ async def on_raw_reaction_remove(payload):
   print("ssus")
 
 @bot.listen()
-async def on_message_delete(message, payload):
+async def on_raw_message_delete(message, payload):
   channel = payload.bot.get_channel(1001405648828891187)
   msgdel = payload.message.clean_content
   msgatr = payload.message.author.mention
