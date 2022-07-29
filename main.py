@@ -32,7 +32,15 @@ async def on_member_join(member):
 
 @bot.listen()
 async def on_raw_reaction_add(payload):
-  print("suss")
+  message_id = payload.message_id
+  if message_id == 1002661188481593406:
+    guild_id = payload.guild_id
+    guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
+
+    if payload.emoji.name == 'thumbsup':
+      print("THUMBSUP ROLE EE")
+async def on_raw_reaction_remove(payload):
+  print("ssus")
 
 @bot.listen()
 async def on_message_delete(message):
