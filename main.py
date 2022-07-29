@@ -77,7 +77,7 @@ async def stats(ctx):
   hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
   minutes, seconds = divmod(remainder, 60)
   days, hours = divmod(hours, 24)
-  embed = discord.Embed(title = "**Bot Stats**", description =    f"""
+  embed = discord.Embed(title = "Bot Stats", description =    f"""
 ```yaml
 Creator: Matt3o0#4764
 Uptime: {days}d {hours}h {minutes}m {seconds}s
@@ -98,18 +98,8 @@ Uptime: {days}d {hours}h {minutes}m {seconds}s
 Members: {members}
 ```
             """,
-            inline=True
+            inline=False
       )
-  embed.add_field(
-            name="Version",
-            value=f"""
-```yaml
-Python: {pythonVersion}
-Pycord: {dpyVersion}
-```
-            """,
-            inline=True
-      ) 
   await ctx.respond(embed = embed)
 
 
