@@ -60,7 +60,7 @@ async def embed(ctx, title, description):
 {title}
 ```
   """, color = 0x4f93cf)
-    emb.add_field(
+    embed.add_field(
             name="Description",
             value=f"""
 ```
