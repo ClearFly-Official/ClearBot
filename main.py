@@ -59,14 +59,12 @@ async def on_message_edit(before, after):
   msgedita = after.clean_content
   msgatr = before.author.mention
   msgcnl = before.channel.mention
-  time = after.edited_at
   pfp = before.author.avatar.url
   emb = discord.Embed(title="**Message Edited:**", color=0x4f93cf)
   emb.add_field(name="Content before:", value=f"{msgeditb}", inline = False)
   emb.add_field(name="Content after:", value=f"{msgedita}", inline = False)
   emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
   emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
-  emb.add_field(name="Edited at:", value=f"{time}", inline = True)
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
 
