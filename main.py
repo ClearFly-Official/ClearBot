@@ -36,9 +36,10 @@ async def on_reaction_add(reaction, user):
       await user.add_roles(Role)
 
 @bot.listen()
-async def on_raw_message_delete(ctx):
-    emb = discord.Embed(title=f"{ctx.author} deleted a message:", description="idk what the name of the event is lol")
+async def on_raw_message_delete(member):
+    emb = discord.Embed(title=f"{member.mention} deleted a message:", description="idk what the name of the event is lol")
     channel = bot.get_channel(1001405648828891187)
+    pfp = member.author.url
     emb.set_thumbnail(url=pfp)
     await channel.send(embed=emb)
 
