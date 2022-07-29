@@ -53,18 +53,9 @@ async def on_message_delete(message):
   await channel.send(embed=emb)
 
 @bot.listen()
-async def on_message_edit(message):
+async def on_message_edit():
   channel = bot.get_channel(1001405648828891187)
-  msgdel = message.clean_content
-  msgatr = message.author.mention
-  msgcnl = message.channel.mention
-  pfp = message.author.avatar.url
-  emb = discord.Embed(title="Message Edited:", color=0x4f93cf)
-  emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
-  emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
-  emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
-  emb.set_thumbnail(url=pfp)
-  await channel.send(embed=emb)
+  await channel.send("message edited, this means at least it recognizes it")
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
