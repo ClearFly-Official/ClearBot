@@ -39,7 +39,7 @@ async def on_reaction_add(reaction, user):
       await user.add_roles(Role)
 
 @bot.listen()
-async def on_message_delete(message):
+async def on_raw_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
   msgatr = message.author.mention
