@@ -53,8 +53,21 @@ async def on_message_delete(message):
   await channel.send(embed=emb)
 
 @bot.listen()
-async def on_message_edit():
-  print("gae")
+async def on_message_edit(before, after):
+  channel = bot.get_channel(1001405648828891187)
+  msgeditb = before.clean_content
+  msgedita = after.clean_content
+  msgatr = before.author.mention
+  msgcnl = before.channel.mention
+  pfp = before.author.avatar.url
+  emb = discord.Embed(title="Message Edited:", color=0x4f93cf)
+  emb.add_field(name="Content before:", value=f"{msgeditb}", inline = False)
+  emb.add_field(name="Content after:", value=f"{msgedita}", inline = False)
+  emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
+  emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
+  emb.set_thumbnail(url=pfp)
+  await channel.send(embed=emb)
+
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
