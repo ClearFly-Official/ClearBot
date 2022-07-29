@@ -30,12 +30,12 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 @bot.listen()
-async def on_reaction_add(reaction, user):
+async def on_raw_reaction_add(reaction, user):
     Channel = bot.get_channel(1001514035868610702)
     if reaction.message.channel.id != Channel.id:
         return
     if reaction.emoji == "👍":
-      Role = discord.utils.get(user.server.roles, name="test role")
+      Role = discord.utils.get(user.server.roles, name="sus")
       await user.add_roles(Role)
 
 @bot.listen()
