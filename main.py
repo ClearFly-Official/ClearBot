@@ -35,7 +35,7 @@ async def on_raw_reaction_add(payload):
   print("suss")
 
 @bot.listen()
-async def on_raw_message_delete(message, payload):
+async def on_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
   msgatr = message.author.mention
