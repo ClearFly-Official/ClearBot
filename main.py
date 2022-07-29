@@ -55,11 +55,15 @@ async def embed(ctx, title, description):
     await ctx.channel.send(embed=emb)
     pfp = ctx.author.avatar.url
     channel2 = bot.get_channel(1001405648828891187)
-    embed = discord.Embed(title=f"{ctx.author} used embed:", description =    f"""
+    embed = discord.Embed(title=f"{ctx.author} used embed:", color = 0x4f93cf)
+    embed.add_field(
+        name="Description",
+        value=f"""
 ```
 {title}
 ```
-  """, color = 0x4f93cf)
+            """
+      )
     embed.add_field(
             name="Description",
             value=f"""
