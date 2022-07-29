@@ -58,17 +58,10 @@ async def embed(ctx, title, description):
     embed = discord.Embed(title=f"{ctx.author} used embed:", description =    f"""
 ```
 {title}
-```
-  """, color = 0x4f93cf)
-
-    emb.add_field(
-            name="Description",
-            value=f"""
-```
+-------------------
 {description}
 ```
-            """
-      )
+  """, color = 0x4f93cf)
     embed.set_thumbnail(url=pfp)
     await channel2.send(embed=embed)
 
@@ -76,8 +69,8 @@ async def embed(ctx, title, description):
 async def embed(ctx):
     emb = discord.Embed(title = "Available commands(more to come soon!)", description =    f"""
 ```
-**/stats** : Show statistics about the bot and server.
-**/ping** : Shows the latency speed of the bot.
+/stats : Show statistics about the bot and server.
+/ping : Shows the latency speed of the bot.
 ```
   """, color = 0x4f93cf)
 
@@ -85,8 +78,8 @@ async def embed(ctx):
             name="**Available commands(Admin only)**",
             value=f"""
 ```
-**/echo** : Send a message as the bot.
-**/embed** : Send an embed as the bot.
+/echo : Send a message as the bot.
+/embed : Send an embed as the bot.
 ```
             """
       )
