@@ -16,10 +16,8 @@ intents = discord.Intents.default()
 intents.members = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
-@bot.listen()
-async def on_ready():
-    print("I started up ig")
-    await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online) 
+
+print("I started up ig")
 
 @bot.listen()
 async def on_member_join(member):
@@ -38,11 +36,37 @@ async def on_reaction_add(reaction, user):
       await user.add_roles(Role)
 
 @bot.listen()
-async def on_message_delete(message):
-  channel = bot.get_channel(1001405648828891187)
-  msgdel = message.content
-  emb = discord.Embed(title="Message Deleted:", description=f"{msgdel}")
-  await channel.send(embed=emb)
+async def on_raw_message_delete(message):
+    channel = bot.get_channel(1001405648828891187)
+    msgdel = message.content
+    msgatr = message.author.mention
+    msgcnl = message.channel.mention
+    emb = discord.Embed(title="Message Deleted")
+    emb.add_field(
+        name="Content",
+        value=f"""
+```
+{msgdel}
+```
+            """
+      )
+    embed.add_field(
+            name="Author",
+            value=f"""
+```
+{msgatr}
+```
+            """
+      , inline = True)
+    embed.add_field(
+            name="Channel",
+            value=f"""
+```
+{msgcnl}
+```
+            """
+      , inline = True)
+    await channel.send(embed=emb)
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
@@ -86,7 +110,7 @@ async def embed(ctx, title, description):
 
 @bot.command(name="help", description="Help command for the bot.")
 async def embed(ctx):
-    emb = discord.Embed(title = "**Available commands(more to come soon!)**", description =    f"""
+    emb = discord.Embed(title = "Available commands(more to come soon!)", description =    f"""
 ```
 /stats : Show statistics about the bot and server.
 /ping : Shows the latency speed of the bot.
@@ -94,7 +118,7 @@ async def embed(ctx):
   """, color = 0x4f93cf)
 
     emb.add_field(
-            name="**Admin only commands**",
+            name="**Available commands(Admin only)**",
             value=f"""
 ```
 /echo : Send a message as the bot.
