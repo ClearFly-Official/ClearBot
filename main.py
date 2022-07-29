@@ -3,6 +3,7 @@
 ########################
 import discord
 import os
+import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
@@ -53,6 +54,60 @@ async def embed(ctx, title, description):
     emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
     emb.set_thumbnail(url=pfp)
     await channel2.send(embed=emb)
+
+
+##############################
+##no more commands down here##
+##############################
+
+@bot.command(name="ping",description="It tells the latency speed of the bot.")
+async def ping(ctx):
+    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}!")
+    await ctx.respond(embed=emb)
+
+bot.launch_time = datetime.utcnow()
+
+@bot.command(name="stats",description="Stats and info about this bot.")
+async def stats(ctx):
+  delta_uptime = datetime.utcnow() - bot.launch_time
+  hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+  minutes, seconds = divmod(remainder, 60)
+  days, hours = divmod(hours, 24)
+  embed = discord.Embed(title = "**Bot Stats**", description =    f"""
+```yaml
+Creator: Matt3o0#4764
+Uptime: {days}d {hours}h {minutes}m {seconds}s
+```
+  """, color = 0x4f93cf)
+  servers = len(bot.guilds)
+  members = 0
+  for guild in bot.guilds:
+    members += guild.member_count - 1
+  pythonVersion = platform.python_version()
+  dpyVersion = discord.__version__
+  serverCount = len(bot.guilds)
+  memberCount = len(set(bot.get_all_members()))
+  embed.add_field(
+            name="__Stats__",
+            value=f"""
+```yaml
+Users: {members}
+Servers in: {servers}
+```
+            """,
+            inline=True
+      )
+  embed.add_field(
+            name="__Version__",
+            value=f"""
+```yaml
+Python: {pythonVersion}
+Pycord: {dpyVersion}
+```
+            """,
+            inline=True
+      ) 
+  await ctx.respond(embed = embed)
 
 
 bot.run(os.environ['TOKEN'])
