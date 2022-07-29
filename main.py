@@ -43,12 +43,12 @@ async def on_raw_reaction_remove(payload):
   print("ssus")
 
 @bot.listen()
-async def on_raw_message_delete(message, payload):
-  channel = payload.bot.get_channel(1001405648828891187)
-  msgdel = payload.message.clean_content
-  msgatr = payload.message.author.mention
-  msgcnl = payload.message.channel.mention
-  pfp = payload.message.author.avatar.url
+async def on_message_delete(message):
+  channel = bot.get_channel(1001405648828891187)
+  msgdel = message.clean_content
+  msgatr = message.author.mention
+  msgcnl = message.channel.mention
+  pfp = message.author.avatar.url
   emb = discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
   emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
   emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
