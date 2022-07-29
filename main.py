@@ -17,7 +17,10 @@ intents.members = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
 
-print("I started up ig")
+@bot.listen()
+async def on_ready():
+    await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
+    print("The bot is ready for usage!")
 
 @bot.listen()
 async def on_member_join(member):
@@ -37,36 +40,12 @@ async def on_reaction_add(reaction, user):
 
 @bot.listen()
 async def on_raw_message_delete(message):
-    channel = bot.get_channel(1001405648828891187)
-    msgdel = message.content
-    msgatr = message.author.mention
-    msgcnl = message.channel.mention
-    emb = discord.Embed(title="Message Deleted")
-    emb.add_field(
-        name="Content",
-        value=f"""
-```
-{msgdel}
-```
-            """
-      )
-    embed.add_field(
-            name="Author",
-            value=f"""
-```
-{msgatr}
-```
-            """
-      , inline = True)
-    embed.add_field(
-            name="Channel",
-            value=f"""
-```
-{msgcnl}
-```
-            """
-      , inline = True)
-    await channel.send(embed=emb)
+  channel = bot.get_channel(1001405648828891187)
+  msgdel = message.content
+  msgatr = message.author.mention
+  msgcnl = message.channel.mention
+  emb = discord.Embed(title="Message Deleted",description=msgdel, msgatr, msgcnl)
+  await channel.send(embed=emb)
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
