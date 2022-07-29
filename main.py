@@ -58,10 +58,16 @@ async def embed(ctx, title, description):
     embed = discord.Embed(title=f"{ctx.author} used embed:", description =    f"""
 ```
 {title}
--------------------
-{description}
 ```
   """, color = 0x4f93cf)
+    emb.add_field(
+            name="Description",
+            value=f"""
+```
+{description}
+```
+            """
+      )
     embed.set_thumbnail(url=pfp)
     await channel2.send(embed=embed)
 
