@@ -3,7 +3,7 @@
 ########################
 import discord
 import os
-import datetime
+from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
