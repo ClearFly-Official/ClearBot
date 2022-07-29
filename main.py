@@ -14,6 +14,7 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
 
 intents = discord.Intents.all()
 intents.members = True
+intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
 
