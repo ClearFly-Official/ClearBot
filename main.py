@@ -33,7 +33,7 @@ async def on_member_join(member):
 @bot.listen()
 async def on_reaction_add(reaction, user):
     if reaction.emoji == "👍":
-      await user.add_roles(name='sus')
+      await user.add_roles('sus')
 
 @bot.listen()
 async def on_message_delete(message):
