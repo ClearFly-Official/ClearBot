@@ -36,7 +36,7 @@ async def on_reaction_add(reaction, user):
       await user.add_roles(Role)
 
 @bot.listen()
-async def on_message_delete(self, member):
+async def on_message_delete(self, message):
     embed = discord.Embed(title="Message Deleted")
     embed.add_field(name="Member: ", value=message.author.mention, inline=False)
     embed.add_field(name="Message: ", value=message.content, inline=True)
