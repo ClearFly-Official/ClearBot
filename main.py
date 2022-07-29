@@ -12,7 +12,7 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
 
 #clearfly color embed = 0x4f93cf#
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
@@ -41,10 +41,10 @@ async def on_reaction_add(reaction, user):
 @bot.listen()
 async def on_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
-  msgdel = message.content
+  msgdel = message.clean_content
   msgatr = message.author.mention
   msgcnl = message.channel.mention
-  emb = discord.Embed(title="Message Deleted",description=f"{msgdel}{msgatr}{msgcnl}")
+  emb = discord.Embed(title="Message Deleted",description=f"{msgdel}{msgatr}{msgcnl}", color=0x4f93cf)
   await channel.send(embed=emb)
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
