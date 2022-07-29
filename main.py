@@ -44,7 +44,7 @@ async def on_raw_message_delete(message):
   msgdel = message.content
   msgatr = message.author.mention
   msgcnl = message.channel.mention
-  emb = discord.Embed(title="Message Deleted",description=msgdel, msgatr, msgcnl)
+  emb = discord.Embed(title="Message Deleted",description=f"{msgdel}{msgatr}{msgcnl}")
   await channel.send(embed=emb)
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
