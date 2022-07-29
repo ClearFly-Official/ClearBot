@@ -92,7 +92,7 @@ Uptime: {days}d {hours}h {minutes}m {seconds}s
   serverCount = len(bot.guilds)
   memberCount = len(set(bot.get_all_members()))
   embed.add_field(
-            name="Server Stats",
+            name="**Server Stats**",
             value=f"""
 ```yaml
 Members: {members}
