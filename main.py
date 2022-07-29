@@ -54,8 +54,7 @@ async def on_message_delete(message):
 
 @bot.listen()
 async def on_message_edit():
-  channel = bot.get_channel(1001405648828891187)
-  await channel.send("message edited, this means at least it recognizes it")
+  print("gae")
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
