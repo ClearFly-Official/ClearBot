@@ -66,7 +66,7 @@ async def embed(ctx, title, description):
 
 @bot.command(name="ping",description="It tells the latency speed of the bot.")
 async def ping(ctx):
-    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}!", color=0x4f93cf)
+    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}ms!", color=0x4f93cf)
     await ctx.respond(embed=emb)
 
 bot.launch_time = datetime.utcnow()
@@ -92,17 +92,16 @@ Uptime: {days}d {hours}h {minutes}m {seconds}s
   serverCount = len(bot.guilds)
   memberCount = len(set(bot.get_all_members()))
   embed.add_field(
-            name="__Stats__",
+            name="Server Stats",
             value=f"""
 ```yaml
-Users: {members}
-Servers in: {servers}
+Members: {members}
 ```
             """,
             inline=True
       )
   embed.add_field(
-            name="__Version__",
+            name="Version",
             value=f"""
 ```yaml
 Python: {pythonVersion}
