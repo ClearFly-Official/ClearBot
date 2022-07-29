@@ -17,7 +17,7 @@ intents.members = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
 @bot.listen()
-async def on_ready()
+async def on_ready():
     print("I started up ig")
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online) 
 
