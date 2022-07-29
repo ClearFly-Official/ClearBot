@@ -35,6 +35,13 @@ async def on_reaction_add(reaction, user):
       Role = discord.utils.get(user.server.roles, name="test role")
       await user.add_roles(Role)
 
+@bot.listen()
+async def on_raw_message_delete(ctx):
+    emb = discord.Embed(title=f"{ctx.author} deleted a message:", description="idk what the name of the event is lol")
+    channel = bot.get_channel(1001405648828891187)
+    emb.set_thumbnail(url=pfp)
+    await channel.send(embed=emb)
+
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
 async def echo(ctx, text):
