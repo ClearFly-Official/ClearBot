@@ -52,7 +52,7 @@ async def on_message_delete(message):
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
 
-bot.listen()
+@bot.listen()
 async def on_message_edit(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
