@@ -55,14 +55,27 @@ async def embed(ctx, title, description):
     await ctx.channel.send(embed=emb)
     pfp = ctx.author.avatar.url
     channel2 = bot.get_channel(1001405648828891187)
-    embed = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
+    embed = discord.Embed(title=f"{ctx.author} used embed:", description =    f"""
+```
+{title}
+```
+  """, color = 0x4f93cf)
+
+    emb.add_field(
+            name="Description",
+            value=f"""
+```
+{description}
+```
+            """
+      )
     embed.set_thumbnail(url=pfp)
     await channel2.send(embed=embed)
 
 @bot.command(name="help", description="Help command for the bot.")
 async def embed(ctx):
     emb = discord.Embed(title = "Available commands(more to come soon!)", description =    f"""
-```yaml
+```
 **/stats** : Show statistics about the bot and server.
 **/ping** : Shows the latency speed of the bot.
 ```
@@ -71,7 +84,7 @@ async def embed(ctx):
     emb.add_field(
             name="**Available commands(Admin only)**",
             value=f"""
-```yaml
+```
 **/echo** : Send a message as the bot.
 **/embed** : Send an embed as the bot.
 ```
