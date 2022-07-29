@@ -3,10 +3,14 @@
 ########################
 import discord
 import os
+import platform
 from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
+
+
+#clearfly color embed = 0x4f93cf#
 
 intents = discord.Intents.default()
 intents.members = True
@@ -62,7 +66,7 @@ async def embed(ctx, title, description):
 
 @bot.command(name="ping",description="It tells the latency speed of the bot.")
 async def ping(ctx):
-    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}!")
+    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}!", color=0x4f93cf)
     await ctx.respond(embed=emb)
 
 bot.launch_time = datetime.utcnow()
