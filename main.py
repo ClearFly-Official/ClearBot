@@ -38,13 +38,11 @@ async def on_reaction_add(reaction, user):
       await user.add_roles(Role)
 
 @bot.listen()
-async def on_message_delete(self, message):
-    embed = discord.Embed(title="Message Deleted")
-    embed.add_field(name="Member: ", value=message.author.mention, inline=False)
-    embed.add_field(name="Message: ", value=message.content, inline=True)
-    embed.add_field(name="Channel: ", value=message.channel.mention, inline=False)
-
-    await self.bot.get_channel(1001405648828891187).send(embed=embed)
+async def on_message_delete(message):
+  channel = bot.get_channel(1001405648828891187)
+  msgdel = message.content
+  emb = discord.Embed(title="Message Deleted:", description=f"{msgdel}")
+  await channel.send(embed=emb)
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(965422406036488282)
