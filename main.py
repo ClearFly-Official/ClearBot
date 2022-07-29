@@ -54,16 +54,16 @@ async def on_message_delete(message):
             """
       )
     emb.add_field(
-            name="Author:",
-            value=f"""
+      name="Author:",
+      value=f"""
 ```
 {msgatr}
 ```
             """
       , inline = True)
     emb.add_field(
-            name="Channel:",
-            value=f"""
+      name="Channel:",
+      value=f"""
 ```
 {msgcnl}
 ```
