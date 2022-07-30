@@ -117,7 +117,7 @@ async def embed(ctx, title, description):
 @bot.command(name="help", description="Help command for the bot.")
 async def embed(ctx):
     emb = discord.Embed(title = "**Help**",color = cfc)
-    emb.add_field(name="**Available commands**"f"""
+    emb.add_field(name="**Available commands**", value=f"""
 ```
 /stats : Show statistics about the bot and server.
 /ping : Shows the latency speed of the bot.
