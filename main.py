@@ -178,20 +178,37 @@ async def ascii(ctx, text):
 
 @bot.command(name="who-is", description="Shows all kind of information about a user")
 async def whois(ctx, user: discord.Member = None):
-  acccreate = user.created_at
-  accjoin = user.joined_at
-  acccreatet = isoparse(f"{acccreate}")
-  accjoint = isoparse(f"{accjoin}")
-  roles = user.roles
-  pfp = user.avatar.url
-  emb = discord.Embed(title=f"**{user}'s information**", color=cfc)
-  emb.add_field(name="**General Information:**", value=f"""
-  **Account created on:**{acccreatet}
-  **Account joined this server on:**{accjoint}
-  """)
-  emb.add_field(name="**Roles**", value=f"{roles}", inline=False)
-  emb.add_thumbnail(url=pfp)
-  await ctx.respond(embed=emb)
+  if user == None:
+    author = ctx.author
+    acccreate = author.created_at
+    accjoin = author.joined_at
+    acccreatet = isoparse(f"{acccreate}")
+    accjoint = isoparse(f"{accjoin}")
+    roles = author.roles
+    pfp = author.avatar.url
+    embed = discord.Embed(title=f"**{user}'s information**", color=cfc)
+    embed.add_field(name="**General Information:**", value=f"""
+    **Account created on:**{acccreatet}
+    **Account joined this server on:**{accjoint}
+    """)
+    embed.add_field(name="**Roles**", value=f"{roles}", inline=False)
+    embed.set_image(url=pfp)
+    await ctx.respond(embed=embed)
+  else:
+    acccreatee = user.created_at
+    accjoine = user.joined_at
+    acccreatete = isoparse(f"{acccreatee}")
+    accjointe = isoparse(f"{accjoine}")
+    rolese = user.roles
+    pfpe = user.avatar.url
+    emb = discord.Embed(title=f"**{user}'s information**", color=cfc)
+    emb.add_field(name="**General Information:**", value=f"""
+    **Account created on:**{acccreatete}
+    **Account joined this server on:**{accjointe}
+    """)
+    emb.add_field(name="**Roles**", value=f"{rolese}", inline=False)
+    emb.set_image(url=pfpe)
+    await ctx.respond(embed=embed)
 ##############################
 ##no more commands down here##
 ##############################
