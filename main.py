@@ -12,11 +12,20 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
 
 #clearfly color embed = 0x4f93cf#
 
+
 intents = discord.Intents.all()
 intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
+
+@bot.command()
+async def load(ctx, extension):
+  bot.load_extension(f'cogs.{extension}')
+
+@bot.command()
+async def unload(ctx, extension):
+  bot.unload_extension(f'cogs.{extension}')
 
 @bot.listen()
 async def on_ready():
@@ -29,18 +38,6 @@ async def on_member_join(member):
     memberid = member.id
     emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the sever! Thanks for joining!", color = 0x57a4cd)
     await channel.send(embed=emb)
-
-@bot.listen()
-async def on_raw_reaction_add(payload):
-  message_id = payload.message_id
-  if message_id == 1002661188481593406:
-    guild_id = payload.guild_id
-    guild = discord.utils.find(lambda g : g.id == guild_id, bot.guilds)
-
-    if payload.emoji.name == 'thumbsup':
-      print("THUMBSUP ROLE EE")
-async def on_raw_reaction_remove(payload):
-  print("ssus")
 
 @bot.listen()
 async def on_message_delete(message):
@@ -71,6 +68,8 @@ async def on_message_edit(before, after):
   emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
+
+
 
 
 @bot.command(name="echo",description="Send a message as the bot.(Admin only)")
@@ -175,5 +174,10 @@ Members: {members}
       )
   await ctx.respond(embed = embed)
 
+#############################################
+
+for filename in os.listdir('./cogs'):
+  if filename.endswith('.py'):
+    bot.load_extension(f'cogs.{filename[:3]}')
 
 bot.run(os.environ['TOKEN'])
