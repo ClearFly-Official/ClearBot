@@ -32,6 +32,14 @@ async def on_member_join(member):
     await channel.send(embed=emb)
 
 @bot.listen()
+async def on_member_remove(member):
+  channel = bot.get_channel(1001405648828891187)
+  emb = discord.Embed(title=f"{member.mention} left", color=cfc)
+  pfp = member.avatar.url
+  emb.set_thumbnail(url=pfp)
+  await channel.send(embed=emb)
+
+@bot.listen()
 async def on_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
