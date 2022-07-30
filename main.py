@@ -19,10 +19,17 @@ intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
 
+
+
 @bot.listen()
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
     print("The bot is ready for usage!")
+
+@bot.listen()
+async def on_command_error(ctx):
+  emb = discord.Embed(title="Error!", description="It seems that you have given a non-valid input to the bot, try again with a valid input. If that doesn't work contact <@668874138160594985>.", color=0xff0000)
+  await ctx.respond(embed=emb)
 
 @bot.listen()
 async def on_member_join(member):
@@ -68,6 +75,11 @@ async def on_message_edit(before, after):
   emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
+
+
+@bot.command(name="error", description="forces an error(for development purposes)")
+async def error():
+  print("error command run")
 
 
 
