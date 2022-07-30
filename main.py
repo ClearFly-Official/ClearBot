@@ -19,14 +19,6 @@ intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
 
-@bot.command()
-async def load(ctx, extension):
-  bot.load_extension(f'cogs.{extension}')
-
-@bot.command()
-async def unload(ctx, extension):
-  bot.unload_extension(f'cogs.{extension}')
-
 @bot.listen()
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
