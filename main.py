@@ -110,8 +110,11 @@ async def embed(ctx):
 ```
 /stats : Show statistics about the bot and server.
 /ping : Shows the latency speed of the bot.
+/help : Shows this information.
+/the-team : Shows The ClearFly Team!
+/avatar :Shows your avatar.
 ```
-  """, color = 0x4f93cf)
+  """, color = cfc)
 
     emb.add_field(
             name="**Available commands(Admin only)**",
@@ -124,7 +127,7 @@ async def embed(ctx):
       )
     await ctx.respond(embed=emb)
 
-@bot.command(name='the-team', description='the ClearFly Team!')
+@bot.command(name='the-team', description='Shows The ClearFly Team!')
 async def team(ctx):
   emb = discord.Embed(title="**The ClearFly Team:**",color=cfc)
   logo = "https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png"
@@ -133,6 +136,20 @@ async def team(ctx):
   emb.add_field(name="DJ",value="Admin",inline=False)
   emb.set_thumbnail(url=logo)
   await ctx.respond(embed=emb)
+
+@bot.command(name="avatar",description="Shows your avatar.")
+async def avatar(ctx, user: discord.Member = None):
+  if user == None:
+    author = ctx.author
+    pfp = author.avatar.url
+    embed = discord.Embed(title="Your avatar!")
+    embed.set_image(url=pfp)
+    await ctx.respond(embed=embed)
+  else:
+    userAvatarUrl = user.avatar.url    
+    embed = discord.Embed(title=f"{user}'s avatar!")
+    embed.set_image(url=userAvatarUrl)
+    await ctx.respond(embed=embed)
 
 ##############################
 ##no more commands down here##
