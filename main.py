@@ -180,30 +180,24 @@ async def ascii(ctx, text):
 async def whois(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
-    acccreate = author.created_at
-    accjoin = author.joined_at
-    acccreatet = isoparse(f"{acccreate}")
-    accjoint = isoparse(f"{accjoin}")
-    roles = author.roles
+    acccreatee = author.created_at
+    accjoine = author.joined_at
     pfp = author.avatar.url
     embed = discord.Embed(title=f"**Your information**", color=cfc)
     embed.add_field(name="**General Information:**", value=f"""
-    **Account created on:**{acccreatet}
-    **Account joined this server on:**{accjoint}
+    **Account created on:**{acccreatee}
+    **Account joined this server on:**{accjoine}
     """)
     embed.set_image(url=pfp)
     await ctx.respond(embed=embed)
   else:
-    acccreatee = user.created_at
-    accjoine = user.joined_at
-    acccreatete = isoparse(f"{acccreatee}")
-    accjointe = isoparse(f"{accjoine}")
-    rolese = user.roles
+    acccreate = user.created_at
+    accjoin = user.joined_at
     pfpe = user.avatar.url
     emb = discord.Embed(title=f"**{user}'s information**", color=cfc)
     emb.add_field(name="**General Information:**", value=f"""
-    **Account created on:**{acccreatete}
-    **Account joined this server on:**{accjointe}
+    **Account created on:**{acccreate}
+    **Account joined this server on:**{accjoin}
     """)
     emb.set_image(url=pfpe)
     await ctx.respond(embed=embed)
