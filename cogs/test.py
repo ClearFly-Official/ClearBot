@@ -10,10 +10,5 @@ class Test(commands.Cog):
     async def on_ready(self):
         print("cog is ready")
 
-    @commands.command()
-    async def test(self, ctx):
-        await ctx.respond('The cog works succesfully!')
-        print(ea test works e)
-
 def setup(bot):
     bot.add_cog(Test(bot))
