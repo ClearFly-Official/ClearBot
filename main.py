@@ -124,8 +124,8 @@ async def embed(ctx):
 /help : Shows this information.
 /the-team : Shows The ClearFly Team!
 /avatar : Shows your avatar.
-*more to come soon...*
 ```
+*more to come soon!*
   """)
 
     emb.add_field(
