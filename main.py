@@ -27,16 +27,10 @@ async def on_ready():
     print("The bot is ready for usage!")
 
 @bot.listen()
-async def on_application_command_error(ctx):
-  emb = discord.Embed(title="Error!", description="It seems that you have given a non-valid input to the bot, try again with a valid input. If that doesn't work contact <@668874138160594985>.", color=0xff0000)
-  await ctx.respond(embed=emb)
-  print("an error occured")
-
-@bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
     memberid = member.id
-    emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the sever! Thanks for joining!", color = 0x57a4cd)
+    emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!", color = 0x57a4cd)
     await channel.send(embed=emb)
 
 @bot.listen()
@@ -76,11 +70,6 @@ async def on_message_edit(before, after):
   emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
-
-
-@bot.command(name="error", description="forces an error(for development purposes)")
-async def errorcommandforced(ctx, cheese):
-  print(f"error command run, {cheese}")
 
 
 
