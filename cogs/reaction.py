@@ -10,6 +10,10 @@ class Reactions(commands.Cog):
         self.emoji_to_role = {
             discord.PartialEmoji(name="👍"): 1002646271682687056,  # ID of the role associated with unicode emoji '🔴'.
         }
+    @commands.Cog.listener()
+    async def on_ready():
+        print("the reaction cog is ready!")
+
 
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """Gives a role based on a reaction emoji."""
