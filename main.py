@@ -183,22 +183,24 @@ async def whois(ctx, user: discord.Member = None):
     acccreatee = author.created_at
     accjoine = author.joined_at
     pfp = author.avatar.url
-    emb = discord.Embed(title=f"**Your information**", color=cfc)
-    emb.add_field(name="**General Information:**", value=f"""
+    emb = discord.Embed(title=f"**Your information:**", color=cfc)
+    emb.add_field(value=f"""
     **Account created on:**{acccreatee}
     **Account joined this server on:**{accjoine}
     """)
+    emb.add_field(name="Avatar:")
     emb.set_image(url=pfp)
     await ctx.respond(embed=emb)
   else:
     acccreate = user.created_at
     accjoin = user.joined_at
     pfpe = user.avatar.url
-    embed = discord.Embed(title=f"**{user}'s information**", color=cfc)
-    embed.add_field(name="**General Information:**", value=f"""
+    embed = discord.Embed(title=f"**{user}'s information:**", color=cfc)
+    embed.add_field(value=f"""
     **Account created on:**{acccreate}
     **Account joined this server on:**{accjoin}
     """)
+    embed.add_field(name="Avatar:")
     embed.set_image(url=pfpe)
     await ctx.respond(embed=embed)
 ##############################
