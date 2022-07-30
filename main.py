@@ -45,7 +45,7 @@ async def on_member_remove(member):
   await channel.send(embed=emb)
 
 @bot.listen()
-async def on_message_delete(message):
+async def on_raw_message_delete(message, payload):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
   msgatr = message.author.mention
@@ -188,7 +188,7 @@ async def whois(ctx, user: discord.Member = None):
     **Account created on:**{acccreatee}
     **Account joined this server on:**{accjoine}
     """)
-    emb.add_field(name="Avatar:")
+    emb.add_field(name="Avatar:", value=f"link:{pfp}")
     emb.set_image(url=pfp)
     await ctx.respond(embed=emb)
   else:
@@ -200,7 +200,7 @@ async def whois(ctx, user: discord.Member = None):
     **Account created on:**{acccreate}
     **Account joined this server on:**{accjoin}
     """)
-    embed.add_field(name="Avatar:")
+    embed.add_field(name="Avatar:", value=f"link:{pfpe}")
     embed.set_image(url=pfpe)
     await ctx.respond(embed=embed)
 ##############################
