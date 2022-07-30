@@ -169,12 +169,13 @@ async def avatar(ctx, user: discord.Member = None):
 async def ascii(ctx, text):
   try:
     ascii = pyfiglet.figlet_format(text)
-    await ctx.respond(f"{ascii}")
+    await ctx.respond(f"```{ascii}```")
   except Exception as e:
     await ctx.respond(f'Error:\n{e}', ephemeral  = True)
 
 @bot.command(name="who-is", description="Shows all kind of information about an user")
-
+async def whois(ctx, user: discord.Member = None):
+  emb = discord.Embed(title="Error!", description="This command is in the works, it will be working soon:tm:", color=0xff0000)
 ##############################
 ##no more commands down here##
 ##############################
