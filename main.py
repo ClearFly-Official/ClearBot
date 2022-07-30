@@ -34,7 +34,7 @@ async def on_member_join(member):
 @bot.listen()
 async def on_member_remove(member):
   channel = bot.get_channel(1001405648828891187)
-  emb = discord.Embed(title=f"{member.mention} left", color=cfc)
+  emb = discord.Embed(title=f"{member} left.", color=cfc)
   pfp = member.avatar.url
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
