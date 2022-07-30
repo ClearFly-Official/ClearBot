@@ -6,6 +6,7 @@ import discord
 import os
 import platform
 import pyfiglet
+from dateutil.parser import isoparse
 from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
@@ -179,13 +180,17 @@ async def ascii(ctx, text):
 async def whois(ctx, user: discord.Member = None):
   acccreate = user.created_at
   accjoin = user.joined_at
+  acccreatet = isoparse(f"{acccreate}")
+  accjoint = isoparse(f"{accjoin}")
   roles = user.roles
-  emb = discord.Embed(title=f"{user.mention}'s information", color=cfc)
-  emb.add_field(name="General Information:", value=f"""
-  Account created on:{acccreate}
-  Account joined this server on:{accjoin}
+  pfp = user.avatar.url
+  emb = discord.Embed(title=f"**{user}'s information**", color=cfc)
+  emb.add_field(name="**General Information:**", value=f"""
+  **Account created on:**{acccreatet}
+  **Account joined this server on:**{accjoint}
   """)
-  emb.add_field(name="Roles", value=f"{roles}")
+  emb.add_field(name="**Roles**", value=f"{roles}", inline=False)
+  emb.add_thumbnail(url=pfp)
   await ctx.respond(embed=emb)
 ##############################
 ##no more commands down here##
