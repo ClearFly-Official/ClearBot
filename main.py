@@ -1,9 +1,11 @@
 ########################
 #-Made by Matt3o0#4764-#
 ########################
+from doctest import debug_script
 import discord
 import os
 import platform
+import pyfiglet
 from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
@@ -162,6 +164,16 @@ async def avatar(ctx, user: discord.Member = None):
     embed = discord.Embed(title=f"{user}'s avatar!", color=cfc)
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
+
+@bot.command(name="ascii",description="Convert texts into ascii")
+async def ascii(ctx, text):
+  try:
+    ascii = pyfiglet.figlet_format(text)
+    await ctx.respond(f"{ascii}")
+  except Exception as e:
+    await ctx.respond(f'Error:\n{e}', ephemeral  = True)
+
+@bot.command(name="who-is", description="Shows all kind of information about an user")
 
 ##############################
 ##no more commands down here##
