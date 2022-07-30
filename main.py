@@ -27,9 +27,10 @@ async def on_ready():
     print("The bot is ready for usage!")
 
 @bot.listen()
-async def on_command_error(ctx):
+async def on_application_command_error(ctx):
   emb = discord.Embed(title="Error!", description="It seems that you have given a non-valid input to the bot, try again with a valid input. If that doesn't work contact <@668874138160594985>.", color=0xff0000)
   await ctx.respond(embed=emb)
+  print("an error occured")
 
 @bot.listen()
 async def on_member_join(member):
