@@ -4,14 +4,14 @@ from discord.ext import commands
 class Reactions(commands.Cog):
     def __init__(self, bot,*args, **kwargs):
         self.bot = bot
-        super().__init__(*args, **kwargs)
+        super().__init__(self, *args, **kwargs)
 
         self.role_message_id = 1002661188481593406  # ID of the message that can be reacted to for adding/removing a role.
         self.emoji_to_role = {
             discord.PartialEmoji(name="👍"): 1002646271682687056,  # ID of the role associated with unicode emoji '🔴'.
         }
     @commands.Cog.listener()
-    async def on_ready():
+    async def on_ready(self):
         print("the reaction cog is ready!")
 
 
