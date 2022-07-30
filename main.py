@@ -56,7 +56,7 @@ async def on_raw_message_delete(message, payload):
   payload.emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
   payload.emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
   payload.emb.set_thumbnail(url=pfp)
-  await payload.channel.send(embed=emb)
+  await channel.send(embed=emb)
 
 @bot.listen()
 async def on_message_edit(before, after):
