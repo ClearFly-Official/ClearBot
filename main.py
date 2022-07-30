@@ -78,7 +78,7 @@ async def on_message_edit(before, after):
 
 
 @bot.command(name="error", description="forces an error(for development purposes)")
-async def error():
+async def errorcommandforced():
   print("error command run")
 
 
