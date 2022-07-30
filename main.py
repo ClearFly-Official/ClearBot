@@ -59,7 +59,7 @@ async def on_message_delete(message):
   await channel.send(embed=emb)
 
 #@bot.listen()
-#async def on_message_delete(message):
+#async def on_raw_message_delete(message, payload):
 #  channel = bot.get_channel(1001405648828891187)
 #  msgdel = message.clean_content
 #  msgatr = message.author.mention
