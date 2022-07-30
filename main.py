@@ -155,7 +155,7 @@ async def avatar(ctx, user: discord.Member = None):
     await ctx.respond(embed=embed)
   else:
     userAvatarUrl = user.avatar.url    
-    embed = discord.Embed(title=f"{user}'s avatar!")
+    embed = discord.Embed(title=f"{user}'s avatar!", color=cfc)
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
