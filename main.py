@@ -51,7 +51,7 @@ async def on_raw_message_delete(message, payload):
   msgatr = message.author.mention
   msgcnl = message.channel.mention
   pfp = message.author.avatar.url
-  emb = payload.discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
+  emb = discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
   emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
   emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
   emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
