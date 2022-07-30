@@ -10,7 +10,7 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
 
 
-#clearfly color embed = 0x4f93cf#
+cfc = 0x4f93cf
 
 
 intents = discord.Intents.all()
@@ -123,6 +123,15 @@ async def embed(ctx):
             """
       )
     await ctx.respond(embed=emb)
+
+@bot.command(name='the-team', description='the ClearFly Team!')
+async def team(ctx):
+  emb = discord.Embed(title="The ClearFly Team", description="Wolfair - Founder&3D model", color=cfc)
+  logo = https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png
+  emb.add_field(value="Matt3o0 - Bot creator & Admin")
+  emb.add_field(value="DJ - Admin")
+  emb.set_thumbnail(url=logo)
+  await ctx.respond(embed=emb)
 
 ##############################
 ##no more commands down here##
