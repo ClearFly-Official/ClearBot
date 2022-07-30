@@ -176,6 +176,7 @@ async def ascii(ctx, text):
 @bot.command(name="who-is", description="Shows all kind of information about an user")
 async def whois(ctx, user: discord.Member = None):
   emb = discord.Embed(title="Error!", description="This command is in the works, it will be working soon:tm:", color=0xff0000)
+  await ctx.respond(embed=emb)
 ##############################
 ##no more commands down here##
 ##############################
