@@ -186,12 +186,11 @@ async def whois(ctx, user: discord.Member = None):
     accjoint = isoparse(f"{accjoin}")
     roles = author.roles
     pfp = author.avatar.url
-    embed = discord.Embed(title=f"**{user}'s information**", color=cfc)
+    embed = discord.Embed(title=f"**Your information**", color=cfc)
     embed.add_field(name="**General Information:**", value=f"""
     **Account created on:**{acccreatet}
     **Account joined this server on:**{accjoint}
     """)
-    embed.add_field(name="**Roles**", value=f"{roles}", inline=False)
     embed.set_image(url=pfp)
     await ctx.respond(embed=embed)
   else:
@@ -206,7 +205,6 @@ async def whois(ctx, user: discord.Member = None):
     **Account created on:**{acccreatete}
     **Account joined this server on:**{accjointe}
     """)
-    emb.add_field(name="**Roles**", value=f"{rolese}", inline=False)
     emb.set_image(url=pfpe)
     await ctx.respond(embed=embed)
 ##############################
