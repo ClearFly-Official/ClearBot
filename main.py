@@ -127,6 +127,8 @@ async def embed(ctx):
 /help : Shows this information.
 /the-team : Shows The ClearFly Team!
 /avatar : Shows your avatar.
+/ascii : Converts text in to ascii.
+/who-is : Shows all kind of information about a user.
 ```
   """)
 
@@ -173,9 +175,17 @@ async def ascii(ctx, text):
   except Exception as e:
     await ctx.respond(f'Error:\n{e}', ephemeral  = True)
 
-@bot.command(name="who-is", description="Shows all kind of information about an user")
+@bot.command(name="who-is", description="Shows all kind of information about a user")
 async def whois(ctx, user: discord.Member = None):
-  emb = discord.Embed(title="Error!", description=f"**{user}'s information couldn't be shown**.This command is in the works, it will be working soon:tm:", color=0xff0000)
+  acccreate = user.created_at
+  accjoin = user.joined_at
+  roles = user.roles
+  emb = discord.Embed(title=f"{user.mention}'s information", color=cfc)
+  emb.add_field(name="General Information:", value=f"""
+  Account created on:{acccreate}
+  Account joined this server on:{accjoin}
+  """)
+  emb.add_field(name="Roles", value=f"{roles}")
   await ctx.respond(embed=emb)
 ##############################
 ##no more commands down here##
