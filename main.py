@@ -127,7 +127,7 @@ async def embed(ctx):
 @bot.command(name='the-team', description='the ClearFly Team!')
 async def team(ctx):
   emb = discord.Embed(title="The ClearFly Team", description="Wolfair - Founder&3D model", color=cfc)
-  logo = https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png
+  logo = "https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png"
   emb.add_field(value="Matt3o0 - Bot creator & Admin")
   emb.add_field(value="DJ - Admin")
   emb.set_thumbnail(url=logo)
