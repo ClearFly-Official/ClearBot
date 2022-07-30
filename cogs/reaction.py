@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 
 class Reactions(commands.Cog):
     def __init__(self, bot,*args, **kwargs):
@@ -79,5 +80,3 @@ def setup(bot):
 
 intents = discord.Intents.all()
 intents.members = True
-
-Reactions.add_cog(Reactions(Reactions))

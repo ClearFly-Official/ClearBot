@@ -13,6 +13,7 @@ class Test(commands.Cog):
     @commands.command()
     async def test(self, ctx):
         await ctx.respond('The cog works succesfully!')
+        print(ea test works e)
 
 def setup(bot):
     bot.add_cog(Test(bot))
