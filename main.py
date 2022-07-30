@@ -118,13 +118,13 @@ async def embed(ctx, title, description):
 async def embed(ctx):
     emb = discord.Embed(title = "**Help**",color = cfc)
     emb.add_field(name="**Available commands**"f"""
-(more to come soon!)
 ```
 /stats : Show statistics about the bot and server.
 /ping : Shows the latency speed of the bot.
 /help : Shows this information.
 /the-team : Shows The ClearFly Team!
 /avatar : Shows your avatar.
+*more to come soon...*
 ```
   """)
 
