@@ -6,7 +6,6 @@ import discord
 import os
 import platform
 import pyfiglet
-from dateutil.parser import isoparse
 from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
