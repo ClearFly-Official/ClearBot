@@ -6,6 +6,7 @@ MIT license
 Coded in Python using pycord
 Hosted on Heroku
 # Commands:
+```
 /stats : Show statistics about the bot and server.
 /ping : Shows the latency speed of the bot.
 /help : Shows this information.
