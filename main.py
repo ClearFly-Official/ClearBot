@@ -134,11 +134,13 @@ async def avatar(ctx, user: discord.Member = None):
     pfp = author.avatar.url
     embed = discord.Embed(title="Your avatar!", color=cfc)
     embed.set_image(url=pfp)
+    embed.set_footer(f"link:{pfp}")
     await ctx.respond(embed=embed)
   else:
     userAvatarUrl = user.avatar.url    
     embed = discord.Embed(title=f"{user}'s avatar!", color=cfc)
     embed.set_image(url=userAvatarUrl)
+    embed.set_footer(f"link:{userAvatarUrl}")
     await ctx.respond(embed=embed)
 
 @bot.command(name="ascii",description="Convert texts into ascii")
