@@ -236,6 +236,7 @@ async def embed(ctx):
 /avatar : Shows your avatar.
 /ascii : Converts text in to ascii.
 /who-is : Shows all kind of information about a user.
+/github : Shows the bot's GitHub repository.
 ```
   """)
 
