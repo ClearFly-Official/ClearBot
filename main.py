@@ -131,33 +131,6 @@ async def embed(ctx, title, description):
     embed.set_thumbnail(url=pfp)
     await channel2.send(embed=embed)
 
-@bot.command(name="help", description="Help command for the bot.")
-async def embed(ctx):
-    emb = discord.Embed(title = "**Help**",color = cfc)
-    emb.add_field(name="**Available commands**", value=f"""
-*more to come soon!*
-```
-/stats : Show statistics about the bot and server.
-/ping : Shows the latency speed of the bot.
-/help : Shows this information.
-/the-team : Shows The ClearFly Team!
-/avatar : Shows your avatar.
-/ascii : Converts text in to ascii.
-/who-is : Shows all kind of information about a user.
-```
-  """)
-
-    emb.add_field(
-            name="**Available commands (Admin only)**",
-            value=f"""
-```
-/echo : Send a message as the bot.
-/embed : Send an embed as the bot.
-```
-            """
-      )
-    await ctx.respond(embed=emb)
-
 @bot.command(name='the-team', description='Shows The ClearFly Team!')
 async def team(ctx):
   emb = discord.Embed(title="**The ClearFly Team:**",color=cfc)
@@ -235,7 +208,7 @@ async def stats(ctx):
   minutes, seconds = divmod(remainder, 60)
   days, hours = divmod(hours, 24)
   embed = discord.Embed(title = "**Bot Stats**", description =    f"""
-```yaml
+```rb
 Creator: Matt3o0#4764
 Uptime: {days}d {hours}h {minutes}m {seconds}s
 ```
@@ -251,13 +224,40 @@ Uptime: {days}d {hours}h {minutes}m {seconds}s
   embed.add_field(
             name="**Server Stats**",
             value=f"""
-```yaml
+```rb
 Members: {members}
 ```
             """,
             inline=False
       )
   await ctx.respond(embed = embed)
+
+@bot.command(name="help", description="Help command for the bot.")
+async def embed(ctx):
+    emb = discord.Embed(title = "**Help**",color = cfc)
+    emb.add_field(name="**Available commands**", value=f"""
+*more to come soon!*
+```
+/stats : Show statistics about the bot and server.
+/ping : Shows the latency speed of the bot.
+/help : Shows this information.
+/the-team : Shows The ClearFly Team!
+/avatar : Shows your avatar.
+/ascii : Converts text in to ascii.
+/who-is : Shows all kind of information about a user.
+```
+  """)
+
+    emb.add_field(
+            name="**Available commands (Admin only)**",
+            value=f"""
+```
+/echo : Send a message as the bot.
+/embed : Send an embed as the bot.
+```
+            """
+      )
+    await ctx.respond(embed=emb)
 
 #############################################
 
