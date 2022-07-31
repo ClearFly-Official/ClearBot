@@ -176,6 +176,11 @@ async def whois(ctx, user: discord.Member = None):
     embed.add_field(name="Avatar:", value=f"link:{pfpe}", inline=False)
     embed.set_image(url=pfpe)
     await ctx.respond(embed=embed)
+
+@bot.command(name="github", description="Shows the bot's GitHub repository")
+async def github(ctx):
+  emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
+  await ctx.respond(embed=emb)
 ##############################
 ##no more commands down here##
 ##############################
