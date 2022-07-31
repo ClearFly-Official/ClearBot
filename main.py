@@ -161,7 +161,7 @@ async def whois(ctx, user: discord.Member = None):
     **Account created on:**{acccreatee}
     **Account joined this server on:**{accjoine}
     """)
-    emb.add_field(name="Avatar:", value=f"link:{pfp}", inline=False)
+    emb.add_field(name="Avatar:", value=f"[link:]({pfp})", inline=False)
     emb.set_image(url=pfp)
     await ctx.respond(embed=emb)
   else:
@@ -173,7 +173,7 @@ async def whois(ctx, user: discord.Member = None):
     **Account created on:**{acccreate}
     **Account joined this server on:**{accjoin}
     """)
-    embed.add_field(name="Avatar:", value=f"link:{pfpe}", inline=False)
+    embed.add_field(name="Avatar:", value=f"[link:]({pfpe})", inline=False)
     embed.set_image(url=pfpe)
     await ctx.respond(embed=embed)
 
