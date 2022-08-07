@@ -6,6 +6,7 @@ import discord
 import os
 import platform
 import pyfiglet
+from time import sleep
 from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
@@ -27,6 +28,18 @@ bot = discord.Bot(command_prefix=',', intents=intents)
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
     print("The bot is ready for usage!")
+
+@bot.listen()
+async def on_ready():
+    def to_infinity():
+        index = 0
+        while True:
+            yield index
+            index += 1
+
+    for i in to_infinity():
+        print("auto stay on")
+        sleep(300)
 
 @bot.listen()
 async def on_member_join(member):
