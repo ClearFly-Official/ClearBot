@@ -30,18 +30,6 @@ async def on_ready():
     print("The bot is ready for usage!")
 
 @bot.listen()
-async def on_ready():
-    def to_infinity():
-        index = 0
-        while True:
-            yield index
-            index += 1
-
-    for i in to_infinity():
-        print("auto stay on")
-        sleep(300)
-
-@bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
     memberid = member.id
