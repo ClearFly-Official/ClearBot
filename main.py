@@ -30,8 +30,15 @@ async def on_ready():
 
 @bot.listen()
 async def on_message(message):
-  if message.author.bot == False and message.channel.id == 1001401783689678868:
-    await message.channel.send("<@&1001457701022343181> New update! ^")
+  if message.author.bot == False and message.channel.id == 965597725519405106:
+    await message.channel.send("<@&965688527109107712> New update on the 737-100! ^")
+  else:
+    return
+
+@bot.listen()
+async def on_message(message):
+  if message.author.bot == False and message.channel.id == 965693914847793214:
+    await message.channel.send("<@&965689409364197467> New announcement! ^")
   else:
     return
 
