@@ -30,7 +30,7 @@ async def on_ready():
 
 @bot.listen()
 async def on_message(message):
-  if message.author.bot == True and message.channel.id == 1001401783689678868:
+  if message.author.bot == False and message.channel.id == 1001401783689678868:
     await message.channel.send("<@&1001457701022343181> New update! ^")
   else:
     return
