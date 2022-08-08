@@ -32,7 +32,8 @@ async def on_ready():
 @bot.listen()
 async def on_message(message):
   if message.channel.id == 1001401783689678868:
-    message.channel.send("<@1001457701022343181> ^")
+    await message.channel.send("<@1001457701022343181> ^")
+    return
   else:
     return
 @bot.listen()
