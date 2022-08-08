@@ -31,12 +31,11 @@ async def on_ready():
 
 @bot.listen()
 async def on_message(ctx):
-  if not ctx.channel.id == 1001401783689678868:
-    return
-  else:
+  if ctx.channel.id == 1001401783689678868:
     await ctx.channel.send("<@&1001457701022343181> ^")
-    sleep(1)
     pass
+  else:
+    return
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
