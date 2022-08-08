@@ -28,19 +28,6 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
     print("The bot is ready for usage!")
 
-@bot.listen()
-async def on_message(message):
-  if message.author.bot == False and message.channel.id == 965597725519405106:
-    await message.channel.send("<@&965688527109107712> New update on the 737-100! ^")
-  else:
-    return
-
-@bot.listen()
-async def on_message(message):
-  if message.author.bot == False and message.channel.id == 965693914847793214:
-    await message.channel.send("<@&965689409364197467> New announcement! ^")
-  else:
-    return
 
 @bot.listen()
 async def on_member_join(member):
