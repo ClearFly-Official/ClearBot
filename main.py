@@ -29,14 +29,12 @@ async def on_ready():
     print("The bot is ready for usage!")
 
 @bot.listen()
-async def on_message(message):
-  if message.channel.id == 1001401783689678868:
-    if discord.Member.bot == True:
-      await message.channel.send("<@&1001457701022343181> ^")
-    else:
-      return
+async def on_message(message, member):
+  if member.author.bot == True and message.channel.id == 1001401783689678868:
+    await message.channel.send("<@&1001457701022343181> New update! ^")
   else:
     return
+
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
