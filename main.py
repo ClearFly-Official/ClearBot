@@ -1,7 +1,6 @@
 ########################
 #-Made by Matt3o0#4764-#
 ########################
-from doctest import debug_script
 import discord
 import os
 import platform
@@ -32,8 +31,10 @@ async def on_ready():
 @bot.listen()
 async def on_message(message):
   if message.channel.id == 1001401783689678868:
-    await message.channel.send("<@&1001457701022343181> ^")
-    continue
+    if discord.Member.bot == True:
+      await message.channel.send("<@&1001457701022343181> ^")
+    else:
+      return
   else:
     return
 @bot.listen()
