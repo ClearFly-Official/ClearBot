@@ -1,7 +1,7 @@
 # ClearBot
-A discord bot for the ClearFly server
+**A discord bot for the ClearFly server**
 
-MIT license
+Uses the **MIT license**
 
 Coded in Python using pycord
 Hosted on Heroku
