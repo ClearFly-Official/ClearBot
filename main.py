@@ -46,10 +46,6 @@ async def on_member_remove(member):
   await channel.send(embed=emb)
 
 @bot.listen()
-async def interaction_check(interaction):
-  await interaction.response.send_message("sus")
-
-@bot.listen()
 async def on_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
@@ -195,6 +191,12 @@ async def github(ctx):
 @commands.has_role(965422406036488282)
 async def test(ctx):
   button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+
+  async def button_callback(interaction):
+    await interaction.response.send_message("button works!")
+
+  button1.callback = button_callback
+
   view = View()
   view.add_item(button1)
   await ctx.respond("rules posted!",ephemeral=True)
