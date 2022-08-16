@@ -198,7 +198,7 @@ class MyView(discord.ui.View):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
       role = guild.get_role(1009130013729235015)
-      await interaction.author.add_roles(role)
+      await author.add_roles(role)
       await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
 @bot.command(name="rules", descritpion="sends the rules(admin only)")
