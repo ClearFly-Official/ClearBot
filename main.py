@@ -190,7 +190,7 @@ async def github(ctx):
 @bot.command(name="rules", description="sends the rules(admin only)")
 @commands.has_role(965422406036488282)
 async def test(ctx):
-  button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_clear:1009114252671467630>")
+  button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_half_clear:1009117524677369866>")
   async def interaction_check(interaction):
     await interaction.response.send("button works")
   view = View()
