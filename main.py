@@ -195,7 +195,7 @@ async def test(ctx):
 
   async def button_callback(interaction):
     member = interaction.author 
-    print(member)
+    await print(member)
     await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
   button1.callback = button_callback
