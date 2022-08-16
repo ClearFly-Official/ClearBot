@@ -192,7 +192,7 @@ async def test(ctx):
   button = Button(label="TEST", style=discord.ButtonStyle.success, emoji="🧪")
   view = View()
   view.add_item(button)
-  await ctx.send("hi", view=view)
+  await ctx.respond("hi", view=view)
 ##############################
 ##no more commands down here##
 ##############################
