@@ -194,9 +194,9 @@ async def test(ctx):
   button1 = Button(label="I have read and accept the rules", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
 
   async def button_callback(interaction):
-    author = interaction.author
-    role = discord.utils.get(ctx.guild.roles, name="test role")
-    await author.add_roles(role)
+    member = interaction.author 
+    role = discord.utils.get(lambda role: role.name == "test role", ctx.guild.roles)
+    await member.add_roles(role)
     await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
   button1.callback = button_callback
