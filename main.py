@@ -191,8 +191,6 @@ async def github(ctx):
 @commands.has_role(965422406036488282)
 async def test(ctx):
   button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_half_clear:1009117524677369866>")
-  async def interaction_check(interaction):
-    await interaction.response.print("button works")
   view = View()
   view.add_item(button1)
   await ctx.respond("rules posted!",ephemeral=True)
@@ -200,7 +198,8 @@ async def test(ctx):
 
 @bot.listen()
 async def interaction_check(interaction):
-  await interaction.response.send_message("button works")
+  await interaction.response.send("button works")
+  await interaction.response.print("lol")
 ##############################
 ##no more commands down here##
 ##############################
