@@ -193,7 +193,7 @@ class MyView(discord.ui.View):
     def __init__(self):
       super().__init__(timeout=None)
 
-    @discord.ui.button(label="I have read and accept the rules", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+    @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
     async def button_callback(self, button, interaction):
       author = interaction.author
       guild = discord.guild.get_guild(965419296937365514)
