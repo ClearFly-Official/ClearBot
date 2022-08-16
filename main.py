@@ -195,7 +195,7 @@ async def test(ctx):
 
   async def button_callback(interaction):
     member = interaction.author 
-    role = discord.utils.get(discord.guild.roles, name = "test role")
+    role = interaction.discord.utils.get(discord.guild.roles, name = "test role")
     await member.add_roles(role)
     await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
