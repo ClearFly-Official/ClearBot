@@ -189,14 +189,14 @@ async def github(ctx):
 ###############
 @bot.command(name="button-test", description="button-test")
 async def test(ctx):
-  button1 = Button(label="TEST", style=discord.ButtonStyle.success, emoji="🧪")
-  button2 = Button(label="TESTi", style=discord.ButtonStyle.danger, emoji="<:sus:965626768063086702>")
-  button3 = Button(label="go to googlos", url="https://google.com")
+  button1 = Button(label="TEST", style=discord.ButtonStyle.success, emoji="<:sus:965626768063086702>")
+
+  async def button_callback(interaction):
+    await interaction.response.send_message("button works")
+
   view = View()
   view.add_item(button1)
-  view.add_item(button2)
-  view.add_item(button3)
-  await ctx.respond("hi", view=view)
+  await ctx.respond("click the button", view=view)
 ##############################
 ##no more commands down here##
 ##############################
