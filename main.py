@@ -197,7 +197,7 @@ async def test(ctx):
     author = interaction.author
     guild = discord.guildget_guild(965419296937365514)
     role = guild.get_role(1009130013729235015)
-    await interaction.response.author.add_roles(role)
+    await interaction.author.add_roles(role)
     await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
   
   button1.callback = button_callback
