@@ -187,14 +187,16 @@ async def github(ctx):
 ###############
 ##--BUTTONS--##
 ###############
-@bot.command(name="button-test", description="button-test")
+@bot.command(name="rules", description="sends the rules(admin only)")
+@commands.has_role(965422406036488282)
 async def test(ctx):
   button1 = Button(label="TEST", style=discord.ButtonStyle.success, emoji="<:sus:965626768063086702>")
-  async def callback(interaction):
+  async def interaction_check(interaction):
     await interaction.response.send_message("button works")
   view = View()
   view.add_item(button1)
-  await ctx.respond("click the button", view=view)
+  await ctx.respond("rules posted!",ephemeral=True)
+  await ctx.send("click the button", view=view)
 ##############################
 ##no more commands down here##
 ##############################
