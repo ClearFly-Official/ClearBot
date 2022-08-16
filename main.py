@@ -10,6 +10,7 @@ from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
+from discord.ui import Button, View
 
 
 cfc = 0x4f93cf
@@ -20,6 +21,7 @@ intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
+
 
 
 
@@ -181,6 +183,16 @@ async def whois(ctx, user: discord.Member = None):
 async def github(ctx):
   emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
+
+###############
+##--BUTTONS--##
+###############
+@bot.command(name="button-test", description="button-test")
+async def test(ctx):
+  button = Button(label="TEST", style=discord.ButtonStyle.success, emoji="<:sus:1009018212270223390>")
+  view = View()
+  view.add_item(button)
+  await ctx.send("hi", view=view)
 ##############################
 ##no more commands down here##
 ##############################
