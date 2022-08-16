@@ -192,7 +192,7 @@ async def github(ctx):
 async def test(ctx):
   button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_half_clear:1009117524677369866>")
   async def interaction_check(interaction):
-    await interaction.response.send("button works")
+    await interaction.response.respond("button works")
   view = View()
   view.add_item(button1)
   await ctx.respond("rules posted!",ephemeral=True)
