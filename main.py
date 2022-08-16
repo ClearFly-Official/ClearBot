@@ -196,7 +196,7 @@ class MyView(discord.ui.View):
     @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
     async def button_callback(self, button, interaction):
       author = interaction.user
-      guild = discord.guild.fetch_guild(965419296937365514)
+      guild = bot.get_guild(965419296937365514)
       role = guild.get_role(1009130013729235015)
       await interaction.author.add_roles(role)
       await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
