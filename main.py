@@ -205,7 +205,7 @@ class MyView(discord.ui.View):
 async def rules(ctx):
   embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4. No harassment. If you are being harassed, let the staff know, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)", color=cfc)
   await ctx.respond("rules posted!",ephemeral=True)
-  await ctx.send(embed=embed, f"{MyView.is_persistent(MyView())}", view=MyView())
+  await ctx.send(f"{MyView.is_persistent(MyView())}", embed=embed,view=MyView())
 
 ##############################
 ##no more commands down here##
