@@ -11,6 +11,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
 from discord.ui import Button, View
+from discord.utils import get
 
 
 cfc = 0x4f93cf
@@ -193,7 +194,7 @@ async def test(ctx):
   button1 = Button(label="I have read and accept the rules", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
 
   async def button_callback(interaction):
-    role = guild.get_role(1009130013729235015)
+    role = discord.utils.get(ctx.guild.roles, name="test role")
     await discord.Member.add_roles(role)
     await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
