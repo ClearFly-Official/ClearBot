@@ -190,10 +190,8 @@ async def github(ctx):
 @bot.command(name="button-test", description="button-test")
 async def test(ctx):
   button1 = Button(label="TEST", style=discord.ButtonStyle.success, emoji="<:sus:965626768063086702>")
-
   async def button_callback(interaction):
     await interaction.response.send_message("button works")
-
   view = View()
   view.add_item(button1)
   await ctx.respond("click the button", view=view)
