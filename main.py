@@ -202,7 +202,7 @@ class MyView(discord.ui.View):
       await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
 @bot.command(name="rules", descritpion="sends the rules(admin only)")
-@command.has_role(1006725140933001246)
+@commands.has_role(1006725140933001246)
 async def rules(ctx):
   embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4. No harassment. If you are being harassed, let the staff know, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)", color=cfc)
   await ctx.respond("rules posted!",ephemeral=True)
