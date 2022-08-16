@@ -190,17 +190,18 @@ async def github(ctx):
 @bot.command(name="rules", description="sends the rules(admin only)")
 @commands.has_role(965422406036488282)
 async def test(ctx):
-  button1 = Button(label="TEST", style=discord.ButtonStyle.primary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+  button1 = Button(label="I have read and accept the rules", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
 
   async def button_callback(interaction):
-    await interaction.response.send_message("button works!")
+    await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
 
   button1.callback = button_callback
+  embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4.No harassment. If you are being harassed, let the staff know, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)")
 
   view = View()
   view.add_item(button1)
   await ctx.respond("rules posted!",ephemeral=True)
-  await ctx.send("click the button", view=view)
+  await ctx.send(embed=embed, view=view)
 
 ##############################
 ##no more commands down here##
