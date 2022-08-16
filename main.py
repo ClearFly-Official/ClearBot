@@ -189,7 +189,7 @@ async def github(ctx):
 ###############
 @bot.command(name="button-test", description="button-test")
 async def test(ctx):
-  button = Button(label="TEST", style=discord.ButtonStyle.success, emoji="<:sus:1009018212270223390>")
+  button = Button(label="TEST", style=discord.ButtonStyle.success, emoji="🧪")
   view = View()
   view.add_item(button)
   await ctx.send("hi", view=view)
