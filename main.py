@@ -199,7 +199,7 @@ async def test(ctx):
 @bot.listen()
 async def interaction_check(interaction):
   await interaction.response.send("button works")
-  await interaction.response.print("lol")
+  await print("gae")
 ##############################
 ##no more commands down here##
 ##############################
