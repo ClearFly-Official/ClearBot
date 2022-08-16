@@ -46,6 +46,10 @@ async def on_member_remove(member):
   await channel.send(embed=emb)
 
 @bot.listen()
+async def interaction_check(interaction):
+  await interaction.response.send_message("sus")
+
+@bot.listen()
 async def on_message_delete(message):
   channel = bot.get_channel(1001405648828891187)
   msgdel = message.clean_content
@@ -196,10 +200,6 @@ async def test(ctx):
   await ctx.respond("rules posted!",ephemeral=True)
   await ctx.send("click the button", view=view)
 
-@bot.listen()
-async def interaction_check(interaction):
-  await interaction.response.send("button works")
-  await print("gae")
 ##############################
 ##no more commands down here##
 ##############################
