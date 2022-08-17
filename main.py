@@ -267,7 +267,7 @@ class MyView4(discord.ui.View):
         guild = bot.get_guild(965419296937365514)
         role = guild.get_role(965688527109107712)
         await author.remove_roles(role)
-        await interaction.response.send_message("You won't get mentioned for updates anymore",ephemeral=True)
+        await interaction.response.send_message("You won't get mentioned for updates anymore.",ephemeral=True)
       else:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
