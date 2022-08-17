@@ -208,6 +208,25 @@ async def rules(ctx):
   await ctx.respond("rules posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView())
 
+class MyView2(discord.ui.View):
+    def __init__(self):
+      super().__init__(timeout=None)
+
+    @discord.ui.button(label="I have read the FAQ", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+    async def button_callback(self, button, interaction):
+      author = interaction.user
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(1002932992534134814)
+      await author.add_roles(role)
+      await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in <#965598257017413673>!",ephemeral=True)
+
+@bot.command(name="fas", descritpion="sends the faq(admin only)")
+@commands.has_role(1006725140933001246)
+async def faq(ctx):
+  embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
+  await ctx.respond("FAQ posted!",ephemeral=True)
+  await ctx.send(embed=embed,view=MyView2())
+
 ##############################
 ##no more commands down here##
 ##############################
