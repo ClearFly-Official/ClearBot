@@ -239,6 +239,10 @@ class MyView3(discord.ui.View):
       await author.add_roles(role)
       await interaction.response.send_message("You will now get mentioned when a announcement is made!",ephemeral=True)
 
+class MyView4(discord.ui.View):
+    def __init__(self):
+      super().__init__(timeout=None)
+
     @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
     async def button_callback(self, button, interaction):
       author = interaction.user
@@ -252,7 +256,7 @@ class MyView3(discord.ui.View):
 async def faq(ctx):
   embed = discord.Embed(title="**Roles**", description="Click on 📣 for announcement pings\n\nClick on 🛠 for update pings", color=cfc)
   await ctx.respond("Button roles posted!",ephemeral=True)
-  await ctx.send(embed=embed,view=MyView3())
+  await ctx.send(embed=embed,view=MyView3() and MyView4())
 
 ##############################
 ##no more commands down here##
