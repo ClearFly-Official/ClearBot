@@ -212,7 +212,7 @@ class MyView2(discord.ui.View):
     def __init__(self):
       super().__init__(timeout=None)
 
-    @discord.ui.button(label="I have read the FAQ", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+    @discord.ui.button(label="I have read the FAQ", custom_id="faqbutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
@@ -220,12 +220,39 @@ class MyView2(discord.ui.View):
       await author.add_roles(role)
       await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in <#965598257017413673>!",ephemeral=True)
 
-@bot.command(name="fas", descritpion="sends the faq(admin only)")
+@bot.command(name="faq", descritpion="sends the faq(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
-  embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
+  embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working on it 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
   await ctx.respond("FAQ posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView2())
+
+class MyView3(discord.ui.View):
+    def __init__(self):
+      super().__init__(timeout=None)
+
+    @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.primary, emoji="📣")
+    async def button_callback(self, button, interaction):
+      author = interaction.user
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(965689409364197467)
+      await author.add_roles(role)
+      await interaction.response.send_message("You will now get mentioned when a announcement is made!",ephemeral=True)
+
+    @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
+    async def button_callback(self, button, interaction):
+      author = interaction.user
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(965688527109107712)
+      await author.add_roles(role)
+      await interaction.response.send_message("You will now get mentioned when new update comes!!",ephemeral=True)
+
+@bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
+@commands.has_role(1006725140933001246)
+async def faq(ctx):
+  embed = discord.Embed(title="**Roles**", description="Click on 📣 for announcement pings\n\nClick on 🛠 for update pings", color=cfc)
+  await ctx.respond("Button roles posted!",ephemeral=True)
+  await ctx.send(embed=embed,view=MyView3())
 
 ##############################
 ##no more commands down here##
