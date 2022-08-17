@@ -129,7 +129,7 @@ async def team(ctx):
   logo = "https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png"
   emb.add_field(name="WolfAir",value="Founder & Modeler",inline=False)
   emb.add_field(name="Matt3o0",value="Bot Creator & Admin",inline=False)
-  emb.add_field(name="Yeet._.",value="Cockpit Modeler",inline=False)
+  emb.add_field(name="Yeet.__.",value="Cockpit Modeler",inline=False)
   emb.add_field(name="DJ",value="Admin",inline=False)
   emb.set_thumbnail(url=logo)
   await ctx.respond(embed=emb)
