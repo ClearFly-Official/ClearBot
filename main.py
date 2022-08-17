@@ -237,7 +237,9 @@ class MyView3(discord.ui.View):
     @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.primary, emoji="📣")
     async def button_callback(self, button, interaction):
       author = interaction.user
-      if author.has_role(965689409364197467):
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(965688527109107712)
+      if role in author.roles:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
         role = guild.get_role(965689409364197467)
@@ -258,7 +260,9 @@ class MyView4(discord.ui.View):
     @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
     async def button_callback(self, button, interaction):
       author = interaction.user
-      if author.has_role(965688527109107712):
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(965688527109107712)
+      if role in author.roles:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
         role = guild.get_role(965688527109107712)
