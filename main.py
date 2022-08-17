@@ -30,6 +30,9 @@ bot = discord.Bot(command_prefix=',', intents=intents)
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
     bot.add_view(MyView())
+    bot.add_view(MyView2())
+    bot.add_view(MyView3())
+    bot.add_view(MyView4())
     print("The bot is ready for usage!")
 
 
