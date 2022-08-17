@@ -236,6 +236,7 @@ class MyView3(discord.ui.View):
 
     @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.primary, emoji="📣")
     async def button_callback(self, button, interaction):
+      author = interaction.user
       if author.has_role(965689409364197467):
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
@@ -256,6 +257,7 @@ class MyView4(discord.ui.View):
 
     @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
     async def button_callback(self, button, interaction):
+      author = interaction.user
       if author.has_role(965688527109107712):
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
@@ -272,8 +274,8 @@ class MyView4(discord.ui.View):
 @bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
-  embed = discord.Embed(title="**Announcement Pings**", description="Click on 📣 for announcement pings", color=cfc)
-  emb = discord.Embed(title="**Update Pings**", description="Click on 🛠 for update pings", color=cfc)
+  embed = discord.Embed(title="**Announcement Pings**", description="Click on 📣 for announcement pings*(click agian to remove)*", color=cfc)
+  emb = discord.Embed(title="**Update Pings**", description="Click on 🛠 for update pings*(click agian to remove)*", color=cfc)
   await ctx.respond("Button roles posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView3())
   await ctx.send(embed=emb,view=MyView4())
