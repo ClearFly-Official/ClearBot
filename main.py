@@ -254,9 +254,11 @@ class MyView4(discord.ui.View):
 @bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
-  embed = discord.Embed(title="**Roles**", description="Click on 📣 for announcement pings\n\nClick on 🛠 for update pings", color=cfc)
+  embed = discord.Embed(title="**Announcement Pings**", description="Click on 📣 for announcement pings", color=cfc)
+  emb = discord.Embed(title="**Update Pings**", description="Click on 🛠 for update pings", color=cfc)
   await ctx.respond("Button roles posted!",ephemeral=True)
-  await ctx.send(embed=embed,view=MyView3() and MyView4())
+  await ctx.send(embed=embed,view=MyView3())
+  await ctx.send(embed=emb,view=MyView4())
 
 ##############################
 ##no more commands down here##
