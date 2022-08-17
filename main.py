@@ -236,11 +236,19 @@ class MyView3(discord.ui.View):
 
     @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.primary, emoji="📣")
     async def button_callback(self, button, interaction):
-      author = interaction.user
-      guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(965689409364197467)
-      await author.add_roles(role)
-      await interaction.response.send_message("You will now get mentioned when a announcement is made!",ephemeral=True)
+      if author.has_role(965689409364197467):
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(965689409364197467)
+        await author.remove_roles(role)
+        await interaction.response.send_message("You won't get mentioned anymore for announcements.",ephemeral=True)
+      else:
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(965689409364197467)
+        await author.add_roles(role)
+        await interaction.response.send_message("You will now get mentioned for announcments!",ephemeral=True)
+
 
 class MyView4(discord.ui.View):
     def __init__(self):
@@ -248,11 +256,18 @@ class MyView4(discord.ui.View):
 
     @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
     async def button_callback(self, button, interaction):
-      author = interaction.user
-      guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(965688527109107712)
-      await author.add_roles(role)
-      await interaction.response.send_message("You will now get mentioned when new update comes!!",ephemeral=True)
+      if author.has_role(965688527109107712):
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(965688527109107712)
+        await author.remove_roles(role)
+        await interaction.response.send_message("You won't get mentioned for updates anymore",ephemeral=True)
+      else:
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(965688527109107712)
+        await author.add_roles(role)
+        await interaction.response.send_message("You will now get mentioned for updates!",ephemeral=True)
 
 @bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_role(1006725140933001246)
