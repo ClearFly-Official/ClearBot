@@ -203,8 +203,8 @@ class MyView(discord.ui.View):
       pfp = author.avatar.url
       guild = bot.get_guild(965419296937365514)
       role = guild.get_role(1002200398905483285)
-      embed = discord.Embed(title=f"{author} accepted the rules!")
-      embed.set_image(url=pfp)
+      embed = discord.Embed(title=f"{author} accepted the rules!", color=cfc)
+      embed.set_thumbnail(url=pfp)
       await author.add_roles(role)
       await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
       await channel.send(embed=embed)
