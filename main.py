@@ -243,7 +243,7 @@ class MyView3(discord.ui.View):
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(965688527109107712)
+      role = guild.get_role(965689409364197467)
       if role in author.roles:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
