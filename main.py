@@ -194,8 +194,8 @@ async def github(ctx):
 
 @va.command(name="file", descriprion="File a flight you are gonna do for the Clearfly VA.")
 @option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738"])
-@option("origin", description="The airport you are will fly from.")
-@option("destination", description="The airport you will fly to.")
+@option("origin", description="The airport(ICAO) you are will fly from.")
+@option("destination", description="The airport(ICAO) you will fly to.")
 @option("flightnumber", description="The flight number of the flight.")
 async def file(ctx, aircraft, origin, destination, fligntnumber):
   channel = bot.get_channel(1013587423747395616)
