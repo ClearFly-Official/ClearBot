@@ -1,7 +1,6 @@
 ########################
 #-Made by Matt3o0#4764-#
 ########################
-from random import choices
 import discord
 import os
 import platform
@@ -22,7 +21,7 @@ intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
-va = bot.create_group("va", "Everything related to the ClearFly virtual airline")
+va = discord.SlashCommandGroup("va", "Everything related to the ClearFly virtual airline")
 
 
 
