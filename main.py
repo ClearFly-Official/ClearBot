@@ -197,7 +197,7 @@ async def github(ctx):
 @option("origin", description="The airport(ICAO) you are will fly from.")
 @option("destination", description="The airport(ICAO) you will fly to.")
 @option("flightnumber", description="The flight number of the flight.")
-async def file(ctx, aircraft, origin, destination, fligntnumber):
+async def file(ctx, aircraft, origin, destination, flightnumber):
   channel = bot.get_channel(1013587423747395616)
   pfp = ctx.author.avatar.url
   embed = discord.Embed(title="**Flight Filed!**", color=cfc)
@@ -206,7 +206,7 @@ async def file(ctx, aircraft, origin, destination, fligntnumber):
   Aircraft:{aircraft}
   Departure:{origin}
   Arrival:{destination}
-  Flight Number: {fligntnumber}
+  Flight Number: {flightnumber}
   ```
   Have fun flying!
             """)
@@ -381,7 +381,7 @@ async def embed(ctx):
 ```
   """)
     emb.add_field(
-            name="**ClearFLy Virtual Airline**",
+            name="**ClearFly Virtual Airline**",
             value=f"""
 ```
 /va file : File a flight you are gonna do for the Clearfly VA.
