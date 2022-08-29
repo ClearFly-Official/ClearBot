@@ -198,8 +198,28 @@ async def github(ctx):
 @option("destination", description="The airport you will fly to.")
 @option("flightnumber", description="The flight number of the flight.")
 async def file(ctx, aircraft, origin, destination, fligntnumber):
-  embed = discord.Embed(title="Work In Progress", description="This command is not complete yet, but will be soon!", color=0xFF0000)
+  channel = bot.get_channel(1013587423747395616)
+  pfp = ctx.author.avatar.url
+  embed = discord.Embed(title="**Flight Filed!**", color=0xFF0000)
+  embed.add_field(name="**Your flight has been filed with the following data:**", value=f"""
+  ```
+  aircraft:{aircraft}
+  from {origin} to {destination}
+  flight number: {fligntnumber}
+  ```
+  Have fun flying!
+  """)
   await ctx.respond(embed=embed)
+  emb = discord.Embed(title=f"{ctx.author} filed a flight:")
+  emb.add_field(value=f"""
+  ```
+  aircraft:{aircraft}
+  from {origin} to {destination}
+  flight number: {fligntnumber}
+  ```
+  """)
+  emb.set_thumbnail(url=pfp)
+  await channel.send(embed=emb)
 ###############
 ##--BUTTONS--##
 ###############
@@ -357,12 +377,15 @@ async def embed(ctx):
 /who-is : Shows all kind of information about a user.
 /github : Shows the bot's GitHub repository.
 ```
-**ClearFly Virtual Airline**
+  """)
+    emb.add_field(
+            name="**ClearFLy Virtual Airline**",
+            value=f"""
 ```
 /va file : File a flight you are gonna do for the Clearfly VA.
 ```
-  """)
-
+            """
+      )
     emb.add_field(
             name="**Available commands (Admin only)**",
             value=f"""
