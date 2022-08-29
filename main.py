@@ -386,7 +386,7 @@ async def embed(ctx):
 ```
 /va file : File a flight you are gonna do for the Clearfly VA.
 ```
-            """
+            """, inline=False
       )
     emb.add_field(
             name="**Available commands (Admin only)**",
