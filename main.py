@@ -174,7 +174,7 @@ async def whois(ctx, user: discord.Member = None):
     emb.set_thumbnail(url=pfp)
     await ctx.respond(embed=emb)
   else:
-    acccreate = user.created_at
+    acccrt = user.created_at
     accjoin = user.joined_at
     acccrtt = discord.utils.format_dt(acccrt)
     accjoint = discord.utils.format_dt(accjoin)
