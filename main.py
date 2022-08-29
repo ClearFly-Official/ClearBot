@@ -200,7 +200,7 @@ async def github(ctx):
 async def file(ctx, aircraft, origin, destination, fligntnumber):
   channel = bot.get_channel(1013587423747395616)
   pfp = ctx.author.avatar.url
-  embed = discord.Embed(title="**Flight Filed!**", color=0xFF0000)
+  embed = discord.Embed(title="**Flight Filed!**", color=cfc)
   embed.add_field(name="**Your flight has been filed with the following data:**", value=f"""
   ```
   Aircraft:{aircraft}
@@ -210,7 +210,7 @@ async def file(ctx, aircraft, origin, destination, fligntnumber):
   ```
   Have fun flying!
   """)
-  emb = discord.Embed(title=f"{ctx.author} filed a flight:")
+  emb = discord.Embed(title=f"{ctx.author} filed a flight:", color=cfc)
   emb.add_field(name=f"{origin} to {destination}"value=f"""
   ```
   Aircraft:{aircraft}
