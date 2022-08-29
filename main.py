@@ -384,7 +384,7 @@ async def embed(ctx):
             name="**ClearFly Virtual Airline**",
             value=f"""
 ```
-/va file : File a flight you are gonna do for the Clearfly VA.
+/va file : File a flight you are gonna do for the ClearFly VA.
 ```
             """, inline=False
       )
