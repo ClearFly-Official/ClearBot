@@ -216,7 +216,7 @@ async def file(ctx, aircraft, origin, destination, flightnumber):
   Aircraft:{aircraft}
   Departure:{origin}
   Arrival:{destination}
-  Flight Number: {fligntnumber}
+  Flight Number: {flightnumber}
   ```
             """)
   emb.set_thumbnail(url=pfp)
