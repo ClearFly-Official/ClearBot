@@ -13,7 +13,7 @@ from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
 from discord.ui import Button, View
 from discord.utils import get
-
+from discord import option
 
 cfc = 0x4f93cf
 
