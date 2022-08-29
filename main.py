@@ -16,13 +16,12 @@ from discord.utils import get
 
 cfc = 0x4f93cf
 
-
 intents = discord.Intents.all()
 intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
-
+va = bot.create_group("va", "Everything related to the ClearFly virtual airline")
 
 
 
@@ -148,7 +147,7 @@ async def avatar(ctx, user: discord.Member = None):
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
-@bot.command(name="ascii",description="Convert texts into ascii")
+@bot.command(name="ascii",description="Convert texts into ascii.")
 async def ascii(ctx, text):
   try:
     ascii = pyfiglet.figlet_format(text)
@@ -156,7 +155,7 @@ async def ascii(ctx, text):
   except Exception as e:
     await ctx.respond(f'Error:\n{e}', ephemeral  = True)
 
-@bot.command(name="who-is", description="Shows all kind of information about a user")
+@bot.command(name="who-is", description="Shows all kind of information about a user.")
 async def whois(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
@@ -188,10 +187,12 @@ async def whois(ctx, user: discord.Member = None):
     embed.set_thumbnail(url=pfp)
     await ctx.respond(embed=embed)
 
-@bot.command(name="github", description="Shows the bot's GitHub repository")
+@bot.command(name="github", description="Shows the bot's GitHub repository.")
 async def github(ctx):
   emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
+
+@va.command(name="file", descriprion="File a flight you are gonna do for the Clearfly VA.")
 
 ###############
 ##--BUTTONS--##
@@ -350,6 +351,10 @@ async def embed(ctx):
 /who-is : Shows all kind of information about a user.
 /github : Shows the bot's GitHub repository.
 ```
+**ClearFly Virtual Airline**
+```
+/va file : File a flight you are gonna do for the Clearfly VA.
+```
   """)
 
     emb.add_field(
@@ -364,5 +369,5 @@ async def embed(ctx):
     await ctx.respond(embed=emb)
 
 #############################################
-
+bot.add_application_command(va)
 bot.run(os.environ['TOKEN'])
