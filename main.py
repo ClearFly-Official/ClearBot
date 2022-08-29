@@ -1,6 +1,7 @@
 ########################
 #-Made by Matt3o0#4764-#
 ########################
+from random import choices
 import discord
 import os
 import platform
@@ -193,7 +194,13 @@ async def github(ctx):
   await ctx.respond(embed=emb)
 
 @va.command(name="file", descriprion="File a flight you are gonna do for the Clearfly VA.")
-
+@option("aircraft", "The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738"])
+@option("origin", "The airport you are will fly from.")
+@option("destination", "The airport you will fly to.")
+@option("flightnumber", "The flight number of the flight.")
+async def file(ctx, aircraft, origin, destination, fligntnumber):
+  embed = discord.Embed(title="Work In Progress", description="This command is not complete yet, but will be soon!", color=0xFF0000)
+  await ctx.respond(embed=embed)
 ###############
 ##--BUTTONS--##
 ###############
