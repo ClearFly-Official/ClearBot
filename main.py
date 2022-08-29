@@ -203,22 +203,24 @@ async def file(ctx, aircraft, origin, destination, fligntnumber):
   embed = discord.Embed(title="**Flight Filed!**", color=0xFF0000)
   embed.add_field(name="**Your flight has been filed with the following data:**", value=f"""
   ```
-  aircraft:{aircraft}
-  from {origin} to {destination}
-  flight number: {fligntnumber}
+  Aircraft:{aircraft}
+  Departure:{origin}
+  Arrival:{destination}
+  Flight Number: {fligntnumber}
   ```
   Have fun flying!
   """)
-  await ctx.respond(embed=embed)
   emb = discord.Embed(title=f"{ctx.author} filed a flight:")
-  emb.add_field(value=f"""
+  emb.add_field(name=f"{origin} to {destination}"value=f"""
   ```
-  aircraft:{aircraft}
-  from {origin} to {destination}
-  flight number: {fligntnumber}
+  Aircraft:{aircraft}
+  Departure:{origin}
+  Arrival:{destination}
+  Flight Number: {fligntnumber}
   ```
   """)
   emb.set_thumbnail(url=pfp)
+  await ctx.respond(embed=embed)
   await channel.send(embed=emb)
 ###############
 ##--BUTTONS--##
