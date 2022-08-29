@@ -211,7 +211,7 @@ async def file(ctx, aircraft, origin, destination, fligntnumber):
   Have fun flying!
   """)
   emb = discord.Embed(title=f"{ctx.author} filed a flight:", color=cfc)
-  emb.add_field(name=f"{origin} to {destination}"value=f"""
+  emb.add_field(name=f"{origin} to {destination}",value=f"""
   ```
   Aircraft:{aircraft}
   Departure:{origin}
