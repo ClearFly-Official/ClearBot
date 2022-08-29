@@ -395,7 +395,7 @@ async def embed(ctx):
 /echo : Send a message as the bot.
 /embed : Send an embed as the bot.
 ```
-            """
+            """, inline=False
       )
     await ctx.respond(embed=emb)
 
