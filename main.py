@@ -139,12 +139,12 @@ async def avatar(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
     pfp = author.avatar.url
-    embed = discord.Embed(title="Your avatar!", color=cfc)
+    embed = discord.Embed(title="Your avatar!",description=f"[link]({pfp})", color=cfc)
     embed.set_image(url=pfp)
     await ctx.respond(embed=embed)
   else:
     userAvatarUrl = user.avatar.url    
-    embed = discord.Embed(title=f"{user}'s avatar!", color=cfc)
+    embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({pfp})", color=cfc)
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
@@ -160,28 +160,32 @@ async def ascii(ctx, text):
 async def whois(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
-    acccreatee = author.created_at
-    accjoine = author.joined_at
+    acccrt = author.created_at
+    accjoin = author.joined_at
+    acccrtt = discord.utils.format_dt(acccrt)
+    accjoint = discord.utils.format_dt(accjoin)
     pfp = author.avatar.url
     emb = discord.Embed(title=f"**Your information:**", color=cfc)
     emb.add_field(name=f"{author}",value=f"""
-    **Account created on:**{acccreatee}
-    **Account joined this server on:**{accjoine}
+    **Account created on:**{acccrtt}
+    **Account joined this server on:**{accjoint}
     """)
     emb.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
-    emb.set_image(url=pfp)
+    emb.set_thumbnail(url=pfp)
     await ctx.respond(embed=emb)
   else:
     acccreate = user.created_at
     accjoin = user.joined_at
-    pfpe = user.avatar.url
+    acccrtt = discord.utils.format_dt(acccrt)
+    accjoint = discord.utils.format_dt(accjoin)
+    pfp = user.avatar.url
     embed = discord.Embed(title=f"**{user}'s information:**", color=cfc)
     embed.add_field(name=f"{user}",value=f"""
-    **Account created on:**{acccreate}
-    **Account joined this server on:**{accjoin}
+    **Account created on:**{acccrtt}
+    **Account joined this server on:**{accjoint}
     """)
-    embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
-    embed.set_image(url=pfpe)
+    embed.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
+    embed.set_thumbnail(url=pfp)
     await ctx.respond(embed=embed)
 
 @bot.command(name="github", description="Shows the bot's GitHub repository")
