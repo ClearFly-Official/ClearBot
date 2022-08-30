@@ -1,10 +1,11 @@
 ########################
-#-Made by Matt3o0#4764-#
+#-Made by Matt3o0#4000-#
 ########################
 import discord
 import os
 import platform
 import pyfiglet
+from dotenv import load_dotenv
 from time import sleep
 from datetime import datetime
 from discord.ext import commands, tasks
@@ -14,14 +15,15 @@ from discord.ui import Button, View
 from discord.utils import get
 from discord import option
 
-cfc = 0x4f93cf
 
+load_dotenv()
+
+cfc = 0x4f93cf
 intents = discord.Intents.all()
 intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
-va = discord.SlashCommandGroup("va", "Everything related to the ClearFly virtual airline")
 
 
 
@@ -32,6 +34,7 @@ async def on_ready():
     bot.add_view(MyView2())
     bot.add_view(MyView3())
     bot.add_view(MyView4())
+    bot.add_view(MyView5())
     print("The bot is ready for usage!")
 
 
@@ -143,7 +146,7 @@ async def avatar(ctx, user: discord.Member = None):
     await ctx.respond(embed=embed)
   else:
     userAvatarUrl = user.avatar.url    
-    embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({pfp})", color=cfc)
+    embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({userAvatarUrl})", color=cfc)
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
@@ -155,7 +158,7 @@ async def ascii(ctx, text):
   except Exception as e:
     await ctx.respond(f'Error:\n{e}', ephemeral  = True)
 
-@bot.command(name="who-is", description="Shows all kind of information about a user.")
+@bot.command(name="who-is", description="Fetches a user profile")
 async def whois(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
@@ -164,35 +167,39 @@ async def whois(ctx, user: discord.Member = None):
     acccrtt = discord.utils.format_dt(acccrt)
     accjoint = discord.utils.format_dt(accjoin)
     pfp = author.avatar.url
-    emb = discord.Embed(title=f"**Your information:**", color=cfc)
+    emb = discord.Embed(title=f"**Your profile:**", color=cfc)
     emb.add_field(name=f"{author}",value=f"""
     **Account created on:**{acccrtt}
     **Account joined this server on:**{accjoint}
     """)
     emb.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
     emb.set_thumbnail(url=pfp)
+    sleep(1)
     await ctx.respond(embed=emb)
   else:
-    acccrt = user.created_at
-    accjoin = user.joined_at
-    acccrtt = discord.utils.format_dt(acccrt)
-    accjoint = discord.utils.format_dt(accjoin)
-    pfp = user.avatar.url
-    embed = discord.Embed(title=f"**{user}'s information:**", color=cfc)
+    acccrte = user.created_at
+    accjoine = user.joined_at
+    acccrtte = discord.utils.format_dt(acccrte)
+    accjointe = discord.utils.format_dt(accjoine)
+    pfpe = user.avatar.url
+    embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
     embed.add_field(name=f"{user}",value=f"""
-    **Account created on:**{acccrtt}
-    **Account joined this server on:**{accjoint}
+    **Account created on:**{acccrtte}
+    **Account joined this server on:**{accjointe}
     """)
-    embed.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
-    embed.set_thumbnail(url=pfp)
+    embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
+    embed.set_thumbnail(url=pfpe)
+    sleep(1)
     await ctx.respond(embed=embed)
+
 
 @bot.command(name="github", description="Shows the bot's GitHub repository.")
 async def github(ctx):
   emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
 
-@va.command(name="file", descriprion="File a flight you are gonna do for the Clearfly VA.")
+@bot.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
+@commands.has_role(1013933799777783849)
 @option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738"])
 @option("origin", description="The airport(ICAO) you are will fly from.")
 @option("destination", description="The airport(ICAO) you will fly to.")
@@ -200,8 +207,8 @@ async def github(ctx):
 async def file(ctx, aircraft, origin, destination, flightnumber):
   channel = bot.get_channel(1013587423747395616)
   pfp = ctx.author.avatar.url
-  embed = discord.Embed(title="**Flight Filed!**", color=cfc)
-  embed.add_field(name="**Your flight has been filed with the following data:**", value=f"""
+  embed = discord.Embed(title="Flight Filed!", color=cfc)
+  embed.add_field(name="Your flight has been filed with the following data:", value=f"""
   ```
   Aircraft:{aircraft}
   Departure:{origin}
@@ -222,6 +229,8 @@ async def file(ctx, aircraft, origin, destination, flightnumber):
   emb.set_thumbnail(url=pfp)
   await ctx.respond(embed=embed)
   await channel.send(embed=emb)
+
+
 ###############
 ##--BUTTONS--##
 ###############
@@ -312,15 +321,37 @@ class MyView4(discord.ui.View):
         role = guild.get_role(965688527109107712)
         await author.add_roles(role)
         await interaction.response.send_message("You will now get mentioned for updates!",ephemeral=True)
+class MyView5(discord.ui.View):
+    def __init__(self):
+      super().__init__(timeout=None)
 
+    @discord.ui.button(custom_id="vabutton", style=discord.ButtonStyle.primary, emoji="✈️")
+    async def button_callback(self, button, interaction):
+      author = interaction.user
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(1013933799777783849)
+      if role in author.roles:
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(1013933799777783849)
+        await author.remove_roles(role)
+        await interaction.response.send_message("You are no longer part of the ClearFly VA",ephemeral=True)
+      else:
+        author = interaction.user
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(1013933799777783849)
+        await author.add_roles(role)
+        await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
 @bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
   embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
   emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
+  embva = discord.Embed(title="ClearFly VA pilot", description="Click on ✈️ to be part of the Official ClearFly VA!\n*(click again to remove.)*", color=cfc)
   await ctx.respond("Button roles posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView3())
   await ctx.send(embed=emb,view=MyView4())
+  await ctx.send(embed=embva,view=MyView5())
 
 ##############################
 ##no more commands down here##
@@ -400,5 +431,4 @@ async def embed(ctx):
     await ctx.respond(embed=emb)
 
 #############################################
-bot.add_application_command(va)
-bot.run(os.environ['TOKEN'])
+bot.run('TOKEN')
