@@ -26,6 +26,8 @@ intents.members = True
 intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=intents)
+fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
+va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
 
 
 
@@ -202,6 +204,16 @@ async def whois(ctx, user: discord.Member = None):
 async def github(ctx):
   emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
+
+@fun.command(name="8ball", description="testing command for Matt3o0")
+async def test(ctx):
+  if ctx.author.id == 668874138160594985:
+    await ctx.respond("sus")
+  else:
+    embed=discord.Embed(title="Error 403!", description="This command only works is in testing!")
+    await ctx.respond(embed=embed)
+
+
 ###################################
 ####     Virtual Airline     ######
 ###################################
@@ -231,7 +243,7 @@ airports = [
     "KATL"
 ]
 
-@bot.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
+@va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
 @option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A300"])
 @option("origin", description="The airport(ICAO) you will fly from.", choices=airports)
 @option("destination", description="The airport(ICAO) you will fly to.", choices=airports)
@@ -374,7 +386,7 @@ async def file(ctx, aircraft, origin, destination):
   else:
     embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
     await ctx.respond(embed=embed)
-@bot.command(name="flights", descripiton="Fetches flights a user has done.")
+@va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def datar(ctx, user: discord.Member = None):
   guild = bot.get_guild(965419296937365514)
   cfpilot = guild.get_role(1013933799777783849)
@@ -429,6 +441,7 @@ async def datar(ctx, user: discord.Member = None):
   else:
     embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
     await ctx.respond(embed=embed)
+
 
 
 ###############

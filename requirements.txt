@@ -1,4 +1,5 @@
 py-cord
 datetime
 pyfiglet
+python-dotenv
 python-dateutil
