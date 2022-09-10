@@ -206,7 +206,24 @@ async def github(ctx):
   await ctx.respond(embed=emb)
 
 @fun.command(name="8ball", description="Ask the bot some questions!")
-async def test(ctx):
+async def test(ctx, question):
+  answers = [
+    "No.",
+    "Yes.",
+    "Maybe.",
+    "Never.",
+    "No thank you.",
+    "You're joking right?",
+    "I'm certain",
+    "I don't think so...",
+    "Ask Google, don't bother me.|| Not Bing, I dare you.||",
+    "Go to sleep, you're tired",
+    "I'm not qualified to give medical advice, sorry"
+  ]
+  output = random.choice(answers)
+  embed = discord.Embed(title=question, description=output)
+  await ctx.respond(embed=embed)
+
 
 ###################################
 ####     Virtual Airline     ######
