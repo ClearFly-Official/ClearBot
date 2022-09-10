@@ -28,7 +28,7 @@ intents.reactions = True
 bot = discord.Bot(command_prefix=',', intents=intents)
 fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
-admin = bot.create_group(name="admin", description="Commands for admins"
+admin = bot.create_group(name="admin", description="Commands for admins")
 
 
 @bot.listen()
