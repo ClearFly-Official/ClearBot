@@ -28,7 +28,7 @@ intents.reactions = True
 bot = discord.Bot(command_prefix=',', intents=intents)
 fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
-
+admin = bot.create_group(name="admin", description="Commands for admins"
 
 
 @bot.listen()
@@ -92,7 +92,7 @@ async def on_message_edit(before, after):
 
 
 
-@bot.command(name="echo",description="Send a message as the bot.(Admin only)")
+@admin.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(1006725140933001246)
 async def echo(ctx, text):
     await ctx.respond('posted your message!',ephemeral  = True)
@@ -104,7 +104,7 @@ async def echo(ctx, text):
     await channel.send(embed=emb)
     print(ctx.author, "used echo:", text)
 
-@bot.command(name="embed",description="Send an embed as the bot.(Admin only)")
+@admin.command(name="embed",description="Send an embed as the bot.(Admin only)")
 @commands.has_role(1006725140933001246)
 async def embed(ctx, title, description):
     await ctx.respond('posted your embed!',ephemeral  = True)
@@ -157,7 +157,7 @@ async def avatar(ctx, user: discord.Member = None):
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
-@bot.command(name="ascii",description="Convert texts into ascii.")
+@fun.command(name="ascii",description="Convert texts into ascii.")
 async def ascii(ctx, text):
   try:
     ascii = pyfiglet.figlet_format(text)
