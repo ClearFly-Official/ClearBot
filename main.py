@@ -158,7 +158,6 @@ async def avatar(ctx, user: discord.Member = None):
     await ctx.respond(embed=embed)
 
 @fun.command(name="ascii",description="Convert texts into ascii characters.")
-@option("text","The text to convert")
 async def ascii(ctx, text):
   try:
     ascii = pyfiglet.figlet_format(text)
