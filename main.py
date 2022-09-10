@@ -35,7 +35,7 @@ utility = bot.create_group(name="utility", description="Commands related to util
 
 @bot.listen()
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="/help"),status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game(name="/help | Give me Baby Boeing 😩"),status=discord.Status.online)
     bot.add_view(MyView())
     bot.add_view(MyView2())
     bot.add_view(MyView3())
