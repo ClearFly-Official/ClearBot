@@ -30,6 +30,7 @@ bot = discord.Bot(command_prefix=',', intents=intents)
 fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
 admin = bot.create_group(name="admin", description="Commands for admins")
+utility = bot.create_group(name="utility", description="Commands related to utility")
 
 
 @bot.listen()
@@ -143,7 +144,7 @@ async def team(ctx):
   emb.set_thumbnail(url=logo)
   await ctx.respond(embed=emb)
 
-@bot.command(name="avatar",description="Shows your avatar.")
+@utility.command(name="avatar",description="Shows your avatar.")
 async def avatar(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
@@ -165,7 +166,7 @@ async def ascii(ctx, text):
   except Exception as e:
     await ctx.respond(f'Error:\n{e}', ephemeral  = True)
 
-@bot.command(name="who-is", description="Fetches a user profile")
+@utility.command(name="who-is", description="Fetches a user profile")
 async def whois(ctx, user: discord.Member = None):
   if user == None:
     author = ctx.author
