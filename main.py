@@ -161,7 +161,7 @@ async def avatar(ctx, user: discord.Member = None):
     await ctx.respond(embed=embed)
 
 @fun.command(name="ascii",description="Convert texts into ascii characters.")
-@option("text","The text to convert)
+@option("text","The text to convert")
 async def ascii(ctx, text):
   try:
     ascii = pyfiglet.figlet_format(text)
@@ -209,7 +209,7 @@ async def github(ctx):
   emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
 
-@fun.command(name="8ball", description="testing command for Matt3o0")
+@fun.command(name="8ball", description="Ask the bot some questions!")
 async def test(ctx):
   if ctx.author.id == 668874138160594985:
     await ctx.respond("sus")
