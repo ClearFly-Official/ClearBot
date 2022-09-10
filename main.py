@@ -226,7 +226,7 @@ async def test(ctx, question):
     "I'm concerned.",
     "Really good question to be honest, I still have no clue."
   ]
-  embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}')
+  embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
   await ctx.respond(embed=embed)
 
 
