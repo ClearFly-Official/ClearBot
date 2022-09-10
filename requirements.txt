@@ -1,4 +1,4 @@
-py-cord
+py-cord==2.0.1
 datetime
 pyfiglet
 python-dotenv
