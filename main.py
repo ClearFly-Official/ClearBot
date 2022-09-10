@@ -94,7 +94,6 @@ async def on_message_edit(before, after):
 
 @admin.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(1006725140933001246)
-@option("text","The text to send")
 async def echo(ctx, text: str):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
@@ -107,8 +106,6 @@ async def echo(ctx, text: str):
 
 @admin.command(name="embed",description="Send an embed as the bot.(Admin only)")
 @commands.has_role(1006725140933001246)
-@option("title", "The title of the embed")
-@option("description", "The description of the embed")
 async def embed(ctx, title: str, description: str):
     await ctx.respond('posted your embed!',ephemeral  = True)
     emb = discord.Embed(title=title, description=description, color=0x4f93cf)
