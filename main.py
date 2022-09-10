@@ -1,14 +1,15 @@
 ########################
 #-Made by Matt3o0#4000-#
 ########################
-from random import choices
 import discord
 import os
 import platform
 import pyfiglet
+import random
 from dotenv import load_dotenv
 from time import sleep
 from datetime import datetime
+from random import choices
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
