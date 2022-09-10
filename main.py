@@ -207,12 +207,6 @@ async def github(ctx):
 
 @fun.command(name="8ball", description="Ask the bot some questions!")
 async def test(ctx):
-  if ctx.author.id == 668874138160594985:
-    await ctx.respond("sus")
-  else:
-    embed=discord.Embed(title="Error 403!", description="This command only works is in testing!")
-    await ctx.respond(embed=embed)
-
 
 ###################################
 ####     Virtual Airline     ######
@@ -464,7 +458,7 @@ class MyView(discord.ui.View):
       await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
       await channel.send(embed=embed)
 
-@bot.command(name="rules", descritpion="sends the rules(admin only)")
+@admin.command(name="rules", descritpion="sends the rules(admin only)")
 @commands.has_role(1006725140933001246)
 async def rules(ctx):
   embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4. No harassment. If you are being harassed, let the staff know, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)", color=cfc)
@@ -483,7 +477,7 @@ class MyView2(discord.ui.View):
       await author.add_roles(role)
       await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in <#965598257017413673>!",ephemeral=True)
 
-@bot.command(name="faq", descritpion="sends the faq(admin only)")
+@admin.command(name="faq", descritpion="sends the faq(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
   embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working on it 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
@@ -555,7 +549,7 @@ class MyView5(discord.ui.View):
         role = guild.get_role(1013933799777783849)
         await author.add_roles(role)
         await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
-@bot.command(name="buttonroles", descritpion="sends the button roles(admin only)")
+@admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_role(1006725140933001246)
 async def faq(ctx):
   embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
@@ -619,7 +613,8 @@ async def embed(ctx):
 /help : Shows this information.
 /the-team : Shows The ClearFly Team!
 /avatar : Shows your avatar.
-/ascii : Converts text in to ascii.
+/fun ascii : Converts text in to ascii.
+/fun 8ball : Ask the bot some questions!
 /who-is : Shows all kind of information about a user.
 /github : Shows the bot's GitHub repository.
 ```
