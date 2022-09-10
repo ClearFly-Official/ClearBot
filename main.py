@@ -94,7 +94,6 @@ async def on_message_edit(before, after):
 
 @admin.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_role(1006725140933001246)
-@option("text","The text to send")
 async def echo(ctx, text: str):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
