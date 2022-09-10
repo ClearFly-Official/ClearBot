@@ -218,10 +218,14 @@ async def test(ctx, question):
     "I don't think so...",
     "Ask Google, don't bother me.|| Not Bing, I dare you.||",
     "Go to sleep, you're tired",
-    "I'm not qualified to give medical advice, sorry"
+    "I'm not qualified to give medical advice, sorry",
+    "Ask again later.",
+    "What?",
+    "Haha, no.",
+    "I'm concerned.",
+    "Really good question to be honest, I still have no clue."
   ]
-  output = random.choice(answers)
-  embed = discord.Embed(title=question, description=output)
+  embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}')
   await ctx.respond(embed=embed)
 
 
