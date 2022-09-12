@@ -233,15 +233,16 @@ async def test(ctx, question):
   embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
   await ctx.respond(embed=embed)
 
-@admin.command(name="spam", description="Spam the channel to oblivion <:aye:965627580743024671>.")
+@admin.command(name="spam", description="Spam the channel to oblivion.")
 @commands.has_permissions(manage_channels=True)
 async def spam(ctx, text ,amount: int):
   channel = bot.get_channel(1001405648828891187)
   user = ctx.author
+  await ctx.respond("Get ready for the show <:aye:965627580743024671>")
   for i in range(amount):
     await ctx.send(text)
-  embed = discord.Embed(title=f"{user} spammed {ctx.channel} {amount} times with the following text:", description=text, color=cfc)
-  embed.set_image(url=user.avatar.url)
+  embed = discord.Embed(title=f"{user} spammed {ctx.channel.mention} {amount} times with the following text:", description=text, color=cfc)
+  embed.set_thumbnail(url=user.avatar.url)
   await channel.send(embed=embed)
 
 ###################################
