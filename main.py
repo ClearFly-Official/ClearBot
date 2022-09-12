@@ -99,7 +99,7 @@ async def on_message_edit(before, after):
 @option("priority", description="The priority level of the report", choices=["low", "medium", "high"])
 @option("user", description="The user involved(if more than one mention in comments unless raid)", required=False)
 @option("comments", description="Anything else to say about the report?", required=False)
-async def report(ctx, subject ,priority ,user, comments):
+async def report(ctx, subject ,priority ,user: discord.Member, comments):
   await ctx.respond("Sending report.", ephemeral=True)
   channel=bot.get_channel(965655791468183612)
   embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
