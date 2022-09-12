@@ -215,16 +215,20 @@ async def test(ctx, question):
     "Never.",
     "No thank you.",
     "You're joking right?",
-    "I'm certain",
+    "I'm certain.",
     "I don't think so...",
     "Ask Google, don't bother me.|| Not Bing, I dare you.||",
-    "Go to sleep, you're tired",
-    "I'm not qualified to give medical advice, sorry",
+    "Go to sleep, you're tired.",
+    "I'm not qualified to give medical advice, sorry.",
     "Ask again later.",
     "What?",
     "Haha, no.",
     "I'm concerned.",
-    "Really good question to be honest, I still have no clue."
+    "Really good question to be honest, I still have no clue.",
+    "WolfAir probably knows.",
+    "A bit suspicious<:susge:965624336956407838>.",
+    "Eh, probably not.",
+    "Respectfully, shut up."
   ]
   embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
   await ctx.respond(embed=embed)
