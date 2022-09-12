@@ -240,7 +240,8 @@ async def spam(ctx, text ,amount: int):
   user = ctx.author
   for i in range(amount):
     await ctx.send(text)
-  embed = discord.Embed(title=f"{user} spammed {ctx.channel} {amount} times with the following text:", description=text)
+  embed = discord.Embed(title=f"{user} spammed {ctx.channel} {amount} times with the following text:", description=text, color=cfc)
+  embed.set_image(url=user.avatar.url)
   await channel.send(embed=embed)
 
 ###################################
