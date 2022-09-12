@@ -95,10 +95,10 @@ async def on_message_edit(before, after):
 
 
 @bot.slash_command(name="report", description="Need help? Use this command to contact the admins!")
-@option("subject","What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
-@option("priority", "The priority level of the report", choices=["low", "medium", "high"])
-@option("user", "The user involved(if more than one mention in comments unless raid)", required=False)
-@option("comments", "Anything else to say about the report?", required=False)
+@option("subject",description="What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
+@option("priority", description="The priority level of the report", choices=["low", "medium", "high"])
+@option("user", description="The user involved(if more than one mention in comments unless raid)", required=False)
+@option("comments", description="Anything else to say about the report?", required=False)
 async def report(ctx, subject ,priority ,user, comments):
   await ctx.respond("Sending report.", ephemeral=True)
   channel=bot.get_channel(965655791468183612)
