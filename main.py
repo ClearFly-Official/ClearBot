@@ -95,7 +95,7 @@ async def on_message_edit(before, after):
 
 
 @admin.command(name="echo",description="Send a message as the bot.(Admin only)")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def echo(ctx, text: str):
     await ctx.respond('posted your message!',ephemeral  = True)
     await ctx.channel.send(text)
@@ -107,7 +107,7 @@ async def echo(ctx, text: str):
     print(ctx.author, "used echo:", text)
 
 @admin.command(name="embed",description="Send an embed as the bot.(Admin only)")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def embed(ctx, title: str, description: str):
     await ctx.respond('posted your embed!',ephemeral  = True)
     emb = discord.Embed(title=title, description=description, color=0x4f93cf)
@@ -234,7 +234,7 @@ async def test(ctx, question):
   await ctx.respond(embed=embed)
 
 @admin.command(name="spam", description="Spam the channel to oblivion <:aye:965627580743024671>.")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def spam(ctx, text ,amount: int):
   channel = bot.get_channel(1001405648828891187)
   user = ctx.author
@@ -495,7 +495,7 @@ class MyView(discord.ui.View):
       await channel.send(embed=embed)
 
 @admin.command(name="rules", descritpion="sends the rules(admin only)")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def rules(ctx):
   embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4. No harassment. If you are being harassed, let the staff know, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)", color=cfc)
   await ctx.respond("rules posted!",ephemeral=True)
@@ -514,7 +514,7 @@ class MyView2(discord.ui.View):
       await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in <#965598257017413673>!",ephemeral=True)
 
 @admin.command(name="faq", descritpion="sends the faq(admin only)")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def faq(ctx):
   embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working on it 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
   await ctx.respond("FAQ posted!",ephemeral=True)
@@ -586,7 +586,7 @@ class MyView5(discord.ui.View):
         await author.add_roles(role)
         await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
 @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
-@commands.has_permissions(manage_server=True)
+@commands.has_permissions(manage_channel=True)
 async def faq(ctx):
   embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
   emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
