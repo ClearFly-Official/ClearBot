@@ -93,6 +93,56 @@ async def on_message_edit(before, after):
 
 
 
+@bot.command(name="report", description="Need help? Use this command to contact the admins!")
+@option("subject","What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
+@option("priority", "The priority level of the report", choices=["low", "medium", "high"])
+@option("user", "The user involved(if more than one mention in comments unless raid)", required=False)
+@option("comments", "Anything else to say about the report?", required=False)
+async def report(ctx, subject ,priority ,user: discord.Member,comments):
+  await ctx.respond("Sending report.", ephemeral=True)
+  channel=bot.get_channel(965655791468183612)
+  embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
+  confirmembed = discord.Embed(title="Report send!", description="The team will come to help you as soon as possible.", color=cfc)
+  if priority == "low":
+    embed.add_field(name="Subject:", value=subject)
+    embed.add_field(name="Involved User:", value=user)
+    embed.add_field(name="Comments *if any*:", value=f"""
+    ```
+    {comments}
+    ```
+    """)
+    await ctx.edit(content="Sending report..")
+    sleep(0.1)
+    await ctx.edit(content="Sending report...")
+    await ctx.edit(content=None, embed=confirmembed)
+    await channel.send("Low priority report", embed=embed)
+  if priority == "medium":
+    embed.add_field(name="Subject:", value=subject)
+    embed.add_field(name="Involved User:", value=user)
+    embed.add_field(name="Comments *if any*:", value=f"""
+    ```
+    {comments}
+    ```
+    """)
+    await ctx.edit(content="Sending report..")
+    sleep(0.1)
+    await ctx.edit(content="Sending report...")
+    await ctx.edit(content=None, embed=confirmembed)
+    await channel.send("<@&1006725140933001246> Medium priority report", embed=embed)
+  if priority == "high":
+    embed.add_field(name="Subject:", value=subject)
+    embed.add_field(name="Involved User:", value=user)
+    embed.add_field(name="Comments *if any*:", value=f"""
+    ```
+    {comments}
+    ```
+    """)
+    await ctx.edit(content="Sending report..")
+    sleep(0.1)
+    await ctx.edit(content="Sending report...")
+    await ctx.edit(content=None, embed=confirmembed)
+    await channel.send("<@&1006725140933001246> ATTENTION ALL ADMINS", embed=embed)
+    await channel.send("<@&1006725140933001246> ^ THIS IS A HIGH PRIORITY REPORT")
 
 @admin.command(name="echo",description="Send a message as the bot.(Admin only)")
 @commands.has_permissions(manage_channels=True)
@@ -250,59 +300,6 @@ async def spam(ctx, text ,amount: int):
     embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
     embed.set_thumbnail(url=user.avatar.url)
     await channel.send(embed=embed)
-
-
-@bot.command(name="report", description="Need help? Use this command to contact the admins!")
-@option("subject","What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
-@option("priority", "The priority level of the report", choices=["low", "medium", "high"])
-@option("user", "The user involved(if more than one mention in comments unless raid)", required=False)
-@option("comments", "Anything else to say about the report?", required=False)
-async def report(ctx, subject ,priority ,user: discord.Member,comments):
-  await ctx.respond("Sending report.", ephemeral=True)
-  channel=bot.get_channel(965655791468183612)
-  embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
-  confirmembed = discord.Embed(title="Report send!", description="The team will come to help you as soon as possible.", color=cfc)
-  if priority == "low":
-    embed.add_field(name="Subject:", value=subject)
-    embed.add_field(name="Involved User:", value=user)
-    embed.add_field(name="Comments *if any*:", value=f"""
-    ```
-    {comments}
-    ```
-    """)
-    await ctx.edit(content="Sending report..")
-    sleep(0.1)
-    await ctx.edit(content="Sending report...")
-    await ctx.edit(content=None, embed=confirmembed)
-    await channel.send("Low priority report", embed=embed)
-  if priority == "medium":
-    embed.add_field(name="Subject:", value=subject)
-    embed.add_field(name="Involved User:", value=user)
-    embed.add_field(name="Comments *if any*:", value=f"""
-    ```
-    {comments}
-    ```
-    """)
-    await ctx.edit(content="Sending report..")
-    sleep(0.1)
-    await ctx.edit(content="Sending report...")
-    await ctx.edit(content=None, embed=confirmembed)
-    await channel.send("<@&1006725140933001246> Medium priority report", embed=embed)
-  if priority == "high":
-    embed.add_field(name="Subject:", value=subject)
-    embed.add_field(name="Involved User:", value=user)
-    embed.add_field(name="Comments *if any*:", value=f"""
-    ```
-    {comments}
-    ```
-    """)
-    await ctx.edit(content="Sending report..")
-    sleep(0.1)
-    await ctx.edit(content="Sending report...")
-    await ctx.edit(content=None, embed=confirmembed)
-    await channel.send("<@&1006725140933001246> ATTENTION ALL ADMINS", embed=embed)
-    await channel.send("<@&1006725140933001246> ^ THIS IS A HIGH PRIORITY REPORT")
-
 ###################################
 ####     Virtual Airline     ######
 ###################################
