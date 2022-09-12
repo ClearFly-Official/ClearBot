@@ -103,7 +103,7 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
   await ctx.respond("Sending report.", ephemeral=True)
   channel=bot.get_channel(965655791468183612)
   embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
-  embed.set_thumbnail(ctx.author.avatar.url)
+  embed.set_thumbnail(url=ctx.author.avatar.url)
   confirmembed = discord.Embed(title="Report send!", description="The team will come to help you as soon as possible.", color=cfc)
   if priority == "low":
     embed.add_field(name="Subject:", value=subject)
