@@ -239,7 +239,10 @@ async def spam(ctx, text ,amount: int):
   channel = bot.get_channel(1001405648828891187)
   user = ctx.author
   if amount > 100:
-    await ctx.respond("Sorry, but that to much.")
+    await ctx.respond("Sorry, but that to much.", epmheral=True)
+    embed = discord.Embed(title=f"**{user}** tried to spam `{ctx.channel}` **{amount} times** with the following text but failed:", description=text, color=cfc)
+    embed.set_thumbnail(url=user.avatar.url)
+    await channel.send(embed=embed)
   else:
     await ctx.respond("Get ready for the show <:aye:965627580743024671>", ephemeral=True)
     for i in range(amount):
