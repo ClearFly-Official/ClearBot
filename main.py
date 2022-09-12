@@ -107,7 +107,7 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
   confirmembed = discord.Embed(title="Report send!", description="The team will come to help you as soon as possible.", color=cfc)
   if priority == "low":
     embed.add_field(name="Subject:", value=subject)
-    embed.add_field(name="Involved User:", value=user)
+    embed.add_field(name="Involved User:", value=f"{user.mention}")
     embed.add_field(name="Comments *if any*:", value=f"""
     ```
     {comments}
