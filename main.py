@@ -1,6 +1,7 @@
 ########################
 #-Made by Matt3o0#4000-#
 ########################
+from ctypes import util
 import discord
 import os
 import platform
@@ -93,7 +94,7 @@ async def on_message_edit(before, after):
 
 
 
-@bot.command(name="report", description="Need help? Use this command to contact the admins!")
+@bot.slash_command(name="report", description="Need help? Use this command to contact the admins!")
 @option("subject","What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
 @option("priority", "The priority level of the report", choices=["low", "medium", "high"])
 @option("user", "The user involved(if more than one mention in comments unless raid)", required=False)
