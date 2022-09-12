@@ -238,12 +238,15 @@ async def test(ctx, question):
 async def spam(ctx, text ,amount: int):
   channel = bot.get_channel(1001405648828891187)
   user = ctx.author
-  await ctx.respond("Get ready for the show <:aye:965627580743024671>")
-  for i in range(amount):
-    await ctx.send(text)
-  embed = discord.Embed(title=f"{user} spammed {ctx.channel.mention} {amount} times with the following text:", description=text, color=cfc)
-  embed.set_thumbnail(url=user.avatar.url)
-  await channel.send(embed=embed)
+  if amount > 100:
+    await ctx.respond("Sorry, but that to much.")
+  else:
+    await ctx.respond("Get ready for the show <:aye:965627580743024671>", ephemeral=True)
+    for i in range(amount):
+      await ctx.send(text)
+    embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
+    embed.set_thumbnail(url=user.avatar.url)
+    await channel.send(embed=embed)
 
 ###################################
 ####     Virtual Airline     ######
