@@ -313,7 +313,7 @@ async def spam(ctx, text ,amount: int):
 @admin.command(name="slowmode", description="Set the slow mode of a channel")
 @option("slowmode", description="What the slow mode delay should be.")
 @option("channel", description="The channel to set a slow mode too.", required=True)
-async def sm(ctx, slowmode:int, channel: discord.Channel):
+async def sm(ctx, slowmode:int, channel: discord.TextChannel):
   await channel.slowmode_delay(slowmode)
   embed = discord.Embed(title=f"{channel.mention}'s slow mode set to {slowmode} seconds!")
   await ctx.respond(embed)
