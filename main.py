@@ -345,7 +345,7 @@ async def purge(ctx, amount: int):
                 await interaction.response.send_message(f"Ok, cancelling purge.", ephemeral=True)
         
       embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages!**")
-      await ctx.respond(embed=embed,views=PurgeC, ephemeral=True)
+      await ctx.respond(embed=embed,view=PurgeC, ephemeral=True)
     else:
       await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
       await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
