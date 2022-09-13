@@ -335,13 +335,13 @@ async def purge(ctx, amount: int):
 
             @discord.ui.button(custom_id="okbutton", style=discord.ButtonStyle.green, emoji="✅")
             async def button_callback(self, button, interaction):
-              await interaction.send(f"Ok, purging {amount} messages.", ephemeral=True)
+              await interaction.response.send_message(f"Ok, purging {amount} messages.", ephemeral=True)
               await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
               embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel} after confirmation!", color=0x4f94cf)
               await channel.send(embed=embed)
             @discord.ui.button(custom_id="nobutton", style=discord.ButtonStyle.danger, emoji="❌")
             async def button_callback(self, button, interaction):
-              await interaction.send(f"Ok, cancelling purge.", ephemeral=True)
+              await interaction.response.send_message(f"Ok, cancelling purge.", ephemeral=True)
       embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages!**")
       await ctx.respond("",view=Purge(), ephemeral=True)
     else:
