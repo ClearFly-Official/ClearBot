@@ -545,7 +545,7 @@ class MyView(discord.ui.View):
     async def button_callback(self, button, interaction):
       guilds = bot.get_guild(965419296937365514)
       roles = guilds.get_role(1002200398905483285)
-      if roles in interaction.user:
+      if roles in interaction.user.roles:
         await interaction.response.send_message("You already accepted the rules!")
       else:
         author = interaction.user
