@@ -36,12 +36,17 @@ utility = bot.create_group(name="utility", description="Commands related to util
 
 @bot.listen()
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="/help | Give me Baby Boeing 😩"),status=discord.Status.online)
+    await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
+    sleep(0.1)
+    await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
+    sleep(0.1)
+    await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     bot.add_view(MyView())
     bot.add_view(MyView2())
     bot.add_view(MyView3())
     bot.add_view(MyView4())
     bot.add_view(MyView5())
+    await bot.change_presence(activity=discord.Game(name="/help | Give me Baby Boeing 😩"),status=discord.Status.online)
     print("The bot is ready for usage!")
 
 
@@ -546,7 +551,7 @@ class MyView(discord.ui.View):
       guilds = bot.get_guild(965419296937365514)
       roles = guilds.get_role(1002200398905483285)
       if roles in interaction.user.roles:
-        await interaction.response.send_message("You already accepted the rules!")
+        await interaction.response.send_message("You already accepted the rules!",ephemeral=True)
       else:
         author = interaction.user
         channel = bot.get_channel(1001405648828891187)
