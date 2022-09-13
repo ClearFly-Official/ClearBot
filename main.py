@@ -37,9 +37,9 @@ utility = bot.create_group(name="utility", description="Commands related to util
 @bot.listen()
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
-    sleep(0.1)
+    sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
-    sleep(0.1)
+    sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     bot.add_view(MyView())
     bot.add_view(MyView2())
@@ -309,6 +309,15 @@ async def spam(ctx, text ,amount: int):
     embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
     embed.set_thumbnail(url=user.avatar.url)
     await channel.send(embed=embed)
+
+@admin.command(name="slowmode", description="Set the slow mode of a channel")
+@option("slowmode", description="What the slow mode delay should be.")
+@option("channel", description="The channel to set a slow mode too.", required=True)
+async def sm(ctx, slowmode:int, channel: discord.Channel):
+  await channel.slowmode_delay(slowmode)
+  embed = discord.Embed(title=f"{channel.mention}'s slow mode set to {slowmode} seconds!")
+  await ctx.respond(embed)
+
 ###################################
 ####     Virtual Airline     ######
 ###################################
