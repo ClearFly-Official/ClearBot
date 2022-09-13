@@ -352,7 +352,7 @@ async def purge(ctx, amount: int):
     else:
       await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
       await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
-      embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}!", color=cfc)
+      embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!", color=cfc)
       embed.set_thumbnail(url=ctx.author.avatar.url)
       await channel.send(embed=embed)
 
