@@ -303,16 +303,17 @@ async def spam(ctx, text ,amount: int):
     embed.set_thumbnail(url=user.avatar.url)
     await channel.send(embed=embed)
   else:
-    await ctx.respond("Get ready for the show <:aye:965627580743024671>", ephemeral=True)
-    for i in range(amount):
-      await ctx.send(text)
     embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
     embed.set_thumbnail(url=user.avatar.url)
+    await ctx.respond("Get ready for the show <:aye:965627580743024671>", ephemeral=True)
     await channel.send(embed=embed)
+    for i in range(amount):
+      await ctx.send(text)
 
 @admin.command(name="slowmode", description="Set the slow mode of a channel")
 @option("slowmode", description="What the slow mode delay should be.")
 @option("channel", description="The channel to set a slow mode too.", required=False)
+@commands.has_permissions(manage_channels=True)
 async def sm(ctx, slowmode:int, channel: discord.TextChannel):
   if channel == None:
     await ctx.channel.edit(slowmode_delay=slowmode)
@@ -322,6 +323,33 @@ async def sm(ctx, slowmode:int, channel: discord.TextChannel):
     await channel.edit(slowmode_delay=slowmode)
     embed = discord.Embed(title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!", color=cfc)
     await ctx.respond(embed=embed)
+  
+@admin.command(description='Delete messages from a channel.')
+@commands.has_permissions(manage_channels=True)
+async def purge(ctx, amount: int):
+    channel = bot.get_channel(1001405648828891187)
+    if amount > 100 < 1000:
+      class Purge(discord.ui.View):
+            def __init__(self):
+              super().__init__(timeout=10.0)
+
+            @discord.ui.button(custom_id="okbutton", style=discord.ButtonStyle.green, emoji="✅")
+            async def button_callback(self, button, interaction):
+              await interaction.send(f"Ok, purging {amount} messages.", ephemeral=True)
+              await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
+              embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel} after confirmation!", color=0x4f94cf)
+              await channel.send(embed=embed)
+            @discord.ui.button(custom_id="nobutton", style=discord.ButtonStyle.danger, emoji="❌")
+            async def button_callback(self, button, interaction):
+              await interaction.send(f"Ok, cancelling purge.", ephemeral=True)
+      embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages!**")
+      await ctx.respond("",view=Purge(), ephemeral=True)
+    else:
+      await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
+      await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
+      embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}!", color=cfc)
+      embed.set_thumbnail(url=ctx.author.avatar.url)
+      await channel.send(embed=embed)
 
 
 ###################################
