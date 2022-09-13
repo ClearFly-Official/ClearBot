@@ -320,7 +320,7 @@ async def sm(ctx, slowmode:int, channel: discord.TextChannel):
     await ctx.respond(embed=embed)
   else:
     await channel.edit(slowmode_delay=slowmode)
-    embed = discord.Embed(title=f"{channel.mention}'s slow mode has been set to {slowmode} seconds!", color=cfc)
+    embed = discord.Embed(title=f"`{channel}`'s slow mode has been set to {slowmode} seconds!", color=cfc)
     await ctx.respond(embed=embed)
 
 
