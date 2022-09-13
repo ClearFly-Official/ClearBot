@@ -328,7 +328,7 @@ async def sm(ctx, slowmode:int, channel: discord.TextChannel):
 @commands.has_permissions(manage_channels=True)
 async def purge(ctx, amount: int):
     channel = bot.get_channel(1001405648828891187)
-    if amount > 100 < 1000:
+    if amount > 100:
       class Purge(discord.ui.Button):
         def __init__(self):
           super().__init__(timeout=10.0)
@@ -348,7 +348,7 @@ async def purge(ctx, amount: int):
                 await interaction.response.send_message(f"Ok, cancelling purge.", ephemeral=True)
         
       embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages!**")
-      await ctx.respond(embed=embed,view=[Purge(), Purge2()], ephemeral=True)
+      await ctx.respond("That's to much", ephemeral=True)
     else:
       await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
       await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
