@@ -105,6 +105,8 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
   embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
   embed.set_thumbnail(url=ctx.author.avatar.url)
   confirmembed = discord.Embed(title="Report send!", description="The team will come to help you as soon as possible.", color=cfc)
+  if user ==None:
+    user ="None was given"
   if priority == "low":
     embed.add_field(name="Subject:", value=subject)
     embed.add_field(name="Involved User:", value=f"{user.mention}")
@@ -541,16 +543,21 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
     async def button_callback(self, button, interaction):
-      author = interaction.user
-      channel = bot.get_channel(1001405648828891187)
-      pfp = author.avatar.url
-      guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(1002200398905483285)
-      embed = discord.Embed(title=f"{author} accepted the rules!", color=cfc)
-      embed.set_thumbnail(url=pfp)
-      await author.add_roles(role)
-      await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
-      await channel.send(embed=embed)
+      guilds = bot.get_guild(965419296937365514)
+      roles = guilds.get_role(1002200398905483285)
+      if roles in interaction.user:
+        await interaction.response.send_message("You already accepted the rules!")
+      else:
+        author = interaction.user
+        channel = bot.get_channel(1001405648828891187)
+        pfp = author.avatar.url
+        guild = bot.get_guild(965419296937365514)
+        role = guild.get_role(1002200398905483285)
+        embed = discord.Embed(title=f"{author} accepted the rules!", color=cfc)
+        embed.set_thumbnail(url=pfp)
+        await author.add_roles(role)
+        await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
+        await channel.send(embed=embed)
 
 @admin.command(name="rules", descritpion="sends the rules(admin only)")
 @commands.has_permissions(manage_channels=True)
