@@ -43,7 +43,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
     embed=discord.Embed(title="I (re)started up!", color=0x00FF00)
-    channel.send(embed=embed)
+    await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
     bot.add_view(MyView3())
