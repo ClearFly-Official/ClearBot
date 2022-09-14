@@ -2,10 +2,12 @@
 #-Made by Matt3o0#4000-#
 ########################
 from ctypes import util
+from urllib import response
 import discord
 import os
 import platform
 import pyfiglet
+import requests
 import random
 from dotenv import load_dotenv
 from time import sleep
@@ -358,6 +360,11 @@ async def purge(ctx, amount: int):
       embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!", color=cfc)
       embed.set_thumbnail(url=ctx.author.avatar.url)
       await channel.send(embed=embed)
+
+@fun.command(name="dadjoke", description="Gives a dadjoke")
+async def dadjoke(ctx):
+  joke = requests.get('https://icanhazdadjoke.com/', headers={"Accept": "text/plain"}).text
+  await ctx.respond(joke)
 
 
 ###################################
