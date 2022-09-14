@@ -42,14 +42,21 @@ async def on_ready():
     sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
-    embed=discord.Embed(title="I (re)started up!", color=0x00FF00)
+    embed=discord.Embed(title="I started up!", description="Started bot up:\n   Defined Bot\nSuccesfully added views\nInitialised presence",color=0x00FF00)
     await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
     bot.add_view(MyView3())
     bot.add_view(MyView4())
     bot.add_view(MyView5())
-    await bot.change_presence(activity=discord.Game(name="/help | Give me Baby Boeing 😩"),status=discord.Status.online)
+    statements=[
+      "Give me Baby Boeing 😩",
+      "Boeing > Airbus",
+      "How are you doing?",
+      "Use me please.",
+      "How can I assist you today?"
+    ]
+    await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
     print("The bot is ready for usage!")
 
 
@@ -275,6 +282,9 @@ async def test(ctx, question):
     "Yes.",
     "Maybe.",
     "Never.",
+    "Ok",
+    "Uhm ok...",
+    "For legal purposes, I can't respond to that question",
     "No thank you.",
     "You're joking right?",
     "I'm certain.",
@@ -285,6 +295,9 @@ async def test(ctx, question):
     "Ask again later.",
     "What?",
     "Haha, no.",
+    "I'd go with yes",
+    "Sure",
+    "Yeah",
     "I'm concerned.",
     "Really good question to be honest, I still have no clue.",
     "WolfAir probably knows.",
@@ -301,7 +314,7 @@ async def spam(ctx, text ,amount: int):
   channel = bot.get_channel(1001405648828891187)
   user = ctx.author
   if amount > 100:
-    await ctx.respond("Sorry, but that to much.", ephemeral=True)
+    await ctx.respond("Sorry, but that too much.", ephemeral=True)
     embed = discord.Embed(title=f"**{user}** tried to spam `{ctx.channel}` **{amount} times** with the following text but failed:", description=text, color=cfc)
     embed.set_thumbnail(url=user.avatar.url)
     await channel.send(embed=embed)
