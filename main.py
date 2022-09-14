@@ -2,6 +2,7 @@
 #-Made by Matt3o0#4000-#
 ########################
 from ctypes import util
+from turtle import color
 from urllib import response
 import discord
 import os
@@ -364,6 +365,7 @@ async def purge(ctx, amount: int):
 @fun.command(name="dadjoke", description="Gives a dadjoke")
 async def dadjoke(ctx):
   joke = requests.get('https://icanhazdadjoke.com/', headers={"Accept": "text/plain"}).text
+  embed=discord.Embed(title=f"**{joke}**", color=cfc)
   await ctx.respond(joke)
 
 
