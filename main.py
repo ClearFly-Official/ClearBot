@@ -49,6 +49,7 @@ async def on_ready():
     bot.add_view(MyView3())
     bot.add_view(MyView4())
     bot.add_view(MyView5())
+    presence.start()
     statements=[
       "Give me Baby Boeing 😩",
       "Boeing > Airbus",
