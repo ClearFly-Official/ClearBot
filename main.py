@@ -2,6 +2,7 @@
 #-Made by Matt3o0#4000-#
 ########################
 from secrets import choice
+from typing_extensions import Required
 import discord
 import os
 import platform
@@ -415,12 +416,17 @@ async def basic(ctx, type,input1:int, input2:int):
 
 @math.command(name="advanced", description="Do some more advanced math.")
 @option("type", description="The type of advanced math you want to do.", choices=["Square root", "Power"])
-async def square_root(ctx, type, input: int):
+@option("input", description="The first number")
+@option("power", description="The exponent (not needed for sqrt)", required=False)
+async def square_root(ctx, type, input: int, exponent:int):
   if type == "Square root":
     embed = discord.Embed(title=f"The square root of {input} is {sqrt(input)}", color=cfc)
     await ctx.respond(embed=embed)
-  else:
-    await ctx.respond("Not available yet")
+  if type == "Power" and exponent == None:
+    await ctx.respond("You need to give a exponent...")
+  if type == "Power":
+    embed = discord.Embed(title=f"The square root of {input} is {input**exponent}", color=cfc)
+    await ctx.respond(embed=embed)
 
 ###################################
 ####     Virtual Airline     ######
