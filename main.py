@@ -1,8 +1,6 @@
 ########################
 #-Made by Matt3o0#4000-#
 ########################
-from secrets import choice
-from typing_extensions import Required
 import discord
 import os
 import platform
