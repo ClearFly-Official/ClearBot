@@ -396,9 +396,9 @@ async def dadjoke(ctx):
   await ctx.respond(embed=embed)
 
 @math.command(name="basic", description="Do some basic math.")
-@option("type", "The type of basic math you want to do.", choices=["Addition","Subtraction","Multiplication","Division"])
-@option("input1", "The first number.")
-@option("input2", "The second number.")
+@option("type", description="The type of basic math you want to do.", choices=["Addition","Subtraction","Multiplication","Division"])
+@option("input1", description="The first number.")
+@option("input2", description="The second number.")
 async def basic(ctx, type,input1, input2):
   if type == "Addition":
     embed = discord.Embed(title=f"{input1} + {input2} = {input1+input2}", color=cfc)
@@ -414,7 +414,7 @@ async def basic(ctx, type,input1, input2):
     await ctx.respond(embed=embed)
 
 @math.command(name="advanced", description="Do some more advanced math.")
-@option("type", "The type of advanced math you want to do.", choices=["Square root", "Power"])
+@option("type", description="The type of advanced math you want to do.", choices=["Square root", "Power"])
 async def square_root(ctx, type, input: int):
   if type == "Square root":
     embed = discord.Embed(title=f"The square root of {input} is {sqrt(input)}", color=cfc)
