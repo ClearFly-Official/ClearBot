@@ -417,7 +417,7 @@ async def basic(ctx, type,input1:int, input2:int):
 @option("input", description="The first number")
 @option("power", description="The exponent (not needed for sqrt)", required=False)
 async def advanced(ctx, type, input: int, exponent:int = None):
-  if input > 5000:
+  if input > 2500:
     await ctx.respond("To big of a number!")
     return
   if type == "Square root":
