@@ -399,7 +399,7 @@ async def dadjoke(ctx):
 @option("type", description="The type of basic math you want to do.", choices=["Addition","Subtraction","Multiplication","Division"])
 @option("input1", description="The first number.")
 @option("input2", description="The second number.")
-async def basic(ctx, type,input1, input2):
+async def basic(ctx, type,input1:int, input2:int):
   if type == "Addition":
     embed = discord.Embed(title=f"{input1} + {input2} = {input1+input2}", color=cfc)
     await ctx.respond(embed=embed)
