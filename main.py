@@ -416,14 +416,14 @@ async def basic(ctx, type,input1:int, input2:int):
 @option("type", description="The type of advanced math you want to do.", choices=["Square root", "Power"])
 @option("input", description="The first number")
 @option("power", description="The exponent (not needed for sqrt)", required=False)
-async def square_root(ctx, type, input: int, exponent:int):
+async def advanced(ctx, type, input: int, exponent:int):
   if type == "Square root":
     embed = discord.Embed(title=f"The square root of {input} is {sqrt(input)}", color=cfc)
     await ctx.respond(embed=embed)
   if type == "Power" and exponent == None:
     await ctx.respond("You need to give a exponent...")
   if type == "Power":
-    embed = discord.Embed(title=f"The square root of {input} is {input**exponent}", color=cfc)
+    embed = discord.Embed(title=f"{input} to the power of {exponent} is {input**exponent}", color=cfc)
     await ctx.respond(embed=embed)
 
 ###################################
