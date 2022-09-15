@@ -1,6 +1,7 @@
 ########################
 #-Made by Matt3o0#4000-#
 ########################
+from secrets import choice
 import discord
 import os
 import platform
@@ -11,6 +12,7 @@ from dotenv import load_dotenv
 from time import sleep
 from datetime import datetime
 from random import choices
+from math import sqrt
 from discord.ext import commands, tasks
 from discord.ext.commands import (BadArgument, Bot, BucketType,
                                   clean_content, command, cooldown)
@@ -32,6 +34,7 @@ fun = bot.create_group(name="fun",description="Commands that are supposed to be 
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
 admin = bot.create_group(name="admin", description="Commands for admins")
 utility = bot.create_group(name="utility", description="Commands related to utility")
+math = utility.create_subgroup(name="math", description="Commands related to math")
 
 
 @bot.listen()
@@ -60,7 +63,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
     print("The bot is ready for usage!")
 
-@tasks.loop(seconds=10)
+@tasks.loop(minutes=5)
 async def presence():
     statements=[
       "Give me Baby Boeing 😩",
@@ -392,6 +395,32 @@ async def dadjoke(ctx):
   embed = discord.Embed(title=f"**{joke}**", color=cfc)
   await ctx.respond(embed=embed)
 
+@math.command(name="basic", description="Do some basic math.")
+@option("type", "The type of basic math you want to do.", choices=["Addition","Subtraction","Multiplication","Division"])
+@option("input1", "The first number.")
+@option("input2", "The second number.")
+async def basic(ctx, type,input1, input2):
+  if type == "Addition":
+    embed = discord.Embed(title=f"{input1} + {input2} = {input1+input2}", color=cfc)
+    await ctx.respond(embed=embed)
+  if type == "Subtraction":
+    embed = discord.Embed(title=f"{input1} - {input2} = {input1-input2}", color=cfc)
+    await ctx.respond(embed=embed)
+  if type == "Multiplication":
+    embed = discord.Embed(title=f"{input1} x {input2} = {input1*input2}", color=cfc)
+    await ctx.respond(embed=embed)
+  if type == "Division":
+    embed = discord.Embed(title=f"{input1} : {input2} = {input1/input2}", color=cfc)
+    await ctx.respond(embed=embed)
+
+@math.command(name="advanced", description="Do some more advanced math.")
+@option("type", "The type of advanced math you want to do.", choices=["Square root", "Power"])
+async def square_root(ctx, type, input: int):
+  if type == "Square root":
+    embed = discord.Embed(title=f"The square root of {input} is {sqrt(input)}", color=cfc)
+    await ctx.respond(embed=embed)
+  else:
+    await ctx.respond("Not available yet")
 
 ###################################
 ####     Virtual Airline     ######
@@ -798,23 +827,27 @@ async def embed(ctx):
     emb.add_field(name="**Available commands**", value=f"""
 *more to come soon!*
 ```
-/stats : Show statistics about the bot and server.
-/ping : Shows the latency speed of the bot.
 /help : Shows this information.
-/the-team : Shows The ClearFly Team!
-/avatar : Shows your avatar.
+/report : Report a user or situation to the team.
+/utility stats : Show statistics about the bot and server.
+/utility ping : Shows the latency speed of the bot.
+/utility who-is : Shows all kind of information about a user.
+/utility the-team : Shows The ClearFly Team!
+/utility avatar : Shows your avatar.
+/utility github : Shows the bot's GitHub repository.
+/utility math basic: Do some basic math.
+/utility math advanced: Do some advanced math.
 /fun ascii : Converts text in to ascii.
 /fun 8ball : Ask the bot some questions!
-/who-is : Shows all kind of information about a user.
-/github : Shows the bot's GitHub repository.
+/fun dadjoke: Gets you a dadjoke.
 ```
   """)
     emb.add_field(
             name="**ClearFly Virtual Airline**",
             value=f"""
 ```
-/file : File a flight you are gonna do for the ClearFly VA.
-/flights : Fetches information about all flights a user has done
+/va file : File a flight you are gonna do for the ClearFly VA.
+/va flights : Fetches information about all flights a user has done
 ```
             """, inline=False
       )
