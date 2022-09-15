@@ -400,16 +400,16 @@ async def dadjoke(ctx):
 @option("input2", description="The second number.")
 async def basic(ctx, type,input1:int, input2:int):
   if type == "Addition":
-    embed = discord.Embed(title=f"{input1} + {input2} = {input1+input2}", color=cfc)
+    embed = discord.Embed(description=f"{input1} + {input2} = {input1+input2}", color=cfc)
     await ctx.respond(embed=embed)
   if type == "Subtraction":
-    embed = discord.Embed(title=f"{input1} - {input2} = {input1-input2}", color=cfc)
+    embed = discord.Embed(description=f"{input1} - {input2} = {input1-input2}", color=cfc)
     await ctx.respond(embed=embed)
   if type == "Multiplication":
-    embed = discord.Embed(title=f"{input1} x {input2} = {input1*input2}", color=cfc)
+    embed = discord.Embed(description=f"{input1} x {input2} = {input1*input2}", color=cfc)
     await ctx.respond(embed=embed)
   if type == "Division":
-    embed = discord.Embed(title=f"{input1} : {input2} = {input1/input2}", color=cfc)
+    embed = discord.Embed(description=f"{input1} : {input2} = {input1/input2}", color=cfc)
     await ctx.respond(embed=embed)
 
 @math.command(name="advanced", description="Do some more advanced math.")
@@ -417,13 +417,15 @@ async def basic(ctx, type,input1:int, input2:int):
 @option("input", description="The first number")
 @option("power", description="The exponent (not needed for sqrt)", required=False)
 async def advanced(ctx, type, input: int, exponent:int = None):
+  if input or exponent >500:
+    await ctx.respond("To big of a number!")
   if type == "Square root":
-    embed = discord.Embed(title=f"The square root of {input} is {sqrt(input)}", color=cfc)
+    embed = discord.Embed(description=f"The square root of {input} is {sqrt(input)}", color=cfc)
     await ctx.respond(embed=embed)
   if type == "Power" and exponent == None:
     await ctx.respond("You need to give a exponent...")
   if type == "Power":
-    embed = discord.Embed(title=f"{input} to the power of {exponent} is {input**exponent}", color=cfc)
+    embed = discord.Embed(description=f"{input} to the power of {exponent} is {input**exponent}", color=cfc)
     await ctx.respond(embed=embed)
 
 ###################################
