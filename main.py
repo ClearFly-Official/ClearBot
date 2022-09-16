@@ -816,7 +816,7 @@ async def stats(ctx):
 ```rb
 Creator: Matt3o0#4000
 Uptime: {days}d {hours}h {minutes}m {seconds}s
-Lines of code: {lines}
+LinesOfCode: {lines}
 ```
   """, color = cfc)
   servers = len(bot.guilds)
