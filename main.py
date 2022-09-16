@@ -391,7 +391,7 @@ async def purge(ctx, amount: int):
 @fun.command(name="dadjoke", description="Gives a dadjoke")
 async def dadjoke(ctx):
   joke = requests.get('https://icanhazdadjoke.com/', headers={"Accept": "text/plain"}).text
-  embed = discord.Embed(title=f"**{joke}**", color=cfc)
+  embed = discord.Embed(title=f"{joke}", color=cfc)
   await ctx.respond(embed=embed)
 
 @math.command(name="basic", description="Do some basic math.")
