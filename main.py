@@ -130,6 +130,7 @@ async def on_message_edit(before, after):
 @bot.listen()
 async def on_message(message):
   if message.channel.id == 966077223260004402:
+    start="0"
     if message.content == "<@1001249135774666823> convo":
       start="1"
       await message.channel.send(f"Hey {message.author.mention}, how are you doing?")
