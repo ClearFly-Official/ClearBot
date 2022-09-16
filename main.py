@@ -127,6 +127,24 @@ async def on_message_edit(before, after):
   else:
     pass
 
+@bot.listen()
+async def on_message(message):
+  if message.channel.id == 966077223260004402:
+    if message.content == "<@1001249135774666823> convo":
+      await message.respond(f"Hey {message.author.mention}, how are you doing?")
+      if "good" or "fine" in message.content:
+        responses=[
+          "Nice to hear that.",
+          "Nice!",
+          "Glad you are doing fine!"
+        ]
+        await message.respond(f"{random.choice(responses)}")
+        if "how you" in message.content:
+          await message.respond("I'm doing just fine, thanks for asking!")
+  else:
+    pass
+
+
 
 
 @bot.slash_command(name="report", description="Need help? Use this command to contact the admins!")
