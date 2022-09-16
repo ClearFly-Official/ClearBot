@@ -45,7 +45,7 @@ async def on_ready():
     sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
-    embed=discord.Embed(title="I started up!", description="Started bot up:\n   _ _Defined Bot\n_ _Succesfully added views\n_ _Initialised presence",color=0x00FF00)
+    embed=discord.Embed(title="I started up!", description="Started bot up:\n   Defined Bot\n Succesfully added views\n_ _Initialised presence",color=0x00FF00)
     await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
@@ -806,23 +806,23 @@ bot.launch_time = datetime.utcnow()
 
 @utility.command(name="stats",description="Show statistics about the bot and server.")
 async def stats(ctx):
+  f = open("main.py", "r")
+  lines = len(f.readlines())
   delta_uptime = datetime.utcnow() - bot.launch_time
   hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
   minutes, seconds = divmod(remainder, 60)
   days, hours = divmod(hours, 24)
   embed = discord.Embed(title = "**Bot Stats**", description =    f"""
 ```rb
-Creator: Matt3o0#4764
+Creator: Matt3o0#4000
 Uptime: {days}d {hours}h {minutes}m {seconds}s
+Lines of code: {lines}
 ```
-  """, color = 0x4f93cf)
+  """, color = cfc)
   servers = len(bot.guilds)
   members = 0
   for guild in bot.guilds:
     members += guild.member_count - 1
-  pythonVersion = platform.python_version()
-  dpyVersion = discord.__version__
-  serverCount = len(bot.guilds)
   memberCount = len(set(bot.get_all_members()))
   embed.add_field(
             name="**Server Stats**",
