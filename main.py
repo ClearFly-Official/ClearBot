@@ -418,13 +418,13 @@ async def basic(ctx, type,input1:int, input2:int):
 @option("power", description="The exponent (not needed for sqrt)", required=False)
 async def advanced(ctx, type, input: int, exponent:int = None):
   if input > 2500:
-    await ctx.respond("To big of a number!")
+    await ctx.respond("Too big of a number!")
     return
   if exponent == None:
     pass
   else:
     if exponent > 1000:
-      await ctx.respond("To big of a exponent!")
+      await ctx.respond("Too big of an exponent!")
       return
   if type == "Square root":
     embed = discord.Embed(title=f"The square root of {input} is", description=f"**{sqrt(input)}**", color=cfc)
