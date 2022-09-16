@@ -373,6 +373,8 @@ async def spam(ctx, text ,amount: int):
 @option("channel", description="The channel to set a slow mode too.", required=False)
 @commands.has_permissions(manage_channels=True)
 async def sm(ctx, slowmode:int, channel: discord.TextChannel):
+  if slowmode > 21600:
+    await ctx.respond("Max slowmode is 21600 seconds!")
   if channel == None:
     await ctx.channel.edit(slowmode_delay=slowmode)
     embed = discord.Embed(title=f"This channel's slow mode has been set to {slowmode} second(s)!", color=cfc)
