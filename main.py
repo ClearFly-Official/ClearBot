@@ -688,7 +688,7 @@ async def overview(ctx):
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
   embed=discord.Embed(title="ClearFly VA Official Liveries:", description="[Boeing 737-800 by Zibo](https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD)\n[Airbus A300-600 by IniSimulations](https://drive.google.com/drive/u/1/folders/16n0cnwkTeGWBhUQJZhXtNz4oq4n4Pe86)\n[Boeing 737-200 by FlyJSim](https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P)")
-  await ctx.respond(embed)
+  await ctx.respond(embed=embed)
 
 
 ###############
