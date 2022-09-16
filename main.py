@@ -45,7 +45,10 @@ async def on_ready():
     sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
-    embed=discord.Embed(title="I started up!", description="Started bot up:\n   Defined Bot\n Succesfully added views\n_ _Initialised presence",color=0x00FF00)
+    now = discord.utils.format_dt(datetime.now())
+    embed=discord.Embed(title="I started up!", description=f"""
+    Started bot up on {now}
+    """,color=0x00FF00)
     await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
