@@ -132,7 +132,7 @@ async def on_message(message):
   if message.channel.id == 966077223260004402:
     if message.content == "<@1001249135774666823> convo":
       await message.channel.send(f"Hey {message.author.mention}, how are you doing?")
-      if "good" or "fine" in message.content:
+      if "good" in message.content:
         responses=[
           "Nice to hear that.",
           "Nice!",
