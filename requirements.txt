@@ -4,3 +4,4 @@ pyfiglet
 python-dotenv
 python-dateutil
 requests
+dadjokes

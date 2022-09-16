@@ -7,6 +7,7 @@ import platform
 import pyfiglet
 import requests
 import random
+from dadjokes import Dadjoke
 from dotenv import load_dotenv
 from time import sleep
 from datetime import datetime
@@ -44,7 +45,7 @@ async def on_ready():
     sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
-    embed=discord.Embed(title="I started up!", description="Started bot up:\n   Defined Bot\nSuccesfully added views\nInitialised presence",color=0x00FF00)
+    embed=discord.Embed(title="I started up!", description="Started bot up:\n   _ _Defined Bot\n_ _Succesfully added views\n_ _Initialised presence",color=0x00FF00)
     await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
@@ -390,8 +391,8 @@ async def purge(ctx, amount: int):
 
 @fun.command(name="dadjoke", description="Gives a dadjoke")
 async def dadjoke(ctx):
-  joke = requests.get('https://icanhazdadjoke.com/', headers={"Accept": "text/plain"}).text
-  embed = discord.Embed(title=f"{joke}", color=cfc)
+  dadjoke = Dadjoke()
+  embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
   await ctx.respond(embed=embed)
 
 @math.command(name="basic", description="Do some basic math.")
