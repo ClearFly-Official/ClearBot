@@ -134,7 +134,7 @@ async def on_message(message):
     if message.content == "<@1001249135774666823> convo":
       start="1"
       await message.channel.send(f"Hey {message.author.mention}, how are you doing?")
-    if start=="1" and "good"in message.content:
+    if "good"in message.content:
         start="2"
         responses=[
           "Nice to hear that.",
@@ -142,7 +142,7 @@ async def on_message(message):
           "Glad you are doing fine!"
         ]
         await message.channel.send(f"{random.choice(responses)}")
-    if start=="2"and"how you" in message.content:
+    if "how you" in message.content:
       start="3"
       await message.channel.send("I'm doing just fine, thanks for asking!")
   else:
