@@ -131,16 +131,16 @@ async def on_message_edit(before, after):
 async def on_message(message):
   if message.channel.id == 966077223260004402:
     if message.content == "<@1001249135774666823> convo":
-      await message.respond(f"Hey {message.author.mention}, how are you doing?")
+      await message.channel.send(f"Hey {message.author.mention}, how are you doing?")
       if "good" or "fine" in message.content:
         responses=[
           "Nice to hear that.",
           "Nice!",
           "Glad you are doing fine!"
         ]
-        await message.respond(f"{random.choice(responses)}")
+        await message.channel.send(f"{random.choice(responses)}")
         if "how you" in message.content:
-          await message.respond("I'm doing just fine, thanks for asking!")
+          await message.channel.send("I'm doing just fine, thanks for asking!")
   else:
     pass
 
