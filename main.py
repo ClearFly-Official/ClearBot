@@ -650,8 +650,9 @@ async def file(ctx, aircraft, origin, destination):
       embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
       await ctx.respond(embed=embed)
   else:
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disable at the moment, read <#1013934267966967848> for more information.", color=cfc)
+    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=cfc)
     await ctx.respond(embed=embed)
+
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def flights(ctx, user: discord.Member = None):
   if ctx.author == 668874138160594985:
@@ -709,12 +710,12 @@ async def flights(ctx, user: discord.Member = None):
       embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
       await ctx.respond(embed=embed)
   else:
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disable at the moment, read <#1013934267966967848> for more information.", color=errorc)
+    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
     await ctx.respond(embed=embed)
 
 @va.command(name="overview", description="Get an overview over all flights in the va.")
 async def overview(ctx):
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disable at the moment, read <#1013934267966967848> for more information.", color=errorc)
+    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
     await ctx.respond(embed=embed)
 
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
