@@ -252,6 +252,13 @@ async def avatar(ctx, user: discord.Member = None):
     embed.set_image(url=userAvatarUrl)
     await ctx.respond(embed=embed)
 
+@bot.user_command(name="User Avatar", description="Get's the avatar from the user")
+async def avatar_app(ctx, user:discord.Member):
+    userAvatarUrl = user.avatar.url    
+    embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({userAvatarUrl})", color=cfc)
+    embed.set_image(url=userAvatarUrl)
+    await ctx.respond(embed=embed)
+
 @fun.command(name="ascii",description="Convert texts into ascii characters.")
 async def ascii(ctx, text):
   try:
@@ -279,6 +286,23 @@ async def whois(ctx, user: discord.Member = None):
     sleep(1)
     await ctx.respond(embed=emb)
   else:
+    acccrte = user.created_at
+    accjoine = user.joined_at
+    acccrtte = discord.utils.format_dt(acccrte)
+    accjointe = discord.utils.format_dt(accjoine)
+    pfpe = user.avatar.url
+    embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
+    embed.add_field(name=f"{user}",value=f"""
+    **Account created on:**{acccrtte}
+    **Account joined this server on:**{accjointe}
+    """)
+    embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
+    embed.set_thumbnail(url=pfpe)
+    sleep(1)
+    await ctx.respond(embed=embed)
+
+@bot.user_command(name="User Profile")
+async def whois_app(ctx, user:discord.Member):
     acccrte = user.created_at
     accjoine = user.joined_at
     acccrtte = discord.utils.format_dt(acccrte)
@@ -745,6 +769,41 @@ async def flights(ctx, user: discord.Member = None):
     embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
     await ctx.respond(embed=embed)
 
+@bot.user_command(name="User VA Flights")
+async def flights_app(ctx, user: discord.Member):
+    if ctx.author == 668874138160594985:
+      guild = bot.get_guild(965419296937365514)
+      cfpilot = guild.get_role(1013933799777783849)
+      if cfpilot in ctx.author.roles:
+          await ctx.respond(f"Loading {user}'s Filed Flights.")
+          sleep(0.5)
+          await ctx.edit(content=f"Loading {user}'s Filed flights..")
+          sleep(0.5)
+          await ctx.edit(content=f"Loading {user}'s Filed flights...")
+          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
+                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
+                    no = len(fp.readlines())
+                    nof = no-1
+                datar = f.read()
+                embed = discord.Embed(title=f"{user}'s Flights:", color=cfc, description=f"""
+                ```
+                {datar}
+                ```
+                Number of Flights: {nof}
+                """)
+                await ctx.edit(content=None,embed=embed)
+                f.close()
+          else:
+                embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
+                await ctx.edit(content=None, embed=embed)
+      else:
+          embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
+          await ctx.respond(embed=embed)
+    else:
+      embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
+      await ctx.respond(embed=embed)
+
 @va.command(name="overview", description="Get an overview over all flights in the va.")
 async def overview(ctx):
     embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
@@ -960,4 +1019,5 @@ async def embed(ctx):
     await ctx.respond(embed=emb)
 
 #############################################
+bot.load_extension('slash_cog')
 bot.run(os.getenv('TOKEN'))
