@@ -566,7 +566,7 @@ async def roast(ctx, member: discord.Member = None):
   ]
   output = random.choice(roasts)
   print(member)
-  if member == 1001249135774666823:
+  if member == "ClearBot#8421":
     await ctx.respond("Why do you want to roast me :sob:")
   else:
     await ctx.respond(f"{member.mention} {output}")
