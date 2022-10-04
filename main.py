@@ -524,7 +524,7 @@ async def advanced(ctx, type, input: int, exponent:int = None):
 
 @fun.command(name="roast", description="Roast whoever you'd like!")
 @option("member", description="The person you'd like to roast")
-async def roast(ctx, member: discord.Member = None):
+async def roast(ctx, member: discord.Member):
   roasts = [
     "Your face made the onion cry.",
     "I’m jealous of people who don’t know you.",
