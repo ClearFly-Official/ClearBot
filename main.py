@@ -598,7 +598,7 @@ class ButtonGame(discord.ui.View):
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
-        await interaction.response.send_message("You guessed wrong, sad... \n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
 
   @discord.ui.button(label="3", style=discord.ButtonStyle.green)
   async def third_button_callback(self, button, interaction):
@@ -611,7 +611,7 @@ class ButtonGame(discord.ui.View):
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
-        await interaction.response.send_message("You guessed wrong, sad... \n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
   
   async def on_timeout(self, interaction):
     if isPressed == 0:
