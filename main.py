@@ -581,12 +581,11 @@ class ButtonGame(discord.ui.View):
     isPressed = 1
     opts = [1, 2, 3]
     output = random.choice(opts)
+    button.disabled = True
     if output == b:
-        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
-        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
 
   @discord.ui.button(label="2", style=discord.ButtonStyle.green)
@@ -594,14 +593,13 @@ class ButtonGame(discord.ui.View):
     global b, isPressed
     b = 2
     isPressed = 1
+    button.disabled = True
     opts = [1, 2, 3]
     output = random.choice(opts)
     if output == b:
-        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
-        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
 
   @discord.ui.button(label="3", style=discord.ButtonStyle.green)
@@ -610,13 +608,12 @@ class ButtonGame(discord.ui.View):
     b = 3
     isPressed = 1
     opts = [1, 2, 3]
+    button.disabled = True
     output = random.choice(opts)
     if output == b:
-        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
-        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
   
   async def on_timeout(self, interaction):
