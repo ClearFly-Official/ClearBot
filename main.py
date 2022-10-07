@@ -929,7 +929,7 @@ class VALivs(discord.ui.View):
 
   @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
   async def button_callback(self, button, interaction):
-    await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png \n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png https://cdn.discordapp.com/attachments/965419865521393704/1016006463103189022/b738_-_2022-09-04_11.26.16.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
+    await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png \n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
 
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
