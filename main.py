@@ -915,10 +915,20 @@ async def overview(ctx):
     embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
     await ctx.respond(embed=embed)
 
+
+
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
-  embed=discord.Embed(title="ClearFly VA Official Liveries:", description="[Boeing 737-800 by Zibo](https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD)\n[Airbus A300-600 by IniSimulations](https://drive.google.com/drive/u/1/folders/16n0cnwkTeGWBhUQJZhXtNz4oq4n4Pe86)\n[Boeing 737-200 by FlyJSim](https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P)", color=cfc)
-  await ctx.respond(embed=embed)
+  button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD")
+  button2 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/16n0cnwkTeGWBhUQJZhXtNz4oq4n4Pe86")
+  button3 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P")
+  view = View()
+  view.add_item(button1)
+  view.add_item(button2)
+  view.add_item(button3)
+  embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
+  embed.set_image(url="https://cdn.discordapp.com/attachments/801910364831744071/1028028088371646585/VALivsOverview.png")
+  await ctx.respond(embed=embed, view=view)
 
 
 ###############
