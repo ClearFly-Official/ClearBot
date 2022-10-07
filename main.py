@@ -581,7 +581,8 @@ class ButtonGame(discord.ui.View):
     isPressed = 1
     opts = [1, 2, 3]
     output = random.choice(opts)
-    button.disabled = True
+    for child in self.children:
+      child.disabled = True
     if output == b:
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
@@ -593,7 +594,8 @@ class ButtonGame(discord.ui.View):
     global b, isPressed
     b = 2
     isPressed = 1
-    button.disabled = True
+    for child in self.children:
+      child.disabled = True
     opts = [1, 2, 3]
     output = random.choice(opts)
     if output == b:
@@ -608,7 +610,8 @@ class ButtonGame(discord.ui.View):
     b = 3
     isPressed = 1
     opts = [1, 2, 3]
-    button.disabled = True
+    for child in self.children:
+      child.disabled = True
     output = random.choice(opts)
     if output == b:
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
