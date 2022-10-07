@@ -568,7 +568,7 @@ async def roast(ctx, member: discord.Member):
 
 class ButtonGame(discord.ui.View):
   def __init__(self):
-    super().__init__(timeout=5.0)
+    super().__init__(timeout=None)
 
   global b, isPressed
   b = 0
@@ -582,9 +582,11 @@ class ButtonGame(discord.ui.View):
     opts = [1, 2, 3]
     output = random.choice(opts)
     if output == b:
+        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
+        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
 
   @discord.ui.button(label="2", style=discord.ButtonStyle.green)
@@ -595,9 +597,11 @@ class ButtonGame(discord.ui.View):
     opts = [1, 2, 3]
     output = random.choice(opts)
     if output == b:
+        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
+        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
 
   @discord.ui.button(label="3", style=discord.ButtonStyle.green)
@@ -608,9 +612,11 @@ class ButtonGame(discord.ui.View):
     opts = [1, 2, 3]
     output = random.choice(opts)
     if output == b:
+        button.disabled = True
         await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
     else:
       if isPressed == 1:
+        button.disabled = True
         await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
   
   async def on_timeout(self, interaction):
@@ -923,8 +929,8 @@ class VALivs(discord.ui.View):
 
   @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
   async def button_callback(self, button, interaction):
-    await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png https://cdn.discordapp.com/attachments/965419865521393704/1017527654515224626/b738_4k_-_2022-09-08_22.09.28.png https://cdn.discordapp.com/attachments/965419865521393704/1017527654162894888/b738_4k_-_2022-09-08_22.09.50.png", ephemeral=True)
-    await interaction.followup.send_message("\n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png https://cdn.discordapp.com/attachments/965419865521393704/1016006463103189022/b738_-_2022-09-04_11.26.16.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512585842698/b738_-_2022-09-04_13.35.29.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015325294644703332/FJS_732_TwinJet_-_2022-09-02_14.13.02.png", ephemeral=True)
+    await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png ", ephemeral=True)
+    await interaction.followup.send_message("\n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png https://cdn.discordapp.com/attachments/965419865521393704/1016006463103189022/b738_-_2022-09-04_11.26.16.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
 
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
