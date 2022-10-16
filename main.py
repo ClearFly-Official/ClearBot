@@ -8,7 +8,6 @@ import platform
 import pyfiglet
 import requests
 import random
-import ConfigParser
 from dadjokes import Dadjoke
 from dotenv import load_dotenv
 from time import sleep
