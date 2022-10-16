@@ -6,4 +6,4 @@ python-dateutil
 requests
 dadjokes
 asyncio
-python_weather
+ConfigParser

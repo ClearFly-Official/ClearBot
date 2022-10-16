@@ -8,6 +8,7 @@ import platform
 import pyfiglet
 import requests
 import random
+import ConfigParser
 from dadjokes import Dadjoke
 from dotenv import load_dotenv
 from time import sleep
@@ -84,6 +85,9 @@ async def presence():
     await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
 
 
+
+
+
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
@@ -93,7 +97,7 @@ async def on_member_join(member):
 @bot.listen()
 async def on_member_remove(member):
   channel = bot.get_channel(1001405648828891187)
-  emb = discord.Embed(title=f"{member} left.", color=cfc)
+  emb = discord.Embed(title=f"{member} left.", color=cfc, description=f"Joined on {discord.utils.format_dt(member.joined_at)}")
   pfp = member.avatar.url
   emb.set_thumbnail(url=pfp)
   await channel.send(embed=emb)
@@ -929,19 +933,23 @@ class VALivs(discord.ui.View):
 
   @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
   async def button_callback(self, button, interaction):
+    ctx = discord.ApplicationContext
     await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png \n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
+    await ctx.respond("https://cdn.discordapp.com/attachments/965655791468183612/1030879828242595860/A300_F_V2_-_2022-10-15_18.08.00.png", ephemeral=True)
 
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
   button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD")
   button2 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/16n0cnwkTeGWBhUQJZhXtNz4oq4n4Pe86")
-  button3 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P")
+  button3 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/0/folders/1JIT5dhLsPHI95-v36iETxolSYZHq-aku")
+  button4 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P")
   view = VALivs()
   view.add_item(button1)
   view.add_item(button2)
   view.add_item(button3)
+  view.add_item(button4)
   embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
-  embed.set_image(url="https://cdn.discordapp.com/attachments/801910364831744071/1028028088371646585/VALivsOverview.png")
+  embed.set_image(url="https://cdn.discordapp.com/attachments/801910364831744071/1031268854795604008/VALivsOverview.png")
   await ctx.respond(embed=embed, view=view)
 
 
