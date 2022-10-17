@@ -8,6 +8,7 @@ import platform
 import pyfiglet
 import requests
 import random
+import configparser
 from dadjokes import Dadjoke
 from dotenv import load_dotenv
 from time import sleep
@@ -933,6 +934,7 @@ class VALivs(discord.ui.View):
   async def button_callback(self, button, interaction):
     ctx = discord.ApplicationContext
     await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png \n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
+    await ctx.respond("https://cdn.discordapp.com/attachments/965655791468183612/1030879828242595860/A300_F_V2_-_2022-10-15_18.08.00.png", ephemeral=True)
 
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
@@ -1151,7 +1153,6 @@ class HelpView(discord.ui.View):
 /help : Shows this information.
 /report : Report a user or situation to the team.
 ```
-
 ```yaml
 /utility stats : Show statistics about the bot and server.
 /utility ping : Shows the latency speed of the bot.
@@ -1217,3 +1218,84 @@ async def help(ctx):
   await ctx.respond(embed=embed, view=HelpView())
 #############################################
 bot.run(os.getenv('TOKEN'))
+
+##level code lel##
+@bot.listen()
+async def on_message(message):
+  config = configparser.ConfigParser()
+  if message.channel.id == 966077223260004402:
+    return
+  else:
+    if message.author.bot == False:
+      if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
+          data = open(f"Leveling/users/{message.author.id}/data.ini", "a")
+          config.read(f"Leveling/users/{message.author.id}/data.ini")
+          belvlprog = config.get("Level", "lvlprog")
+          if len(message.content) > 0:
+            nowlvlprog = int(belvlprog)+1
+          if len(message.content) > 10:
+            nowlvlprog = int(belvlprog)+2
+          if len(message.content) > 25:
+            nowlvlprog = int(belvlprog)+5
+          if len(message.content) > 50:
+            nowlvlprog = int(belvlprog)+10
+          if len(message.content) > 75:
+            nowlvlprog = int(belvlprog)+15
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          config.set("Level","lvlprog", f"{nowlvlprog}")
+          if int(lvlprog) >= int(topprog):
+              config.set("Level","lvlprog", "0")
+              config.set("Level","lvl", f"{int(lvl)+1}")
+              config.set("Level","topprog", f"{int(topprog)*2-(int(lvl)*3)}")
+              lvlp = config.get("Level", "lvl")
+              await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
+          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+              config.write(configfile)
+      else:
+          os.mkdir(f"Leveling/users/{message.author.id}")
+          config.add_section("Level")
+          config.set("Level","lvlprog", "1")
+          config.set("Level","lvl", "0")
+          config.set("Level","topprog", "50")
+          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+              config.write(configfile)
+          lvlprog = config.get("Level", "lvlprog")
+          topprog = config.get("Level", "topprog")
+          lvl = config.get("Level", "lvl")
+    
+@bot.command(name="level", description="Gets the provided user's level.")
+async def level(ctx, member: discord.Member = None):
+  await ctx.respond("Loading level data.")
+  config = configparser.ConfigParser()
+  sleep(0.2)
+  await ctx.edit(content="Loading level data..")
+  if member == None:
+      sleep(0.2)
+      await ctx.edit(content="Loading level data...")
+      if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
+        config.read(f"Leveling/users/{ctx.author.id}/data.ini")
+        lvlprog = config.get("Level", "lvlprog")
+        lvl = config.get("Level", "lvl")
+        topprog = config.get("Level", "topprog")
+        embed = discord.Embed(title=f"Your current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+        await ctx.edit(content=None, embed=embed)
+      else:
+        embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+        await ctx.edit(content=None, embed=embed)
+  else:
+      sleep(0.2)
+      await ctx.edit(content="Loading level data...")
+      if os.path.exists(f"Leveling/users/{member.id}/data.ini"):
+        config.read(f"Leveling/users/{member.id}/data.ini")
+        lvlprog = config.get("Level", "lvlprog")
+        lvl = config.get("Level", "lvl")
+        topprog = config.get("Level", "topprog")
+        embed = discord.Embed(title=f"{member}'s current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+        embed.set_thumbnail(url=member.avatar.url)
+        await ctx.edit(content=None, embed=embed)
+      else:
+        embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+        await ctx.edit(content=None, embed=embed)
