@@ -8,7 +8,7 @@ import platform
 import pyfiglet
 import requests
 import random
-import ConfigParser
+import configparser
 from dadjokes import Dadjoke
 from dotenv import load_dotenv
 from time import sleep
@@ -25,7 +25,8 @@ from discord import ButtonStyle, option
 
 load_dotenv()
 
-cfc = 0x4f93cf
+#cfc = 0x4f93cf
+cfc = 0xcc8d0e
 errorc = 0xFF0000
 intents = discord.Intents.all()
 intents.members = True
@@ -85,9 +86,6 @@ async def presence():
     await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
 
 
-
-
-
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
@@ -104,17 +102,20 @@ async def on_member_remove(member):
 
 @bot.listen()
 async def on_message_delete(message):
-  channel = bot.get_channel(1001405648828891187)
-  msgdel = message.clean_content
-  msgatr = message.author.mention
-  msgcnl = message.channel.mention
-  pfp = message.author.avatar.url
-  emb = discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
-  emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
-  emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
-  emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
-  emb.set_thumbnail(url=pfp)
-  await channel.send(embed=emb)
+  if message.author.bot == False:
+    channel = bot.get_channel(1001405648828891187)
+    msgdel = message.clean_content
+    msgatr = message.author.mention
+    msgcnl = message.channel.mention
+    pfp = message.author.avatar.url
+    emb = discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
+    emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
+    emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
+    emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
+    emb.set_thumbnail(url=pfp)
+    await channel.send(embed=emb)
+  else:
+    pass
 
 @bot.listen()
 async def on_message_edit(before, after):
@@ -189,7 +190,7 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     await channel.send("<@&1006725140933001246> ATTENTION ALL ADMINS", embed=embed)
     await channel.send("<@&1006725140933001246> ^ THIS IS A HIGH PRIORITY REPORT")
 
-@admin.command(name="echo",description="Send a message as the bot.(Admin only)")
+@admin.command(name="echo",description="Send a message as the bot.")
 @commands.has_permissions(manage_channels=True)
 async def echo(ctx, text: str):
     await ctx.respond('posted your message!',ephemeral  = True)
@@ -199,9 +200,8 @@ async def echo(ctx, text: str):
     emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
     emb.set_thumbnail(url=pfp)
     await channel.send(embed=emb)
-    print(ctx.author, "used echo:", text)
 
-@admin.command(name="embed",description="Send an embed as the bot.(Admin only)")
+@admin.command(name="embed",description="Send an embed as the bot.")
 @commands.has_permissions(manage_channels=True)
 async def embed(ctx, title: str, description: str):
     await ctx.respond('posted your embed!',ephemeral  = True)
@@ -564,7 +564,6 @@ async def roast(ctx, member: discord.Member):
     "Your crazy is showing. You might want to tuck it back in.",
   ]
   output = random.choice(roasts)
-  print(member)
   if member.id == 1001249135774666823:
     await ctx.respond("Why do you want to roast me :sob:")
   else:
@@ -583,15 +582,15 @@ class ButtonGame(discord.ui.View):
     global b, isPressed
     b = 1
     isPressed = 1
-    opts = [1, 2, 3]
+    opts = [1, 2, 3, 1, 2, 3]
     output = random.choice(opts)
     for child in self.children:
       child.disabled = True
     if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
     else:
       if isPressed == 1:
-        await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
 
   @discord.ui.button(label="2", style=discord.ButtonStyle.green)
   async def second_button_callback(self, button, interaction):
@@ -600,28 +599,28 @@ class ButtonGame(discord.ui.View):
     isPressed = 1
     for child in self.children:
       child.disabled = True
-    opts = [1, 2, 3]
+    opts = [1, 2, 3, 1, 2, 3]
     output = random.choice(opts)
     if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
     else:
       if isPressed == 1:
-        await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
 
   @discord.ui.button(label="3", style=discord.ButtonStyle.green)
   async def third_button_callback(self, button, interaction):
     global b, isPressed
     b = 3
     isPressed = 1
-    opts = [1, 2, 3]
+    opts = [1, 2, 3, 1, 2, 3]
     for child in self.children:
       child.disabled = True
     output = random.choice(opts)
     if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
     else:
       if isPressed == 1:
-        await interaction.response.send_message(f"You guessed wrong, the right answer was {output}\n\n *play again with /fun buttongame!*")
+        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
   
   async def on_timeout(self, interaction):
     if isPressed == 0:
@@ -1008,7 +1007,7 @@ class MyView3(discord.ui.View):
     def __init__(self):
       super().__init__(timeout=None)
 
-    @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.primary, emoji="📣")
+    @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.secondary, emoji="📣")
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
@@ -1031,7 +1030,7 @@ class MyView4(discord.ui.View):
     def __init__(self):
       super().__init__(timeout=None)
 
-    @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.primary, emoji="🛠")
+    @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.secondary, emoji="🛠")
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
@@ -1052,7 +1051,7 @@ class MyView5(discord.ui.View):
     def __init__(self):
       super().__init__(timeout=None)
 
-    @discord.ui.button(custom_id="vabutton", style=discord.ButtonStyle.primary, emoji="✈️")
+    @discord.ui.button(custom_id="vabutton", style=discord.ButtonStyle.secondary, emoji="✈️")
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
@@ -1164,6 +1163,7 @@ class HelpView(discord.ui.View):
 /utility github : Shows the bot's GitHub repository.
 /utility math basic: Do some basic math.
 /utility math advanced: Do some advanced math.
+/utility level: Get someone's level.
 ```
                 """)
           await interaction.response.edit_message(embed=embutil)
@@ -1184,6 +1184,7 @@ class HelpView(discord.ui.View):
           embva.add_field(
               name="**ClearFly Virtual Airline**",
               value=f"""
+*notice: most va commands are disabled at the moment, more info in <#1013934267966967848>
 ```yaml
 /va file : File a flight you are gonna do for the ClearFly VA.
 /va flights : Fetches information about all flights a user has done.
@@ -1218,3 +1219,84 @@ async def help(ctx):
   await ctx.respond(embed=embed, view=HelpView())
 #############################################
 bot.run(os.getenv('TOKEN'))
+
+##level code lel##
+@bot.listen()
+async def on_message(message):
+  config = configparser.ConfigParser()
+  if message.channel.id == 966077223260004402:
+    return
+  else:
+    if message.author.bot == False:
+      if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
+          data = open(f"Leveling/users/{message.author.id}/data.ini", "a")
+          config.read(f"Leveling/users/{message.author.id}/data.ini")
+          belvlprog = config.get("Level", "lvlprog")
+          if len(message.content) > 0:
+            nowlvlprog = int(belvlprog)+1
+          if len(message.content) > 10:
+            nowlvlprog = int(belvlprog)+2
+          if len(message.content) > 25:
+            nowlvlprog = int(belvlprog)+5
+          if len(message.content) > 50:
+            nowlvlprog = int(belvlprog)+10
+          if len(message.content) > 75:
+            nowlvlprog = int(belvlprog)+15
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          config.set("Level","lvlprog", f"{nowlvlprog}")
+          if int(lvlprog) >= int(topprog):
+              config.set("Level","lvlprog", "0")
+              config.set("Level","lvl", f"{int(lvl)+1}")
+              config.set("Level","topprog", f"{int(topprog)*2-(int(lvl)*3)}")
+              lvlp = config.get("Level", "lvl")
+              await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
+          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+              config.write(configfile)
+      else:
+          os.mkdir(f"Leveling/users/{message.author.id}")
+          config.add_section("Level")
+          config.set("Level","lvlprog", "1")
+          config.set("Level","lvl", "0")
+          config.set("Level","topprog", "50")
+          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+              config.write(configfile)
+          lvlprog = config.get("Level", "lvlprog")
+          topprog = config.get("Level", "topprog")
+          lvl = config.get("Level", "lvl")
+    
+@bot.command(name="level", description="Gets the provided user's level.")
+async def level(ctx, member: discord.Member = None):
+  await ctx.respond("Loading level data.")
+  config = configparser.ConfigParser()
+  sleep(0.2)
+  await ctx.edit(content="Loading level data..")
+  if member == None:
+      sleep(0.2)
+      await ctx.edit(content="Loading level data...")
+      if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
+        config.read(f"Leveling/users/{ctx.author.id}/data.ini")
+        lvlprog = config.get("Level", "lvlprog")
+        lvl = config.get("Level", "lvl")
+        topprog = config.get("Level", "topprog")
+        embed = discord.Embed(title=f"Your current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+        await ctx.edit(content=None, embed=embed)
+      else:
+        embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+        await ctx.edit(content=None, embed=embed)
+  else:
+      sleep(0.2)
+      await ctx.edit(content="Loading level data...")
+      if os.path.exists(f"Leveling/users/{member.id}/data.ini"):
+        config.read(f"Leveling/users/{member.id}/data.ini")
+        lvlprog = config.get("Level", "lvlprog")
+        lvl = config.get("Level", "lvl")
+        topprog = config.get("Level", "topprog")
+        embed = discord.Embed(title=f"{member}'s current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+        embed.set_thumbnail(url=member.avatar.url)
+        await ctx.edit(content=None, embed=embed)
+      else:
+        embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+        await ctx.edit(content=None, embed=embed)
