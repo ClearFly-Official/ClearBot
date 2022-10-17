@@ -89,7 +89,7 @@ async def presence():
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
-    emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!", color = 0x57a4cd)
+    emb = discord.Embed(title=f"Welcome to ClearFly!", description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!", color = cfc)
     await channel.send(embed=emb)
 
 @bot.listen()
@@ -108,7 +108,7 @@ async def on_message_delete(message):
     msgatr = message.author.mention
     msgcnl = message.channel.mention
     pfp = message.author.avatar.url
-    emb = discord.Embed(title="**Message Deleted:**", color=0x4f93cf)
+    emb = discord.Embed(title="**Message Deleted:**", color=cfc)
     emb.add_field(name="Content:", value=f"{msgdel}", inline = False)
     emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
     emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
@@ -126,7 +126,7 @@ async def on_message_edit(before, after):
     msgatr = before.author.mention
     msgcnl = before.channel.mention
     pfp = before.author.avatar.url
-    emb = discord.Embed(title="**Message Edited:**", color=0x4f93cf)
+    emb = discord.Embed(title="**Message Edited:**", color=cfc)
     emb.add_field(name="Content before:", value=f"{msgeditb}", inline = False)
     emb.add_field(name="Content after:", value=f"{msgedita}", inline = False)
     emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
