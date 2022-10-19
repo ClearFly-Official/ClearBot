@@ -1,8 +1,8 @@
-########################
-#-Made by Matt3o0#4000-#
-########################
-from glob import glob
-import discord
+###################
+#-Made by Matt3o0-#
+###################
+import glob
+import discord #Using pycord
 import os
 import platform
 import pyfiglet
@@ -23,24 +23,25 @@ from discord.utils import get
 from discord import ButtonStyle, option
 
 
-load_dotenv()
+load_dotenv()#for the token
 
-#cfc = 0x4f93cf
-cfc = 0xcc8d0e
+#cfc = 0x4f93cf <- this is the non halloween color
+cfc = 0xcc8d0e # <- halloween color
 errorc = 0xFF0000
-intents = discord.Intents.all()
-intents.members = True
-intents.reactions = True
 
 bot = discord.Bot(command_prefix=',', intents=discord.Intents.all())
+############
+## Groups ##
+############
 fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
 admin = bot.create_group(name="admin", description="Commands for admins")
 utility = bot.create_group(name="utility", description="Commands related to utility")
-weather = utility.create_subgroup(name="weather", description="Commands in testing.")
 math = utility.create_subgroup(name="math", description="Commands related to math")
 
-
+###############
+## Listeners ##
+###############
 @bot.listen()
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
@@ -65,7 +66,7 @@ async def on_ready():
       "Boeing > Airbus",
       "How are you doing?",
       "Use me please.",
-      "How can I assist you today?"
+      "How can I assist you today?",
     ]
     await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
     print("The bot is ready for usage!")
@@ -81,9 +82,126 @@ async def presence():
       "BABY BOEINGGGG",
       "If it ain't Boeing, I'm not going.",
       "I'm tired",
-      "Nuke airbus smh"
+      "Nuke airbus smh",
+      "Boeing supremacy",
+      "*Sends missile to Airbus hq*",
+      "Wolfair is my daddy:)",
+      "Deep™",
+      "What ya looking at 🤨",
     ]
     await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+
+##level code lel##
+@bot.listen()
+async def on_message(message):
+  if os.path.exists(".onpc"):
+    config = configparser.ConfigParser()
+    if message.channel.id == 966077223260004402:
+      return
+    else:
+      if message.author.bot == False:
+        if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
+            data = open(f"Leveling/users/{message.author.id}/data.ini", "a")
+            config.read(f"Leveling/users/{message.author.id}/data.ini")
+            belvlprog = config.get("Level", "lvlprog")
+            if len(message.content) > 0:
+              nowlvlprog = int(belvlprog)+1
+            if len(message.content) > 10:
+              nowlvlprog = int(belvlprog)+2
+            if len(message.content) > 25:
+              nowlvlprog = int(belvlprog)+5
+            if len(message.content) > 50:
+              nowlvlprog = int(belvlprog)+10
+            if len(message.content) > 75:
+              nowlvlprog = int(belvlprog)+15
+            lvlprog = config.get("Level", "lvlprog")
+            lvl = config.get("Level", "lvl")
+            topprog = config.get("Level", "topprog")
+            config.set("Level","lvlprog", f"{nowlvlprog}")
+            if int(lvlprog) >= int(topprog):
+                config.set("Level","lvlprog", "0")
+                config.set("Level","lvl", f"{int(lvl)+1}")
+                config.set("Level","topprog", f"{int(topprog)*2-(int(lvl)*3)}")
+                lvlp = config.get("Level", "lvl")
+                await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
+            with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+                config.write(configfile)
+        else:
+            os.mkdir(f"Leveling/users/{message.author.id}")
+            config.add_section("Level")
+            config.set("Level","lvlprog", "1")
+            config.set("Level","lvl", "0")
+            config.set("Level","topprog", "50")
+            with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
+                config.write(configfile)
+            lvlprog = config.get("Level", "lvlprog")
+            topprog = config.get("Level", "topprog")
+            lvl = config.get("Level", "lvl")
+  else: 
+    return
+@bot.command(name="level", description="Gets the provided user's level.")
+async def level(ctx, member: discord.Member = None):
+    await ctx.respond("Loading level data.")
+    config = configparser.ConfigParser()
+    sleep(0.2)
+    await ctx.edit(content="Loading level data..")
+    if member == None:
+        sleep(0.2)
+        await ctx.edit(content="Loading level data...")
+        if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
+          config.read(f"Leveling/users/{ctx.author.id}/data.ini")
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          embed = discord.Embed(title=f"Your current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+          embed.set_thumbnail(url=ctx.author.avatar.url)
+          await ctx.edit(content=None, embed=embed)
+        else:
+          embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+          await ctx.edit(content=None, embed=embed)
+    else:
+        sleep(0.2)
+        await ctx.edit(content="Loading level data...")
+        if os.path.exists(f"Leveling/users/{member.id}/data.ini"):
+          config.read(f"Leveling/users/{member.id}/data.ini")
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          embed = discord.Embed(title=f"{member}'s current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+          embed.set_thumbnail(url=member.avatar.url)
+          await ctx.edit(content=None, embed=embed)
+        else:
+          embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+          await ctx.edit(content=None, embed=embed)
+
+@bot.command(name="leaderboard", description="See the leaderboard of the whole server.")
+async def lb(ctx):
+  output = []
+  output2 =[]
+  index = 1
+  config = configparser.ConfigParser()
+  for index, filename in enumerate(glob.glob('Leveling/users/*/*')):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        config.read(f"{filename}")
+        lvl = int(config.get("Level", "lvl"))
+        lvlprog = int(config.get("Level", "lvlprog"))
+        topprog = int(config.get("Level", "topprog"))
+        filen = filename.replace("Leveling/users/", f"")
+        lbn = index+1
+        id=os.path.dirname(filen)
+        idconv = bot.get_user(int(id))
+        line = f"Level:{lvl} Progress:{lvlprog}/{topprog} | {idconv}\n"
+        output.append(line)
+  output.sort(reverse=True)
+  foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
+  embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
+  Chat more to go higher on the list!
+  ```
+{"".join(foutput)}
+  ```
+  """, color=cfc)
+  await ctx.respond(embed=embed)
+
 
 
 @bot.listen()
@@ -136,6 +254,10 @@ async def on_message_edit(before, after):
   else:
     pass
 
+
+##############
+## Commands ##
+##############
 @bot.slash_command(name="report", description="Need help? Use this command to contact the admins!")
 @option("subject",description="What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
 @option("priority", description="The priority level of the report", choices=["low", "medium", "high"])
@@ -636,6 +758,7 @@ async def bgame(ctx):
   embed = discord.Embed(title="Choose a button!", color=cfc)
   await ctx.respond(embed=embed, view=ButtonGame())
 
+#Might use the cities in the future(weather cmd maybe)
 cities=['A Coruña', 'Aachen', 'Aarhus', 'Abbeville', 'Aberdeen (UK)', 'Aberdeen (South Dakota)', 'Aberdeen (Washington)', 'Abidjan', 'Abilene', 'Abu Dhabi', 'Abuja', 'Acapulco', 'Accra', 'Adamstown', 'Addis Ababa', 'Adelaide', 'Adelboden', 'Agadir', 'Agde', 'Agen', 'Agios Nikolaos', 'Agra', 'Agrigento', 'Agropoli', 'Ahmedabad', 'Aigues-Mortes', 'Aix-en-Provence', 'Aix-les-Bains', 'Ajaccio', 'Ajman', 'Akron', 'Al Ain', 'Alanya', 'Alaró', 'Albacete', 'Albany', 'Albenga', 'Albi', 'Albufeira', 'Albuquerque', 'Alcudia', 'Aleppo', 'Alessandria', 'Ålesund', 'Alexandria (U.S.)', 'Alexandria (Egypt)', 'Algeciras', 'Alghero', 'Algiers', 'Alicante', 'Alkmaar', 'Allentown', 'Almaty', 'Alofi', "Alpe d'Huez", 'Alta Badia', 'Altea', 'Altoona', 'Amalfi', 'Amapala', 'Amarillo', 'Amersfoort', 'Amiens', 'Amman', 'Amsterdam', 'Anaheim', 'Anchorage', 'Ancona', 'Andalo', 'Andermatt', 'Andorra la Vella', 'Andratx', 'Andria', 'Angers', 'Angoulême', 'Ankara', 'Ann Arbor', 'Annapolis', 'Annecy', 'Antalya', 'Antananarivo', 'Antibes', 'Antigua Guatemala', 'Antwerp', 'Anzio', 'Ao Nang', 'Aosta', 'Apeldoorn', 'Apia', 'Appleton', 'Aqaba', 'Aracaju', 'Arcachon', 'Arenzano', 'Arequipa', 'Arezzo', 'Argostoli', 'Arica', 'Arles', 'Arlington (Virginia)', 'Arlington (Texas)', 'Armagh', 'Arnhem', 'Arosa', 'Arras', 'Arrecife', 'Artà', 'Asbury Park', 'Ascoli Piceno', 'Ascona', 'Ashdod', 'Ashgabat', 'Ashkelon', 'Asmara', 'Aspen', 'Asti', 'Astoria', 'Asunción', 'Atafu', 'Athens', 'Athlone', 'Atlanta', 'Atlantic City', 'Auckland', 'Augsburg', 'Augusta (Georgia)', 'Augusta (Maine)', 'Aurora (Colorado)', 'Aurora (Illinois)', 'Austin', 'Auxerre', 'Avalon (California)', 'Avalon (New Jersey)', 'Avarua', 'Aveiro', 'Avellino', 'Avignon', 'Avila Beach', 'Avoriaz', 'Axamer Lizum', 'Ayia Napa', 'Azusa', 'Bad Gastein', 'Bad Hofgastein', 'Baden', 'Baghdad', 'Baiona', 'Bakersfield', 'Baku', 'Baltimore', 'Bamako', 'Bandar Seri Begawan', 'Bandol', 'Bangalore', 'Bangkok', 'Bangor', 'Bangui', 'Banjul', 'Bar', 'Bar Harbor', 'Barcelona', 'Bari', 'Barletta', 'Barstow', 'Basel', 'Basseterre', 'Basse-Terre', 'Bastia', 'Bata', 'Bath', 'Baton Rouge', 'Batumi', 'Bayonne', 'Beaulieu-sur-Mer', 'Beaumont', 'Beaune', 'Beersheba', 'Beijing', 'Beirut', 'Belek', 'Belfast', 'Belfort', 'Belgrade', 'Belize City', 'Bellingham', 'Bellinzona', 'Belluno', 'Belmopan', 'Belo Horizonte', 'Bemidji', 'Benalmadena', 'Bend', 'Bendigo', 'Benevento', 'Benicàssim', 'Benidorm', 'Bergamo', 'Bergen', 'Bergerac', 'Berkeley', 'Berlin', 'Bern', 'Besançon', 'Bethlehem', 'Beverly Hills', 'Béziers', 'Biarritz', 'Biel/Bienne', 'Bielefeld', 'Biella', 'Bilbao', 'Billings', 'Biloxi', 'Birmingham (UK)', 'Birmingham (U.S.)', 'Bishkek', 'Bismarck', 'Bissau', 'Blanes', 'Bled', 'Blois', 'Bloomington', 'Blumenau', 'Boca Chica', 'Boca Raton', 'Bochum', 'Bodrum', 'Bogotá', 'Boise', 'Bologna', 'Bolzano', 'Bonifacio', 'Bonn', 'Bordeaux', 'Bordighera', 'Bormio', 'Boston', 'Boulder', 'Boulogne-sur-Mer', 'Bourges', 'Bowling Green', 'Boynton Beach', 'Bozeman', 'Bradenton', 'Bradford', 'Braga', 'Brampton', 'Brasilia', 'Bratislava', 'Braunschweig', 'Brazzaville', 'Breda', 'Bregenz', 'Brela', 'Bremen', 'Bremerhaven', 'Brescia', 'Brest', 'Briançon', 'Bridgeport', 'Bridgetown', 'Brighton', 'Brindisi', 'Brisbane', 'Bristol', 'Brixen', 'Brixental', 'Brno', 'Brookings', 'Brownsville', 'Bruges', 'Brussels', 'Bucharest', 'Budapest', 'Budva', 'Buenos Aires', 'Buffalo', 'Bujumbura', 'Burgas', 'Burlington', 'Burnt Pine', 'Butte', 'Cabo San Lucas', 'Cadaqués', 'Cádiz', 'Caen', 'Cagliari', 'Cagnes-sur-Mer', 'Cairns', 'Cairo', 'Cala Bona', "Cala d'Or", 'Cala Millor', 'Cala Ratjada', 'Calais', 'Calella', 'Calgary', 'Cali', 'Caloundra', 'Calp', 'Caltanissetta', 'Calvi', 'Cambridge (UK)', 'Cambridge (U.S.)', 'Cambrils', 'Camden', 'Campinas', 'Campobasso', 'Can Pastilla', 'Can Picafort', 'Canazei', 'Canberra', 'Cancun', 'Cannes', 'Cannon Beach', 'Canterbury', 'Canton', 'Canyamel', 'Capdepera', 'Cape Canaveral', 'Cape Coral', 'Cape May', 'Cape Town', 'Capitola', 'Caracas', 'Carbonia', 'Carcassonne', 'Cardiff', 'Carlisle', 'Carlsbad', 'Carmel-by-the-Sea', 'Carpi', 'Carpinteria', 'Carrara', 'Carson City', 'Cartagena (Colombia)', 'Cartagena (Spain)', 'Casablanca', 'Caserta', 'Casper', 'Cassis', 'Castellón de la Plana', 'Castelrotto', 'Castletown', 'Castries', 'Catania', 'Catanzaro', 'Caxias do Sul', 'Cayenne', 'Cedar Rapids', 'Celle', 'Cervinia', 'Cesena', 'Český Krumlov', 'Çeşme', 'Chamonix', 'Chandler', 'Chania', 'Charleroi', 'Charleston (West Virginia)', 'Charleston (South Carolina)', 'Charlestown', 'Charlotte', 'Charlotte Amalie', 'Charlottetown', 'Chartres', 'Chatham', 'Chattanooga', 'Chelmsford', 'Chemnitz', 'Chennai', 'Cherbourg', 'Chesapeake', 'Chester', 'Cheyenne', 'Chiang Mai', 'Chiang Rai', 'Chiavari', 'Chicago', 'Chichester', 'Chiclayo', 'Chieti', 'Chincoteague', 'Chioggia', 'Chios', 'Chișinău', 'Chonburi', 'Christchurch', 'Christiansted', 'Chula Vista', 'Chur', 'Cincinnati', 'Ciutadella de Menorca', 'Civitavecchia', 'Clarksville', 'Clearwater', 'Clermont-Ferrand', 'Cleveland', 'Cockburn Town', 'Cocoa Beach', 'Coconut Creek', 'Coimbra', 'Collioure', 'Colmar', 'Cologne', 'Colombo', 'Colón', 'Colonia del Sacramento', 'Colorado Springs', 'Columbia (South Carolina)', 'Columbia (Missouri)', 'Columbus', 'Como', 'Conakry', 'Concepción', 'Concord', 'Conil de la Frontera', 'Conway', 'Copenhagen', 'Coral Springs', 'Córdoba (Argentina)', 'Córdoba (Spain)', 'Corfu', 'Corinth', 'Cork', 'Coro', 'Corpus Christi', 'Corralejo', "Cortina d'Ampezzo", 'Cosenza', 'Costa Adeje', 'Cottbus', 'Courchevel', 'Courmayeur', 'Coventry', 'Covington', 'Coxen Hole', 'Coyhaique', 'Cozumel', 'Crans-Montana', 'Cremona', 'Crotone', 'Cruz Bay', 'Cuenca (Ecuador)', 'Cuenca (Spain)', 'Cumaná', 'Cuneo', 'Cusco', 'Da Nang', 'Dachau', 'Dahab', 'Dakar', 'Dallas', 'Damascus', 'Dana Point', 'Dar es Salaam', 'Darmstadt', 'Darwin', 'Daugavpils', 'Dauphin Island', 'Davenport', 'Davos', 'Dayton', 'Daytona Beach', 'Deauville', 'Decatur', 'Deerfield Beach', 'Del Mar', 'Delft', 'Delhi', 'Delray Beach', 'Den Bosch', 'Denia', 'Denton', 'Denver', 'Derby', 'Derry', 'Des Moines', 'Detroit', 'Dhaka', 'Didim', 'Dieppe', 'Dijon', 'Dili', 'Djibouti', 'Dodoma', 'Doha', 'Dolomiti Superski', 'Dordrecht', 'Dorfgastein', 'Dortmund', 'Dothan', 'Douala', 'Douglas', 'Dover (Delaware)', 'Dover (New Hampshire)', 'Dresden', 'Dubai', 'Dublin', 'Dubrovnik', 'Duisburg', 'Duluth', 'Dundalk', 'Dundee', 'Dunedin', 'Dunkirk', 'Durham (UK)', 'Durham (U.S.)', 'Dushanbe', 'Düsseldorf', 'Eastbourne', 'Eau Claire', 'Edgartown', 'Edinburgh', 'Edmonton', 'Eilat', 'Eindhoven', 'El Paso', 'Elche', 'Elizabeth', 'Elko', 'Ellmau', 'Elm', 'Empuriabrava', 'Encinitas', 'Engelberg', 'Enna', 'Enschede', 'Épinal', 'Erfurt', 'Erie', 'Erlangen', 'Esbjerg', 'Espace Killy', 'Essaouira', 'Essen', 'Estepona', 'Eugene', 'Eureka', 'Evansville', 'Everett', 'Exeter', 'Èze', 'Faenza', 'Fairbanks', 'Fakaofo', 'Falmouth', 'Famagusta', 'Fano', 'Fargo', 'Faro', 'Fayetteville (North Carolina)', 'Fayetteville (Arkansas)', 'Fermo', 'Fernandina Beach', 'Ferrara', 'Fethiye', 'Fez', 'Fieberbrunn', 'Filzmoos', 'Finale Ligure', 'Fiumicino', 'Flagstaff', 'Flaine', 'Flint', 'Florence', 'Florence (Alabama)', 'Flores', 'Foggia', 'Folgarida', 'Fontana', 'Forlì', 'Fort Collins', 'Fort Lauderdale', 'Fort Myers', 'Fort Smith', 'Fort Wayne', 'Fort Worth', 'Fort-de-France', 'Forte dei Marmi', 'Foz do Iguaçu', 'Frankfort', 'Frankfurt am Main', 'Franklin', 'Frederick', 'Fredericton', 'Frederiksted', 'Freeport', 'Freetown', 'Freiburg', 'Fremont', 'Fresno', 'Fribourg', 'Frosinone', 'Fuengirola', 'Fujairah', 'Fukuoka', 'Funafuti', 'Funchal', 'Gaborone', 'Gainesville', 'Galtür', 'Galway', 'Gandia', 'Garden Grove', 'Garland', 'Gastonia', 'Gatineau', 'Gaza City', 'Gdansk', 'Gdynia', 'Geelong', 'Gelsenkirchen', 'Geneva', 'Genoa', 'George Town (Cayman Islands)', 'George Town (Malaysia)', 'Georgetown', 'Ghent', 'Gijón', 'Gilbert', 'Girona', 'Gitega', 'Giza', 'Glasgow', 'Glendale (Arizona)', 'Glendale (California)', 'Gloucester', 'Gold Coast', 'Gorizia', 'Dachstein-West', 'Gothenburg', 'Göttingen', 'Gouda', 'Granada (Spain)', 'Granada (Nicaragua)', 'Grand Forks', 'Grand Island', 'Grand Junction', 'Grand Prairie', 'Grand Rapids', 'Granville', 'Grasse', 'Graz', 'Great Falls', 'Greeley', 'Green Bay', 'Greensboro', 'Greenville NC', 'Greenville SC', 'Grenoble', 'Grindelwald', 'Groningen', 'Grossarl', 'Grosseto', 'Grover Beach', 'Gstaad', 'Guadalajara', 'Guadalupe', 'Guangzhou', 'Guatemala City', 'Guayaquil', 'Guimarães', 'Gulf Shores', 'Gulfport', 'Gustavia', 'Haarlem', 'Haifa', 'Half Moon Bay', 'Halifax', 'Halle', 'Hamburg', 'Hamilton (Bermuda)', 'Hamilton (Canada)', 'Hamilton (New Zealand)', 'Hampton', 'Hanford', 'Hangzhou', 'Hannover', 'Hanoi', 'Harare', 'Hargeisa', 'Harrisburg', 'Hartford', 'Hasselt', 'Hastings', 'Hat Yai', 'Hattiesburg', 'Havana', 'Heidelberg', 'Heilbronn', 'Heiligenblut', 'Helena', 'Helsinki', 'Henderson', 'Heraklion', 'Herceg Novi', 'Hereford', 'Hermosa Beach', 'Hervey Bay', 'Hialeah', 'Hillsboro', 'Hinterglemm', 'Hinterstoder', 'Hiroshima', 'Hoi An', 'Hobart', 'Ho Chi Minh City', 'Holbrook', 'Hollywood (Florida)', 'Honfleur', 'Hong Kong', 'Honiara', 'Honolulu', 'Horsens', 'Hot Springs', 'Houston', 'Hua Hin', 'Hue', 'Huntington', 'Huntington Beach', 'Huntsville', 'Hurghada', 'Hvar', 'Hyères', 'Ibiza Town', 'Imola', 'Imperia', 'Inca', 'Indianapolis', 'Ingolstadt', 'Innsbruck', 'Interlaken', 'Inverness', 'Ioannina', 'Iqaluit', 'Iquitos', 'Irvine', 'Irving', 'Ischgl', 'Isernia', 'Lahore', 'Islamorada', 'Istanbul', 'İzmir', 'Izola', 'Jackson', 'Jackson (Tennessee)', 'Jacksonville', 'Jaipur', 'Jefferson City', 'Jena', 'Jerez de la Frontera', 'Jersey City', 'Jerusalem', 'Johannesburg', 'Johnson City', 'Joinville', 'Jonesboro', 'Juan Griego', 'Juan-les-Pins', 'Juba', 'Juiz de Fora', 'Juneau', 'Jungfrau', 'Jupiter', 'Jūrmala', 'Kabul', 'Kaiserslautern', 'Kalamata', 'Kalamazoo', 'Kampala', 'Kanchanaburi', 'Kansas City', 'Kansas City (Kansas)', 'Kappl', 'Kaprun', 'Islamabad', 'Karlovy Vary', 'Karlsruhe', 'Kassel', 'Kastoria', 'Kathmandu', 'Kaunas', 'Kavala', 'Kearney', 'Keene', 'Kemer', 'Kenosha', 'Key Largo', 'Key West', 'Khao Lak', 'Khartoum', 'Kiel', 'Kigali', 'Kilkenny', 'Kingman', 'Kingston (Jamaica)', 'Kingston (Norfolk Island)', 'Kingston upon Hull', 'Kingstown', 'Kinshasa', 'Kissimmee', 'Kitzbühel', 'Klagenfurt', 'Klaipėda', 'Knoxville', 'Kobe', 'Koblenz', 'Kolding', 'Kolkata', 'Komotini', 'Koper', 'Koror', 'Kos', 'Košice', 'Kotor', 'Krabi', 'Krakow', 'Kralendijk', 'Krefeld', 'Kuah', 'Kuala Lumpur', 'Kuşadası', 'Kutná Hora', 'Kuwait City', 'Kyiv', 'Kyoto', 'Kyrenia', 'La Ceiba', 'La Ciotat', 'La Clusaz', 'La Laguna', 'La Maddalena', 'La Manga', 'La Paz', 'La Plagne', 'La Plata', 'La Rochelle', 'La Romana', 'La Serena', 'La Seyne-sur-Mer', 'La Spezia', 'La Thuile', 'Laax', 'Labasa', 'Lafayette (Indiana)', 'Lafayette (Louisiana)', 'Lagos (Nigeria)', 'Lagos (Portugal)', 'Laguna Beach', 'Karachi', 'Lakeland', 'Lalitpur', 'Lamezia Terme', 'Lancaster', 'Lancaster (U.S.)', 'Landshut', 'Lansing', "L'Aquila", 'Laredo', 'Largo', 'Larnaca', 'Las Cruces', 'Las Palmas', 'Las Vegas', 'Latina', 'Lausanne', 'Lautoka', 'Laval', 'Lawton', 'Layton', 'Le Havre', 'Le Lavandou', 'Le Mans', 'Le Puy-en-Velay', 'Lecce', 'Lecco', 'Lech', 'Leeds', 'Legnano', 'Leicester', 'Leiden', 'Leipzig', 'Lemgo', 'Leogang', 'León', 'Les Arcs', 'Les Deux Alpes', 'Les Gets', 'Les Houches', 'Les Menuires', 'Leuven', 'Leverkusen', 'Lexington', 'Liberec', 'Libreville', 'Lichfield', 'Liège', 'Lienz', 'Liepāja', 'Lille', 'Lilongwe', 'Lima', 'Limassol', 'Limerick', 'Limoges', 'Lincoln', 'Lincoln', 'Lindos', 'Linz', 'Lisbon', 'Lisburn', 'Little Rock', 'Liverpool', 'Livigno', 'Livorno', 'Ljubljana', 'Lloret de Mar', 'Llucmajor', 'Loano', 'Locarno', 'Lodi', 'Lodz', 'Logan', 'Logroño', 'Lomé', 'London (Canada)', 'London (UK)', 'Londrina', 'Long Beach', 'Long Beach (New York)', 'Long Branch', 'Longview (Texas)', 'Longview (Washington)', 'Lorain', 'Los Alamos', 'Los Angeles', 'Los Cabos', 'Los Cristianos', 'Louisville', 'Lourdes', 'Loutraki', 'Louvain-la-Neuve', 'Lowell', 'Luanda', 'Lubbock', 'Lübeck', 'Lublin', 'Lucca', 'Lucerne', 'Lugano', 'Luganville', 'Lund', 'Lusaka', 'Luxembourg', 'Luxor', 'Lyon', 'Maastricht', 'Macerata', 'Machu Picchu', 'Macon', 'Madera', 'Madison', 'Madonna di Campiglio', 'Madrid', 'Magaluf', 'Magdeburg', 'Mahón', 'Mainz', 'Majuro', 'Makarska', 'Malabo', 'Malaga', 'Maldonado', 'Malé', 'Malia', 'Malibu', 'Malmö', 'Manacor', 'Managua', 'Manama', 'Manchester (UK)', 'Manchester (U.S.)', 'Máncora', 'Manhattan Beach', 'Manhattan, KS', 'Mannheim', 'Manosque', 'Mantua', 'Maputo', 'Mar del Plata', 'Maracaibo', 'Marathon', 'Marbella', 'Maria Alm', 'Maribor', 'Marigot', 'Markham', 'Marmaris', 'Maroochydore', 'Marquette', 'Marrakesh', 'Marsa Alam', 'Marsala', 'Marseille', 'Martigues', 'Masaya', 'Maseru', 'Maspalomas', 'Massa', 'Matera', 'Mayrhofen', 'Mazara del Vallo', 'Mbabane', 'McKinney', 'Mechelen', 'Medellín', 'Medford', 'Megève', 'Melbourne (Australia)', 'Melbourne (U.S.)', 'Memphis', 'Menton', 'Merano', 'Merced', 'Meribel', 'Mérida (Spain)', 'Mérida (Venezuela)', 'Meridian', 'Mesa', 'Messina', 'Mestre', 'Metz', 'Mexico City', 'Miami', 'Middelburg', 'Midland', 'Mijas', 'Milan', 'Milford', 'Millau', 'Milwaukee', 'Mindelo', 'Minneapolis', 'Minot', 'Minsk', 'Miramar', 'Mishawaka', 'Mississauga', 'Missoula', 'Moab', 'Mobile', 'Modena', 'Modesto', 'Modica', 'Moena', 'Mogadishu', 'Mogi das Cruzes', 'Mombasa', 'Monaco City', 'Mönchengladbach', 'Monrovia (Liberia)', 'Monrovia (U.S.)', 'Mons', 'Monschau', 'Monte Carlo', 'Monte Rosa', 'Montego Bay', 'Montepulciano', 'Monterey', 'Montevideo', 'Montgomery', 'Montluçon', 'Montpelier', 'Montpellier', 'Montreal', 'Montreux', 'Monza', 'Moraira', 'Moreno Valley', 'Morgantown', 'Moroni', 'Morro Bay', 'Morzine', 'Moscow', 'Mount Vernon', 'Mountain View', 'Moutier', 'Mulhouse', 'Mumbai', 'Munich', 'Münster', 'Murcia', 'Murfreesboro', 'Murter', 'Mykonos', 'Mytilene', 'Nadi', 'Nafplio', 'Nagoya', 'Nags Head', 'Nairobi', 'Namur', 'Nancy', 'Nantes', 'Napa', 'Naples (Italy)', 'Naples (U.S.)', 'Narbonne', 'Narva', 'Nashua', 'Nashville', 'Nassau', 'Naxos', 'Nazareth', "N'Djamena", 'Negril', 'Neiafu', 'Nelson', 'Nerja', 'Netanya', 'Nevers', 'New Haven', 'New London', 'New Orleans', 'New Smyrna Beach', 'New York City', 'Newark', 'Newcastle (Australia)', 'Newcastle (UK)', 'Newport (UK)', 'Newport (Rhode Island)', 'Newport (Vermont)', 'Newport Beach', 'Newport News', 'Newry', 'Ngerulmud', 'Nha Trang', 'Niagara Falls', 'Niamey', 'Nice', 'Nicosia', 'Nijmegen', 'Nimes', 'Niort', 'Noosa Heads', 'Norfolk', 'Normal', 'Norman', 'North Las Vegas', 'North Port', 'Norwalk', 'Norwich', 'Nottingham', 'Nouakchott', 'Novara', 'Novigrad', 'Nukuʻalofa', 'Nukunonu', 'Nuoro', 'Nürnberg', 'Nur-Sultan', 'Nuuk', 'Nyon', 'Oakland', 'Oaxaca', 'Obergurgl', 'Oberhausen', 'Ocala', 'Ocean City', 'Ocean Grove', 'Oceanside', 'Ocho Rios', 'Odense', 'Odessa', 'Ogden', 'Oia', 'Oklahoma City', 'Olbia', 'Oldenburg', 'Olomouc', 'Olympia', 'Omaha', 'Omoa', 'Opatija', 'Orange Beach', 'Oranjestad (Aruba)', 'Oranjestad (Sint Eustatius)', 'Orem', 'Oristano', 'Orlando', 'Orléans', 'Ortisei', 'Osaka', 'Oshkosh', 'Oslo', 'Osnabrück', 'Ostrava', 'Ottawa', 'Ouagadougou', 'Oulu', 'Ourense', 'Overland Park', 'Oviedo', 'Owensboro', 'Oxford', 'Oxnard', 'Pacific Grove', 'Paderborn', 'Padova', 'Pago Pago', 'Palanga', 'Palavas-les-Flots', 'Palermo', 'Palikir', 'Palm Bay', 'Palm Beach', 'Palm Springs', 'Palma de Mallorca', 'Palma Nova', 'Palmetto', 'Palo Alto', 'Pamplona', 'Panama City (U.S.)', 'Panama City (Panama)', 'Paphos', 'Paradiski', 'Paralia', 'Paramaribo', 'Parikia', 'Paris', 'Parkersburg', 'Parma', 'Pärnu', 'Pasadena', 'Passo del Tonale', 'Passo Rolle', 'Paterson', 'Patras', 'Pattaya', 'Pau', 'Pavia', 'Peel', 'Peguera', 'Pembroke Pines', 'Peniscola', 'Pensacola', 'Peoria', 'Perast', 'Périgueux', 'Perpignan', 'Perros-Guirec', 'Perth (Australia)', 'Perth (UK)', 'Perugia', 'Pesaro', 'Pescara', 'Pescasseroli', 'Petah Tikva', 'Peterborough', 'Petra', 'Petrovac', 'Pforzheim', 'Phang Nga', 'Phetchabun', 'Philadelphia', 'Philipsburg', 'Phoenix', 'Phuket City', 'Piacenza', 'Pierre', 'Pine Bluff', 'Piraeus', 'Piran', 'Pisa', 'Pistoia', 'Pittsburgh', 'Placencia', 'Plano', 'Playa Blanca', 'Playa de las Américas', 'Playa del Carmen', 'Pleasure Point', 'Plovdiv', 'Plymouth', 'Plzeň', 'Podgorica', 'Pointe-à-Pitre', 'Poitiers', 'Pollença', 'Pompano Beach', 'Pontevedra', 'Pordenone', 'Poreč', 'Porlamar', 'Port Angeles', 'Port Charlotte', "Port d'Andratx", 'Port Louis', 'Port Moresby', 'Port of Spain', 'Port St. Lucie', 'Port Townsend', 'Port Vila', 'Port-au-Prince', 'Portimão', 'Portland (Oregon)', 'Portland (Maine)', 'Porto', 'Porto Cervo', 'Porto Cristo', 'Porto Torres', 'Portocolom', 'Portoferraio', 'Portofino', 'Porto-Novo', 'Portorož', 'Porto-Vecchio', 'Portsmouth (UK)', 'Portsmouth (U.S.)', 'Positano', 'Potenza', 'Potsdam', 'Poznan', 'Pozzuoli', 'Prague', 'Praia', 'Praia da Rocha', 'Prato', 'Prescott', 'Preston', 'Pretoria', 'Pristina', 'Propriano', 'Protaras', 'Providence', 'Provincetown', 'Provo', 'Pueblo', 'Puerto Baquerizo Moreno', 'Puerto Cortés', 'Puerto de la Cruz', 'Puerto la Cruz', 'Puerto Plata', 'Puerto Rico de Gran Canaria', 'Puerto Vallarta', 'Pula', 'Punta Arenas', 'Punta Cana', 'Punta del Este', 'Punta Gorda', 'Pyeongchang', 'Pyongyang', 'Quarteira', 'Quebec', 'Quetzaltenango', 'Quimper', 'Quito', 'Rabat', 'Racine', 'Ragusa', 'Railay Beach', 'Raleigh', 'Ramallah', 'Ramsey', 'Rancho Cucamonga', 'Randers', 'Rapallo', 'Rapid City', 'Ras al-Khaimah', 'Ras Sedr', 'Ratingen', 'Ravello', 'Ravenna', 'Rayong', 'Reading', 'Redding', 'Redondo Beach', 'Regensburg', 'Reggio Calabria', 'Reggio Emilia', 'Regina', 'Rehovot', 'Reims', 'Rennes', 'Reno', 'Rethymno', 'Reus', 'Reutlingen', 'Reykjavik', 'Rhodes', 'Richmond', 'Rieti', 'Riga', 'Rijeka', 'Rimini', 'Rio de Janeiro', 'Riomaggiore', 'Rishon LeZion', 'Rivas', 'Riverside', 'Riviera Maya', 'Road Town', 'Roanoke', 'Rocamadour', 'Rochester (Minnesota)', 'Rochester (New York)', 'Rock Hill', 'Rockford', 'Rockville', 'Rodez', 'Rogers', 'Rome', 'Ronda', 'Rosario', 'Roseau', 'Roskilde', 'Rostock', 'Roswell', 'Rotterdam', 'Roubaix', 'Rouen', 'Rovigo', 'Rovinj', 'Rutland', 'Sa Coma', 'Sa Pobla', 'Saalbach', 'Saarbrücken', 'Saas-Fee', 'Sacramento', 'Safaga', 'Saint Paul', 'Saint Petersburg', 'Saint-Brieuc', 'Sainte-Maxime', 'Saintes-Maries-de-la-Mer', 'Saint-Étienne', 'Saint-Jean-Cap-Ferrat', 'Saint-Laurent-du-Maroni', 'Saint-Malo', 'Saint-Tropez', 'Salamanca', 'Salem (Oregon)', 'Salem (Massachusetts)', 'Salerno', 'Salinas', 'Salisbury', 'Salou', 'Salt Lake City', 'Salta', 'Salvador', 'Salzburg', 'Samaná', 'San Angelo', 'San Antonio', 'San Bernardino', 'San Clemente', 'San Cristóbal', 'San Diego', 'San Francisco', 'San José (Costa Rica)', 'San Jose (U.S.)', 'San Juan', 'San Juan del Sur', 'San Lorenzo', 'San Luis Obispo', 'San Marino', 'San Mateo', 'San Miguel', 'San Pedro', 'San Pedro de Atacama', 'San Pedro Sula', 'San Rafael', 'San Salvador', 'San Sebastián', 'Sanaa', 'Sanford', 'Sanremo', 'Sant Antoni de Portmany', 'Santa Ana (U.S.)', 'Santa Ana (El Salvador)', 'Santa Barbara', 'Santa Clara', 'Santa Clarita', 'Santa Cruz', 'Santa Cruz de la Sierra', 'Santa Cruz de Tenerife', 'Santa Eulària des Riu', 'Santa Fe', 'Santa Lucía', 'Santa Margherita Ligure', 'Santa Maria (Cape Verde)', 'Santa Maria (U.S.)', 'Santa Monica', 'Santa Pola', 'Santa Ponsa', 'Santa Rosa', 'Santa Tecla', 'Santander', 'Santanyí', 'Santiago (Chile)', 'Santiago (Dominican Rep.)', 'Santiago de Compostela', 'Santo Domingo', 'Sao Paulo', 'São Tomé', 'Sapporo', 'Sarajevo', 'Sarasota', 'Saratoga Springs', "S'Arenal", 'Sarlat-la-Canéda', 'Saskatoon', 'Sassari', 'Saumur', 'Savannah', 'Savona', 'Savusavu', 'Schaffhausen', 'Schenectady', 'Schladming', 'Scottsdale', 'Scranton', 'Sea Isle City', 'Seal Beach', 'Seaside', 'Seattle', 'Sedona', 'Seefeld', 'Segovia', 'Seoul', 'Serre Chevalier', 'Sète', 'Seville', 'Shanghai', 'Sharjah', 'Sharm el-Sheikh', 'Sheffield', 'Shenzhen', 'Shreveport', 'Šiauliai', 'Šibenik', 'Side', 'Siegen', 'Siena', 'Sineu', 'Singapore', 'Sion', 'Sioux City', 'Sioux Falls', 'Sitges', 'Skiathos', 'Skopje', 'Sofia', 'Sölden', 'Söll', 'Soller', 'Solothurn', 'Sondrio', 'Sopot', 'Sorocaba', 'Sorrento', 'South Bend', 'Southampton', 'Split', 'Spokane', 'Springdale', 'Springfield (Illinois)', 'Springfield (Massachusetts)', 'Springfield (Missouri)', 'Springfield (Oregon)', 'St Albans', "St George's (Bermuda)", 'St. Albans', 'St. Anton', 'St. Augustine', 'St. Cloud', 'St. Gallen', 'St. George', "St. George's (Grenada)", "St. John's (Antigua and Barbuda)", "St. John's (Canada)", 'St. Louis', 'St. Moritz', 'St. Petersburg (U.S.)', 'Stamford', 'Stanley', 'Stavanger', 'Stillwater', 'Stirling', 'Stockholm', 'Stockton', 'Stoke-on-Trent', 'Stone Harbor', 'Strasbourg', 'Stuttgart', 'Sucre', 'Suez', 'Sukhothai', 'Sumter', 'Sunderland', 'Sunnyvale', 'Sunshine Coast', 'Superior', 'Surrey', 'Suva', 'Sveti Stefan', 'Swansea', 'Sydney', 'Syracuse (Italy)', 'Syracuse (U.S.)', 'Szczecin', 'Taba', 'Tacoma', 'Taipei', 'Tallahassee', 'Tallinn', 'Tampa', 'Tampere', 'Tamworth', 'Tangier', 'Taormina', 'Taranto', 'Tarifa', 'Tarragona', 'Tartu', 'Tashkent', 'Tauplitz', 'Tauranga', 'Tavira', 'Tbilisi', 'Tegucigalpa', 'Tel Aviv', 'Temecula', 'Tempe', 'Teramo', 'Terni', 'Texarkana AR', 'Texarkana TX', 'The Bottom', 'The Hague', 'The Valley', 'The Woodlands', 'Thessaloniki', 'Thimphu', 'Tignes', 'Tijuana', 'Tilburg', 'Tinos', 'Tirana', 'Tivat', 'Tivoli', 'Tokyo', 'Toledo (Spain)', 'Toledo (U.S.)', 'Tooele', 'Toowoomba', 'Topeka', 'Toronto', 'Torre del Greco', 'Torre del Mar', 'Torremolinos', 'Torrevieja', 'Tórshavn', 'Toruń', 'Tossa de Mar', 'Toulon', 'Toulouse', 'Tours', 'Townsville', 'Trani', 'Trapani', 'Trento', 'Trenton', 'Treviso', 'Trier', 'Trieste', 'Tripoli', 'Trogir', 'Tromsø', 'Trondheim', 'Trouville-sur-Mer', 'Troy', 'Troyes', 'Trujillo', 'Tucson', 'Tui', 'Tulsa', 'Tulum', 'Turin', 'Turku', 'Tuscaloosa', 'Twin Falls', 'Two Harbors', 'Tybee Island', 'Tyler', 'Udine', 'Udon Thani', 'Ukiah', 'Ulaanbaatar', 'Ulcinj', 'Ulm', 'Umag', 'Uppsala', 'Urbino', 'Urubamba', 'Ushuaia', 'Utica', 'Utrecht', 'Vaduz', 'Val d’Isère', 'Val di Fassa', 'Val Gardena', 'Val Thorens', 'Valence', 'Valencia (Spain)', 'Valencia (Venezuela)', 'Valladolid', 'Valldemossa', 'Valle Isarco', 'Valletta', 'Valparaíso', 'Vancouver (Canada)', 'Vancouver (U.S.)', 'Varazze', 'Varese', 'Varna', 'Vaughan', 'Vejle', 'Venice (Italy)', 'Venice (U.S.)', 'Ventimiglia', 'Ventspils', 'Ventura', 'Verbania', 'Verbier', 'Vercelli', 'Vero Beach', 'Verona', 'Versailles', 'Vevey', 'Viareggio', 'Vibo Valentia', 'Viborg', 'Vicenza', 'Vichy', 'Victoria (Canada)', 'Victoria (Seychelles)', 'Victorville', 'Vienna', 'Vigo', 'Vilamoura', 'Villach', 'Villefranche-sur-Mer', 'Vilnius', 'Viña del Mar', 'Virginia Beach', 'Visalia', 'Viterbo', 'Vitoria-Gasteiz', 'Volos', 'Vrsar', 'Waco', 'Wakefield', 'Warsaw', 'Warth', 'Washington D.C.', 'Waterford', 'Watertown', 'Watsonville', 'Waukegan', 'Waukesha', 'Wellington (New Zealand)', 'Wellington (U.S.)', 'Wengen', 'Weno', 'West Lafayette', 'West Palm Beach', 'Westendorf', 'Westminster', 'Weston', 'Wheeling', 'White Plains', 'Whitehorse', 'Wichita', 'Wichita Falls', 'Wiesbaden', 'Wildwood', 'Wilkes-Barre', 'Willemstad', 'Williams', 'Wilmington (Delaware)', 'Wilmington (North Carolina)', 'Winchester', 'Windhoek', 'Windsor', 'Winnipeg', 'Winslow', 'Winston–Salem', 'Winterthur', 'Wolfsburg', 'Wollongong', 'Wolverhampton', 'Woodburn', 'Worcester (UK)', 'Worcester (U.S.)', 'Worthing', 'Wroclaw', 'Wuppertal', 'Würzburg', 'Yakima', 'Yamoussoukro', 'Yaoundé', 'Yaren', 'Yellowknife', 'Yerevan', 'Yokohama', 'Yonkers', 'York (UK)', 'York (U.S.)', 'Youngstown', 'Yuma', 'Zadar', 'Zagreb', 'Zakopane', 'Zanzibar', 'Zaragoza', 'Zell am See', 'Zell am Ziller', 'Zermatt', 'Zug', 'Zurich', 'Zwickau', 'Zwolle']
 
 async def get_cities(ctx: discord.AutocompleteContext):
@@ -677,11 +800,11 @@ async def get_airports_d(ctx: discord.AutocompleteContext):
     return [destination for destination in airports if destination.startswith(ctx.value.upper())]
 
 @va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
-@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A300"])
+@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A300", "A300F"])
 @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
 @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
 async def file(ctx, aircraft, origin, destination):
-  if ctx.author == 668874138160594985:
+  if os.path.exists(".onpc"):
     guild = bot.get_guild(965419296937365514)
     cfpilot = guild.get_role(1013933799777783849)
     if cfpilot in ctx.author.roles:
@@ -816,17 +939,18 @@ async def file(ctx, aircraft, origin, destination):
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG")
       if aircraft == "A300":
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
+      if aircraft == "A300F":
+        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png")
       await ctx.edit(content=None, embed=embed)
     else:
       embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
       await ctx.respond(embed=embed)
   else:
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=cfc)
-    await ctx.respond(embed=embed)
-
+      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
+      await ctx.respond(embed=embed)
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def flights(ctx, user: discord.Member = None):
-  if ctx.author == 668874138160594985:
+  if os.path.exists(".onpc"):
     guild = bot.get_guild(965419296937365514)
     cfpilot = guild.get_role(1013933799777783849)
     if cfpilot in ctx.author.roles:
@@ -881,12 +1005,13 @@ async def flights(ctx, user: discord.Member = None):
       embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
       await ctx.respond(embed=embed)
   else:
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
-    await ctx.respond(embed=embed)
+      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
+      await ctx.respond(embed=embed)
+
 
 @bot.user_command(name="User VA Flights")
 async def flights_app(ctx, user: discord.Member):
-    if ctx.author == 668874138160594985:
+  if os.path.exists(".onpc"):
       guild = bot.get_guild(965419296937365514)
       cfpilot = guild.get_role(1013933799777783849)
       if cfpilot in ctx.author.roles:
@@ -915,8 +1040,8 @@ async def flights_app(ctx, user: discord.Member):
       else:
           embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
           await ctx.respond(embed=embed)
-    else:
-      embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
+  else:
+      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
 
 @va.command(name="overview", description="Get an overview over all flights in the va.")
@@ -1079,9 +1204,9 @@ async def faq(ctx):
   await ctx.send(embed=emb,view=MyView4())
   await ctx.send(embed=embva,view=MyView5())
 
-##############################
-##no more commands down here##
-##############################
+###################################
+##Help cmd, Stats cmd and bot.run##
+###################################
 
 @utility.command(name="ping",description="Shows the latency speed of the bot.")
 async def ping(ctx):
@@ -1218,84 +1343,3 @@ async def help(ctx):
   await ctx.respond(embed=embed, view=HelpView())
 #############################################
 bot.run(os.getenv('TOKEN'))
-
-##level code lel##
-@bot.listen()
-async def on_message(message):
-  config = configparser.ConfigParser()
-  if message.channel.id == 966077223260004402:
-    return
-  else:
-    if message.author.bot == False:
-      if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
-          data = open(f"Leveling/users/{message.author.id}/data.ini", "a")
-          config.read(f"Leveling/users/{message.author.id}/data.ini")
-          belvlprog = config.get("Level", "lvlprog")
-          if len(message.content) > 0:
-            nowlvlprog = int(belvlprog)+1
-          if len(message.content) > 10:
-            nowlvlprog = int(belvlprog)+2
-          if len(message.content) > 25:
-            nowlvlprog = int(belvlprog)+5
-          if len(message.content) > 50:
-            nowlvlprog = int(belvlprog)+10
-          if len(message.content) > 75:
-            nowlvlprog = int(belvlprog)+15
-          lvlprog = config.get("Level", "lvlprog")
-          lvl = config.get("Level", "lvl")
-          topprog = config.get("Level", "topprog")
-          config.set("Level","lvlprog", f"{nowlvlprog}")
-          if int(lvlprog) >= int(topprog):
-              config.set("Level","lvlprog", "0")
-              config.set("Level","lvl", f"{int(lvl)+1}")
-              config.set("Level","topprog", f"{int(topprog)*2-(int(lvl)*3)}")
-              lvlp = config.get("Level", "lvl")
-              await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
-          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
-              config.write(configfile)
-      else:
-          os.mkdir(f"Leveling/users/{message.author.id}")
-          config.add_section("Level")
-          config.set("Level","lvlprog", "1")
-          config.set("Level","lvl", "0")
-          config.set("Level","topprog", "50")
-          with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
-              config.write(configfile)
-          lvlprog = config.get("Level", "lvlprog")
-          topprog = config.get("Level", "topprog")
-          lvl = config.get("Level", "lvl")
-    
-@bot.command(name="level", description="Gets the provided user's level.")
-async def level(ctx, member: discord.Member = None):
-  await ctx.respond("Loading level data.")
-  config = configparser.ConfigParser()
-  sleep(0.2)
-  await ctx.edit(content="Loading level data..")
-  if member == None:
-      sleep(0.2)
-      await ctx.edit(content="Loading level data...")
-      if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
-        config.read(f"Leveling/users/{ctx.author.id}/data.ini")
-        lvlprog = config.get("Level", "lvlprog")
-        lvl = config.get("Level", "lvl")
-        topprog = config.get("Level", "topprog")
-        embed = discord.Embed(title=f"Your current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
-        embed.set_thumbnail(url=ctx.author.avatar.url)
-        await ctx.edit(content=None, embed=embed)
-      else:
-        embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
-        await ctx.edit(content=None, embed=embed)
-  else:
-      sleep(0.2)
-      await ctx.edit(content="Loading level data...")
-      if os.path.exists(f"Leveling/users/{member.id}/data.ini"):
-        config.read(f"Leveling/users/{member.id}/data.ini")
-        lvlprog = config.get("Level", "lvlprog")
-        lvl = config.get("Level", "lvl")
-        topprog = config.get("Level", "topprog")
-        embed = discord.Embed(title=f"{member}'s current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
-        embed.set_thumbnail(url=member.avatar.url)
-        await ctx.edit(content=None, embed=embed)
-      else:
-        embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
-        await ctx.edit(content=None, embed=embed)
