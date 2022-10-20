@@ -36,6 +36,7 @@ bot = discord.Bot(command_prefix=',', intents=discord.Intents.all())
 fun = bot.create_group(name="fun",description="Commands that are supposed to be fun")
 va = bot.create_group(name="va",description="Commands related to the ClearFly Virtual Airline")
 admin = bot.create_group(name="admin", description="Commands for admins")
+leveling = bot.create_group(name="level", description="Commands related to leveling")
 utility = bot.create_group(name="utility", description="Commands related to utility")
 math = utility.create_subgroup(name="math", description="Commands related to math")
 
@@ -95,6 +96,7 @@ async def presence():
 @bot.listen()
 async def on_message(message):
   if os.path.exists(".onpc"):
+    nowlvlprog = 0
     config = configparser.ConfigParser()
     if message.channel.id == 966077223260004402:
       return
@@ -139,8 +141,8 @@ async def on_message(message):
             lvl = config.get("Level", "lvl")
   else: 
     return
-@bot.command(name="level", description="Gets the provided user's level.")
-async def level(ctx, member: discord.Member = None):
+@leveling.command(name="userlevel", description="Gets the provided user's level.")
+async def userlevel(ctx, member: discord.Member = None):
     await ctx.respond("Loading level data.")
     config = configparser.ConfigParser()
     sleep(0.2)
@@ -174,10 +176,9 @@ async def level(ctx, member: discord.Member = None):
           embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
           await ctx.edit(content=None, embed=embed)
 
-@bot.command(name="leaderboard", description="See the leaderboard of the whole server.")
+@leveling.command(name="leaderboard", description="See the leaderboard of the whole server.")
 async def lb(ctx):
   output = []
-  output2 =[]
   index = 1
   config = configparser.ConfigParser()
   for index, filename in enumerate(glob.glob('Leveling/users/*/*')):
@@ -189,10 +190,18 @@ async def lb(ctx):
         filen = filename.replace("Leveling/users/", f"")
         lbn = index+1
         id=os.path.dirname(filen)
-        idconv = bot.get_user(int(id))
-        line = f"Level:{lvl} Progress:{lvlprog}/{topprog} | {idconv}\n"
+        user = bot.get_user(int(id))
+        line = f"| Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
         output.append(line)
   output.sort(reverse=True)
+  def movestr(lst):
+    return [
+        f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+          output = movestr(output)
   foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
   embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
   Chat more to go higher on the list!
@@ -1044,10 +1053,33 @@ async def flights_app(ctx, user: discord.Member):
       embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
 
-@va.command(name="overview", description="Get an overview over all flights in the va.")
-async def overview(ctx):
-    embed=discord.Embed(title="Error 503!", description="Most ClearFly VA commands are disabled at the moment, read <#1013934267966967848> for more information.", color=errorc)
-    await ctx.respond(embed=embed)
+@va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
+async def valb(ctx):
+  output = []
+  for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/*')):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        nof = f"{int(len(f.readlines()))-1}"
+        filen = filename.replace("ClearFly_VA/users/", f"")
+        id=os.path.dirname(filen)
+        user = bot.get_user(int(id))
+        line = f"| Flights flown:{nof} {user.name}\n"
+        output.append(line)
+  output.sort(reverse=True)
+  def movestr(lst):
+    return [
+        f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+          output = movestr(output)
+  foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
+  embed = discord.Embed(title="ClearFly VA Leaderboard", description=f"""
+  ```
+{"".join(foutput)}
+  ```
+  """, color=cfc)
+  await ctx.respond(embed=embed)
 
 
 
@@ -1265,6 +1297,10 @@ class HelpView(discord.ui.View):
                 description="VA related commands"
             ),
             discord.SelectOption(
+              label="Leveling",
+              description="Commands related to leveling"
+            ),
+            discord.SelectOption(
               label="Admin",
               description="Commands for admins only"
             )
@@ -1312,8 +1348,18 @@ class HelpView(discord.ui.View):
 ```yaml
 /va file : File a flight you are gonna do for the ClearFly VA.
 /va flights : Fetches information about all flights a user has done.
-/va overview : Get an overview over all flights in the va.
+/va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
+```
+                          """, inline=False)
+      if select.values[0] == "Leveling":
+          embva = discord.Embed(title = "**Help**",color = cfc)
+          embva.add_field(
+              name="**Leveling Commands**",
+              value=f"""
+```yaml
+/level userlevel : Gets the provided user's level.
+/level leaderboard : See the leaderboard of the whole server.
 ```
                           """, inline=False)
           await interaction.response.edit_message(embed=embva)
