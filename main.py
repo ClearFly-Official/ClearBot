@@ -959,7 +959,6 @@ async def file(ctx, aircraft, origin, destination):
       await ctx.respond(embed=embed)
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def flights(ctx, user: discord.Member = None):
-  if os.path.exists(".onpc"):
     guild = bot.get_guild(965419296937365514)
     cfpilot = guild.get_role(1013933799777783849)
     if cfpilot in ctx.author.roles:
@@ -1012,9 +1011,6 @@ async def flights(ctx, user: discord.Member = None):
                 await ctx.edit(content=None, embed=embed)
     else:
       embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
-      await ctx.respond(embed=embed)
-  else:
-      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
 
 
