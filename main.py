@@ -4,6 +4,7 @@
 import glob
 import discord #Using pycord
 import os
+import re
 import platform
 import pyfiglet
 import requests
@@ -52,10 +53,18 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
     now = discord.utils.format_dt(datetime.now())
-    embed=discord.Embed(title="I started up!", description=f"""
-    Started bot up on {now}
-    """,color=0x00FF00)
-    await channel.send(embed=embed)
+    if os.path.exists(".onpc"):
+      embed=discord.Embed(title="I started up!", description=f"""
+      Started bot up on {now}
+      *running on Matt's pc(data save available)*
+      """,color=0x00FF00)
+      await channel.send(embed=embed)
+    else:
+      embed=discord.Embed(title="I started up!", description=f"""
+      Started bot up on {now}
+      *running on Heroku's servers(data save unavailable)*
+      """,color=0x00FF00)
+      await channel.send(embed=embed)
     bot.add_view(MyView())
     bot.add_view(MyView2())
     bot.add_view(MyView3())
@@ -103,7 +112,6 @@ async def on_message(message):
     else:
       if message.author.bot == False:
         if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
-            data = open(f"Leveling/users/{message.author.id}/data.ini", "a")
             config.read(f"Leveling/users/{message.author.id}/data.ini")
             belvlprog = config.get("Level", "lvlprog")
             if len(message.content) > 0:
@@ -191,9 +199,23 @@ async def lb(ctx):
         lbn = index+1
         id=os.path.dirname(filen)
         user = bot.get_user(int(id))
-        line = f"| Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
+        line = f"{lvlprog+topprog*lvl} | Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
         output.append(line)
-  output.sort(reverse=True)
+  def atoi(text):
+    return int(text) if text.isdigit() else text
+  def natural_keys(text):
+    return [ atoi(c) for c in re.split('(\d+)',text) ]
+  output.sort(key=natural_keys, reverse=True)
+  def delstr(lst):
+    return [
+        f"{' '.join(elem.split()[1:]).rstrip()}"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+        output = delstr(output)
+        print(output)
+
   def movestr(lst):
     return [
         f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
@@ -202,6 +224,8 @@ async def lb(ctx):
         
   if __name__ == "__main__":
           output = movestr(output)
+          print(output)
+
   foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
   embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
   Chat more to go higher on the list!
