@@ -149,7 +149,43 @@ async def on_message(message):
             lvl = config.get("Level", "lvl")
   else: 
     return
+
 @leveling.command(name="userlevel", description="Gets the provided user's level.")
+async def userlevel(ctx, member: discord.Member = None):
+    await ctx.respond("Loading level data.")
+    config = configparser.ConfigParser()
+    sleep(0.2)
+    await ctx.edit(content="Loading level data..")
+    if member == None:
+        sleep(0.2)
+        await ctx.edit(content="Loading level data...")
+        if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
+          config.read(f"Leveling/users/{ctx.author.id}/data.ini")
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          embed = discord.Embed(title=f"Your current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+          embed.set_thumbnail(url=ctx.author.avatar.url)
+          await ctx.edit(content=None, embed=embed)
+        else:
+          embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+          await ctx.edit(content=None, embed=embed)
+    else:
+        sleep(0.2)
+        await ctx.edit(content="Loading level data...")
+        if os.path.exists(f"Leveling/users/{member.id}/data.ini"):
+          config.read(f"Leveling/users/{member.id}/data.ini")
+          lvlprog = config.get("Level", "lvlprog")
+          lvl = config.get("Level", "lvl")
+          topprog = config.get("Level", "topprog")
+          embed = discord.Embed(title=f"{member}'s current level:", description=f"XP: `{lvlprog}`/`{topprog}`  Level:`{lvl}`", color=cfc)
+          embed.set_thumbnail(url=member.avatar.url)
+          await ctx.edit(content=None, embed=embed)
+        else:
+          embed = discord.Embed(title="Error 404!", description="This most probably means that this user never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+          await ctx.edit(content=None, embed=embed)
+
+@bot.user_command(name="User level", description="Gets the provided user's level.")
 async def userlevel(ctx, member: discord.Member = None):
     await ctx.respond("Loading level data.")
     config = configparser.ConfigParser()
@@ -1011,7 +1047,7 @@ async def flights(ctx, user: discord.Member = None):
             embed = discord.Embed(title="Error 404!", description=f"No flights we're found for you, make sure you have flights filed!", color=errorc)
             await ctx.edit(content=None, embed=embed)
       else:
-            await ctx.respond(f"Loading {user}'s Filed Flights.")
+            await ctx.respond(f"Loading {user}'s Filed flights.")
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights..")
             sleep(0.5)
@@ -1044,7 +1080,7 @@ async def flights_app(ctx, user: discord.Member):
       guild = bot.get_guild(965419296937365514)
       cfpilot = guild.get_role(1013933799777783849)
       if cfpilot in ctx.author.roles:
-          await ctx.respond(f"Loading {user}'s Filed Flights.")
+          await ctx.respond(f"Loading {user}'s Filed flights.")
           sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights..")
           sleep(0.5)
