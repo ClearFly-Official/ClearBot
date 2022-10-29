@@ -388,7 +388,7 @@ async def echo(ctx, text: str):
     await ctx.channel.send(text)
     pfp = ctx.author.avatar.url
     channel = bot.get_channel(1001405648828891187)
-    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = 0x4f93cf)
+    emb = discord.Embed(title=f"{ctx.author} used echo:", description=text, color = cfc)
     emb.set_thumbnail(url=pfp)
     await channel.send(embed=emb)
 
@@ -396,11 +396,11 @@ async def echo(ctx, text: str):
 @commands.has_permissions(manage_channels=True)
 async def embed(ctx, title: str, description: str):
     await ctx.respond('posted your embed!',ephemeral  = True)
-    emb = discord.Embed(title=title, description=description, color=0x4f93cf)
+    emb = discord.Embed(title=title, description=description, color=cfc)
     await ctx.channel.send(embed=emb)
     pfp = ctx.author.avatar.url
     channel2 = bot.get_channel(1001405648828891187)
-    embed = discord.Embed(title=f"{ctx.author} used embed:", color = 0x4f93cf)
+    embed = discord.Embed(title=f"{ctx.author} used embed:", color = cfc)
     embed.add_field(
         name="Title",
         value=f"""
@@ -1017,6 +1017,24 @@ async def file(ctx, aircraft, origin, destination):
   else:
       embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
+
+@va.command(name="cancel", description="Cancels and removes your last filed flight.")
+async def cancel(ctx):
+  with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
+
+    file.seek(0, os.SEEK_END)
+
+    pos = file.tell() - 1
+
+    while pos > 0 and file.read(1) != "\n":
+        pos -= 1
+        file.seek(pos, os.SEEK_SET)
+
+    if pos > 0:
+        file.seek(pos, os.SEEK_SET)
+        file.truncate()
+  embed = discord.Embed(title="Flight canceled!", color=cfc)
+  await ctx.respond(embed=embed)
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def flights(ctx, user: discord.Member = None):
     guild = bot.get_guild(965419296937365514)
@@ -1108,6 +1126,24 @@ async def flights_app(ctx, user: discord.Member):
   else:
       embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
+@va.command(name="stats", description="Show general statistics about the whole VA.")
+async def vastats(ctx):
+  output = 0
+  index = 0
+  for filename in glob.glob('ClearFly_VA/users/*/*'):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        lines = f.readlines()
+        output2.append(lines)
+        nof = int(len(f.readlines()))-1
+        print(output2)
+        index = index+1
+        filen = filename.replace("ClearFly_VA/users/", f"")
+        id=os.path.dirname(filen)
+        output = output+nof
+  embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
+  embed.add_field(name="Total Flights:", value=f"{output}")
+  embed.add_field(name="Most Common Aircraft:", value=f"N/A")
+  await ctx.respond(embed=embed)
 
 @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
 async def valb(ctx):
@@ -1298,7 +1334,7 @@ async def faq(ctx):
 
 @utility.command(name="ping",description="Shows the latency speed of the bot.")
 async def ping(ctx):
-    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}ms!", color=0x4f93cf)
+    emb = discord.Embed(title="Bot's latency", description=f"The bot's latency is {round(bot.latency*1000)}ms!", color=cfc)
     await ctx.respond(embed=emb)
 
 bot.launch_time = datetime.utcnow()
