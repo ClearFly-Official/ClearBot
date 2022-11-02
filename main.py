@@ -26,8 +26,8 @@ from discord import ButtonStyle, option
 
 load_dotenv()#for the token
 
-#cfc = 0x4f93cf <- this is the non halloween color
-cfc = 0xcc8d0e # <- halloween color
+cfc = 0x4f93cf #<- this is the non halloween color
+#cfc = 0xcc8d0e # <- halloween color
 errorc = 0xFF0000
 
 bot = discord.Bot(command_prefix=',', intents=discord.Intents.all())
