@@ -1,18 +1,31 @@
-lst = ['\n', 'CF21, B738, KBOS-KORD\n', 'CF5, B732, KIAD-KLGA\n', 'CF24, B732, KLGA-KPIT\n', 'CF19, A300F, KPHX-KLAX\n', 'CF19, B732, KIAD-KIND']
+import os, glob, re
 
-tst = ["YES O NO", "YES, O, NO", "YES O NO"]
-
-
+cmnac = []
+output = []
+index = 0
+cmndest = []
+for filename in glob.glob('ClearFly_VA/users/*/*'):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        lines = f.readlines()
+        cmndest = cmndest+lines
 def delstr2(lst):
-    return [
-        {' '.join(elem.split()[1:]).rstrip(), ' '.join(elem.split()[2:]).rstrip(-1)}
-        for elem in lst
-    ]
+      return [
+          f"{''.join(elem.split()[2:]).rstrip()}"
+          for elem in lst
+      ]
 
+if __name__ == "__main__":
+    cmndest = delstr2(cmndest)
+    for x in cmndest:
+      x = re.sub(r'.', '', x, count = 5)
+      output.append(x)
+    print(output)
 
+def most_frequent(List):
+            return max(set(List), key = List.count)
 
-
-print(lst)
-print("----------------------------------------------------------------")
-print(delstr2(lst))
-print("----------------------------------------------------------------")
+if __name__ == "__main__":
+    output = list(filter(None, output))
+    cmndest = most_frequent(output)
+    print(cmndest)
+    print("e")

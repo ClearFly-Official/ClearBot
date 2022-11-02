@@ -1128,21 +1128,60 @@ async def flights_app(ctx, user: discord.Member):
       await ctx.respond(embed=embed)
 @va.command(name="stats", description="Show general statistics about the whole VA.")
 async def vastats(ctx):
+  cmnac = []
   output = 0
+  cmndestoutput = []
   index = 0
+  cmndest = []
   for filename in glob.glob('ClearFly_VA/users/*/*'):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         lines = f.readlines()
-        output2.append(lines)
-        nof = int(len(f.readlines()))-1
-        print(output2)
+        cmnac = cmnac+lines
+        cmndest = cmndest+lines
+        nof = int(len(lines))
         index = index+1
-        filen = filename.replace("ClearFly_VA/users/", f"")
-        id=os.path.dirname(filen)
-        output = output+nof
+        output = output+nof-1
+  def delstr2(lst):
+      return [
+          f"{''.join(elem.split()[2:]).rstrip()}"
+          for elem in lst
+      ]
+
+  if __name__ == "__main__":
+    cmndest = delstr2(cmndest)
+    for x in cmndest:
+      x = re.sub(r'.', '', x, count = 5)
+      cmndestoutput.append(x)
+  def movestr(lst):
+          return [
+              f"{' '.join(elem.split()[2:]).rstrip()} {' '.join(elem.split()[:2])}\n"
+              for elem in lst
+          ]
+
+  def delstr(lst):
+            return [
+                f"{' '.join(elem.split()[1:]).rstrip()}"
+                for elem in lst
+            ]
+  if __name__ == "__main__":
+                  cmnac = movestr(cmnac)
+  if __name__ == "__main__":
+                  cmnac = delstr(cmnac)
+                  cmnac = delstr(cmnac)
+  def most_frequent(List):
+            return max(set(List), key = List.count)
+  def most_frequent(List):
+            return max(set(List), key = List.count)
+
+  if __name__ == "__main__":
+    cmndestoutput = list(filter(None, cmndestoutput))
+    cmndest = most_frequent(cmndestoutput)
+  cmnac = f"{most_frequent(cmnac)}".replace(",","")
   embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
   embed.add_field(name="Total Flights:", value=f"{output}")
-  embed.add_field(name="Most Common Aircraft:", value=f"N/A")
+  embed.add_field(name="Most Common Aircraft:", value=f"{cmnac}")
+  embed.add_field(name="Most Common Destination:", value=f"{cmndest}")
+  embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
   await ctx.respond(embed=embed)
 
 @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
@@ -1181,10 +1220,7 @@ class VALivs(discord.ui.View):
 
   @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
   async def button_callback(self, button, interaction):
-    ctx = discord.ApplicationContext
-    await interaction.response.send_message("Here you go! \n\nXP12: \nhttps://cdn.discordapp.com/attachments/965419865521393704/1017527654745919528/b738_4k_-_2022-09-08_22.07.57.png \n\nXP11:\nhttps://cdn.discordapp.com/attachments/965419865521393704/1016006462805389432/b738_-_2022-09-04_11.26.10.png \n https://cdn.discordapp.com/attachments/965419865521393704/1015948512984322059/b738_-_2022-09-04_13.35.41.png https://cdn.discordapp.com/attachments/965419865521393704/1015948511973494854/b738_-_2022-09-04_12.53.17.png https://cdn.discordapp.com/attachments/965419865521393704/1015948512250306581/b738_-_2022-09-04_13.35.20.png ", ephemeral=True)
-    await ctx.respond("https://cdn.discordapp.com/attachments/965655791468183612/1030879828242595860/A300_F_V2_-_2022-10-15_18.08.00.png", ephemeral=True)
-
+    await interaction.response.send_message("https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png\nhttps://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png", ephemeral=True)
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
   button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD")
@@ -1197,7 +1233,6 @@ async def valivs(ctx):
   view.add_item(button3)
   view.add_item(button4)
   embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
-  embed.set_image(url="https://cdn.discordapp.com/attachments/801910364831744071/1031268854795604008/VALivsOverview.png")
   await ctx.respond(embed=embed, view=view)
 
 
