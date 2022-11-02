@@ -56,13 +56,13 @@ async def on_ready():
     if os.path.exists(".onpc"):
       embed=discord.Embed(title="I started up!", description=f"""
       Started bot up on {now}
-      *running on Matt's pc(data save available)*
+      *Data save available*
       """,color=0x00FF00)
       await channel.send(embed=embed)
     else:
       embed=discord.Embed(title="I started up!", description=f"""
       Started bot up on {now}
-      *running on Heroku's servers(data save unavailable)*
+      *Data save available*
       """,color=0x00FF00)
       await channel.send(embed=embed)
     bot.add_view(MyView())
@@ -928,57 +928,65 @@ async def file(ctx, aircraft, origin, destination):
           cf1 = 23
       if ori == 1:
         if origin == "KDCA":
-          cf2 = 1
+          cf2 = 23
         if origin == "KIAD":
-          cf2 = 2
+          cf2 = 22
         if origin == "KLGA":
-          cf2 = 3
+          cf2 = 21
         if origin == "KMSP":
-          cf2 = 4
+          cf2 = 20
         if origin == "KORD":
-          cf2 = 5
+          cf2 = 19
         if origin == "KMDW":
-          cf2 = 6
+          cf2 = 18
         if origin == "KMKE":
-          cf2 = 7
+          cf2 = 17
         if origin == "KSFO":
-          cf2 = 8
+          cf2 = 16
         if origin == "KLAX":
-          cf2 = 9
+          cf2 = 15
         if origin == "KPHX":
-          cf2 = 10
+          cf2 = 14
         if origin == "KSEA":
-          cf2 = 11
+          cf2 = 13
         if origin == "KPDX":
           cf2 = 12
         if origin == "KRIC":
-          cf2 = 13
+          cf2 = 11
         if origin == "KMIA":
-          cf2 = 14
+          cf2 = 10
         if origin == "KSTL":
-          cf2 = 15
+          cf2 = 9
         if origin == "KBOS":
-          cf2 = 16
+          cf2 = 8
         if origin == "KIND":
-          cf2 = 17
+          cf2 = 7
         if origin == "KIAH":
-          cf2 = 18
+          cf2 = 6
         if origin == "KAUS":
-          cf2 = 19
+          cf2 = 5
         if origin == "KDFW":
-          cf2 = 20
+          cf2 = 4
         if origin == "KPIT":
-          cf2 = 21
+          cf2 = 3
         if origin == "KSAN":
-          cf2 = 22
+          cf2 = 2
         if origin == "KATL":
-          cf2 = 22
+          cf2 = 1
+      if aircraft == "B732":
+        cf3 = 1
+      if aircraft == "B738":
+        cf3 = 2
+      if aircraft == "A300":
+        cf3 = 3
+      if aircraft == "A300F":
+        cf3 = 4
       user = ctx.author
       await ctx.respond("Filing flight.")
       sleep(0.1)
       await ctx.edit(content="Filing flight..")
       embed = discord.Embed(title="Flight Filed!", color=cfc)
-      flightnumber = cf1+cf2
+      flightnumber = f"{int(cf1+cf2)}"+str(cf3)
       embed.add_field(name="Your flight has been filed with the following data:", value=f"""
       ```
       Aircraft:{aircraft}
