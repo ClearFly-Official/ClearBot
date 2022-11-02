@@ -109,6 +109,8 @@ async def on_message(message):
     config = configparser.ConfigParser()
     if message.channel.id == 966077223260004402:
       return
+    if message.channel.id == 965600413376200726:
+      return
     else:
       if message.author.bot == False:
         if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
@@ -250,7 +252,6 @@ async def lb(ctx):
         
   if __name__ == "__main__":
         output = delstr(output)
-        print(output)
 
   def movestr(lst):
     return [
