@@ -516,7 +516,7 @@ async def whois_app(ctx, user:discord.Member):
 
 @utility.command(name="github", description="Shows the bot's GitHub repository.")
 async def github(ctx):
-  emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/duvbolone/ClearBot)",color=cfc)
+  emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/ClearFly-Official/ClearBot)",color=cfc)
   await ctx.respond(embed=emb)
 
 @fun.command(name="8ball", description="Ask the bot some questions!")
