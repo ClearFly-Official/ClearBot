@@ -7,3 +7,7 @@ city.txt
 city.py
 .onpc
 test.py
+test.ipynb
+.gitignore
+development.py
+test.md

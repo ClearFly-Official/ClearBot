@@ -40,6 +40,8 @@ admin = bot.create_group(name="admin", description="Commands for admins")
 leveling = bot.create_group(name="level", description="Commands related to leveling")
 utility = bot.create_group(name="utility", description="Commands related to utility")
 math = utility.create_subgroup(name="math", description="Commands related to math")
+instructor = va.create_subgroup(name="instructor", description="Commands for the ClearFly Instructors")
+
 
 ###############
 ## Listeners ##
@@ -868,120 +870,600 @@ async def get_airports_o(ctx: discord.AutocompleteContext):
 
 async def get_airports_d(ctx: discord.AutocompleteContext):
     return [destination for destination in airports if destination.startswith(ctx.value.upper())]
+class InfoB4training(discord.ui.View):
+  def __init__(self):
+    super().__init__(timeout=None)
 
+  @discord.ui.button(label="Continue to flight training", style=discord.ButtonStyle.green, custom_id="vastudent")
+  async def first_button_callback(self, button, interaction):
+    author = interaction.user
+    guild = bot.get_guild(983272986058559508)
+    role = guild.get_role(1038008354661994557)
+    if role in author.roles:
+      author = interaction.user
+      guild = bot.get_guild(983272986058559508)
+      role = guild.get_role(1038008354661994557)
+      await author.remove_roles(role)
+      await interaction.response.send_message("You are ready to go training!",ephemeral=True)
+    else:
+      author = interaction.user
+      guild = bot.get_guild(983272986058559508)
+      role = guild.get_role(1038008354661994557)
+      await author.add_roles(role)
+      await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
+    channel = bot.get_channel(1039987003044929598)
+    await channel.send(f"{interaction.user.mention} continue here, run </va training:1038015187011260436> and input your desired destination and origin.")
+@va.command(name="roles", description="roles")
+async def varoles(ctx):
+  embed = discord.Embed(title="The ClearFly VA", description="""
+  **How to fly for the VA**
+
+-Click the button below
+
+======**GENERAL TRAINING**======
+
+{-Run the command </va training:1038015187011260436>
+{-Enter your desired origin and destination
+{-Wait for an instructor to approve and assign you required information
+{-Do the flight witht the C172(steam gauges)
+{-Share screenshots of the flight, in one of those screenshots there should be the G430 with the flightplan __clearly visible__
+⌞______**2X**______⌟
+-------------------------------------------------------------------
+{-Run the command </va training:1038015187011260436> again
+{-Enter your desired origin and destination
+{-Wait for an instructor to approve and assign you required information
+{-Do the flight witht the C172(G1000)
+{-Share screenshots of the flight, let us see that you can use the autopilot
+⌞______**2X**______⌟
+-------------------------------------------------------------------
+-An instructor will check you off, so you're ready to go to the next phase, type rating!
+
+======**TYPE RATING**======
+
+-Run the command </va training:1038015187011260436>
+-Choose the aircraft you want in the dropdown menu
+{-Run the command </va training:1038015187011260436> again
+{-Enter your desired origin and destination
+{-Wait for an instructor to approve and assign you required information
+{-Share screenshots of the flight were we can see that you are able to use the plane(this includes autopilot except if you're fitted without any navigation system on the B732)
+⌞______**2X**______⌟
+-An instructor will check you off once again for the final time, you can then fly as much as you want for the VA!""", color=cfc)
+  await ctx.send(embed=embed, view=InfoB4training
+())
+  await ctx.respond("however, your mom", ephemeral=True)
+
+class TypeView(discord.ui.View):
+    @discord.ui.select( 
+        placeholder = "Aircraft type", 
+        min_values = 1, 
+        max_values = 1, 
+        options = [ 
+            discord.SelectOption(
+                label="Boeing 737-200",
+                description="By FlyJSim"
+            ),
+            discord.SelectOption(
+                label="Boeing 737-800",
+                description="By Zibo"
+            ),
+            discord.SelectOption(
+                label="Airbus A300-600",
+                description="By iniSimulations"
+            ),
+            discord.SelectOption(
+                label="Airbus A300-600F",
+                description="By iniSimulations"
+            )
+        ]
+    )
+    async def select_callback(self, select, interaction):
+      config = configparser.ConfigParser()
+
+      if select.values[0] == "Boeing 737-200":
+        embed = discord.Embed(title="You have selected the Boeing 737-200 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        await interaction.response.send_message(embed=embed)
+        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.set("Student","typed", "1")
+        config.set("Student","type", "B732")
+        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+      
+      if select.values[0] == "Boeing 737-800":
+        embed = discord.Embed(title="You have selected the Boeing 737-800 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        await interaction.response.send_message(embed=embed)
+        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.set("Student","typed", "1")
+        config.set("Student","type", "B738")
+        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+      
+      if select.values[0] == "Airbus A300-600":
+        embed = discord.Embed(title="You have selected the Airbus A300-600 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        await interaction.response.send_message(embed=embed)
+        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.set("Student","typed", "1")
+        config.set("Student","hasAccess", "0")
+        config.set("Student","type", "A306")
+        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+      
+      if select.values[0] == "Airbus A300-600F":
+        embed = discord.Embed(title="You have selected the Airbus A300-600F as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        await interaction.response.send_message(embed=embed)
+        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.set("Student","typed", "1")
+        config.set("Student","type", "A306F")
+        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+@va.command(name="training", description="Start your career in the ClearFly VA!")
+@option("origin", description="The airport(ICAO) you will fly from.")
+@option("destination", description="The airport(ICAO) you will fly to.")
+async def vatrain(ctx, origin, destination):
+  origin = origin.upper()
+  destination = destination.upper()
+  user = ctx.author
+  config = configparser.ConfigParser()
+  guild = bot.get_guild(983272986058559508)
+  role = guild.get_role(1038008354661994557)
+  if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
+    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+    if config.get("Student", "hasAccess") == "1":
+      if config.get("Student", "typed") == "0":
+        embed = discord.Embed(title="Choose the aircraf you want to fly!", description="In order to fly for the VA you will need to get a type rating too, to do this select the aircraft you want below and you will be prompted to give origin and a destination. An instructor will approve your flight(just like in your general training), you will need to do 2 flights and then an instructor will check you off once again and then you're good to go to do as many flights for the VA as you want!", color=cfc)
+        await ctx.respond(embed=embed,view=TypeView())
+      else:
+        if config.get("Student", "ready") == "1":
+          await ctx.respond("Filing flight.")
+          actype = config.get("Student", "type")
+          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+          await ctx.edit(content="Filing flight..")
+          embed.add_field(name="Flight information:", value=f"""
+```
+Departure:{origin}
+Arrival:{destination}
+```
+Have a nice and safe flight!
+                    """)
+          await ctx.edit(content="Filing flight...")
+          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+              f = open(f"ClearFly_VAT/users/{user.id}/type.txt","a")
+              f.write(f"\nType Training {actype} {origin}-{destination}")
+              f.close()
+          else:
+              os.mkdir(f"ClearFly_VAT/users/{user.id}")
+              f = open(f"ClearFly_VAT/users/{user.id}/type.txt","a")
+              f.write(f"\nType Training {actype} {origin}-{destination}")
+              f.close()
+          await ctx.edit(content="Uploading to database.")
+          await ctx.edit(content="Uploading to database..")
+          config.set("Student", "ready", "0")
+          await ctx.edit(content="Uploading to database...")
+          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          await ctx.edit(content=None, embed=embed)
+          await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their flight, give them the required info!")
+        else:
+          await ctx.respond("Wait for an instructor to approve your current flight and after you have done that one you can do another one.")
+          return
+    else:
+      if role in ctx.author.roles:
+          icaoprefix = ["K", "E", "L", "P", "T"]
+          origin.capitalize()
+          destination.capitalize()
+          if not len(origin) == 4:
+            await ctx.respond("That doesn't seem to be a valid ICAO")
+            return
+          if not len(destination) == 4:
+            await ctx.respond("That doesn't seem to be a valid ICAO")
+            return
+          if origin.startswith(tuple(icaoprefix)) == False:
+            await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
+            return
+          if origin.startswith(tuple(icaoprefix)) == False:
+            await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
+            return
+          await ctx.respond("Filing flight.")
+          if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
+              config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+              with open(f"ClearFly_VAT/users/{user.id}/student.txt", "r") as f:
+                lines = len(f.readlines())
+              if lines == 5:
+                await ctx.edit(content="You have flown 4 times already, wait to get checked off!")
+                return
+              if config.get("Student", "ready") == "0":
+                await ctx.edit(content="Wait for an instructor to approve your current flight and after you have done that one you can do another one.")
+                return
+              else:
+                phase = config.get("Student","phase")
+                config.set("Student","ready", "0")
+                with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+                  config.write(configfile)
+          else:
+            os.mkdir(f"ClearFly_VAT/users/{user.id}")
+            config.add_section("Student")
+            config.set("Student","phase", "1")
+            config.set("Student","ready", "0")
+            config.set("Student","hasAccess", "0")
+            config.set("Student","typed", "0")
+            config.set("Student","end", "0")
+            phase = "1"
+            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          sleep(0.1)
+          if phase == "1":
+            phasetxt = "Your first flight has been filed, welcome!"
+            phasen = "first"
+            paneltype = "Steam Gauges"
+            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.set("Student","phase", "2")
+            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          if phase == "2":
+            phasetxt = "Your second flight has been filed"
+            phasen = "second"
+            paneltype = "Steam Gauges"
+            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.set("Student","phase", "3")
+            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          if phase == "3":
+            phasetxt = "Your third flight has been filed"
+            phasen = "third"
+            paneltype = "G1000"
+            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.set("Student","phase", "4")
+            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          if phase == "4":
+            phasetxt = "Your last training flight has been filed"
+            phasen = "fourth"
+            paneltype = "G1000"
+            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+          await ctx.edit(content="Filing flight..")
+          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+          embed.add_field(name=phasetxt, value=f"""
+```
+Departure:{origin}
+Arrival:{destination}
+```
+Have a nice and safe flight!
+                    """)
+          await ctx.edit(content="Filing flight...")
+          await ctx.edit(content="Filing flight.")
+          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+              f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+              f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
+              f.close()
+          else:
+              os.mkdir(f"ClearFly_VAT/users/{user.id}")
+              f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+              f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
+              f.close()
+          await ctx.edit(content="Uploading to database.")
+          await ctx.edit(content="Uploading to database..")
+          await ctx.edit(content="Uploading to database...")
+          await ctx.edit(content=None, embed=embed)
+          await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their {phasen} flight, give them the required info!")
+      else:
+        embed = discord.Embed(title="Error 403!", description="You do not have the CF student role. \nGet it in {channel here} before using this command!", color=errorc)
+        await ctx.respond(embed=embed)
+
+  else:
+    if role in ctx.author.roles:
+      icaoprefix = ["K", "E", "L", "P", "T"]
+      origin.capitalize()
+      destination.capitalize()
+      if not len(origin) == 4:
+        await ctx.respond("That doesn't seem to be a valid ICAO")
+        return
+      if not len(destination) == 4:
+        await ctx.respond("That doesn't seem to be a valid ICAO")
+        return
+      if origin.startswith(tuple(icaoprefix)) == False:
+        await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
+        return
+      if origin.startswith(tuple(icaoprefix)) == False:
+        await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
+        return
+      await ctx.respond("Filing flight.")
+      if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
+        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        if config.get("Student", "ready") == "0":
+          await ctx.edit(content="Wait for an instructor to approve your current flight and after you have done that one you can do another one.")
+          return
+        else:
+          phase = config.get("Student","phase")
+          config.set("Student","ready", "0")
+          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+      else:
+        os.mkdir(f"ClearFly_VAT/users/{user.id}")
+        config.add_section("Student")
+        config.set("Student","phase", "1")
+        config.set("Student","ready", "0")
+        config.set("Student","hasAccess", "0")
+        config.set("Student","typed", "0")
+        config.set("Student","end", "0")
+        phase = "1"
+        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          config.write(configfile)
+      sleep(0.1)
+      if phase == "1":
+        phasetxt = "Your first flight has been filed, welcome!"
+        phasen = "first"
+        paneltype = "Steam Gauges"
+        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.set("Student","phase", "2")
+        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          config.write(configfile)
+      if phase == "2":
+        phasetxt = "Your second flight has been filed"
+        phasen = "second"
+        paneltype = "Steam Gauges"
+        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.set("Student","phase", "3")
+        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          config.write(configfile)
+      if phase == "3":
+        phasetxt = "Your third flight has been filed"
+        phasen = "third"
+        paneltype = "G1000"
+        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.set("Student","phase", "4")
+        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          config.write(configfile)
+      if phase == "4":
+        phasetxt = "Your last training flight has been filed"
+        phasen = "last"
+        paneltype = "G1000"
+        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          config.write(configfile)
+      await ctx.edit(content="Filing flight..")
+      embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+      embed.add_field(name=phasetxt, value=f"""
+      ```
+      Departure:{origin}
+      Arrival:{destination}
+      ```
+      Have a nice and safe flight!
+                """)
+      await ctx.edit(content="Filing flight...")
+      await ctx.edit(content="Filing flight.")
+      if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+          f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+          f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
+          f.close()
+      else:
+          os.mkdir(f"ClearFly_VAT/users/{user.id}")
+          f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+          f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
+          f.close()
+      await ctx.edit(content="Uploading to database.")
+      await ctx.edit(content="Uploading to database..")
+      await ctx.edit(content="Uploading to database...")
+      await ctx.edit(content=None, embed=embed)
+      await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their {phasen} flight, give them the required info!")
+    else:
+      embed = discord.Embed(title="Error 403!", description="You do not have the CF student role. \nGet it in {channel here} before using this command!", color=errorc)
+      await ctx.respond(embed=embed)
+
+@instructor.command(name="approve", description="Approve a student's flight and give the required info to them.")
+@option("comments", required=False)
+async def vaapprove(ctx, user: discord.Member, route, crzalt, comments):
+  guild = bot.get_guild(983272986058559508)
+  role = guild.get_role(1039987756958490737)
+  if role in user.roles:
+    config = configparser.ConfigParser()
+    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+    if config.get("Student", "typed") == "1":
+      with open(f'ClearFly_VAT/users/{user.id}/type.txt', 'a') as f:
+        f.write(f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}")
+      config.set("Student","ready", "1")
+      with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+    else:
+      with open(f'ClearFly_VAT/users/{user.id}/student.txt', 'a') as f:
+        f.write(f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}")
+      config.set("Student","ready", "1")
+      with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+              config.write(configfile)
+    embed = discord.Embed(title="Flight Approved!", description=f"{user.mention}'s flight has been approved and they can take off now.", color=cfc)
+    embed.add_field(name="Approved with following data:", value=f"""
+  ```
+  Route : {route.upper()}
+  Cruise Altidude : FL{crzalt}
+  Comments : {comments}
+  ```
+    """)
+    await ctx.respond(embed=embed)
+  else:
+    embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
+    await ctx.respond(embed=embed)
+
+@instructor.command(name="check-off", description="Check off a user to end their training")
+async def vacheckoff(ctx, user: discord.Member):
+  guild = bot.get_guild(983272986058559508)
+  role = guild.get_role(1039987756958490737)
+  if role in user.roles:
+    config = configparser.ConfigParser()
+    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+    guild = bot.get_guild(983272986058559508)
+    role = guild.get_role(1038008354661994557)
+    role2 = guild.get_role(1038008404855230505)
+    channel = bot.get_channel(1040382700428722186)
+    if config.get("Student", "typed") == "0":
+      with open(f"ClearFly_VAT/users/{user.id}/student.txt", "r") as f:
+        lines = len(f.readlines())
+      if lines == 5:
+        if config.get("Student", "hasAccess") == "0":
+          await user.remove_roles(role)
+          await user.add_roles(role2)
+          config.set("Student","hasAccess","1")
+          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+                config.write(configfile)
+          embed = discord.Embed(title=f"{user} has been checked off.", color=cfc)
+          await ctx.respond(embed=embed, ephemeral=True)
+          embed = discord.Embed(title=f"{user} has finished training!", description=f"Congratulations {user.mention}!\n Now you can do your type rating training and then fly as much as you want for the VA.", colour=cfc, timestamp=datetime.now())
+          embed.add_field(name="_ _", value=f"Checked off by {ctx.author.mention}")
+          await channel.send(f"{user.mention}",embed=embed)
+        else:
+          embed = discord.Embed(title="The user has been checked off already.", color=errorc)
+          await ctx.respond(embed=embed, ephemeral=True)
+      else:
+        embed = discord.Embed(title="The user hasn't completed enough flights.", color=errorc)
+        await ctx.respond(embed=embed, ephemeral=True)
+    else:
+      with open(f"ClearFly_VAT/users/{user.id}/type.txt", "r") as f:
+        lines = len(f.readlines())
+      if lines == 3:
+        if config.get("Student", "end") == "0":
+          config.set("Student", "end", "1")
+          await user.remove_roles(role)
+          await user.add_roles(role2)
+          if config.get("Student", "type") == "B732":
+            role3 = guild.get_role(1040792958385008750)
+          if config.get("Student", "type") == "B738":
+            role3 = guild.get_role(1040792996918071416)
+          if config.get("Student", "type") == "A306":
+            role3 = guild.get_role(1040793039997771926)
+          if config.get("Student", "type") == "A306F":
+            role3 = guild.get_role(1040793076043616257)
+          await user.add_roles(role3)
+          config.set("Student","hasAccess","1")
+          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+                config.write(configfile)
+          embed = discord.Embed(title=f"{user} has been checked off.", color=cfc)
+          await ctx.respond(embed=embed, ephemeral=True)
+          embed = discord.Embed(title=f"{user} has fully finished training!", description=f"Congratulations {user.mention}!\n Now you can fly as much as you want for the VA!", colour=cfc, timestamp=datetime.now())
+          embed.add_field(name="_ _", value=f"Checked off by {ctx.author.mention}")
+          await channel.send(f"{user.mention}",embed=embed)
+        else:
+          embed = discord.Embed(title="The user has been checked off already.", color=errorc)
+          await ctx.respond(embed=embed, ephemeral=True)
+      else:
+        embed = discord.Embed(title="The user hasn't completed enough flights.", color=errorc)
+        await ctx.respond(embed=embed, ephemeral=True)
+  else:
+    embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
+    await ctx.respond(embed=embed)
 @va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
-@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A300", "A300F"])
+@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A306", "A306F"])
 @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
 @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
 async def file(ctx, aircraft, origin, destination):
-  if os.path.exists(".onpc"):
-    guild = bot.get_guild(965419296937365514)
-    cfpilot = guild.get_role(1013933799777783849)
-    if cfpilot in ctx.author.roles:
+  config = configparser.ConfigParser()
+  if os.path.exists(f"ClearFly_VAT/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VAT/users/{ctx.author.id}/student.ini")
+    if config.get("Student", "end") == "1":
       dest = 1
       ori = 1
       if dest == 1:
-        if destination == "KDCA":
-          cf1 = 1
-        if destination == "KIAD":
-          cf1 = 2
-        if destination == "KLGA":
-          cf1 = 3
-        if destination == "KMSP":
-          cf1 = 4
-        if destination == "KORD":
-          cf1 = 5
-        if destination == "KMDW":
-          cf1 = 6
-        if destination == "KMKE":
-          cf1 = 7
-        if destination == "KSFO":
-          cf1 = 8
-        if destination == "KLAX":
-          cf1 = 9
-        if destination == "KPHX":
-          cf1 = 10
-        if destination == "KSEA":
-          cf1 = 11
-        if destination == "KPDX":
-          cf1 = 12
-        if destination == "KRIC":
-          cf1 = 13
-        if destination == "KMIA":
-          cf1 = 14
-        if destination == "KSTL":
-          cf1 = 15
-        if destination == "KBOS":
-          cf1 = 16
-        if destination == "KIND":
-          cf1 = 17
-        if destination == "KIAH":
-          cf1 = 18
-        if destination == "KAUS":
-          cf1 = 19
-        if destination == "KDFW":
-          cf1 = 20
-        if destination == "KPIT":
-          cf1 = 21
-        if destination == "KATL":
-          cf1 = 22
-        if destination == "KSAN":
-          cf1 = 23
+          if destination == "KDCA":
+            cf1 = 1
+          if destination == "KIAD":
+            cf1 = 2
+          if destination == "KLGA":
+            cf1 = 3
+          if destination == "KMSP":
+            cf1 = 4
+          if destination == "KORD":
+            cf1 = 5
+          if destination == "KMDW":
+            cf1 = 6
+          if destination == "KMKE":
+            cf1 = 7
+          if destination == "KSFO":
+            cf1 = 8
+          if destination == "KLAX":
+            cf1 = 9
+          if destination == "KPHX":
+            cf1 = 10
+          if destination == "KSEA":
+            cf1 = 11
+          if destination == "KPDX":
+            cf1 = 12
+          if destination == "KRIC":
+            cf1 = 13
+          if destination == "KMIA":
+            cf1 = 14
+          if destination == "KSTL":
+            cf1 = 15
+          if destination == "KBOS":
+            cf1 = 16
+          if destination == "KIND":
+            cf1 = 17
+          if destination == "KIAH":
+            cf1 = 18
+          if destination == "KAUS":
+            cf1 = 19
+          if destination == "KDFW":
+            cf1 = 20
+          if destination == "KPIT":
+            cf1 = 21
+          if destination == "KATL":
+            cf1 = 22
+          if destination == "KSAN":
+            cf1 = 23
       if ori == 1:
-        if origin == "KDCA":
-          cf2 = 23
-        if origin == "KIAD":
-          cf2 = 22
-        if origin == "KLGA":
-          cf2 = 21
-        if origin == "KMSP":
-          cf2 = 20
-        if origin == "KORD":
-          cf2 = 19
-        if origin == "KMDW":
-          cf2 = 18
-        if origin == "KMKE":
-          cf2 = 17
-        if origin == "KSFO":
-          cf2 = 16
-        if origin == "KLAX":
-          cf2 = 15
-        if origin == "KPHX":
-          cf2 = 14
-        if origin == "KSEA":
-          cf2 = 13
-        if origin == "KPDX":
-          cf2 = 12
-        if origin == "KRIC":
-          cf2 = 11
-        if origin == "KMIA":
-          cf2 = 10
-        if origin == "KSTL":
-          cf2 = 9
-        if origin == "KBOS":
-          cf2 = 8
-        if origin == "KIND":
-          cf2 = 7
-        if origin == "KIAH":
-          cf2 = 6
-        if origin == "KAUS":
-          cf2 = 5
-        if origin == "KDFW":
-          cf2 = 4
-        if origin == "KPIT":
-          cf2 = 3
-        if origin == "KSAN":
-          cf2 = 2
-        if origin == "KATL":
-          cf2 = 1
+          if origin == "KDCA":
+            cf2 = 23
+          if origin == "KIAD":
+            cf2 = 22
+          if origin == "KLGA":
+            cf2 = 21
+          if origin == "KMSP":
+            cf2 = 20
+          if origin == "KORD":
+            cf2 = 19
+          if origin == "KMDW":
+            cf2 = 18
+          if origin == "KMKE":
+            cf2 = 17
+          if origin == "KSFO":
+            cf2 = 16
+          if origin == "KLAX":
+            cf2 = 15
+          if origin == "KPHX":
+            cf2 = 14
+          if origin == "KSEA":
+            cf2 = 13
+          if origin == "KPDX":
+            cf2 = 12
+          if origin == "KRIC":
+            cf2 = 11
+          if origin == "KMIA":
+            cf2 = 10
+          if origin == "KSTL":
+            cf2 = 9
+          if origin == "KBOS":
+            cf2 = 8
+          if origin == "KIND":
+            cf2 = 7
+          if origin == "KIAH":
+            cf2 = 6
+          if origin == "KAUS":
+            cf2 = 5
+          if origin == "KDFW":
+            cf2 = 4
+          if origin == "KPIT":
+            cf2 = 3
+          if origin == "KSAN":
+            cf2 = 2
+          if origin == "KATL":
+            cf2 = 1
       if aircraft == "B732":
         cf3 = 1
       if aircraft == "B738":
         cf3 = 2
-      if aircraft == "A300":
+      if aircraft == "A306":
         cf3 = 3
-      if aircraft == "A300F":
+      if aircraft == "A306F":
         cf3 = 4
+      if not aircraft == config.get("Student", "type"):
+          embed=discord.Embed(title="Error 503!", description="You need to have a type rating of this aircraft if you want to fly it!", color=errorc)
+          await ctx.respond(embed=embed)
+          return
       user = ctx.author
       await ctx.respond("Filing flight.")
       sleep(0.1)
@@ -989,76 +1471,83 @@ async def file(ctx, aircraft, origin, destination):
       embed = discord.Embed(title="Flight Filed!", color=cfc)
       flightnumber = f"{int(cf1+cf2)}"+str(cf3)
       embed.add_field(name="Your flight has been filed with the following data:", value=f"""
-      ```
-      Aircraft:{aircraft}
-      Departure:{origin}
-      Arrival:{destination}
-      Flight Number: CF{flightnumber}
-      ```
-      Have a nice and safe flight!
-                """)
+```
+Aircraft:{aircraft}
+Departure:{origin}
+Arrival:{destination}
+Flight Number: CF{flightnumber}
+```
+Have a nice and safe flight!
+                  """)
       await ctx.edit(content="Filing flight...")
       await ctx.edit(content="Filing flight.")
-      if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-          f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
-          f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
-          f.close()
+      if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+            f = open(f"ClearFly_VAT/users/{user.id}/data.txt","a")
+            f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
+            f.close()
       else:
-          os.mkdir(f"ClearFly_VA/users/{user.id}")
-          f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
-          f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
-          f.close()
+            os.mkdir(f"ClearFly_VAT/users/{user.id}")
+            f = open(f"ClearFly_VAT/users/{user.id}/data.txt","a")
+            f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
+            f.close()
       await ctx.edit(content="Uploading to database.")
       await ctx.edit(content="Uploading to database..")
       await ctx.edit(content="Uploading to database...")
       if aircraft == "B732":
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png")
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060095902330952/1038065978019430430/FJS_732_TwinJet_icon11_thumb.png")
       if aircraft == "B738":
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG")
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060053896364063/1038065018983432242/b738_4k_icon11_thumb.png")
       if aircraft == "A300":
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
       if aircraft == "A300F":
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png")
+          embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038063084733997178/1038065483234164837/A300_F_V2_icon11_thumb.png")
       await ctx.edit(content=None, embed=embed)
     else:
-      embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
-      await ctx.respond(embed=embed)
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
   else:
-      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
-      await ctx.respond(embed=embed)
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
 
 @va.command(name="cancel", description="Cancels and removes your last filed flight.")
 async def cancel(ctx):
-  with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
+  config = configparser.ConfigParser()
+  if os.path.exists(f"ClearFly_VAT/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VAT/users/{ctx.author.id}/student.ini")
+    if config.get("Student", "end") == "1":
+      with open(f"ClearFly_VAT/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
 
-    file.seek(0, os.SEEK_END)
+        file.seek(0, os.SEEK_END)
 
-    pos = file.tell() - 1
+        pos = file.tell() - 1
 
-    while pos > 0 and file.read(1) != "\n":
-        pos -= 1
-        file.seek(pos, os.SEEK_SET)
+        while pos > 0 and file.read(1) != "\n":
+            pos -= 1
+            file.seek(pos, os.SEEK_SET)
 
-    if pos > 0:
-        file.seek(pos, os.SEEK_SET)
-        file.truncate()
-  embed = discord.Embed(title="Flight canceled!", color=cfc)
-  await ctx.respond(embed=embed)
+        if pos > 0:
+            file.seek(pos, os.SEEK_SET)
+            file.truncate()
+      embed = discord.Embed(title="Flight canceled!", color=cfc)
+      await ctx.respond(embed=embed)
+    else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
+  else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 async def flights(ctx, user: discord.Member = None):
-    guild = bot.get_guild(965419296937365514)
-    cfpilot = guild.get_role(1013933799777783849)
-    if cfpilot in ctx.author.roles:
-      if user == None:
+    if user == None:
         author = ctx.author.id
         await ctx.respond(f"loading your filed flights.")
         sleep(0.5)
         await ctx.edit(content=f"loading your filed flights..")
         sleep(0.5)
         await ctx.edit(content=f"loading your filed flights...")
-        if os.path.exists(f"ClearFly_VA/users/{author}"):
-            f = open(f"ClearFly_VA/users/{author}/data.txt","r")
-            with open(rf"ClearFly_VA/users/{author}/data.txt") as fp:
+        if os.path.exists(f"ClearFly_VAT/users/{author}"):
+            f = open(f"ClearFly_VAT/users/{author}/data.txt","r")
+            with open(rf"ClearFly_VAT/users/{author}/data.txt") as fp:
                 no = len(fp.readlines())
                 nof = no-1
             datar = f.read()
@@ -1073,15 +1562,15 @@ async def flights(ctx, user: discord.Member = None):
         else:
             embed = discord.Embed(title="Error 404!", description=f"No flights we're found for you, make sure you have flights filed!", color=errorc)
             await ctx.edit(content=None, embed=embed)
-      else:
+    else:
             await ctx.respond(f"Loading {user}'s Filed flights.")
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights..")
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
-            if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
+            if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+                f = open(f"ClearFly_VAT/users/{user.id}/data.txt","r")
+                with open(rf"ClearFly_VAT/users/{user.id}/data.txt") as fp:
                     no = len(fp.readlines())
                     nof = no-1
                 datar = f.read()
@@ -1096,15 +1585,12 @@ async def flights(ctx, user: discord.Member = None):
             else:
                 embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
                 await ctx.edit(content=None, embed=embed)
-    else:
-      embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
-      await ctx.respond(embed=embed)
 
 
 @bot.user_command(name="User VA Flights")
 async def flights_app(ctx, user: discord.Member):
   if os.path.exists(".onpc"):
-      guild = bot.get_guild(965419296937365514)
+      guild = bot.get_guild(983272986058559508)
       cfpilot = guild.get_role(1013933799777783849)
       if cfpilot in ctx.author.roles:
           await ctx.respond(f"Loading {user}'s Filed flights.")
@@ -1112,9 +1598,9 @@ async def flights_app(ctx, user: discord.Member):
           await ctx.edit(content=f"Loading {user}'s Filed flights..")
           sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights...")
-          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
+          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
+                f = open(f"ClearFly_VAT/users/{user.id}/data.txt","r")
+                with open(rf"ClearFly_VAT/users/{user.id}/data.txt") as fp:
                     no = len(fp.readlines())
                     nof = no-1
                 datar = f.read()
@@ -1142,7 +1628,7 @@ async def vastats(ctx):
   cmndestoutput = []
   index = 0
   cmndest = []
-  for filename in glob.glob('ClearFly_VA/users/*/*'):
+  for index, filename in enumerate(glob.glob('ClearFly_VAT/users/*/data.txt')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         lines = f.readlines()
         cmnac = cmnac+lines
@@ -1187,19 +1673,22 @@ async def vastats(ctx):
     cmndest = most_frequent(cmndestoutput)
   cmnac = f"{most_frequent(cmnac)}".replace(",","")
   embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
-  embed.add_field(name="Total Flights:", value=f"{output}")
-  embed.add_field(name="Most Common Aircraft:", value=f"{cmnac}")
-  embed.add_field(name="Most Common Destination:", value=f"{cmndest}")
+  embed.add_field(name="Total Flights:", value=f" {output}")
+  if cmnac == "":
+    embed.add_field(name="Most Common Aircraft:", value=f"Not enough data available")
+  else:
+    embed.add_field(name="Most Common Aircraft:", value=f" {cmnac}")
+  embed.add_field(name="Most Common Destination:", value=f" {cmndest}")
   embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
   await ctx.respond(embed=embed)
 
 @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
 async def valb(ctx):
   output = []
-  for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/*')):
+  for index, filename in enumerate(glob.glob('ClearFly_VAT/users/*/data.txt')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         nof = f"{int(len(f.readlines()))-1}"
-        filen = filename.replace("ClearFly_VA/users/", f"")
+        filen = filename.replace("ClearFly_VAT/users/", f"")
         id=os.path.dirname(filen)
         user = bot.get_user(int(id))
         line = f"| Flights flown:{nof} {user.name}\n"
@@ -1232,10 +1721,10 @@ class VALivs(discord.ui.View):
     await interaction.response.send_message("https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png\nhttps://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png", ephemeral=True)
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 async def valivs(ctx):
-  button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1DEzn_jPgyME-U1FrUs3eX4QTwsgwbfpD")
-  button2 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/16n0cnwkTeGWBhUQJZhXtNz4oq4n4Pe86")
-  button3 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/0/folders/1JIT5dhLsPHI95-v36iETxolSYZHq-aku")
-  button4 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/u/1/folders/1g-vZsECHyHQMbjwnasxHwj0TXjxfLQ0P")
+  button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/folders/1WcoZpmFNk7jfraZE3VEzl6JRPcRzg7sZ?usp=sharing")
+  button2 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1vdIOYlcM_2kNhooD_CTDE8UpoJ7mIvkk/view?usp=share_link")
+  button3 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1w6kd3H0VBiWoTlmcvvvyte5wbqHE7i5k/view?usp=share_link")
+  button4 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1o1vQk_HG1iJhJH1t_Z8cLBimDwxG90-C/view?usp=share_link")
   view = VALivs()
   view.add_item(button1)
   view.add_item(button2)
@@ -1476,12 +1965,36 @@ class HelpView(discord.ui.View):
               """)
           await interaction.response.edit_message(embed=embfun)
       if select.values[0] == "VA":
+          guild = bot.get_guild(965419296937365514)
+          role = guild.get_role(1040918528565444618)
           embva = discord.Embed(title = "**Help**",color = cfc)
-          embva.add_field(
+          if role in interaction.user.roles:
+            embva.add_field(
               name="**ClearFly Virtual Airline**",
               value=f"""
 *notice: most va commands are disabled at the moment, more info in <#1013934267966967848>
 ```yaml
+-------Instructor-------
+/va instructor approve : Approve a student's flight and give the required info to them.
+/va instructor check-off : Check off a user to end their training
+--------Training--------
+/va training : Start your career in the ClearFly VA!
+-----After Training-----
+/va file : File a flight you are gonna do for the ClearFly VA.
+/va flights : Fetches information about all flights a user has done.
+/va leaderboard : Get the leaderboard of who flew the most flights!
+/va liveries : Get all liveries to get your journey started.
+```
+                          """, inline=False)
+          else:
+            embva.add_field(
+              name="**ClearFly Virtual Airline**",
+              value=f"""
+*notice: most va commands are disabled at the moment, more info in <#1013934267966967848>
+```yaml
+--------Training--------
+/va training : Start your career in the ClearFly VA!
+-----After Training-----
 /va file : File a flight you are gonna do for the ClearFly VA.
 /va flights : Fetches information about all flights a user has done.
 /va leaderboard : Get the leaderboard of who flew the most flights!
