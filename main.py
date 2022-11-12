@@ -1017,7 +1017,7 @@ async def vatrain(ctx, origin, destination):
           with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
             lines = len(f.readlines())
           if lines == 3:
-                await ctx.edit(content="You have flown 2 times already, wait to get checked off!")
+                await ctx.respond("You have flown 2 times already, wait to get checked off!")
                 return
           await ctx.respond("Filing flight.")
           actype = config.get("Student", "type")
