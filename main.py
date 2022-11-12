@@ -948,13 +948,17 @@ class TypeView(discord.ui.View):
                 description="By Zibo"
             ),
             discord.SelectOption(
+                label="Boeing 757-200",
+                description="By Flight Factor"
+            ),
+            discord.SelectOption(
                 label="Airbus A300-600",
                 description="By iniSimulations"
             ),
             discord.SelectOption(
                 label="Airbus A300-600F",
                 description="By iniSimulations"
-            )
+            ),
         ]
     )
     async def select_callback(self, select, interaction):
@@ -975,6 +979,15 @@ class TypeView(discord.ui.View):
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
         config.set("Student","type", "B738")
+        with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
+            config.write(configfile)
+
+      if select.values[0] == "Boeing 757-200":
+        embed = discord.Embed(title="You have selected the Boeing 757-200 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        await interaction.response.send_message(embed=embed)
+        config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
+        config.set("Student","typed", "1")
+        config.set("Student","type", "B752")
         with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
             config.write(configfile)
       
@@ -1335,6 +1348,8 @@ async def vacheckoff(ctx, user: discord.Member):
             role3 = guild.get_role(1040918215188037633)
           if config.get("Student", "type") == "A306F":
             role3 = guild.get_role(1040918248100737054)
+          if config.get("Student", "type") == "B752":
+            role3 = guild.get_role(1040936249474695229)
           await user.add_roles(role3)
           config.set("Student","hasAccess","1")
           with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
@@ -1354,7 +1369,7 @@ async def vacheckoff(ctx, user: discord.Member):
     embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
     await ctx.respond(embed=embed)
 @va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
-@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "A306", "A306F"])
+@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "B752","A306", "A306F"])
 @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
 @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
 async def file(ctx, aircraft, origin, destination):
@@ -1466,6 +1481,8 @@ async def file(ctx, aircraft, origin, destination):
         cf3 = 3
       if aircraft == "A306F":
         cf3 = 4
+      if aircraft == "B752":
+        cf3 = 5
       if not aircraft == config.get("Student", "type"):
           embed=discord.Embed(title="Error 503!", description="You need to have a type rating of this aircraft if you want to fly it!", color=errorc)
           await ctx.respond(embed=embed)
@@ -1515,25 +1532,67 @@ Have a nice and safe flight!
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
 
+@va.command(name="report-incident", description="Something happened on your flight? Run this command and tell us what happend!")
+async def vareport(ctx, flightnumber,report):
+  config = configparser.ConfigParser()
+  if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
+    if config.get("Student", "end") == "1":
+        with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
+          f.write(f"(INC)")
+        embed = discord.Embed(title=f"Report submitted!", color=cfc)
+        await ctx.respond(embed=embed)
+        if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
+          with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'a') as f:
+            f.write(f"-{datetime.now()}|{flightnumber}- \n\n{report}\n")
+    else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
+  else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
+@va.command(name="divert", description="If you need to divert to another airport you can with this command.")
+async def divert(ctx, airport):
+  config = configparser.ConfigParser()
+  if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
+    if config.get("Student", "end") == "1":
+      if not len(airport) == 4:
+        embed=discord.Embed(title="Error 404!", description="That doesn't seem to be a valid ICAO code", color=errorc)
+        await ctx.respond(embed=embed)
+      else:
+        with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'rb+') as f:
+          f.seek(-4, os.SEEK_END)
+          f.truncate()
+        with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
+          f.write(f"{airport}(DV)")
+        embed = discord.Embed(title=f"Flight diverted to {airport}!", color=cfc)
+        await ctx.respond(embed=embed)
+    else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
+  else:
+        embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
+        await ctx.respond(embed=embed)
 @va.command(name="cancel", description="Cancels and removes your last filed flight.")
 async def cancel(ctx):
   config = configparser.ConfigParser()
   if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
     config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
     if config.get("Student", "end") == "1":
-      with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
+      with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as f:
 
-        file.seek(0, os.SEEK_END)
+        f.seek(0, os.SEEK_END)
 
-        pos = file.tell() - 1
+        pos = f.tell() - 1
 
-        while pos > 0 and file.read(1) != "\n":
+        while pos > 0 and f.read(1) != "\n":
             pos -= 1
-            file.seek(pos, os.SEEK_SET)
+            f.seek(pos, os.SEEK_SET)
 
         if pos > 0:
-            file.seek(pos, os.SEEK_SET)
-            file.truncate()
+            f.seek(pos, os.SEEK_SET)
+            f.truncate()
       embed = discord.Embed(title="Flight canceled!", color=cfc)
       await ctx.respond(embed=embed)
     else:
@@ -1965,6 +2024,9 @@ class HelpView(discord.ui.View):
 /va training : Start your career in the ClearFly VA!
 -----After Training-----
 /va file : File a flight you are gonna do for the ClearFly VA.
+/va cancel : Cancels and removes your last filed flight.
+/va divert : If you need to divert to another airport you can with this command.
+/va report-incident : Something happened on your flight? Run this command and tell us what happend!
 /va flights : Fetches information about all flights a user has done.
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
@@ -1974,12 +2036,14 @@ class HelpView(discord.ui.View):
             embva.add_field(
               name="**ClearFly Virtual Airline**",
               value=f"""
-*notice: most va commands are disabled at the moment, more info in <#1013934267966967848>
 ```yaml
 --------Training--------
 /va training : Start your career in the ClearFly VA!
 -----After Training-----
 /va file : File a flight you are gonna do for the ClearFly VA.
+/va cancel : Cancels and removes your last filed flight.
+/va divert : If you need to divert to another airport you can with this command.
+/va report-incident : Something happened on your flight? Run this command and tell us what happend!
 /va flights : Fetches information about all flights a user has done.
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
