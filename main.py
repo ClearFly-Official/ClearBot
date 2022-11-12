@@ -1628,6 +1628,7 @@ async def flights(ctx, user: discord.Member = None):
             if os.path.exists(f"ClearFly_VA/users/{author}/reports.txt"):
                   with open(f"ClearFly_VA/users/{author}/reports.txt") as fp:
                     reports = f.read()
+                    print(f"Report: {reports}")
                   embed.add_field(name="Incidents:", value=f"{reports}")
             await ctx.edit(content=None,embed=embed)
             f.close()
