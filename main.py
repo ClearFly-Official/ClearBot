@@ -1286,7 +1286,7 @@ async def vaapprove(ctx, user: discord.Member, route, crzalt, comments):
 async def vacheckoff(ctx, user: discord.Member):
   guild = bot.get_guild(965419296937365514)
   role = guild.get_role(1040918528565444618)
-  if role in user.roles:
+  if role in ctx.author.roles:
     config = configparser.ConfigParser()
     config.read(f"ClearFly_VA/users/{user.id}/student.ini")
     guild = bot.get_guild(965419296937365514)
