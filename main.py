@@ -892,7 +892,7 @@ class InfoB4training(discord.ui.View):
       await author.add_roles(role)
       await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
     channel = bot.get_channel(1038062843808972850)
-    await channel.send(f"{interaction.user.mention} continue here, run </va training:1038015187011260436> and input your desired destination and origin.")
+    await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
 @va.command(name="roles", description="roles")
 @commands.has_role(1006725140933001246)
 async def varoles(ctx):
@@ -903,14 +903,14 @@ async def varoles(ctx):
 
 ======**GENERAL TRAINING**======
 
-{-Run the command </va training:1038015187011260436>
+{-Run the command </va training:1016059999056826479>
 {-Enter your desired origin and destination
 {-Wait for an instructor to approve and assign you required information
 {-Do the flight witht the C172(steam gauges)
 {-Share screenshots of the flight, in one of those screenshots there should be the G430 with the flightplan __clearly visible__
 ⌞______**2X**______⌟
 -------------------------------------------------------------------
-{-Run the command </va training:1038015187011260436> again
+{-Run the command </va training:1016059999056826479> again
 {-Enter your desired origin and destination
 {-Wait for an instructor to approve and assign you required information
 {-Do the flight witht the C172(G1000)
@@ -921,9 +921,9 @@ async def varoles(ctx):
 
 ======**TYPE RATING**======
 
--Run the command </va training:1038015187011260436>
+-Run the command </va training:1016059999056826479>
 -Choose the aircraft you want in the dropdown menu
-{-Run the command </va training:1038015187011260436> again
+{-Run the command </va training:1016059999056826479> again
 {-Enter your desired origin and destination
 {-Wait for an instructor to approve and assign you required information
 {-Share screenshots of the flight were we can see that you are able to use the plane(this includes autopilot except if you're fitted without any navigation system on the B732)
@@ -965,7 +965,7 @@ class TypeView(discord.ui.View):
       config = configparser.ConfigParser()
 
       if select.values[0] == "Boeing 737-200":
-        embed = discord.Embed(title="You have selected the Boeing 737-200 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        embed = discord.Embed(title="You have selected the Boeing 737-200 as your type rating.", description="Run  </va training:1016059999056826479> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
@@ -974,7 +974,7 @@ class TypeView(discord.ui.View):
             config.write(configfile)
       
       if select.values[0] == "Boeing 737-800":
-        embed = discord.Embed(title="You have selected the Boeing 737-800 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        embed = discord.Embed(title="You have selected the Boeing 737-800 as your type rating.", description="Run  </va training:1016059999056826479> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
@@ -983,7 +983,7 @@ class TypeView(discord.ui.View):
             config.write(configfile)
 
       if select.values[0] == "Boeing 757-200":
-        embed = discord.Embed(title="You have selected the Boeing 757-200 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        embed = discord.Embed(title="You have selected the Boeing 757-200 as your type rating.", description="Run  </va training:1016059999056826479> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
@@ -992,7 +992,7 @@ class TypeView(discord.ui.View):
             config.write(configfile)
       
       if select.values[0] == "Airbus A300-600":
-        embed = discord.Embed(title="You have selected the Airbus A300-600 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        embed = discord.Embed(title="You have selected the Airbus A300-600 as your type rating.", description="Run  </va training:1016059999056826479> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
@@ -1002,7 +1002,7 @@ class TypeView(discord.ui.View):
             config.write(configfile)
       
       if select.values[0] == "Airbus A300-600F":
-        embed = discord.Embed(title="You have selected the Airbus A300-600F as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
+        embed = discord.Embed(title="You have selected the Airbus A300-600F as your type rating.", description="Run  </va training:1016059999056826479> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
         config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
