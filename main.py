@@ -1883,7 +1883,8 @@ async def valivs(ctx, noauth:bool = False):
     view.add_item(button4)
     view.add_item(button5)
     embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
-    await ctx.respond(embed=embed, view=view)
+    await ctx.respond("See below")
+    await ctx.send(embed=embed, view=view)
 
 ###############
 ##--BUTTONS--##
