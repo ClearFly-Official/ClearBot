@@ -894,6 +894,7 @@ class InfoB4training(discord.ui.View):
     channel = bot.get_channel(1038062843808972850)
     await channel.send(f"{interaction.user.mention} continue here, run </va training:1038015187011260436> and input your desired destination and origin.")
 @va.command(name="roles", description="roles")
+@commands.has_role(1006725140933001246)
 async def varoles(ctx):
   embed = discord.Embed(title="The ClearFly VA", description="""
   **How to fly for the VA**
