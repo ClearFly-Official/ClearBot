@@ -1539,7 +1539,7 @@ async def vareport(ctx, flightnumber,report):
     config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
     if config.get("Student", "end") == "1":
         with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
-          f.write(f"(INC)")
+          f.write(f"/I")
         embed = discord.Embed(title=f"Report submitted!", color=cfc)
         await ctx.respond(embed=embed)
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
@@ -1568,7 +1568,7 @@ async def divert(ctx, airport):
           f.seek(-4, os.SEEK_END)
           f.truncate()
         with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
-          f.write(f"{airport}(DV)")
+          f.write(f"{airport}/D")
         embed = discord.Embed(title=f"Flight diverted to {airport}!", color=cfc)
         await ctx.respond(embed=embed)
     else:
