@@ -72,6 +72,7 @@ async def on_ready():
     bot.add_view(MyView3())
     bot.add_view(MyView4())
     bot.add_view(MyView5())
+    bot.add_view(InfoB4training())
     presence.start()
     statements=[
       "Give me Baby Boeing 😩",
@@ -877,21 +878,21 @@ class InfoB4training(discord.ui.View):
   @discord.ui.button(label="Continue to flight training", style=discord.ButtonStyle.green, custom_id="vastudent")
   async def first_button_callback(self, button, interaction):
     author = interaction.user
-    guild = bot.get_guild(983272986058559508)
-    role = guild.get_role(1038008354661994557)
+    guild = bot.get_guild(965419296937365514)
+    role = guild.get_role(1040918463763468369)
     if role in author.roles:
       author = interaction.user
-      guild = bot.get_guild(983272986058559508)
-      role = guild.get_role(1038008354661994557)
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(1040918463763468369)
       await author.remove_roles(role)
-      await interaction.response.send_message("You are ready to go training!",ephemeral=True)
+      await interaction.response.send_message("You are no longer a student in the ClearFly VA.",ephemeral=True)
     else:
       author = interaction.user
-      guild = bot.get_guild(983272986058559508)
-      role = guild.get_role(1038008354661994557)
+      guild = bot.get_guild(965419296937365514)
+      role = guild.get_role(1040918463763468369)
       await author.add_roles(role)
-      await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
-    channel = bot.get_channel(1039987003044929598)
+      await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
+    channel = bot.get_channel(1038062843808972850)
     await channel.send(f"{interaction.user.mention} continue here, run </va training:1038015187011260436> and input your desired destination and origin.")
 @va.command(name="roles", description="roles")
 async def varoles(ctx):
@@ -962,38 +963,38 @@ class TypeView(discord.ui.View):
       if select.values[0] == "Boeing 737-200":
         embed = discord.Embed(title="You have selected the Boeing 737-200 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
-        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
         config.set("Student","type", "B732")
-        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
             config.write(configfile)
       
       if select.values[0] == "Boeing 737-800":
         embed = discord.Embed(title="You have selected the Boeing 737-800 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
-        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
         config.set("Student","type", "B738")
-        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
             config.write(configfile)
       
       if select.values[0] == "Airbus A300-600":
         embed = discord.Embed(title="You have selected the Airbus A300-600 as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
-        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
         config.set("Student","hasAccess", "0")
         config.set("Student","type", "A306")
-        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
             config.write(configfile)
       
       if select.values[0] == "Airbus A300-600F":
         embed = discord.Embed(title="You have selected the Airbus A300-600F as your type rating.", description="Run  </va training:1038015187011260436> again to file your first flight.", color=cfc)
         await interaction.response.send_message(embed=embed)
-        config.read(f"ClearFly_VAT/users/{interaction.user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
         config.set("Student","typed", "1")
         config.set("Student","type", "A306F")
-        with open(f"ClearFly_VAT/users/{interaction.user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w") as configfile:
             config.write(configfile)
 @va.command(name="training", description="Start your career in the ClearFly VA!")
 @option("origin", description="The airport(ICAO) you will fly from.")
@@ -1003,10 +1004,10 @@ async def vatrain(ctx, origin, destination):
   destination = destination.upper()
   user = ctx.author
   config = configparser.ConfigParser()
-  guild = bot.get_guild(983272986058559508)
-  role = guild.get_role(1038008354661994557)
-  if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
-    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+  guild = bot.get_guild(965419296937365514)
+  role = guild.get_role(1040918463763468369)
+  if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
     if config.get("Student", "hasAccess") == "1":
       if config.get("Student", "typed") == "0":
         embed = discord.Embed(title="Choose the aircraf you want to fly!", description="In order to fly for the VA you will need to get a type rating too, to do this select the aircraft you want below and you will be prompted to give origin and a destination. An instructor will approve your flight(just like in your general training), you will need to do 2 flights and then an instructor will check you off once again and then you're good to go to do as many flights for the VA as you want!", color=cfc)
@@ -1015,7 +1016,7 @@ async def vatrain(ctx, origin, destination):
         if config.get("Student", "ready") == "1":
           await ctx.respond("Filing flight.")
           actype = config.get("Student", "type")
-          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
           await ctx.edit(content="Filing flight..")
           embed.add_field(name="Flight information:", value=f"""
 ```
@@ -1025,23 +1026,23 @@ Arrival:{destination}
 Have a nice and safe flight!
                     """)
           await ctx.edit(content="Filing flight...")
-          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-              f = open(f"ClearFly_VAT/users/{user.id}/type.txt","a")
+          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+              f = open(f"ClearFly_VA/users/{user.id}/type.txt","a")
               f.write(f"\nType Training {actype} {origin}-{destination}")
               f.close()
           else:
-              os.mkdir(f"ClearFly_VAT/users/{user.id}")
-              f = open(f"ClearFly_VAT/users/{user.id}/type.txt","a")
+              os.mkdir(f"ClearFly_VA/users/{user.id}")
+              f = open(f"ClearFly_VA/users/{user.id}/type.txt","a")
               f.write(f"\nType Training {actype} {origin}-{destination}")
               f.close()
           await ctx.edit(content="Uploading to database.")
           await ctx.edit(content="Uploading to database..")
           config.set("Student", "ready", "0")
           await ctx.edit(content="Uploading to database...")
-          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           await ctx.edit(content=None, embed=embed)
-          await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their flight, give them the required info!")
+          await ctx.send(f"<@&1040918528565444618> someone needs to get in the air for their flight, give them the required info!")
         else:
           await ctx.respond("Wait for an instructor to approve your current flight and after you have done that one you can do another one.")
           return
@@ -1063,9 +1064,9 @@ Have a nice and safe flight!
             await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
             return
           await ctx.respond("Filing flight.")
-          if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
-              config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
-              with open(f"ClearFly_VAT/users/{user.id}/student.txt", "r") as f:
+          if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+              config.read(f"ClearFly_VA/users/{user.id}/student.ini")
+              with open(f"ClearFly_VA/users/{user.id}/student.txt", "r") as f:
                 lines = len(f.readlines())
               if lines == 5:
                 await ctx.edit(content="You have flown 4 times already, wait to get checked off!")
@@ -1076,10 +1077,10 @@ Have a nice and safe flight!
               else:
                 phase = config.get("Student","phase")
                 config.set("Student","ready", "0")
-                with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+                with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                   config.write(configfile)
           else:
-            os.mkdir(f"ClearFly_VAT/users/{user.id}")
+            os.mkdir(f"ClearFly_VA/users/{user.id}")
             config.add_section("Student")
             config.set("Student","phase", "1")
             config.set("Student","ready", "0")
@@ -1087,41 +1088,41 @@ Have a nice and safe flight!
             config.set("Student","typed", "0")
             config.set("Student","end", "0")
             phase = "1"
-            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           sleep(0.1)
           if phase == "1":
             phasetxt = "Your first flight has been filed, welcome!"
             phasen = "first"
             paneltype = "Steam Gauges"
-            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.read(f"ClearFly_VA/users/{user.id}/student.ini")
             config.set("Student","phase", "2")
-            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           if phase == "2":
             phasetxt = "Your second flight has been filed"
             phasen = "second"
             paneltype = "Steam Gauges"
-            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.read(f"ClearFly_VA/users/{user.id}/student.ini")
             config.set("Student","phase", "3")
-            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           if phase == "3":
             phasetxt = "Your third flight has been filed"
             phasen = "third"
             paneltype = "G1000"
-            config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+            config.read(f"ClearFly_VA/users/{user.id}/student.ini")
             config.set("Student","phase", "4")
-            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           if phase == "4":
             phasetxt = "Your last training flight has been filed"
             phasen = "fourth"
             paneltype = "G1000"
-            with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
           await ctx.edit(content="Filing flight..")
-          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+          embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
           embed.add_field(name=phasetxt, value=f"""
 ```
 Departure:{origin}
@@ -1131,20 +1132,20 @@ Have a nice and safe flight!
                     """)
           await ctx.edit(content="Filing flight...")
           await ctx.edit(content="Filing flight.")
-          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-              f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+              f = open(f"ClearFly_VA/users/{user.id}/student.txt","a")
               f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
               f.close()
           else:
-              os.mkdir(f"ClearFly_VAT/users/{user.id}")
-              f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+              os.mkdir(f"ClearFly_VA/users/{user.id}")
+              f = open(f"ClearFly_VA/users/{user.id}/student.txt","a")
               f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
               f.close()
           await ctx.edit(content="Uploading to database.")
           await ctx.edit(content="Uploading to database..")
           await ctx.edit(content="Uploading to database...")
           await ctx.edit(content=None, embed=embed)
-          await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their {phasen} flight, give them the required info!")
+          await ctx.send(f"<@&1040918528565444618> someone needs to get in the air for their {phasen} flight, give them the required info!")
       else:
         embed = discord.Embed(title="Error 403!", description="You do not have the CF student role. \nGet it in {channel here} before using this command!", color=errorc)
         await ctx.respond(embed=embed)
@@ -1167,18 +1168,18 @@ Have a nice and safe flight!
         await ctx.respond("You can only fly in Canada, Hawaii, the U.S, and Europe")
         return
       await ctx.respond("Filing flight.")
-      if os.path.exists(f"ClearFly_VAT/users/{user.id}/student.ini"):
-        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+      if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
         if config.get("Student", "ready") == "0":
           await ctx.edit(content="Wait for an instructor to approve your current flight and after you have done that one you can do another one.")
           return
         else:
           phase = config.get("Student","phase")
           config.set("Student","ready", "0")
-          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
             config.write(configfile)
       else:
-        os.mkdir(f"ClearFly_VAT/users/{user.id}")
+        os.mkdir(f"ClearFly_VA/users/{user.id}")
         config.add_section("Student")
         config.set("Student","phase", "1")
         config.set("Student","ready", "0")
@@ -1186,41 +1187,41 @@ Have a nice and safe flight!
         config.set("Student","typed", "0")
         config.set("Student","end", "0")
         phase = "1"
-        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
       sleep(0.1)
       if phase == "1":
         phasetxt = "Your first flight has been filed, welcome!"
         phasen = "first"
         paneltype = "Steam Gauges"
-        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
         config.set("Student","phase", "2")
-        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
       if phase == "2":
         phasetxt = "Your second flight has been filed"
         phasen = "second"
         paneltype = "Steam Gauges"
-        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
         config.set("Student","phase", "3")
-        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
       if phase == "3":
         phasetxt = "Your third flight has been filed"
         phasen = "third"
         paneltype = "G1000"
-        config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
         config.set("Student","phase", "4")
-        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
       if phase == "4":
         phasetxt = "Your last training flight has been filed"
         phasen = "last"
         paneltype = "G1000"
-        with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+        with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
       await ctx.edit(content="Filing flight..")
-      embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1039987756958490737> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
+      embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
       embed.add_field(name=phasetxt, value=f"""
       ```
       Departure:{origin}
@@ -1230,43 +1231,43 @@ Have a nice and safe flight!
                 """)
       await ctx.edit(content="Filing flight...")
       await ctx.edit(content="Filing flight.")
-      if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-          f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+      if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+          f = open(f"ClearFly_VA/users/{user.id}/student.txt","a")
           f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
           f.close()
       else:
-          os.mkdir(f"ClearFly_VAT/users/{user.id}")
-          f = open(f"ClearFly_VAT/users/{user.id}/student.txt","a")
+          os.mkdir(f"ClearFly_VA/users/{user.id}")
+          f = open(f"ClearFly_VA/users/{user.id}/student.txt","a")
           f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
           f.close()
       await ctx.edit(content="Uploading to database.")
       await ctx.edit(content="Uploading to database..")
       await ctx.edit(content="Uploading to database...")
       await ctx.edit(content=None, embed=embed)
-      await ctx.send(f"<@&1039987756958490737> someone needs to get in the air for their {phasen} flight, give them the required info!")
+      await ctx.send(f"<@&1040918528565444618> someone needs to get in the air for their {phasen} flight, give them the required info!")
     else:
-      embed = discord.Embed(title="Error 403!", description="You do not have the CF student role. \nGet it in {channel here} before using this command!", color=errorc)
+      embed = discord.Embed(title="Error 403!", description="You do not have the <@&1040918463763468369> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
       await ctx.respond(embed=embed)
 
 @instructor.command(name="approve", description="Approve a student's flight and give the required info to them.")
 @option("comments", required=False)
 async def vaapprove(ctx, user: discord.Member, route, crzalt, comments):
-  guild = bot.get_guild(983272986058559508)
-  role = guild.get_role(1039987756958490737)
+  guild = bot.get_guild(965419296937365514)
+  role = guild.get_role(1040918528565444618)
   if role in user.roles:
     config = configparser.ConfigParser()
-    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
+    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
     if config.get("Student", "typed") == "1":
-      with open(f'ClearFly_VAT/users/{user.id}/type.txt', 'a') as f:
+      with open(f'ClearFly_VA/users/{user.id}/type.txt', 'a') as f:
         f.write(f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}")
       config.set("Student","ready", "1")
-      with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+      with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
     else:
-      with open(f'ClearFly_VAT/users/{user.id}/student.txt', 'a') as f:
+      with open(f'ClearFly_VA/users/{user.id}/student.txt', 'a') as f:
         f.write(f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}")
       config.set("Student","ready", "1")
-      with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+      with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
     embed = discord.Embed(title="Flight Approved!", description=f"{user.mention}'s flight has been approved and they can take off now.", color=cfc)
     embed.add_field(name="Approved with following data:", value=f"""
@@ -1283,24 +1284,24 @@ async def vaapprove(ctx, user: discord.Member, route, crzalt, comments):
 
 @instructor.command(name="check-off", description="Check off a user to end their training")
 async def vacheckoff(ctx, user: discord.Member):
-  guild = bot.get_guild(983272986058559508)
-  role = guild.get_role(1039987756958490737)
+  guild = bot.get_guild(965419296937365514)
+  role = guild.get_role(1040918528565444618)
   if role in user.roles:
     config = configparser.ConfigParser()
-    config.read(f"ClearFly_VAT/users/{user.id}/student.ini")
-    guild = bot.get_guild(983272986058559508)
-    role = guild.get_role(1038008354661994557)
-    role2 = guild.get_role(1038008404855230505)
-    channel = bot.get_channel(1040382700428722186)
+    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
+    guild = bot.get_guild(965419296937365514)
+    role = guild.get_role(1040918463763468369)
+    role2 = guild.get_role(1013933799777783849)
+    channel = bot.get_channel(1013934267966967848)
     if config.get("Student", "typed") == "0":
-      with open(f"ClearFly_VAT/users/{user.id}/student.txt", "r") as f:
+      with open(f"ClearFly_VA/users/{user.id}/student.txt", "r") as f:
         lines = len(f.readlines())
       if lines == 5:
         if config.get("Student", "hasAccess") == "0":
           await user.remove_roles(role)
           await user.add_roles(role2)
           config.set("Student","hasAccess","1")
-          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                 config.write(configfile)
           embed = discord.Embed(title=f"{user} has been checked off.", color=cfc)
           await ctx.respond(embed=embed, ephemeral=True)
@@ -1314,7 +1315,7 @@ async def vacheckoff(ctx, user: discord.Member):
         embed = discord.Embed(title="The user hasn't completed enough flights.", color=errorc)
         await ctx.respond(embed=embed, ephemeral=True)
     else:
-      with open(f"ClearFly_VAT/users/{user.id}/type.txt", "r") as f:
+      with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
         lines = len(f.readlines())
       if lines == 3:
         if config.get("Student", "end") == "0":
@@ -1322,16 +1323,16 @@ async def vacheckoff(ctx, user: discord.Member):
           await user.remove_roles(role)
           await user.add_roles(role2)
           if config.get("Student", "type") == "B732":
-            role3 = guild.get_role(1040792958385008750)
+            role3 = guild.get_role(1040918288525438996)
           if config.get("Student", "type") == "B738":
-            role3 = guild.get_role(1040792996918071416)
+            role3 = guild.get_role(1040918323573047366)
           if config.get("Student", "type") == "A306":
-            role3 = guild.get_role(1040793039997771926)
+            role3 = guild.get_role(1040918215188037633)
           if config.get("Student", "type") == "A306F":
-            role3 = guild.get_role(1040793076043616257)
+            role3 = guild.get_role(1040918248100737054)
           await user.add_roles(role3)
           config.set("Student","hasAccess","1")
-          with open(f"ClearFly_VAT/users/{user.id}/student.ini", "w") as configfile:
+          with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                 config.write(configfile)
           embed = discord.Embed(title=f"{user} has been checked off.", color=cfc)
           await ctx.respond(embed=embed, ephemeral=True)
@@ -1353,8 +1354,8 @@ async def vacheckoff(ctx, user: discord.Member):
 @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
 async def file(ctx, aircraft, origin, destination):
   config = configparser.ConfigParser()
-  if os.path.exists(f"ClearFly_VAT/users/{ctx.author.id}/student.ini"):
-    config.read(f"ClearFly_VAT/users/{ctx.author.id}/student.ini")
+  if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
     if config.get("Student", "end") == "1":
       dest = 1
       ori = 1
@@ -1481,13 +1482,13 @@ Have a nice and safe flight!
                   """)
       await ctx.edit(content="Filing flight...")
       await ctx.edit(content="Filing flight.")
-      if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-            f = open(f"ClearFly_VAT/users/{user.id}/data.txt","a")
+      if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+            f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
             f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
             f.close()
       else:
-            os.mkdir(f"ClearFly_VAT/users/{user.id}")
-            f = open(f"ClearFly_VAT/users/{user.id}/data.txt","a")
+            os.mkdir(f"ClearFly_VA/users/{user.id}")
+            f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
             f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
             f.close()
       await ctx.edit(content="Uploading to database.")
@@ -1512,10 +1513,10 @@ Have a nice and safe flight!
 @va.command(name="cancel", description="Cancels and removes your last filed flight.")
 async def cancel(ctx):
   config = configparser.ConfigParser()
-  if os.path.exists(f"ClearFly_VAT/users/{ctx.author.id}/student.ini"):
-    config.read(f"ClearFly_VAT/users/{ctx.author.id}/student.ini")
+  if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+    config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
     if config.get("Student", "end") == "1":
-      with open(f"ClearFly_VAT/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
+      with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as file:
 
         file.seek(0, os.SEEK_END)
 
@@ -1545,9 +1546,9 @@ async def flights(ctx, user: discord.Member = None):
         await ctx.edit(content=f"loading your filed flights..")
         sleep(0.5)
         await ctx.edit(content=f"loading your filed flights...")
-        if os.path.exists(f"ClearFly_VAT/users/{author}"):
-            f = open(f"ClearFly_VAT/users/{author}/data.txt","r")
-            with open(rf"ClearFly_VAT/users/{author}/data.txt") as fp:
+        if os.path.exists(f"ClearFly_VA/users/{author}"):
+            f = open(f"ClearFly_VA/users/{author}/data.txt","r")
+            with open(rf"ClearFly_VA/users/{author}/data.txt") as fp:
                 no = len(fp.readlines())
                 nof = no-1
             datar = f.read()
@@ -1568,9 +1569,9 @@ async def flights(ctx, user: discord.Member = None):
             await ctx.edit(content=f"Loading {user}'s Filed flights..")
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
-            if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-                f = open(f"ClearFly_VAT/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VAT/users/{user.id}/data.txt") as fp:
+            if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
+                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
                     no = len(fp.readlines())
                     nof = no-1
                 datar = f.read()
@@ -1590,17 +1591,17 @@ async def flights(ctx, user: discord.Member = None):
 @bot.user_command(name="User VA Flights")
 async def flights_app(ctx, user: discord.Member):
   if os.path.exists(".onpc"):
-      guild = bot.get_guild(983272986058559508)
-      cfpilot = guild.get_role(1013933799777783849)
+      guild = bot.get_guild(965419296937365514)
+      cfpilot = guild.get_role(1040918463763468369)
       if cfpilot in ctx.author.roles:
           await ctx.respond(f"Loading {user}'s Filed flights.")
           sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights..")
           sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights...")
-          if os.path.exists(f"ClearFly_VAT/users/{user.id}"):
-                f = open(f"ClearFly_VAT/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VAT/users/{user.id}/data.txt") as fp:
+          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
+                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
                     no = len(fp.readlines())
                     nof = no-1
                 datar = f.read()
@@ -1616,7 +1617,7 @@ async def flights_app(ctx, user: discord.Member):
                 embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
                 await ctx.edit(content=None, embed=embed)
       else:
-          embed = discord.Embed(title="Error 403!", description="You do not have the <@&1013933799777783849> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
+          embed = discord.Embed(title="Error 403!", description="You do not have the <@&1040918463763468369> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
           await ctx.respond(embed=embed)
   else:
       embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
@@ -1628,7 +1629,7 @@ async def vastats(ctx):
   cmndestoutput = []
   index = 0
   cmndest = []
-  for index, filename in enumerate(glob.glob('ClearFly_VAT/users/*/data.txt')):
+  for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/data.txt')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         lines = f.readlines()
         cmnac = cmnac+lines
@@ -1685,10 +1686,10 @@ async def vastats(ctx):
 @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
 async def valb(ctx):
   output = []
-  for index, filename in enumerate(glob.glob('ClearFly_VAT/users/*/data.txt')):
+  for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/data.txt')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         nof = f"{int(len(f.readlines()))-1}"
-        filen = filename.replace("ClearFly_VAT/users/", f"")
+        filen = filename.replace("ClearFly_VA/users/", f"")
         id=os.path.dirname(filen)
         user = bot.get_user(int(id))
         line = f"| Flights flown:{nof} {user.name}\n"
@@ -1837,17 +1838,17 @@ class MyView5(discord.ui.View):
     async def button_callback(self, button, interaction):
       author = interaction.user
       guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(1013933799777783849)
+      role = guild.get_role(1040918463763468369)
       if role in author.roles:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
-        role = guild.get_role(1013933799777783849)
+        role = guild.get_role(1040918463763468369)
         await author.remove_roles(role)
         await interaction.response.send_message("You are no longer part of the ClearFly VA",ephemeral=True)
       else:
         author = interaction.user
         guild = bot.get_guild(965419296937365514)
-        role = guild.get_role(1013933799777783849)
+        role = guild.get_role(1040918463763468369)
         await author.add_roles(role)
         await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
 @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
