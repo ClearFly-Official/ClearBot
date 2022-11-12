@@ -71,7 +71,6 @@ async def on_ready():
     bot.add_view(MyView2())
     bot.add_view(MyView3())
     bot.add_view(MyView4())
-    bot.add_view(MyView5())
     bot.add_view(InfoB4training())
     presence.start()
     statements=[
@@ -1830,27 +1829,6 @@ class MyView4(discord.ui.View):
         role = guild.get_role(965688527109107712)
         await author.add_roles(role)
         await interaction.response.send_message("You will now get mentioned for updates!",ephemeral=True)
-class MyView5(discord.ui.View):
-    def __init__(self):
-      super().__init__(timeout=None)
-
-    @discord.ui.button(custom_id="vabutton", style=discord.ButtonStyle.secondary, emoji="✈️")
-    async def button_callback(self, button, interaction):
-      author = interaction.user
-      guild = bot.get_guild(965419296937365514)
-      role = guild.get_role(1040918463763468369)
-      if role in author.roles:
-        author = interaction.user
-        guild = bot.get_guild(965419296937365514)
-        role = guild.get_role(1040918463763468369)
-        await author.remove_roles(role)
-        await interaction.response.send_message("You are no longer part of the ClearFly VA",ephemeral=True)
-      else:
-        author = interaction.user
-        guild = bot.get_guild(965419296937365514)
-        role = guild.get_role(1040918463763468369)
-        await author.add_roles(role)
-        await interaction.response.send_message("You are now part of the ClearFly VA!",ephemeral=True)
 @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_permissions(manage_channels=True)
 async def faq(ctx):
@@ -1860,7 +1838,6 @@ async def faq(ctx):
   await ctx.respond("Button roles posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView3())
   await ctx.send(embed=emb,view=MyView4())
-  await ctx.send(embed=embva,view=MyView5())
 
 ###################################
 ##Help cmd, Stats cmd and bot.run##
