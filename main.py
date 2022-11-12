@@ -1014,9 +1014,9 @@ async def vatrain(ctx, origin, destination):
         await ctx.respond(embed=embed,view=TypeView())
       else:
         if config.get("Student", "ready") == "1":
-          with open(f"ClearFly_VA/users/{user.id}/student.txt", "r") as f:
+          with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
             lines = len(f.readlines())
-          if lines ==3:
+          if lines == 3:
                 await ctx.edit(content="You have flown 2 times already, wait to get checked off!")
                 return
           await ctx.respond("Filing flight.")
