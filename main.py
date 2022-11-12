@@ -1545,6 +1545,9 @@ async def vareport(ctx, flightnumber,report):
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
           with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'a') as f:
             f.write(f"-{datetime.now()}|{flightnumber}- \n\n{report}\n")
+        else:
+          with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'w') as f:
+            f.write(f"-{datetime.now()}|{flightnumber}- \n\n{report}\n")
     else:
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
@@ -1610,7 +1613,7 @@ async def flights(ctx, user: discord.Member = None):
         await ctx.edit(content=f"loading your filed flights..")
         sleep(0.5)
         await ctx.edit(content=f"loading your filed flights...")
-        if os.path.exists(f"ClearFly_VA/users/{author}"):
+        if os.path.exists(f"ClearFly_VA/users/{author}/data.txt"):
             f = open(f"ClearFly_VA/users/{author}/data.txt","r")
             with open(rf"ClearFly_VA/users/{author}/data.txt") as fp:
                 no = len(fp.readlines())
@@ -1622,6 +1625,10 @@ async def flights(ctx, user: discord.Member = None):
             ```
             Number of Flights: {nof}
             """)
+            if os.path.exists(f"ClearFly_VA/users/{author}/reports.txt"):
+                  with open(f"ClearFly_VA/users/{author}/reports.txt") as fp:
+                    reports = f.read()
+                  embed.add_field(name="Incidents:", value=f"{reports}")
             await ctx.edit(content=None,embed=embed)
             f.close()
         else:
@@ -1633,10 +1640,10 @@ async def flights(ctx, user: discord.Member = None):
             await ctx.edit(content=f"Loading {user}'s Filed flights..")
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
-            if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+            if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
                 f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
-                    no = len(fp.readlines())
+                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
+                    no = len(f.readlines())
                     nof = no-1
                 datar = f.read()
                 embed = discord.Embed(title=f"{user}'s Flights:", color=cfc, description=f"""
@@ -1645,6 +1652,10 @@ async def flights(ctx, user: discord.Member = None):
                 ```
                 Number of Flights: {nof}
                 """)
+                if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
+                  with open(f"ClearFly_VA/users/{user.id}/reports.txt") as fp:
+                    reports = f.read()
+                  embed.add_field(name="Incidents:", value=f"{reports}")
                 await ctx.edit(content=None,embed=embed)
                 f.close()
             else:
