@@ -1614,11 +1614,11 @@ async def flights(ctx, user: discord.Member = None):
         sleep(0.5)
         await ctx.edit(content=f"loading your filed flights...")
         if os.path.exists(f"ClearFly_VA/users/{author}/data.txt"):
-            f = open(f"ClearFly_VA/users/{author}/data.txt","r")
+            with open(f"ClearFly_VA/users/{author}/data.txt","r") as f:
+                datar = f.read()
             with open(rf"ClearFly_VA/users/{author}/data.txt") as fp:
                 no = len(fp.readlines())
                 nof = no-1
-            datar = f.read()
             embed = discord.Embed(title=f"Your Flights:", color=cfc, description=f"""
             ```
             {datar}
@@ -1634,7 +1634,6 @@ async def flights(ctx, user: discord.Member = None):
 ```
                   """)
             await ctx.edit(content=None,embed=embed)
-            f.close()
         else:
             embed = discord.Embed(title="Error 404!", description=f"No flights we're found for you, make sure you have flights filed!", color=errorc)
             await ctx.edit(content=None, embed=embed)
@@ -1645,11 +1644,11 @@ async def flights(ctx, user: discord.Member = None):
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
             if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
-                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
+                with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f
+                  datar = f.read()
                 with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
                     no = len(f.readlines())
                     nof = no-1
-                datar = f.read()
                 embed = discord.Embed(title=f"{user}'s Flights:", color=cfc, description=f"""
                 ```
                 {datar}
@@ -1665,7 +1664,6 @@ async def flights(ctx, user: discord.Member = None):
 ```
                   """)
                 await ctx.edit(content=None,embed=embed)
-                f.close()
             else:
                 embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
                 await ctx.edit(content=None, embed=embed)
