@@ -1253,8 +1253,8 @@ Have a nice and safe flight!
 @option("comments", required=False)
 async def vaapprove(ctx, user: discord.Member, route, crzalt, comments):
   guild = bot.get_guild(965419296937365514)
-  role = guild.get_role(1040928508001656923)
-  if role in user.roles:
+  role = guild.get_role(1040918528565444618)
+  if role in ctx.author.roles:
     config = configparser.ConfigParser()
     config.read(f"ClearFly_VA/users/{user.id}/student.ini")
     if config.get("Student", "typed") == "1":
