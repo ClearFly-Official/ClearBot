@@ -1644,7 +1644,7 @@ async def flights(ctx, user: discord.Member = None):
             sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
             if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
-                with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f
+                with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f:
                   datar = f.read()
                 with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
                     no = len(f.readlines())
