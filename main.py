@@ -862,7 +862,50 @@ airports = [
     "KDFW",
     "KPIT",
     "KSAN",
-    "KATL"
+    "KATL",
+    "CYVR",
+    "CYYQ",
+    "CYVO",
+    "CYUL",
+    "CYQB",
+    "CYYZ",
+    "CYOW",
+    "CYYJ",
+    "CYYC",
+    "PANC",
+    "PAFA",
+    "PHOG",
+    "PHNL",
+    "PHMK",
+    "PHTO",
+    "EDDF",
+    "EGGL",
+    "EBBR",
+    "EGGW",
+    "EGSS",
+    "EGKK",
+    "EDHI",
+    "EDDB",
+    "EGGP",
+    "EIDW",
+    "EGCC",
+    "EGPF",
+    "EBCI",
+    "ENGM",
+    "EPWA",
+    "ESSA",
+    "EFHK",
+    "LEMD",
+    "LFPG",
+    "LIRF",
+    "LROP",
+    "LIPE",
+    "LIRA",
+    "LIML",
+    "LGEL",
+    "LDZA",
+    "LOWI",
+    "LPPT"
 ]
 
 async def get_airports_o(ctx: discord.AutocompleteContext):
@@ -1425,6 +1468,16 @@ async def file(ctx, aircraft, origin, destination):
           if destination == "KATL":
             cf1 = 22
           if destination == "KSAN":
+            cf1 = 23
+          if destination == "CYVR":
+            cf1 = 19
+          if destination == "CYYQ":
+            cf1 = 20
+          if destination == "CYVO":
+            cf1 = 21
+          if destination == "CYUL":
+            cf1 = 22
+          if destination == "CYQB":
             cf1 = 23
       if ori == 1:
           if origin == "KDCA":
