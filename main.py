@@ -1626,9 +1626,8 @@ async def flights(ctx, user: discord.Member = None):
             Number of Flights: {nof}
             """)
             if os.path.exists(f"ClearFly_VA/users/{author}/reports.txt"):
-                  with open(f"ClearFly_VA/users/{author}/reports.txt") as fp:
+                  with open(f"ClearFly_VA/users/{author}/reports.txt") as f:
                     reports = f.read()
-                    print(f"Report: {reports}")
                   embed.add_field(name="Incidents:", value=f"{reports}")
             await ctx.edit(content=None,embed=embed)
             f.close()
@@ -1654,7 +1653,7 @@ async def flights(ctx, user: discord.Member = None):
                 Number of Flights: {nof}
                 """)
                 if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
-                  with open(f"ClearFly_VA/users/{user.id}/reports.txt") as fp:
+                  with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
                     reports = f.read()
                   embed.add_field(name="Incidents:", value=f"{reports}")
                 await ctx.edit(content=None,embed=embed)
