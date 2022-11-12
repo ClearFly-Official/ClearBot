@@ -1544,10 +1544,10 @@ async def vareport(ctx, flightnumber,report):
         await ctx.respond(embed=embed)
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
           with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'a') as f:
-            f.write(f"-{datetime.now()}|{flightnumber}- \n\n{report}\n")
+            f.write(f"# {datetime.now()} | {flightnumber} # \n\n{report}\n")
         else:
           with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'w') as f:
-            f.write(f"-{datetime.now()}|{flightnumber}- \n\n{report}\n")
+            f.write(f"# {datetime.now()} | {flightnumber} # \n\n{report}\n")
     else:
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
@@ -1628,7 +1628,11 @@ async def flights(ctx, user: discord.Member = None):
             if os.path.exists(f"ClearFly_VA/users/{author}/reports.txt"):
                   with open(f"ClearFly_VA/users/{author}/reports.txt") as f:
                     reports = f.read()
-                  embed.add_field(name="Incidents:", value=f"{reports}")
+                  embed.add_field(name="Incidents:", value=f"""
+```md
+{reports}
+```
+                  """)
             await ctx.edit(content=None,embed=embed)
             f.close()
         else:
@@ -1655,7 +1659,11 @@ async def flights(ctx, user: discord.Member = None):
                 if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
                   with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
                     reports = f.read()
-                  embed.add_field(name="Incidents:", value=f"{reports}")
+                  embed.add_field(name="Incidents:", value=f"""
+```md
+{reports}
+```
+                  """)
                 await ctx.edit(content=None,embed=embed)
                 f.close()
             else:
