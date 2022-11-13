@@ -269,7 +269,7 @@ async def lb(ctx):
   embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
   Chat more to go higher on the list!
   ```
-{"".join(foutput)}
+{"".join(foutput[:10])}
   ```
   """, color=cfc)
   await ctx.respond(embed=embed)
@@ -940,7 +940,6 @@ class InfoB4training(discord.ui.View):
 @commands.has_role(1006725140933001246)
 async def varoles(ctx):
   embed = discord.Embed(title="The ClearFly VA", description="""
-  **How to fly for the VA**
 
 -Click the button below
 
@@ -1070,7 +1069,7 @@ async def vatrain(ctx, origin, destination):
         await ctx.respond(embed=embed,view=TypeView())
       else:
         if config.get("Student", "ready") == "1":
-          with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
+          with open(f"ClearFly_VA/users/{user.id}/type.txt", "r+") as f:
             lines = len(f.readlines())
           if lines == 3:
                 await ctx.respond("You have flown 2 times already, wait to get checked off!")
@@ -1083,6 +1082,7 @@ async def vatrain(ctx, origin, destination):
 ```
 Departure:{origin}
 Arrival:{destination}
+Aircraft: {actype}
 ```
 Have a nice and safe flight!
                     """)
@@ -1376,22 +1376,23 @@ async def vacheckoff(ctx, user: discord.Member):
         embed = discord.Embed(title="The user hasn't completed enough flights.", color=errorc)
         await ctx.respond(embed=embed, ephemeral=True)
     else:
-      with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
+      with open(f"ClearFly_VA/users/{user.id}/type.txt", "r+") as f:
         lines = len(f.readlines())
       if lines == 3:
         if config.get("Student", "end") == "0":
           config.set("Student", "end", "1")
           await user.remove_roles(role)
           await user.add_roles(role2)
-          if config.get("Student", "type") == "B732":
+          actype = config.get("Student", "type")
+          if actype == "B732":
             role3 = guild.get_role(1040918288525438996)
-          if config.get("Student", "type") == "B738":
+          if actype == "B738":
             role3 = guild.get_role(1040918323573047366)
-          if config.get("Student", "type") == "A306":
+          if actype == "A306":
             role3 = guild.get_role(1040918215188037633)
-          if config.get("Student", "type") == "A306F":
+          if actype == "A306F":
             role3 = guild.get_role(1040918248100737054)
-          if config.get("Student", "type") == "B752":
+          if actype == "B752":
             role3 = guild.get_role(1040936249474695229)
           await user.add_roles(role3)
           config.set("Student","hasAccess","1")
@@ -1399,7 +1400,7 @@ async def vacheckoff(ctx, user: discord.Member):
                 config.write(configfile)
           embed = discord.Embed(title=f"{user} has been checked off.", color=cfc)
           await ctx.respond(embed=embed, ephemeral=True)
-          embed = discord.Embed(title=f"{user} has fully finished training!", description=f"Congratulations {user.mention}!\n Now you can fly as much as you want for the VA!", colour=cfc, timestamp=datetime.now())
+          embed = discord.Embed(title=f"{user} has fully finished training for the {actype}!", description=f"Congratulations {user.mention}!\n Now you can fly as much as you want for the VA!", colour=cfc, timestamp=datetime.now())
           embed.add_field(name="_ _", value=f"Checked off by {ctx.author.mention}")
           await channel.send(f"{user.mention}",embed=embed)
         else:
@@ -1914,7 +1915,21 @@ class MyView(discord.ui.View):
 @admin.command(name="rules", descritpion="sends the rules(admin only)")
 @commands.has_permissions(manage_channels=True)
 async def rules(ctx):
-  embed = discord.Embed(title="ClearFly Rules", description="1. Don’t post any NSFW(Not Safe For Work) or inappropriate content. This will result in a warning, or an immediate ban depending on the severity.\n\n2. Post content in the correct channels.\n\n3. Do not spam, except in the spam channel.\n\n4. No harassment. If you are being harassed, let the staff know by using the </report:1018970055972757506> command, and we will deal with it from there. Refrain from communicating with the person harassing you as we resolve the problem.\n\n5. Don’t excessively ping members. This will result in a mute.\n\n6. Don’t post any political content.\n\n7. Use common sense.\n\n8. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines.](https://discord.com/guidelines)", color=cfc)
+  embed = discord.Embed(title="ClearFly Rules", description="""
+1. Don’t post any inappropriate content.
+
+2. Use channels for their intended use.
+
+3. Do not spam mention members.
+
+4. Do not be overly political.
+
+5. Use common sense.
+
+6. Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
+
+7. If someone is breaking any of these rules, use the </report:1018970055972757506> command to let us know.
+""", color=cfc)
   await ctx.respond("rules posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView())
 
@@ -1933,7 +1948,19 @@ class MyView2(discord.ui.View):
 @admin.command(name="faq", descritpion="sends the faq(admin only)")
 @commands.has_permissions(manage_channels=True)
 async def faq(ctx):
-  embed = discord.Embed(title="ClearFly FAQ", description="**When will it release?**\nWhen it’s done.\n\n**Is the project dead?**\nNo, we are just not working on it 24/7\n\n**Will there be a 3D cabin?**\nYes!\n\n**Will there be a custom FMC?**\nThis is a complicated topic. We most likely will custom code something like CIV-A for navigation in the initial release, but might later code a UNS if we gain enough experience for the modern avionics version.", color=cfc)
+  embed = discord.Embed(title="ClearFly FAQ", description="""
+1. When will the Boeing 737-100 be released?
+> When it’s finished.
+
+2. Is the project dead?
+> Nope! To see the latest updates, go to the 737 Updates channel.
+
+3. Will there be a 3D cabin?
+> Yes!
+
+4. Will there be a custom FMC?
+> Our current plan is to code VOR navigation.
+""", color=cfc)
   await ctx.respond("FAQ posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView2())
 
@@ -1983,7 +2010,7 @@ class MyView4(discord.ui.View):
         await interaction.response.send_message("You will now get mentioned for updates!",ephemeral=True)
 @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
 @commands.has_permissions(manage_channels=True)
-async def faq(ctx):
+async def buttonroles(ctx):
   embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
   emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
   embva = discord.Embed(title="ClearFly VA pilot", description="Click on ✈️ to be part of the Official ClearFly VA!\n*(click again to remove.)*", color=cfc)
