@@ -853,7 +853,7 @@ async def metar(ctx, icao):
   resp = json.loads(req.text)
   if resp['results'] == 1:
     time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+0:00")), "R")
+    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
     airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
     embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
     embed.add_field(name="Raw Metar Data:", value=f"""
