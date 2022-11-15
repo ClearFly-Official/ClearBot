@@ -853,7 +853,7 @@ async def metar(ctx, icao):
   resp = json.loads(req.text)
   if resp['results'] == 1:
     time = json.dumps(resp['data'][0]['observed']).replace('"', "")
-    obstime = discord.utils.format_dt(datetime.fromisoformat(time.rstrip('Z')), "R")
+    obstime = discord.utils.format_dt(datetime.fromisoformat(time), "R")
     airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
     embed = discord.Embed(title=f"Metar data for {airportn} from {obstime}", color=cfc)
     embed.add_field(name="Raw Metar Data:", value=f"""
@@ -866,7 +866,7 @@ Airport : \n> {json.dumps(resp['data'][0]['station']['name']).replace('"', "")}(
 Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}\nhPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
 Clouds : {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
 Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
-Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°**
+Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
 Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet\n{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
 Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
 Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
