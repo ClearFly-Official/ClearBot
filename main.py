@@ -2,6 +2,7 @@
 #-Made by Matt3o0-#
 ###################
 import glob
+import json
 import discord #Using pycord
 import os
 import re
@@ -841,6 +842,36 @@ async def get_cities(ctx: discord.AutocompleteContext):
   #key = os.getenv("OWN_KEY")
   #apiLink = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={location}&appid{key}")
   #apiData = apiLink.josn()
+
+@utility.command(name="metar", description="Get the metar data of an airport.")
+@option("icao", description="The airport you want the metar data of. If the airport doesn't have metar reports, it will use one from the nearest airport with one.")
+async def metar(ctx, icao):
+
+  hdr = {"X-API-Key": os.getenv("CWX_KEY")}
+  req = requests.get(f"https://api.checkwx.com/metar/{icao}/decoded", headers=hdr)
+  req.raise_for_status()
+  resp = json.loads(req.text)
+  if resp['results'] == 1:
+    time = json.dumps(resp['data'][0]['observed'])
+    obstime = discord.utils.format_dt(datetime.fromisoformat(time.rstrip('Z')))
+    embed = discord.Embed(title=f"Metar data for {json.dumps(resp['data'][0]['station']['name'])} from {obstime}")
+    embed.add_field(name="Raw Metar Data:", value=f"""
+{json.dumps(resp['data'][0]['raw_text'])}
+    """)
+    embed.add_field(name="Translated Metar Data", value=f"""
+Airport : **{json.dumps(resp['data'][0]['station']['name'])}({json.dumps(resp['data'][0]['icao'])})**
+Barometer : **\nHg : {json.dumps(resp['data'][0]['barometer']['hg'])}\nhPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}**
+Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text'])}({json.dumps(resp['data'][0]['clouds'][0]['code'])})**
+Temperature : **\n{json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n {json.dumps(resp['data'][0]['temperature']['fahrenheit'])}F°**
+Dewpoint : **\n{json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°**
+Elevation : **\n{json.dumps(resp['data'][0]['elevation']['feet'])} Feet\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
+Flight Category : **{json.dumps(resp['data'][0]['flight_category'])}**
+Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
+Visibility : **\n{json.dumps(resp['data'][0]['visibility']['miles'])} Miles\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
+Winds : **\n Heading : {json.dumps(resp['data'][0]['winds']['degrees'])}\n Speed : {json.dumps(resp['data'][0]['winds']['speed_kts'])} Knots**
+    """)
+    embed.add_field(name="Airport information:")
+    await ctx.respond(embed=embed)
 ###################################
 ####     Virtual Airline     ######
 ###################################
