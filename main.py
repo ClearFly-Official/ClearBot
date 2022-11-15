@@ -854,22 +854,22 @@ async def metar(ctx, icao):
   if resp['results'] == 1:
     time = json.dumps(resp['data'][0]['observed']).replace('"', "")
     obstime = discord.utils.format_dt(datetime.fromisoformat(time.rstrip('Z')))
-    embed = discord.Embed(title=f"Metar data for {json.dumps(resp['data'][0]['station']['name'])} from {obstime}")
+    embed = discord.Embed(title=f"Metar data for {json.dumps(resp['data'][0]['station']['name'])} from {obstime}", color=cfc)
     embed.add_field(name="Raw Metar Data:", value=f"""
 {json.dumps(resp['data'][0]['raw_text'])}
     """)
     embed.add_field(name="Translated Metar Data", value=f"""
-Airport : **{json.dumps(resp['data'][0]['station']['name'])}({json.dumps(resp['data'][0]['icao'])})**
+Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}({json.dumps(resp['data'][0]['icao']).replace('"', "")})**
 Barometer : **\nHg : {json.dumps(resp['data'][0]['barometer']['hg'])}\nhPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}**
-Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text'])}({json.dumps(resp['data'][0]['clouds'][0]['code'])})**
-Temperature : **\n{json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n {json.dumps(resp['data'][0]['temperature']['fahrenheit'])}F°**
+Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})**
+Temperature : **\n{json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°**
 Dewpoint : **\n{json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°**
-Elevation : **\n{json.dumps(resp['data'][0]['elevation']['feet'])} Feet\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
-Flight Category : **{json.dumps(resp['data'][0]['flight_category'])}**
+Elevation : **\n{json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet\n{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters**
+Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
-Visibility : **\n{json.dumps(resp['data'][0]['visibility']['miles'])} Miles\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
+Visibility : **\n{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
 Winds : **\n Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
-    """)
+    """, inline=False)
     await ctx.respond(embed=embed)
 ###################################
 ####     Virtual Airline     ######
