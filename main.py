@@ -844,7 +844,7 @@ async def get_cities(ctx: discord.AutocompleteContext):
   #apiData = apiLink.josn()
 
 @utility.command(name="metar", description="Get the metar data of an airport.")
-@option("icao", description="The airport you want the metar data of. Will use nearest airport if metar is not available")
+@option("icao", description="The airport you want the metar data of.")
 async def metar(ctx, icao):
 
   hdr = {"X-API-Key": os.getenv("CWX_KEY")}
@@ -873,6 +873,9 @@ Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
 Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}\n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
 Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
     """, inline=False)
+    await ctx.respond(embed=embed)
+  else:
+    embed = discord.Embed(title="Error 404!", description="Didn't found metar data for that airport.", color=errorc)
     await ctx.respond(embed=embed)
 ###################################
 ####     Virtual Airline     ######
