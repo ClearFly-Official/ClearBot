@@ -848,7 +848,7 @@ async def get_cities(ctx: discord.AutocompleteContext):
 async def metar(ctx, icao):
 
   hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-  req = requests.get(f"https://api.checkwx.com/metar/{icao.upper()}/nearest/decoded", headers=hdr)
+  req = requests.get(f"https://api.checkwx.com/metar/{icao.upper()}/decoded", headers=hdr)
   req.raise_for_status()
   resp = json.loads(req.text)
   if resp['results'] == 1:
