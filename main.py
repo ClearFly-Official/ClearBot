@@ -870,7 +870,7 @@ Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n>  {json
 Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet\n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
 Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
 Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
-Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}\n> {json.dumps(resp['data'][0]['visibility']['meters'])} Meters
+Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}\n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
 Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
     """, inline=False)
     await ctx.respond(embed=embed)
