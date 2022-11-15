@@ -844,7 +844,7 @@ async def get_cities(ctx: discord.AutocompleteContext):
   #apiData = apiLink.josn()
 
 @utility.command(name="metar", description="Get the metar data of an airport.")
-@option("icao", description="The airport you want the metar data of. If the airport doesn't have metar reports, it will use one from the nearest airport with one.")
+@option("icao", description="The airport you want the metar data of. Will use nearest airport if metar is not available")
 async def metar(ctx, icao):
 
   hdr = {"X-API-Key": os.getenv("CWX_KEY")}
