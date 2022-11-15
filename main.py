@@ -870,7 +870,6 @@ Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **\n{json.dumps(resp['data'][0]['visibility']['miles'])} Miles\n{json.dumps(resp['data'][0]['elevation']['meters'])} Meters**
 Winds : **\n Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
     """)
-    embed.add_field(name="Airport information:")
     await ctx.respond(embed=embed)
 ###################################
 ####     Virtual Airline     ######
