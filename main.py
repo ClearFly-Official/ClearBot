@@ -864,7 +864,7 @@ async def metar(ctx, icao):
     embed.add_field(name="Translated Metar Data", value=f"""
 Airport : \n> {json.dumps(resp['data'][0]['station']['name']).replace('"', "")}({json.dumps(resp['data'][0]['icao']).replace('"', "")})
 Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}\n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
-Clouds : > {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
+Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
 Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
 Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
 Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet\n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
