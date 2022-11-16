@@ -1110,11 +1110,12 @@ async def vatrain(ctx, origin, destination):
         await ctx.respond(embed=embed,view=TypeView())
       else:
         if config.get("Student", "ready") == "1":
-          with open(f"ClearFly_VA/users/{user.id}/type.txt", "r+") as f:
-            lines = len(f.readlines())
-          if lines == 3:
-                await ctx.respond("You have flown 2 times already, wait to get checked off!")
-                return
+          if os.path.exists(f"ClearFly_VA/users/{user.id}/type.txt"):
+            with open(f"ClearFly_VA/users/{user.id}/type.txt", "r") as f:
+              lines = len(f.readlines())
+            if lines == 3:
+                  await ctx.respond("You have flown 2 times already, wait to get checked off!")
+                  return
           await ctx.respond("Filing flight.")
           actype = config.get("Student", "type")
           embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
@@ -1128,7 +1129,7 @@ Aircraft: {actype}
 Have a nice and safe flight!
                     """)
           await ctx.edit(content="Filing flight...")
-          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+          if os.path.exists(f"ClearFly_VA/users/{user.id}/type.txt"):
               f = open(f"ClearFly_VA/users/{user.id}/type.txt","a")
               f.write(f"\nType Training {actype} {origin}-{destination}")
               f.close()
