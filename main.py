@@ -1134,7 +1134,6 @@ Have a nice and safe flight!
               f.write(f"\nType Training {actype} {origin}-{destination}")
               f.close()
           else:
-              os.mkdir(f"ClearFly_VA/users/{user.id}")
               f = open(f"ClearFly_VA/users/{user.id}/type.txt","a")
               f.write(f"\nType Training {actype} {origin}-{destination}")
               f.close()
