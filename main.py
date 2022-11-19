@@ -1641,89 +1641,89 @@ async def file(ctx, aircraft, origin, destination):
             cf2 = 2
           if origin == "KATL":
             cf2 = 1
-          if destination == "CYVR":
+          if origin == "CYVR":
             cf2 = 65
-          if destination == "CYYQ":
+          if origin == "CYYQ":
             cf2 = 64
-          if destination == "CYVO":
+          if origin == "CYVO":
             cf2 = 63
-          if destination == "CYUL":
+          if origin == "CYUL":
             cf2 = 62
-          if destination == "CYQB":
+          if origin == "CYQB":
             cf2 = 61
-          if destination == "CYYZ":
+          if origin == "CYYZ":
             cf2 = 60
-          if destination == "CYOW":
+          if origin == "CYOW":
             cf2 = 59
-          if destination == "CYYJ":
+          if origin == "CYYJ":
             cf2 = 58
-          if destination == "PANC":
+          if origin == "PANC":
             cf2 = 57
-          if destination == "PAFA":
+          if origin == "PAFA":
             cf2 = 56
-          if destination == "PHOG":
+          if origin == "PHOG":
             cf2 = 55
-          if destination == "PHNL":
+          if origin == "PHNL":
             cf2 = 54
-          if destination == "PHMK":
+          if origin == "PHMK":
             cf2 = 53
-          if destination == "PHTO":
+          if origin == "PHTO":
             cf2 = 52
-          if destination == "EDDF":
+          if origin == "EDDF":
             cf2 = 51
-          if destination == "EGGL":
+          if origin == "EGGL":
             cf2 = 50
-          if destination == "EBBR":
+          if origin == "EBBR":
             cf2 = 49
-          if destination == "EGGW":
+          if origin == "EGGW":
             cf2 = 48
-          if destination == "EGSS":
+          if origin == "EGSS":
             cf2 = 47
-          if destination == "EGKK":
+          if origin == "EGKK":
             cf2 = 46
-          if destination == "EDHI":
+          if origin == "EDHI":
             cf2 = 45
-          if destination == "EDDB":
+          if origin == "EDDB":
             cf2 = 44
-          if destination == "EGGP":
+          if origin == "EGGP":
             cf2 = 43
-          if destination == "EIDW":
+          if origin == "EIDW":
             cf2 = 42
-          if destination == "EGCC":
+          if origin == "EGCC":
             cf2 = 41
-          if destination == "EGPF":
+          if origin == "EGPF":
             cf2 = 40
-          if destination == "EBCI":
+          if origin == "EBCI":
             cf2 = 39
-          if destination == "ENGM":
+          if origin == "ENGM":
             cf2 = 38
-          if destination == "EPWA":
+          if origin == "EPWA":
             cf2 = 37
-          if destination == "ESSA":
+          if origin == "ESSA":
             cf2 = 36
-          if destination == "EFHK":
+          if origin == "EFHK":
             cf2 = 35
-          if destination == "LEMD":
+          if origin == "LEMD":
             cf2 = 34
-          if destination == "LFPG":
+          if origin == "LFPG":
             cf2 = 33
-          if destination == "LIRF":
+          if origin == "LIRF":
             cf2 = 32
-          if destination == "LROP":
+          if origin == "LROP":
             cf2 = 31
-          if destination == "LIPE":
+          if origin == "LIPE":
             cf2 = 30
-          if destination == "LIRA":
+          if origin == "LIRA":
             cf2 = 29
-          if destination == "LIML":
+          if origin == "LIML":
             cf2 = 28
-          if destination == "LGEL":
+          if origin == "LGEL":
             cf2 = 27
-          if destination == "LDZA":
+          if origin == "LDZA":
             cf2 = 26
-          if destination == "LOWI":
+          if origin == "LOWI":
             cf2 = 25
-          if destination == "LPPT":
+          if origin == "LPPT":
             cf2 = 24
       if aircraft == "B732":
         cf3 = 1
