@@ -1812,7 +1812,7 @@ Have a nice and safe flight!
         await ctx.respond(embed=embed)
 
 @va.command(name="report-incident", description="Something happened on your flight? Run this command and tell us what happend!")
-@option("flightnumber", "The flight number of the flight where the accident happened.")
+@option("flightnumber", description="The flight number of the flight where the accident happened.")
 async def vareport(ctx, flightnumber,report):
   config = configparser.ConfigParser()
   if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
