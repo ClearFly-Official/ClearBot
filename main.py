@@ -530,7 +530,7 @@ async def github(ctx):
 @option("question", description="The question you want to ask to the bot.")
 @option("mode", description="The mode of the answers, this will determine the answer type", choices=["Normal", "Weird Mode"])
 async def VIIIball(ctx, question, mode= None):
-  if mode == None:
+  if (mode == None) or (mode == "Normal"):
     answers = [
       "It is certain",
       "Reply hazy, try again",
