@@ -588,7 +588,7 @@ async def VIIIball(ctx, question, mode= None):
     await ctx.respond(embed=embed)
 @admin.command(name="spam", description="Spam the channel to oblivion.")
 @option("amount", description="How many times you want to spam the provided text.")
-@option("text", "The text you want to spam.")
+@option("text", description="The text you want to spam.")
 @commands.has_permissions(manage_channels=True)
 async def spam(ctx, amount: int,text):
   channel = bot.get_channel(1001405648828891187)
