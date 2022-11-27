@@ -529,7 +529,7 @@ async def github(ctx):
 @fun.command(name="8ball", description="Ask the bot some questions!")
 @option("question", description="The question you want to ask to the bot.")
 @option("mode", description="The mode of the answers, this will determine the answer type", choices=["Normal", "Weird Mode"])
-async def VIIIball(ctx, question, mode: None):
+async def VIIIball(ctx, question, mode= None):
   if mode == None:
     answers = [
       "It is certain",
