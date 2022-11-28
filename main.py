@@ -972,7 +972,8 @@ airports = [
     "LGEL",
     "LDZA",
     "LOWI",
-    "LPPT"
+    "LPPT",
+    "KCLE"
 ]
 
 async def get_airports_o(ctx: discord.AutocompleteContext):
@@ -1480,7 +1481,7 @@ async def vacheckoff(ctx, user: discord.Member):
     embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
     await ctx.respond(embed=embed)
 @va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
-@option("aircraft", description="The aircraft you will use for the flight.(for more aircraft send a dm to WolfAir)", choices=["B732", "B738", "B752","A306", "A306F"])
+@option("aircraft", description="The aircraft you will use for the flight.", choices=["B732", "B738", "B752","A306", "A306F"])
 @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
 @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
 async def file(ctx, aircraft, origin, destination):
@@ -1621,6 +1622,8 @@ async def file(ctx, aircraft, origin, destination):
             cf1 = 64
           if destination == "LPPT":
             cf1 = 65
+          if destination == "KCLE":
+            cf1 = 66
       if ori == 1:
           if origin == "KDCA":
             cf2 = 23
@@ -1752,6 +1755,8 @@ async def file(ctx, aircraft, origin, destination):
             cf2 = 25
           if origin == "LPPT":
             cf2 = 24
+          if origin == "KCLE":
+            cf2 = 23
       if aircraft == "B732":
         cf3 = 1
       if aircraft == "B738":
@@ -1811,8 +1816,9 @@ Have a nice and safe flight!
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
 
-@va.command(name="report-incident", description="Something happened on your flight? Run this command and tell us what happend!")
+@va.command(name="report-incident", description="Something happened on your flight? Run this command and tell us what happened!")
 @option("flightnumber", description="The flight number of the flight where the accident happened.")
+@option("report", description="A short text that explained what happened.")
 async def vareport(ctx, flightnumber,report):
   config = configparser.ConfigParser()
   if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
@@ -2082,7 +2088,15 @@ class VALivs(discord.ui.View):
 
   @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
   async def button_callback(self, button, interaction):
-    await interaction.response.send_message("https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG\nhttps://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png\nhttps://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png", ephemeral=True)
+    await interaction.response.send_message(
+"""
+Here are some screenshots of our liveries!
+https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png
+https://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG
+https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG
+https://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png
+https://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png
+""", ephemeral=True)
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
 @option("noauth", description="Makes the bot respond or send the output.")
 async def valivs(ctx, noauth:bool = False):
@@ -2242,7 +2256,6 @@ class MyView4(discord.ui.View):
 async def buttonroles(ctx):
   embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
   emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
-  embva = discord.Embed(title="ClearFly VA pilot", description="Click on ✈️ to be part of the Official ClearFly VA!\n*(click again to remove.)*", color=cfc)
   await ctx.respond("Button roles posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView3())
   await ctx.send(embed=emb,view=MyView4())
@@ -2368,7 +2381,7 @@ class HelpView(discord.ui.View):
 /va file : File a flight you are gonna do for the ClearFly VA.
 /va cancel : Cancels and removes your last filed flight.
 /va divert : If you need to divert to another airport you can with this command.
-/va report-incident : Something happened on your flight? Run this command and tell us what happend!
+/va report-incident : Something happened on your flight? Run this command and tell us what happened!
 /va flights : Fetches information about all flights a user has done.
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
@@ -2386,7 +2399,7 @@ class HelpView(discord.ui.View):
 /va file : File a flight you are gonna do for the ClearFly VA.
 /va cancel : Cancels and removes your last filed flight.
 /va divert : If you need to divert to another airport you can with this command.
-/va report-incident : Something happened on your flight? Run this command and tell us what happend!
+/va report-incident : Something happened on your flight? Run this command and tell us what happened!
 /va flights : Fetches information about all flights a user has done.
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
