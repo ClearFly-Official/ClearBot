@@ -27,8 +27,9 @@ from discord import ButtonStyle, option
 
 load_dotenv()#for the token
 
-cfc = 0x4f93cf #<- this is the non halloween color
+#cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
+cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 bot = discord.Bot(command_prefix=',', intents=discord.Intents.all())
@@ -1177,7 +1178,7 @@ Have a nice and safe flight!
           return
     else:
       if role in ctx.author.roles:
-          icaoprefix = ["K", "E", "L", "P", "T"]
+          icaoprefix = ["K", "E", "L", "P", "T", "C"]
           origin.capitalize()
           destination.capitalize()
           if not len(origin) == 4:
@@ -1281,7 +1282,7 @@ Have a nice and safe flight!
 
   else:
     if role in ctx.author.roles:
-      icaoprefix = ["K", "E", "L", "P", "T"]
+      icaoprefix = ["K", "E", "L", "P", "T", "C"]
       origin.capitalize()
       destination.capitalize()
       if not len(origin) == 4:
@@ -2280,11 +2281,12 @@ async def stats(ctx):
   minutes, seconds = divmod(remainder, 60)
   days, hours = divmod(hours, 24)
   embed = discord.Embed(title = "**Bot Stats**", description =    f"""
-```rb
-Creator: Matt3o0#7010
-Uptime: {days}d {hours}h {minutes}m {seconds}s
-LinesOfCode: {lines}
-```
+**Creator**
+> Matt3o0#7010
+**Uptime:**
+> {days}d {hours}h {minutes}m {seconds}s
+**Lines of code:**
+> {lines}
   """, color = cfc)
   servers = len(bot.guilds)
   members = 0
@@ -2294,9 +2296,8 @@ LinesOfCode: {lines}
   embed.add_field(
             name="**Server Stats**",
             value=f"""
-```rb
-Members: {members}
-```
+**Members:** 
+> {memberCount}
             """,
             inline=False
       )
