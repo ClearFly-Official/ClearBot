@@ -1053,6 +1053,7 @@ Download [here](https://forums.x-plane.org/index.php?/files/file/76763-stableapp
 **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
 **5.** That’s it! StableApproach will now download our custom aircraft profiles.
   """)
+  await channel2.send(embed=embed)
   await ctx.respond("Done", ephemeral=True)
 
 class TypeView(discord.ui.View):
