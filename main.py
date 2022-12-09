@@ -1006,7 +1006,7 @@ class InfoB4training(discord.ui.View):
       await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
 @va.command(name="setup", description="Sends the required message.")
 @commands.has_role(965422406036488282)
-async def varoles(ctx):
+async def vasetup(ctx):
   embed = discord.Embed(title="The ClearFly VA", description="""
 
 -Click the button below
@@ -1039,9 +1039,21 @@ async def varoles(ctx):
 {-Share screenshots of the flight were we can see that you are able to use the plane(this includes autopilot except if you're fitted without any navigation system on the B732)
 ⌞______**2X**______⌟
 -An instructor will check you off once again for the final time, you can then fly as much as you want for the VA!""", color=cfc)
-  await ctx.send(embed=embed, view=InfoB4training
+  channel1 = bot.get_channel(1040927466975404054)
+  channel2 = bot.get_channel(1041057335449227314)
+  await channel1.send(embed=embed, view=InfoB4training
 ())
-  await ctx.respond("however, your mom", ephemeral=True)
+  embed = discord.Embed(title="Required plugin: StableApproach", description="""
+Download [here](https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/)
+
+**Setup:**
+**1.** Open the StableApproach settings in the plugins menu.
+**2.** Open the “Virtual Airline” category.
+**3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
+**4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
+**5.** That’s it! StableApproach will now download our custom aircraft profiles.
+  """)
+  await ctx.respond("Done", ephemeral=True)
 
 class TypeView(discord.ui.View):
     @discord.ui.select( 
