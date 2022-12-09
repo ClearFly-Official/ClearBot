@@ -1052,7 +1052,7 @@ Download [here](https://forums.x-plane.org/index.php?/files/file/76763-stableapp
 **3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
 **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
 **5.** That’s it! StableApproach will now download our custom aircraft profiles.
-  """)
+  """, color=cfc)
   await channel2.send(embed=embed)
   await ctx.respond("Done", ephemeral=True)
 
@@ -2202,7 +2202,7 @@ class MyView2(discord.ui.View):
       guild = bot.get_guild(965419296937365514)
       role = guild.get_role(1002932992534134814)
       await author.add_roles(role)
-      await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in <#965598257017413673>!",ephemeral=True)
+      await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in the server!",ephemeral=True)
 
 @admin.command(name="faq", descritpion="sends the faq(admin only)")
 @commands.has_permissions(manage_channels=True)
