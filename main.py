@@ -369,7 +369,7 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     sleep(0.1)
     await ctx.edit(content="Sending report...")
     await ctx.edit(content=None, embed=confirmembed)
-    await channel.send("<@&1006725140933001246> Medium priority report", embed=embed)
+    await channel.send("<@&965422406036488282> Medium priority report", embed=embed)
   if priority == "high":
     embed.add_field(name="Subject:", value=subject)
     embed.add_field(name="Involved User:", value=user)
@@ -382,8 +382,8 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     sleep(0.1)
     await ctx.edit(content="Sending report...")
     await ctx.edit(content=None, embed=confirmembed)
-    await channel.send("<@&1006725140933001246> ATTENTION ALL ADMINS", embed=embed)
-    await channel.send("<@&1006725140933001246> ^ THIS IS A HIGH PRIORITY REPORT")
+    await channel.send("<@&965422406036488282> ATTENTION ALL ADMINS", embed=embed)
+    await channel.send("<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT")
 
 @admin.command(name="echo",description="Send a message as the bot.")
 @option("text", description="The text you want to send as the bot.")
@@ -1004,8 +1004,8 @@ class InfoB4training(discord.ui.View):
       await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
       channel = bot.get_channel(1038062843808972850)
       await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
-@va.command(name="roles", description="roles")
-@commands.has_role(1006725140933001246)
+@va.command(name="setup", description="Sends the required message.")
+@commands.has_role(965422406036488282)
 async def varoles(ctx):
   embed = discord.Embed(title="The ClearFly VA", description="""
 
@@ -2422,7 +2422,7 @@ class HelpView(discord.ui.View):
           await interaction.response.edit_message(embed=embva)
       if select.values[0] == "Admin":
         guild = bot.get_guild(965419296937365514)
-        adminrole = guild.get_role(1006725140933001246)
+        adminrole = guild.get_role(965422406036488282)
         if adminrole in interaction.user.roles:
           embad = discord.Embed(title = "**Help**",color = cfc)
           embad.add_field(
