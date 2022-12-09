@@ -1,9 +1,10 @@
-py-cord==2.0.1
+py-cord
 datetime
 pyfiglet
 python-dotenv
 python-dateutil
 requests
 dadjokes
-asyncio
 ConfigParser
+numerize
+Pillow
