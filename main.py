@@ -231,12 +231,9 @@ async def userlevel(ctx, user: discord.Member = None):
 
 @leveling.command(name="leaderboard", description="See the leaderboard of the whole server.")
 async def lb(ctx):
-  await ctx.respond("Loading.")
   output = []
-  nameoutput = []
   index = 1
   config = configparser.ConfigParser()
-  img = Image.open(f"images/lbClear.png")
   for index, filename in enumerate(glob.glob('Leveling/users/*/*')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         config.read(f"{filename}")
@@ -244,23 +241,16 @@ async def lb(ctx):
         lvlprog = int(config.get("Level", "lvlprog"))
         topprog = int(config.get("Level", "topprog"))
         filen = filename.replace("Leveling/users/", f"")
+        lbn = index+1
         id=os.path.dirname(filen)
         user = bot.get_user(int(id))
-        line = f"""
-        {lvlprog+topprog*lvl} LVL:{lvl} XP:{lvlprog}/{n.numerize(topprog)}\n
-        """
+        line = f"{lvlprog+topprog*lvl} | Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
         output.append(line)
-        line2 = f"""
-        {lvlprog+topprog*lvl} {user.name[:50]}\n
-        """
-        nameoutput.append(line2)
-  await ctx.edit(content="Loading..")
   def atoi(text):
     return int(text) if text.isdigit() else text
   def natural_keys(text):
     return [ atoi(c) for c in re.split('(\d+)',text) ]
   output.sort(key=natural_keys, reverse=True)
-  nameoutput.sort(key=natural_keys, reverse=True)
   def delstr(lst):
     return [
         f"{' '.join(elem.split()[1:]).rstrip()}"
@@ -269,34 +259,24 @@ async def lb(ctx):
         
   if __name__ == "__main__":
         output = delstr(output)
-        nameoutput = delstr(nameoutput)
 
-  nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
-  #print(output)
-  output = [direction + '\n\n' for direction in output]
-  nameoutput = [direction + '\n\n' for direction in nameoutput]
+  def movestr(lst):
+    return [
+        f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+          output = movestr(output)
+
+  foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
   embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
-  Chat to earn xp!
+  Chat more to go higher on the list!
+  ```
+{"".join(foutput[:10])}
+  ```
   """, color=cfc)
-  await ctx.edit(content="Loading...")
-  await ctx.edit(content="Drawing image.")
-  sleep(1)
-  I1 = ImageDraw.Draw(img)
-  await ctx.edit(content="Drawing image..")
-  #print(output)
-  font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=290, layout_engine=ImageFont.Layout.BASIC)
-  I1.text((4800, 190), "".join(output[:10]), fill=(255, 255, 255), font=font)
-  I1.text((120, 190), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
-  img.save(f"images/lb.png")
-  await ctx.edit(content="Drawing image...")
-  await ctx.edit(content="Drawing image.")
-  await ctx.edit(content="Finalizing.")
-  file = discord.File(f"images/lb.png", filename="lb.png")
-  await ctx.edit(content="Finalizing..")
-  embed.set_image(url=f"attachment://lb.png")
-  await ctx.edit(content="Finalizing...")
-  await ctx.edit(content=None, embed=embed, file=file)
-
+  await ctx.respond(embed=embed)
 @bot.listen()
 async def on_member_join(member):
     channel = bot.get_channel(965600413376200726)
@@ -2072,63 +2052,34 @@ async def vastats(ctx):
   embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
   await ctx.respond(embed=embed)
 
+
 @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
 async def valb(ctx):
-  await ctx.respond("Loading.")
   output = []
-  nameoutput = []
-  img = Image.open(f"images/lbClear.png")
   for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/data.txt')):
     with open(os.path.join(os.getcwd(), filename), 'r') as f:
         nof = f"{int(len(f.readlines()))-1}"
         filen = filename.replace("ClearFly_VA/users/", f"")
         id=os.path.dirname(filen)
         user = bot.get_user(int(id))
-        line = f"Flights flown:{nof}\n"
-        line2 = f"{nof} {user.name}"
+        line = f"| Flights flown:{nof} {user.name}\n"
         output.append(line)
-        nameoutput.append(line2)
   output.sort(reverse=True)
-  nameoutput.sort(reverse=True)
   def movestr(lst):
     return [
-        f"{' '.join(elem.split()[2:]).rstrip()} {' '.join(elem.split()[:2])}\n"
+        f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
         for elem in lst
     ]
         
   if __name__ == "__main__":
           output = movestr(output)
-  def delstr(lst):
-    return [
-        f"{' '.join(elem.split()[1:]).rstrip()}"
-        for elem in lst
-    ]
-        
-  if __name__ == "__main__":
-        nameoutput = delstr(nameoutput)
-  await ctx.edit(content="Loading..")
-  nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
-  output = [direction + '\n' for direction in output]
-  nameoutput = [direction + '\n\n' for direction in nameoutput]
-  embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
-  await ctx.edit(content="Loading...")
-  await ctx.edit(content="Drawing image.")
-  sleep(1)
-  I1 = ImageDraw.Draw(img)
-  await ctx.edit(content="Drawing image..")
-  #print(output)
-  font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=290, layout_engine=ImageFont.Layout.BASIC)
-  I1.text((4800, 190), "".join(output[:10]), fill=(255, 255, 255), font=font)
-  await ctx.edit(content="Drawing image...")
-  I1.text((120, 190), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
-  img.save(f"images/valb.png")
-  await ctx.edit(content="Drawing image.")
-  await ctx.edit(content="Finalizing.")
-  file = discord.File(f"images/valb.png", filename="valb.png")
-  await ctx.edit(content="Finalizing..")
-  embed.set_image(url=f"attachment://valb.png")
-  await ctx.edit(content="Finalizing...")
-  await ctx.edit(content=None, embed=embed, file=file)
+  foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
+  embed = discord.Embed(title="ClearFly VA Leaderboard", description=f"""
+  ```
+{"".join(foutput)}
+  ```
+  """, color=cfc)
+  await ctx.respond(embed=embed)
 
 
 
@@ -2211,19 +2162,19 @@ async def rules(ctx):
   embed1 = discord.Embed(color=cfc)
   embed1.set_image(url="https://cdn.discordapp.com/attachments/1001845626956427265/1050885748439662612/CFRules.png")
   embed2 = discord.Embed(color=cfc, description="""
-1. **Don’t post any inappropriate content.**
+**1.** Don’t post any inappropriate content.
 
-2. **Use channels for their intended use.**
+**2.** Use channels for their intended use.
 
-3. **Do not spam mention members.**
+**3.** Do not spam mention members.
 
-4. **Do not be overly political.**
+**4.** Do not be overly political.
 
-5. **Use common sense.**
+**5.** Use common sense.
 
-6. **Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).**
+**6.** Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
 
-7. **Use </report:1018970055972757506> to let us know about anyone breaking the rules.**
+**7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
 """)
   await ctx.respond("Rules posted!",ephemeral=True)
   await ctx.send(embeds=[embed1, embed2],view=MyView())
@@ -2497,3 +2448,130 @@ async def help(ctx):
 
 #############################################
 bot.run(os.getenv('TOKEN'))
+
+###Disabled cmds using Pillow###
+@leveling.command(name="leaderboard", description="See the leaderboard of the whole server.")
+async def lb(ctx):
+  await ctx.respond("Loading.")
+  output = []
+  nameoutput = []
+  index = 1
+  config = configparser.ConfigParser()
+  img = Image.open(f"images/lbClear.png")
+  for index, filename in enumerate(glob.glob('Leveling/users/*/*')):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        config.read(f"{filename}")
+        lvl = int(config.get("Level", "lvl"))
+        lvlprog = int(config.get("Level", "lvlprog"))
+        topprog = int(config.get("Level", "topprog"))
+        filen = filename.replace("Leveling/users/", f"")
+        id=os.path.dirname(filen)
+        user = bot.get_user(int(id))
+        line = f"""
+        {lvlprog+topprog*lvl} LVL:{lvl} XP:{lvlprog}/{n.numerize(topprog)}\n
+        """
+        output.append(line)
+        line2 = f"""
+        {lvlprog+topprog*lvl} {user.name[:50]}\n
+        """
+        nameoutput.append(line2)
+  await ctx.edit(content="Loading..")
+  def atoi(text):
+    return int(text) if text.isdigit() else text
+  def natural_keys(text):
+    return [ atoi(c) for c in re.split('(\d+)',text) ]
+  output.sort(key=natural_keys, reverse=True)
+  nameoutput.sort(key=natural_keys, reverse=True)
+  def delstr(lst):
+    return [
+        f"{' '.join(elem.split()[1:]).rstrip()}"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+        output = delstr(output)
+        nameoutput = delstr(nameoutput)
+
+  nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
+  #print(output)
+  output = [direction + '\n\n' for direction in output]
+  nameoutput = [direction + '\n\n' for direction in nameoutput]
+  embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
+  Chat to earn xp!
+  """, color=cfc)
+  await ctx.edit(content="Loading...")
+  await ctx.edit(content="Drawing image.")
+  sleep(1)
+  I1 = ImageDraw.Draw(img)
+  await ctx.edit(content="Drawing image..")
+  #print(output)
+  font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=290, layout_engine=ImageFont.Layout.BASIC)
+  I1.text((4800, 190), "".join(output[:10]), fill=(255, 255, 255), font=font)
+  I1.text((120, 190), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+  img.save(f"images/lb.png")
+  await ctx.edit(content="Drawing image...")
+  await ctx.edit(content="Drawing image.")
+  await ctx.edit(content="Finalizing.")
+  file = discord.File(f"images/lb.png", filename="lb.png")
+  await ctx.edit(content="Finalizing..")
+  embed.set_image(url=f"attachment://lb.png")
+  await ctx.edit(content="Finalizing...")
+  await ctx.edit(content=None, embed=embed, file=file)
+
+@va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
+async def valb(ctx):
+  await ctx.respond("Loading.")
+  output = []
+  nameoutput = []
+  img = Image.open(f"images/lbClear.png")
+  for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/data.txt')):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        nof = f"{int(len(f.readlines()))-1}"
+        filen = filename.replace("ClearFly_VA/users/", f"")
+        id=os.path.dirname(filen)
+        user = bot.get_user(int(id))
+        line = f"Flights flown:{nof}\n"
+        line2 = f"{nof} {user.name}"
+        output.append(line)
+        nameoutput.append(line2)
+  output.sort(reverse=True)
+  nameoutput.sort(reverse=True)
+  def movestr(lst):
+    return [
+        f"{' '.join(elem.split()[2:]).rstrip()} {' '.join(elem.split()[:2])}\n"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+          output = movestr(output)
+  def delstr(lst):
+    return [
+        f"{' '.join(elem.split()[1:]).rstrip()}"
+        for elem in lst
+    ]
+        
+  if __name__ == "__main__":
+        nameoutput = delstr(nameoutput)
+  await ctx.edit(content="Loading..")
+  nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
+  output = [direction + '\n' for direction in output]
+  nameoutput = [direction + '\n\n' for direction in nameoutput]
+  embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
+  await ctx.edit(content="Loading...")
+  await ctx.edit(content="Drawing image.")
+  sleep(1)
+  I1 = ImageDraw.Draw(img)
+  await ctx.edit(content="Drawing image..")
+  #print(output)
+  font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=290, layout_engine=ImageFont.Layout.BASIC)
+  I1.text((4800, 190), "".join(output[:10]), fill=(255, 255, 255), font=font)
+  await ctx.edit(content="Drawing image...")
+  I1.text((120, 190), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+  img.save(f"images/valb.png")
+  await ctx.edit(content="Drawing image.")
+  await ctx.edit(content="Finalizing.")
+  file = discord.File(f"images/valb.png", filename="valb.png")
+  await ctx.edit(content="Finalizing..")
+  embed.set_image(url=f"attachment://valb.png")
+  await ctx.edit(content="Finalizing...")
+  await ctx.edit(content=None, embed=embed, file=file)
