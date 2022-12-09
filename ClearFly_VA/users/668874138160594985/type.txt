@@ -1,0 +1,3 @@
+
+Type Training B732 EBBR-EBCI - Approved - rte EBBR/07R LGE GSY EBCI/24, crz 090, cmnts None
+Type Training B732 EBCI-EBLG - Approved - rte EBCI LGE EBLG, crz 050, cmnts None
