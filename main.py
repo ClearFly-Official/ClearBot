@@ -68,7 +68,7 @@ async def on_ready():
     else:
       embed=discord.Embed(title="I started up!", description=f"""
       Started bot up on {now}
-      *Data save available*
+      *Data save unavailable*
       """,color=0x00FF00)
       await channel.send(embed=embed)
     bot.add_view(MyView())
@@ -280,6 +280,7 @@ async def lb(ctx):
   """, color=cfc)
   await ctx.edit(content="Loading...")
   await ctx.edit(content="Drawing image.")
+  sleep(1)
   I1 = ImageDraw.Draw(img)
   await ctx.edit(content="Drawing image..")
   #print(output)
@@ -2112,6 +2113,7 @@ async def valb(ctx):
   embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
   await ctx.edit(content="Loading...")
   await ctx.edit(content="Drawing image.")
+  sleep(1)
   I1 = ImageDraw.Draw(img)
   await ctx.edit(content="Drawing image..")
   #print(output)
@@ -2209,26 +2211,19 @@ async def rules(ctx):
   embed1 = discord.Embed(color=cfc)
   embed1.set_image(url="https://cdn.discordapp.com/attachments/1001845626956427265/1050885748439662612/CFRules.png")
   embed2 = discord.Embed(color=cfc, description="""
-1. 
-> **Don’t post any inappropriate content.**
+1. **Don’t post any inappropriate content.**
 
-2. 
-> **Use channels for their intended use.**
+2. **Use channels for their intended use.**
 
-3. 
-> **Do not spam mention members.**
+3. **Do not spam mention members.**
 
-4. 
-> **Do not be overly political.**
+4. **Do not be overly political.**
 
-5. 
-> **Use common sense.**
+5. **Use common sense.**
 
-6. 
-> **Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).**
+6. **Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).**
 
-7. 
-> **Use </report:1018970055972757506> to let us know about anyone breaking the rules.**
+7. **Use </report:1018970055972757506> to let us know about anyone breaking the rules.**
 """)
   await ctx.respond("Rules posted!",ephemeral=True)
   await ctx.send(embeds=[embed1, embed2],view=MyView())
