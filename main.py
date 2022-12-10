@@ -286,9 +286,9 @@ async def lb(ctx):
     await ctx.edit(content="Drawing image..")
     #print(output)
     font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=45, layout_engine=ImageFont.Layout.BASIC)
-    I1.text((800, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
+    I1.text((795, 25), "".join(output[:10]), fill=(255, 255, 255), font=font)
     await ctx.edit(content="Drawing image...")
-    I1.text((42,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+    I1.text((38,25), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
     img.save(f"images/lb.png")
     await ctx.edit(content="Drawing image.")
     await ctx.edit(content="Finalizing.")
@@ -2180,9 +2180,9 @@ async def valb(ctx):
     await ctx.edit(content="Drawing image..")
     #print(output)
     font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=45, layout_engine=ImageFont.Layout.BASIC)
-    I1.text((800, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
+    I1.text((795, 25), "".join(output[:10]), fill=(255, 255, 255), font=font)
     await ctx.edit(content="Drawing image...")
-    I1.text((42,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+    I1.text((38,25), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
     img.save(f"images/valb.png")
     await ctx.edit(content="Drawing image.")
     await ctx.edit(content="Finalizing.")
@@ -2265,7 +2265,7 @@ async def valivs(ctx, noauth:bool = False):
     view.add_item(button4)
     view.add_item(button5)
     embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
-    await ctx.respond("See below")
+    await ctx.respond("See below", ephemeral=True)
     await ctx.send(embed=embed, view=view)
 
 ###############
@@ -2423,7 +2423,7 @@ async def stats(ctx):
 **Creator**
 > Matt3o0#7010
 **Uptime:**
-> {days}d {hours}h {minutes}m {seconds}s
+> {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
 **Lines of code:**
 > {lines}
   """, color = cfc)
