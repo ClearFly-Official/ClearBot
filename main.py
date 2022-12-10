@@ -272,7 +272,7 @@ async def lb(ctx):
           output = delstr(output)
           nameoutput = delstr(nameoutput)
 
-    nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
+    nameoutput = [f'{index}       {i}' for index, i in enumerate(nameoutput, 1)]
     #print(output)
     output = [direction + '\n\n' for direction in output]
     nameoutput = [direction + '\n\n' for direction in nameoutput]
@@ -285,10 +285,10 @@ async def lb(ctx):
     I1 = ImageDraw.Draw(img)
     await ctx.edit(content="Drawing image..")
     #print(output)
-    font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=45, layout_engine=ImageFont.Layout.BASIC)
-    I1.text((795, 25), "".join(output[:10]), fill=(255, 255, 255), font=font)
+    font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=44, layout_engine=ImageFont.Layout.BASIC)
+    I1.text((810, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
     await ctx.edit(content="Drawing image...")
-    I1.text((38,25), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+    I1.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
     img.save(f"images/lb.png")
     await ctx.edit(content="Drawing image.")
     await ctx.edit(content="Finalizing.")
@@ -2169,7 +2169,7 @@ async def valb(ctx):
     if __name__ == "__main__":
           nameoutput = delstr(nameoutput)
     await ctx.edit(content="Loading..")
-    nameoutput = [f'{index}      {i}' for index, i in enumerate(nameoutput, 1)]
+    nameoutput = [f'{index}       {i}' for index, i in enumerate(nameoutput, 1)]
     output = [direction + '\n' for direction in output]
     nameoutput = [direction + '\n\n' for direction in nameoutput]
     embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
@@ -2179,10 +2179,10 @@ async def valb(ctx):
     I1 = ImageDraw.Draw(img)
     await ctx.edit(content="Drawing image..")
     #print(output)
-    font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=45, layout_engine=ImageFont.Layout.BASIC)
-    I1.text((795, 25), "".join(output[:10]), fill=(255, 255, 255), font=font)
+    font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=44, layout_engine=ImageFont.Layout.BASIC)
+    I1.text((810, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
     await ctx.edit(content="Drawing image...")
-    I1.text((38,25), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+    I1.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
     img.save(f"images/valb.png")
     await ctx.edit(content="Drawing image.")
     await ctx.edit(content="Finalizing.")
