@@ -53,9 +53,7 @@ instructor = va.create_subgroup(name="instructor", description="Commands for the
 @bot.listen()
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
-    sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
-    sleep(0.5)
     await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
     channel=bot.get_channel(1001405648828891187)
     now = discord.utils.format_dt(datetime.now())
@@ -163,10 +161,8 @@ async def on_message(message):
 async def userlevel(ctx, user: discord.Member = None):
     await ctx.respond("Loading level data.")
     config = configparser.ConfigParser()
-    sleep(0.2)
     await ctx.edit(content="Loading level data..")
     if user == None:
-        sleep(0.2)
         await ctx.edit(content="Loading level data...")
         if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
           config.read(f"Leveling/users/{ctx.author.id}/data.ini")
@@ -180,7 +176,6 @@ async def userlevel(ctx, user: discord.Member = None):
           embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
           await ctx.edit(content=None, embed=embed)
     else:
-        sleep(0.2)
         await ctx.edit(content="Loading level data...")
         if os.path.exists(f"Leveling/users/{user.id}/data.ini"):
           config.read(f"Leveling/users/{user.id}/data.ini")
@@ -198,10 +193,8 @@ async def userlevel(ctx, user: discord.Member = None):
 async def userlevel(ctx, user: discord.Member = None):
     await ctx.respond("Loading level data.")
     config = configparser.ConfigParser()
-    sleep(0.2)
     await ctx.edit(content="Loading level data..")
     if user == None:
-        sleep(0.2)
         await ctx.edit(content="Loading level data...")
         if os.path.exists(f"Leveling/users/{ctx.author.id}/data.ini"):
           config.read(f"Leveling/users/{ctx.author.id}/data.ini")
@@ -215,7 +208,6 @@ async def userlevel(ctx, user: discord.Member = None):
           embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
           await ctx.edit(content=None, embed=embed)
     else:
-        sleep(0.2)
         await ctx.edit(content="Loading level data...")
         if os.path.exists(f"Leveling/users/{user.id}/data.ini"):
           config.read(f"Leveling/users/{user.id}/data.ini")
@@ -281,7 +273,6 @@ async def lb(ctx):
     """, color=cfc)
     await ctx.edit(content="Loading...")
     await ctx.edit(content="Drawing image.")
-    sleep(1)
     I1 = ImageDraw.Draw(img)
     await ctx.edit(content="Drawing image..")
     #print(output)
@@ -420,7 +411,6 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     ```
     """, inline=False)
     await ctx.edit(content="Sending report..")
-    sleep(0.1)
     await ctx.edit(content="Sending report...")
     await ctx.edit(content=None, embed=confirmembed)
     await channel.send("Low priority report", embed=embed)
@@ -433,7 +423,6 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     ```
     """, inline=False)
     await ctx.edit(content="Sending report..")
-    sleep(0.1)
     await ctx.edit(content="Sending report...")
     await ctx.edit(content=None, embed=confirmembed)
     await channel.send("<@&965422406036488282> Medium priority report", embed=embed)
@@ -446,7 +435,6 @@ async def report(ctx, subject ,priority ,user: discord.Member, comments):
     ```
     """, inline=False)
     await ctx.edit(content="Sending report..")
-    sleep(0.1)
     await ctx.edit(content="Sending report...")
     await ctx.edit(content=None, embed=confirmembed)
     await channel.send("<@&965422406036488282> ATTENTION ALL ADMINS", embed=embed)
@@ -552,7 +540,6 @@ async def whois(ctx, user: discord.Member = None):
     """)
     emb.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
     emb.set_thumbnail(url=pfp)
-    sleep(1)
     await ctx.respond(embed=emb)
   else:
     acccrte = user.created_at
@@ -567,7 +554,6 @@ async def whois(ctx, user: discord.Member = None):
     """)
     embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
     embed.set_thumbnail(url=pfpe)
-    sleep(1)
     await ctx.respond(embed=embed)
 
 @bot.user_command(name="User Profile")
@@ -584,7 +570,6 @@ async def whois_app(ctx, user:discord.Member):
     """)
     embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
     embed.set_thumbnail(url=pfpe)
-    sleep(1)
     await ctx.respond(embed=embed)
 
 
@@ -1299,7 +1284,6 @@ Have a nice and safe flight!
             phase = "1"
             with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
               config.write(configfile)
-          sleep(0.1)
           if phase == "1":
             phasetxt = "Your first flight has been filed, welcome!"
             phasen = "first"
@@ -1398,7 +1382,6 @@ Have a nice and safe flight!
         phase = "1"
         with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
           config.write(configfile)
-      sleep(0.1)
       if phase == "1":
         phasetxt = "Your first flight has been filed, welcome!"
         phasen = "first"
@@ -1853,7 +1836,6 @@ async def file(ctx, aircraft, origin, destination):
           return
       user = ctx.author
       await ctx.respond("Filing flight.")
-      sleep(0.1)
       await ctx.edit(content="Filing flight..")
       embed = discord.Embed(title="Flight Filed!", color=cfc)
       flightnumber = f"{int(cf1+cf2)}"+str(cf3)
@@ -1976,11 +1958,9 @@ async def cancel(ctx):
 async def flights(ctx, user: discord.Member = None):
     if user == None:
         author = ctx.author.id
-        await ctx.respond(f"loading your filed flights.")
-        sleep(0.5)
-        await ctx.edit(content=f"loading your filed flights..")
-        sleep(0.5)
-        await ctx.edit(content=f"loading your filed flights...")
+        await ctx.respond(f"Loading your filed flights.")
+        await ctx.edit(content=f"Loading your filed flights..")
+        await ctx.edit(content=f"Loading your filed flights...")
         if os.path.exists(f"ClearFly_VA/users/{author}/data.txt"):
             with open(f"ClearFly_VA/users/{author}/data.txt","r") as f:
                 datar = f.read()
@@ -2007,9 +1987,7 @@ async def flights(ctx, user: discord.Member = None):
             await ctx.edit(content=None, embed=embed)
     else:
             await ctx.respond(f"Loading {user}'s Filed flights.")
-            sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights..")
-            sleep(0.5)
             await ctx.edit(content=f"Loading {user}'s Filed flights...")
             if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
                 with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f:
@@ -2044,9 +2022,7 @@ async def flights_app(ctx, user: discord.Member):
       cfpilot = guild.get_role(1040918463763468369)
       if cfpilot in ctx.author.roles:
           await ctx.respond(f"Loading {user}'s Filed flights.")
-          sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights..")
-          sleep(0.5)
           await ctx.edit(content=f"Loading {user}'s Filed flights...")
           if os.path.exists(f"ClearFly_VA/users/{user.id}"):
                 f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
@@ -2175,7 +2151,6 @@ async def valb(ctx):
     embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
     await ctx.edit(content="Loading...")
     await ctx.edit(content="Drawing image.")
-    sleep(1)
     I1 = ImageDraw.Draw(img)
     await ctx.edit(content="Drawing image..")
     #print(output)
@@ -2332,17 +2307,17 @@ class MyView2(discord.ui.View):
 @commands.has_permissions(manage_channels=True)
 async def faq(ctx):
   embed = discord.Embed(title="ClearFly FAQ", description="""
-1. When will the Boeing 737-100 be released?
-> When it’s finished.
+**Q: When will the Boeing 737-100 be released?**
+A: When it’s finished.
 
-2. Is the project dead?
-> Nope! To see the latest updates, go to the 737 Updates channel.
+**Q: Is the project dead?**
+A: Nope! To see the latest updates, go to the 737 Updates channel.
 
-3. Will there be a 3D cabin?
-> Yes!
+**Q: Will there be a 3D cabin?**
+A: Yes!
 
-4. Will there be a custom FMC?
-> Our current plan is to code VOR navigation.
+**Q: Will there be a custom FMC?**
+A: Our current plan is to code VOR navigation only.
 """, color=cfc)
   await ctx.respond("FAQ posted!",ephemeral=True)
   await ctx.send(embed=embed,view=MyView2())
