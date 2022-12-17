@@ -2060,6 +2060,8 @@ async def vareport(ctx, flightnumber,report):
   else:
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
+
+
 @va.command(name="divert", description="If you need to divert to another airport you can with this command.")
 @option("divert", description="The airport you will divert/have diverted to.")
 async def divert(ctx, airport):
@@ -2205,6 +2207,8 @@ async def flights_app(ctx, user: discord.Member):
   else:
       embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
       await ctx.respond(embed=embed)
+
+
 @va.command(name="stats", description="Show general statistics about the whole VA.")
 async def vastats(ctx):
   cmnac = []
@@ -2247,8 +2251,10 @@ async def vastats(ctx):
   if __name__ == "__main__":
                   cmnac = delstr(cmnac)
                   cmnac = delstr(cmnac)
-  def most_frequent(List):
-            return max(set(List), key = List.count)
+
+  while ("" in cmnac):
+    cmnac.remove("")
+
   def most_frequent(List):
             return max(set(List), key = List.count)
 
@@ -2258,10 +2264,7 @@ async def vastats(ctx):
   cmnac = f"{most_frequent(cmnac)}".replace(",","")
   embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
   embed.add_field(name="Total Flights:", value=f" {output}")
-  if cmnac == "":
-    embed.add_field(name="Most Common Aircraft:", value=f"Not enough data available")
-  else:
-    embed.add_field(name="Most Common Aircraft:", value=f" {cmnac}")
+  embed.add_field(name="Most Common Aircraft:", value=f" {cmnac}")
   embed.add_field(name="Most Common Destination:", value=f" {cmndest}")
   embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
   await ctx.respond(embed=embed)
@@ -2280,7 +2283,7 @@ async def valb(ctx):
           filen = filename.replace("ClearFly_VA/users/", f"")
           id=os.path.dirname(filen)
           user = bot.get_user(int(id))
-          line = f"Flights flown:{nof}\n"
+          line = f"{nof} Flights flown: \n"
           line2 = f"{nof} {user.name}"
           output.append(line)
           nameoutput.append(line2)
@@ -2288,7 +2291,7 @@ async def valb(ctx):
     nameoutput.sort(reverse=True)
     def movestr(lst):
       return [
-          f"{' '.join(elem.split()[2:]).rstrip()} {' '.join(elem.split()[:2])}\n"
+          f"{' '.join(elem.split()[1:]).rstrip()} {' '.join(elem.split()[:1])}\n"
           for elem in lst
       ]
           
@@ -2620,7 +2623,7 @@ class HelpView(discord.ui.View):
 /utility github : Shows the bot's GitHub repository.
 /utility math basic: Do some basic math.
 /utility math advanced: Do some advanced math.
-/utility level: Get someone's level.
+/utitlity metar : Get the metar data of an airport.
 ```
                 """)
           await interaction.response.edit_message(embed=embutil)
