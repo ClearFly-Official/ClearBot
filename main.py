@@ -2050,7 +2050,7 @@ async def vareport(ctx, flightnumber,report):
         await ctx.respond(embed=embed)
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
           with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'a') as f:
-            f.write(f"# {datetime.now()} | {flightnumber} # \n\n{report}\n")
+            f.write(f"\n # {datetime.now()} | {flightnumber} # \n\n{report}\n")
         else:
           with open(f"ClearFly_VA/users/{ctx.author.id}/reports.txt", 'w') as f:
             f.write(f"# {datetime.now()} | {flightnumber} # \n\n{report}\n")
@@ -2060,6 +2060,7 @@ async def vareport(ctx, flightnumber,report):
   else:
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
+
 
 
 @va.command(name="divert", description="If you need to divert to another airport you can with this command.")
@@ -2116,97 +2117,103 @@ async def cancel(ctx):
 @va.command(name="flights", descripiton="Fetches flights a user has done.")
 @option("user", description="The user you want flight(s) information about.")
 async def flights(ctx, user: discord.Member = None):
-    if user == None:
-        author = ctx.author.id
-        await ctx.respond(f"Loading your filed flights.")
-        await ctx.edit(content=f"Loading your filed flights..")
-        await ctx.edit(content=f"Loading your filed flights...")
-        if os.path.exists(f"ClearFly_VA/users/{author}/data.txt"):
-            with open(f"ClearFly_VA/users/{author}/data.txt","r") as f:
-                datar = f.read()
-            with open(rf"ClearFly_VA/users/{author}/data.txt") as fp:
-                no = len(fp.readlines())
-                nof = no-1
-            embed = discord.Embed(title=f"Your Flights:", color=cfc, description=f"""
-            ```
-            {datar}
-            ```
-            Number of Flights: {nof}
+  if user == None:
+    author = ctx.author
+    await ctx.respond(f"Loading your filed flights.")
+    if os.path.exists(f"ClearFly_VA/users/{author.id}/data.txt"):
+      await ctx.edit(content=f"Loading your filed flights..")
+      with open(f"ClearFly_VA/users/{author.id}/data.txt","r") as f:
+        datar = f.read()
+      with open(rf"ClearFly_VA/users/{author.id}/data.txt") as f:
+        no = len(f.readlines())
+        nof = no-1
+        embed = discord.Embed(title=f"Your flights:", color=cfc, description=f"""
+  ```
+  {datar}
+  ```
+  Number of flights: {nof}
+
+  *No incidents reported*
+  """)
+      await ctx.edit(content=f"Loading your filed flights..")
+      await ctx.edit(content=None,embed=embed)
+      if os.path.exists(f"ClearFly_VA/users/{author.id}/reports.txt"):
+          with open(f"ClearFly_VA/users/{author.id}/reports.txt") as f:
+            reports = f.read()
+            embed.add_field(name="Incidents:", value=f"""
+  ```md
+  {reports}
+  ```
             """)
-            if os.path.exists(f"ClearFly_VA/users/{author}/reports.txt"):
-                  with open(f"ClearFly_VA/users/{author}/reports.txt") as f:
-                    reports = f.read()
-                  embed.add_field(name="Incidents:", value=f"""
-```md
-{reports}
-```
-                  """)
-            await ctx.edit(content=None,embed=embed)
-        else:
-            embed = discord.Embed(title="Error 404!", description=f"No flights we're found for you, make sure you have flights filed!", color=errorc)
-            await ctx.edit(content=None, embed=embed)
+          await ctx.edit(content=None,embed=embed)
     else:
-            await ctx.respond(f"Loading {user}'s Filed flights.")
-            await ctx.edit(content=f"Loading {user}'s Filed flights..")
-            await ctx.edit(content=f"Loading {user}'s Filed flights...")
-            if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
-                with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f:
-                  datar = f.read()
-                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
-                    no = len(f.readlines())
-                    nof = no-1
-                embed = discord.Embed(title=f"{user}'s Flights:", color=cfc, description=f"""
-                ```
-                {datar}
-                ```
-                Number of Flights: {nof}
-                """)
-                if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
-                  with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
-                    reports = f.read()
-                  embed.add_field(name="Incidents:", value=f"""
+      embed = discord.Embed(title="Error 404!", description=f"No flights were found for {author.mention}, make sure they have flights filed!", color=errorc)
+      await ctx.edit(content=None, embed=embed)
+  else:
+    await ctx.respond(f"Loading {user}'s filed flights.")
+    if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
+      await ctx.edit(content=f"Loading {user}'s filed flights..")
+      with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f:
+        datar = f.read()
+      with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
+        no = len(f.readlines())
+        nof = no-1
+        embed = discord.Embed(title=f"{user}'s flights:", color=cfc, description=f"""
+```
+{datar}
+```
+Number of flights: {nof}
+
+*No incidents reported*
+""")
+      await ctx.edit(content=f"Loading {user}'s filed flights..")
+      await ctx.edit(content=None,embed=embed)
+      if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
+        with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
+          reports = f.read()
+          embed.add_field(name="Incidents:", value=f"""
 ```md
 {reports}
 ```
-                  """)
-                await ctx.edit(content=None,embed=embed)
-            else:
-                embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
-                await ctx.edit(content=None, embed=embed)
+          """)
+        await ctx.edit(content=None,embed=embed)
+    else:
+      embed = discord.Embed(title="Error 404!", description=f"No flights were found for {user.mention}, make sure they have flights filed!", color=errorc)
+      await ctx.edit(content=None, embed=embed)
 
 
 @bot.user_command(name="User VA Flights")
 async def flights_app(ctx, user: discord.Member):
-  if os.path.exists(".onpc"):
-      guild = bot.get_guild(965419296937365514)
-      cfpilot = guild.get_role(1040918463763468369)
-      if cfpilot in ctx.author.roles:
-          await ctx.respond(f"Loading {user}'s Filed flights.")
-          await ctx.edit(content=f"Loading {user}'s Filed flights..")
-          await ctx.edit(content=f"Loading {user}'s Filed flights...")
-          if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-                f = open(f"ClearFly_VA/users/{user.id}/data.txt","r")
-                with open(rf"ClearFly_VA/users/{user.id}/data.txt") as fp:
-                    no = len(fp.readlines())
-                    nof = no-1
-                datar = f.read()
-                embed = discord.Embed(title=f"{user}'s Flights:", color=cfc, description=f"""
-                ```
-                {datar}
-                ```
-                Number of Flights: {nof}
-                """)
-                await ctx.edit(content=None,embed=embed)
-                f.close()
-          else:
-                embed = discord.Embed(title="Error 404!", description=f"No flights we're found for {user.mention}, make sure they have flights filed!", color=errorc)
-                await ctx.edit(content=None, embed=embed)
-      else:
-          embed = discord.Embed(title="Error 403!", description="You do not have the <@&1040918463763468369> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
-          await ctx.respond(embed=embed)
+  await ctx.respond(f"Loading {user}'s filed flights.")
+  if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
+    await ctx.edit(content=f"Loading {user}'s filed flights..")
+    with open(f"ClearFly_VA/users/{user.id}/data.txt","r") as f:
+      datar = f.read()
+    with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
+      no = len(f.readlines())
+      nof = no-1
+      embed = discord.Embed(title=f"{user}'s flights:", color=cfc, description=f"""
+```
+{datar}
+```
+Number of flights: {nof}
+
+*No incidents reported*
+""")
+    await ctx.edit(content=f"Loading {user}'s filed flights..")
+    await ctx.edit(content=None,embed=embed)
+    if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
+        with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
+          reports = f.read()
+          embed.add_field(name="Incidents:", value=f"""
+```md
+{reports}
+```
+          """)
+        await ctx.edit(content=None,embed=embed)
   else:
-      embed=discord.Embed(title="Error 503!", description="The bot is currently not hosted on <@668874138160594985>'s computer, so I'm unable to save data, tell him and he'll host it for you.", color=errorc)
-      await ctx.respond(embed=embed)
+    embed = discord.Embed(title="Error 404!", description=f"No flights were found for {user.mention}, make sure they have flights filed!", color=errorc)
+    await ctx.edit(content=None, embed=embed)
 
 
 @va.command(name="stats", description="Show general statistics about the whole VA.")
@@ -2265,7 +2272,7 @@ async def vastats(ctx):
   embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
   embed.add_field(name="Total Flights:", value=f" {output}")
   embed.add_field(name="Most Common Aircraft:", value=f" {cmnac}")
-  embed.add_field(name="Most Common Destination:", value=f" {cmndest}")
+  embed.add_field(name="Most Common Destination:", value=f" {cmndest[:4]}")
   embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
   await ctx.respond(embed=embed)
 
