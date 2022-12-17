@@ -2074,11 +2074,8 @@ async def divert(ctx, airport):
         embed=discord.Embed(title="Error 404!", description="That doesn't seem to be a valid ICAO code", color=errorc)
         await ctx.respond(embed=embed)
       else:
-        with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'rb+') as f:
-          f.seek(-4, os.SEEK_END)
-          f.truncate()
         with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
-          f.write(f"{airport}/D")
+          f.write(f"/D({airport})")
         embed = discord.Embed(title=f"Flight diverted to {airport}!", color=cfc)
         await ctx.respond(embed=embed)
     else:
@@ -2128,12 +2125,12 @@ async def flights(ctx, user: discord.Member = None):
         no = len(f.readlines())
         nof = no-1
         embed = discord.Embed(title=f"Your flights:", color=cfc, description=f"""
-  ```
-  {datar}
-  ```
-  Number of flights: {nof}
+```
+{datar}
+```
+Number of flights: **{nof}**
 
-  *No incidents reported*
+*No incidents reported*
   """)
       await ctx.edit(content=f"Loading your filed flights..")
       await ctx.edit(content=None,embed=embed)
@@ -2141,9 +2138,9 @@ async def flights(ctx, user: discord.Member = None):
           with open(f"ClearFly_VA/users/{author.id}/reports.txt") as f:
             reports = f.read()
             embed.add_field(name="Incidents:", value=f"""
-  ```md
-  {reports}
-  ```
+```md
+{reports}
+```
             """)
           await ctx.edit(content=None,embed=embed)
     else:
@@ -2162,7 +2159,7 @@ async def flights(ctx, user: discord.Member = None):
 ```
 {datar}
 ```
-Number of flights: {nof}
+Number of flights: **{nof}**
 
 *No incidents reported*
 """)
@@ -2196,7 +2193,7 @@ async def flights_app(ctx, user: discord.Member):
 ```
 {datar}
 ```
-Number of flights: {nof}
+Number of flights: **{nof}**
 
 *No incidents reported*
 """)
@@ -2593,23 +2590,28 @@ class HelpView(discord.ui.View):
         options = [ 
             discord.SelectOption(
                 label="Utility",
-                description="Command that are supposed to be useful."
+                description="Command that are supposed to be useful.",
+                emoji="🛠️"
             ),
             discord.SelectOption(
                 label="Fun",
-                description="Commands to run when you have nothing else to do."
+                description="Commands to run when you have nothing else to do.",
+                emoji="🧩"
             ),
             discord.SelectOption(
                 label="VA",
-                description="Everything needed for the Virtual Airline."
+                description="Everything needed for the Virtual Airline.",
+                emoji="✈️"
             ),
             discord.SelectOption(
               label="Leveling",
-              description="Commands related to leveling."
+              description="Commands related to leveling.",
+              emoji="🏆"
             ),
             discord.SelectOption(
               label="Admin",
-              description="Commands for admins only."
+              description="Commands for admins only.",
+              emoji="🔒"
             )
         ]
     )
