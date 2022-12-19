@@ -8,83 +8,12 @@ from discord.ext import commands
 cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
-class RulesView(discord.ui.View):
-                def __init__(self):
-                    super().__init__(timeout=None)
-
-
-                @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
-                async def button_callback(self, button, interaction):
-                    guild = self.bot.get_guild(965419296937365514)
-                    roles = guild.get_role(1002200398905483285)
-                    if roles in interaction.user.roles:
-                        await interaction.response.send_message("You already accepted the rules!",ephemeral=True)
-                    else:
-                        author = interaction.user
-                        channel = self.bot.get_channel(1001405648828891187)
-                        pfp = author.avatar.url
-                        role = guild.get_role(1002200398905483285)
-                        embed = discord.Embed(title=f"{author} accepted the rules!", color=cfc)
-                        embed.set_thumbnail(url=pfp)
-                        await author.add_roles(role)
-                        await interaction.response.send_message("Rules accepted, have fun in the server!",ephemeral=True)
-                        await channel.send(embed=embed)
-
-class FAQview(discord.ui.View):
-                def __init__(self):
-                    super().__init__(timeout=None)
-
-                @discord.ui.button(label="I have read the FAQ", custom_id="faqbutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
-                async def button_callback(self, button, interaction):
-                    guild = self.bot.get_guild(965419296937365514)
-                    author = interaction.user
-                    role = guild.get_role(1002932992534134814)
-                    await author.add_roles(role)
-                    await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in the server!",ephemeral=True)
-class AnnounceRole(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=None)
-
-            @discord.ui.button(custom_id="announcebutton", style=discord.ButtonStyle.secondary, emoji="📣")
-            async def button_callback(self, button, interaction):
-                guild = self.bot.get_guild(965419296937365514)
-                author = interaction.user
-                role = guild.get_role(965689409364197467)
-                if role in author.roles:
-                    author = interaction.user
-                    role = guild.get_role(965689409364197467)
-                    await author.remove_roles(role)
-                    await interaction.response.send_message("You won't get mentioned anymore for announcements.",ephemeral=True)
-                else:
-                    author = interaction.user
-                    role = guild.get_role(965689409364197467)
-                    await author.add_roles(role)
-                    await interaction.response.send_message("You will now get mentioned for announcments!",ephemeral=True)
-
-class UpdateRole(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=None)
-
-            @discord.ui.button(custom_id="updatebutton", style=discord.ButtonStyle.secondary, emoji="🛠")
-            async def button_callback(self, button, interaction):
-                guild = self.bot.get_guild(965419296937365514)
-                author = interaction.user
-                role = guild.get_role(965688527109107712)
-                if role in author.roles:
-                    author = interaction.user
-                    role = guild.get_role(965688527109107712)
-                    await author.remove_roles(role)
-                    await interaction.response.send_message("You won't get mentioned for updates anymore.",ephemeral=True)
-                else:
-                    author = interaction.user
-                    role = guild.get_role(965688527109107712)
-                    await author.add_roles(role)
-                    await interaction.response.send_message("You will now get mentioned for updates!",ephemeral=True)
 
 class AdminCommands(discord.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
     
     admin = discord.SlashCommandGroup(name="admin", description="Commands for admins")
         
@@ -241,72 +170,6 @@ class AdminCommands(discord.Cog):
             embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!", color=cfc)
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await channel.send(embed=embed)
-
-    @admin.command(name="rules", descritpion="sends the rules(admin only)")
-    async def rules(self, ctx):
-        guild = self.bot.get_guild(965419296937365514)
-        adminrole = guild.get_role(965422406036488282)
-        if adminrole in ctx.author.roles:
-            embed1 = discord.Embed(color=cfc)
-            embed1.set_image(url="https://cdn.discordapp.com/attachments/1001845626956427265/1050885748439662612/CFRules.png")
-            embed2 = discord.Embed(color=cfc, description="""
-            **1.** Don’t post any inappropriate content.
-
-            **2.** Use channels for their intended use.
-
-            **3.** Do not spam mention members.
-
-            **4.** Do not be overly political.
-
-            **5.** Use common sense.
-
-            **6.** Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
-
-            **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
-            """)
-            await ctx.respond("Rules posted!",ephemeral=True)
-            await ctx.send(embeds=[embed1, embed2],view=RulesView())
-        else:
-            embed = discord.Embed(title="Error 403!", description="You are not an admin, and cannot use these commands!", color=errorc)
-            await ctx.respond(embed=embed)
-
-
-    @admin.command(name="faq", descritpion="sends the faq(admin only)")
-    @commands.has_permissions(manage_channels=True)
-    async def faq(self, ctx):
-        guild = self.bot.get_guild(965419296937365514)
-        adminrole = guild.get_role(965422406036488282)
-        if adminrole in ctx.author.roles:
-            embed = discord.Embed(title="ClearFly FAQ", description="""
-            **Q: When will the Boeing 737-100 be released?**
-            A: When it’s finished.
-
-            **Q: Is the project dead?**
-            A: Nope! To see the latest updates, go to the 737 Updates channel.
-
-            **Q: Will there be a 3D cabin?**
-            A: Yes!
-
-            **Q: Will there be a custom FMC?**
-            A: Our current plan is to code VOR navigation only.
-            """, color=cfc)
-            await ctx.respond("FAQ posted!",ephemeral=True)
-            await ctx.send(embed=embed,view=FAQview())
-        else:
-            embed = discord.Embed(title="Error 403!", description="You are not an admin, and cannot use these commands!", color=errorc)
-            await ctx.respond(embed=embed)
-
-
-
-
-    @admin.command(name="buttonroles", descritpion="Sends the button roles(admin only)")
-    @commands.has_permissions(manage_channels=True)
-    async def buttonroles(self, ctx):
-        embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
-        emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
-        await ctx.send(embed=embed,view=AnnounceRole())
-        await ctx.send(embed=emb,view=UpdateRole())
-        await ctx.respond("Button roles posted!",ephemeral=True)
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))

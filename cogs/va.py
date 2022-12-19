@@ -83,27 +83,6 @@ airports = [
     "LPPT",
     "KCLE"
     ]
-class InfoB4training(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=None)
-
-            @discord.ui.button(label="Toggle student role", style=discord.ButtonStyle.green, custom_id="vastudent")
-            async def first_button_callback(self, button, interaction):
-                author = interaction.user
-                guild = self.bot.get_guild(965419296937365514)
-                role = guild.get_role(1040918463763468369)
-                if role in author.roles:
-                    author = interaction.user
-                    role = guild.get_role(1040918463763468369)
-                    await author.remove_roles(role)
-                    await interaction.response.send_message("You are no longer a student in the ClearFly VA. Sad to see you go.",ephemeral=True)
-                else:
-                    author = interaction.user
-                    role = guild.get_role(1040918463763468369)
-                    await author.add_roles(role)
-                    await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
-                    channel = self.bot.get_channel(1038062843808972850)
-                    await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
 
 
 class VACommands(discord.Cog):
@@ -119,58 +98,6 @@ class VACommands(discord.Cog):
 
     async def get_airports_d(self, ctx: discord.AutocompleteContext):
         return [destination for destination in airports if destination.startswith(ctx.value.upper())]
-
-    @va.command(name="setup", description="Sends the required message.")
-    @commands.has_role(965422406036488282)
-    async def vasetup(self, ctx):
-        embed = discord.Embed(title="The ClearFly VA", description="""
-
--Click the button below
-
-======**GENERAL TRAINING**======
-
-{-Run the command </va training:1016059999056826479>
-{-Enter your desired origin and destination
-{-Wait for an instructor to approve and assign you required information
-{-Do the flight witht the C172(steam gauges)
-{-Share screenshots of the flight, in one of those screenshots there should be the G430 with the flightplan __clearly visible__
-⌞______**2X**______⌟
--------------------------------------------------------------------
-{-Run the command </va training:1016059999056826479> again
-{-Enter your desired origin and destination
-{-Wait for an instructor to approve and assign you required information
-{-Do the flight witht the C172(G1000)
-{-Share screenshots of the flight, let us see that you can use the autopilot
-⌞______**2X**______⌟
--------------------------------------------------------------------
--An instructor will check you off, so you're ready to go to the next phase, type rating!
-
-======**TYPE RATING**======
-
--Run the command </va training:1016059999056826479>
--Choose the aircraft you want in the dropdown menu
-{-Run the command </va training:1016059999056826479> again
-{-Enter your desired origin and destination
-{-Wait for an instructor to approve and assign you required information
-{-Share screenshots of the flight were we can see that you are able to use the plane(this includes autopilot except if you're fitted without any navigation system on the B732)
-⌞______**2X**______⌟
--An instructor will check you off once again for the final time, you can then fly as much as you want for the VA!""", color=cfc)
-        channel1 = self.bot.get_channel(1040927466975404054)
-        channel2 = self.bot.get_channel(1041057335449227314)
-        await channel1.send(embed=embed, view=InfoB4training
-        ())
-        embed = discord.Embed(title="Required plugin: StableApproach", description="""
-Download [here](https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/)
-
-**Setup:**
-**1.** Open the StableApproach settings in the plugins menu.
-**2.** Open the “Virtual Airline” category.
-**3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
-**4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
-**5.** That’s it! StableApproach will now download our custom aircraft profiles.
-        """, color=cfc)
-        await channel2.send(embed=embed)
-        await ctx.respond("Done", ephemeral=True)
 
     
     @va.command(name="training", description="Start your career in the ClearFly VA!")
