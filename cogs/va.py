@@ -83,25 +83,7 @@ airports = [
     "LPPT",
     "KCLE"
     ]
-
-class VACommands(discord.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    va = discord.SlashCommandGroup(name="va",description="Commands related to the ClearFly Virtual Airline")
-    instructor = va.create_subgroup(name="instructor", description="Commands for the ClearFly Instructors")
-
-    async def get_airports_o(self, ctx: discord.AutocompleteContext):
-        return [origin for origin in airports if origin.startswith(ctx.value.upper())]
-
-    async def get_airports_d(self, ctx: discord.AutocompleteContext):
-        return [destination for destination in airports if destination.startswith(ctx.value.upper())]
-
-    @va.command(name="setup", description="Sends the required message.")
-    @commands.has_role(965422406036488282)
-    async def vasetup(self, ctx):
-        class InfoB4training(discord.ui.View):
+class InfoB4training(discord.ui.View):
             def __init__(self):
                 super().__init__(timeout=None)
 
@@ -122,6 +104,25 @@ class VACommands(discord.Cog):
                     await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
                     channel = self.bot.get_channel(1038062843808972850)
                     await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
+
+
+class VACommands(discord.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    va = discord.SlashCommandGroup(name="va",description="Commands related to the ClearFly Virtual Airline")
+    instructor = va.create_subgroup(name="instructor", description="Commands for the ClearFly Instructors")
+
+    async def get_airports_o(self, ctx: discord.AutocompleteContext):
+        return [origin for origin in airports if origin.startswith(ctx.value.upper())]
+
+    async def get_airports_d(self, ctx: discord.AutocompleteContext):
+        return [destination for destination in airports if destination.startswith(ctx.value.upper())]
+
+    @va.command(name="setup", description="Sends the required message.")
+    @commands.has_role(965422406036488282)
+    async def vasetup(self, ctx):
         embed = discord.Embed(title="The ClearFly VA", description="""
 
 -Click the button below

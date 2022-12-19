@@ -5,70 +5,70 @@
 import discord#Py-cord
 import os
 import random
-from dotenv import load_dotenv
-from cogs import va, admin#for view classes of cogs for persistent views
+from dotenv import load_dotenv#for view classes of cogs for persistent views
 from discord.ext import tasks
 from datetime import datetime 
+from cogs.admin import RulesView, FAQview, AnnounceRole, UpdateRole
+from cogs.va import InfoB4training
 
 load_dotenv()
 
 bot = discord.Bot(intents=discord.Intents.all())
 
-
 @bot.listen()
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
-    await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
-    await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
-    channel=bot.get_channel(1001405648828891187)
-    now = discord.utils.format_dt(datetime.now())
-    if os.path.exists(".onpc"):
-      embed=discord.Embed(title="I started up!", description=f"""
-      Started bot up on {now}
-      *Data save available*
-      """,color=0x00FF00)
-      await channel.send(embed=embed)
-    else:
-      embed=discord.Embed(title="I started up!", description=f"""
-      Started bot up on {now}
-      *Data save unavailable*
-      """,color=0x00FF00)
-      await channel.send(embed=embed)
-    bot.add_view(admin.MyView())
-    bot.add_view(admin.MyView2())
-    bot.add_view(admin.MyView3())
-    bot.add_view(admin.MyView4())
-    bot.add_view(va.InfoB4training())
-    presence.start()
-    statements=[
-      "Give me Baby Boeing 😩",
-      "Boeing > Airbus",
-      "How are you doing?",
-      "Use me please.",
-      "How can I assist you today?",
-    ]
-    await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
-    print("The bot is ready for usage!")
+        await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
+        await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
+        await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
+        channel = bot.get_channel(1001405648828891187)
+        now = discord.utils.format_dt(datetime.now())
+        bot.add_view(RulesView())
+        bot.add_view(FAQview())
+        bot.add_view(AnnounceRole())
+        bot.add_view(UpdateRole())
+        bot.add_view(InfoB4training())
+        if os.path.exists(".onpc"):
+            embed = discord.Embed(title="I started up!", description=f"""
+            Started bot up on {now}
+            *Data save available*
+            """,color=0x00FF00)
+            await channel.send(embed=embed)
+        else:
+            embed=discord.Embed(title="I started up!", description=f"""
+            Started bot up on {now}
+            *Data save unavailable*
+            """,color=0x00FF00)
+            await channel.send(embed=embed)
+        presence.start()
+        statements=[
+        "Give me Baby Boeing 😩",
+        "Boeing > Airbus",
+        "How are you doing?",
+        "Use me please.",
+        "How can I assist you today?",
+        ]
+        await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+        print("The bot is ready for usage!")
 
 @tasks.loop(minutes=5)
 async def presence():
-    statements=[
-      "Give me Baby Boeing 😩",
-      "Boeing > Airbus",
-      "How are you doing?",
-      "Use me please.",
-      "How can I assist you today?",
-      "BABY BOEINGGGG",
-      "If it ain't Boeing, I'm not going.",
-      "I'm tired",
-      "Nuke airbus smh",
-      "Boeing supremacy",
-      "*Sends missile to Airbus hq*",
-      "Wolfair is my daddy:)",
-      "Deep™",
-      "What ya looking at 🤨",
-    ]
-    await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+        statements=[
+        "Give me Baby Boeing 😩",
+        "Boeing > Airbus",
+        "How are you doing?",
+        "Use me please.",
+        "How can I assist you today?",
+        "BABY BOEINGGGG",
+        "If it ain't Boeing, I'm not going.",
+        "I'm tired",
+        "Nuke airbus smh",
+        "Boeing supremacy",
+        "*Sends missile to Airbus hq*",
+        "Wolfair is my daddy:)",
+        "Deep™",
+        "What ya looking at 🤨",
+        ]
+        await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
 
 cogs = [
     "listeners",

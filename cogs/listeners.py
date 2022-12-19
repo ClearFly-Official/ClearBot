@@ -1,7 +1,8 @@
 import discord
-from discord.ext import commands
 import os
 import configparser
+from discord.ext import commands, tasks
+from datetime import datetime
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
@@ -13,7 +14,6 @@ class Listeners(discord.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
 
     @commands.Cog.listener()
     async def on_message(self, message):
