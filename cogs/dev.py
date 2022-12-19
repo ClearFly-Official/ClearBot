@@ -11,10 +11,10 @@ class DevCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    dev = discord.SlashCommandGroup(name="dev", description="All things for the dev(not for you)")
+    dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
 
     @dev.command(name="reload_cogs")
-    #@option(name="cogs", description="The cogs you want to reload")
+    #@option(name="cogs", description="Reload the provided cogs.")
     async def reloadCogs(self, ctx):
         if 668874138160594985 == ctx.author.id:
             cogs = [
@@ -36,16 +36,16 @@ Following cogs:
             """, color=cfc)
             await ctx.respond(embed=embed)
         else:
-            embed = discord.Embed(title="Error 403!", description="You're not the owner or a developer of me, you can't use this command!", colour=errorc)
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
     @dev.command(name="defertest")
     async def deferTest(self, ctx):
         if 668874138160594985 == ctx.author.id:
             await ctx.defer()
-            await ctx.respond("it works, yay")
+            await ctx.respond("It works. Hallelujah!")
         else:
-            embed = discord.Embed(title="Error 403!", description="You're not the owner or a developer of me, you can't use this command!", colour=errorc)
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
     
 def setup(bot):
