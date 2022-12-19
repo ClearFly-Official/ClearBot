@@ -292,6 +292,7 @@ class UtilityCommands(discord.Cog):
         class HelpView(discord.ui.View):
                 def __init__(self, bot):
                     self.bot = bot
+                    super().__init__(timeout=None)
                     
                 @discord.ui.select( 
                     placeholder = "Command category", 
@@ -326,10 +327,11 @@ class UtilityCommands(discord.Cog):
                     ]
                 )
                 async def select_callback(self, select, interaction):
-                    guild = self.bot.get_guild(965419296937365514)
-                    if select.values[0] == "Utility":
-                        embutil = discord.Embed(title = "**Help**",color = cfc)
-                        embutil.add_field(name="**Utility commands**", value=f"""
+                    if interaction.user.id == ctx.author.id:
+                        guild = self.bot.get_guild(965419296937365514)
+                        if select.values[0] == "Utility":
+                            embutil = discord.Embed(title = "**Help**",color = cfc)
+                            embutil.add_field(name="**Utility commands**", value=f"""
 ```
 /help : Shows this information.
 /report : Report a user or situation to the team.
@@ -345,11 +347,11 @@ class UtilityCommands(discord.Cog):
 /utility math advanced: Do some advanced math.
 /utitlity metar : Get the metar data of an airport.
 ```
-                                """)
-                        await interaction.response.edit_message(embed=embutil)
-                    if select.values[0] == "Fun":
-                        embfun = discord.Embed(title = "**Help**",color = cfc)
-                        embfun.add_field(name="**Fun commands**", value=f"""
+                                    """)
+                            await interaction.response.edit_message(embed=embutil)
+                        if select.values[0] == "Fun":
+                            embfun = discord.Embed(title = "**Help**",color = cfc)
+                            embfun.add_field(name="**Fun commands**", value=f"""
 ```yaml
 /fun ascii : Converts text in to ascii.
 /fun 8ball : Ask the bot some questions!
@@ -357,15 +359,15 @@ class UtilityCommands(discord.Cog):
 /fun roast: Roast whoever you'd like!
 /fun buttongame: Play a game with buttons!
 ```
-                            """)
-                        await interaction.response.edit_message(embed=embfun)
-                    if select.values[0] == "VA":
-                        role = guild.get_role(1040918528565444618)
-                        embva = discord.Embed(title = "**Help**",color = cfc)
-                        if role in interaction.user.roles:
-                            embva.add_field(
-                            name="**ClearFly Virtual Airline**",
-                            value=f"""
+                                """)
+                            await interaction.response.edit_message(embed=embfun)
+                        if select.values[0] == "VA":
+                            role = guild.get_role(1040918528565444618)
+                            embva = discord.Embed(title = "**Help**",color = cfc)
+                            if role in interaction.user.roles:
+                                embva.add_field(
+                                name="**ClearFly Virtual Airline**",
+                                value=f"""
 ```yaml
 -------Instructor-------
 /va instructor approve : Approve a student's flight and give the required info to them.
@@ -381,12 +383,12 @@ class UtilityCommands(discord.Cog):
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
 ```
-                                        """, inline=False)
-                            await interaction.response.edit_message(embed=embva)
-                        else:
-                            embva.add_field(
-                            name="**ClearFly Virtual Airline**",
-                            value=f"""
+                                            """, inline=False)
+                                await interaction.response.edit_message(embed=embva)
+                            else:
+                                embva.add_field(
+                                name="**ClearFly Virtual Airline**",
+                                value=f"""
 ```yaml
 --------Training--------
 /va training : Start your career in the ClearFly VA!
@@ -399,27 +401,27 @@ class UtilityCommands(discord.Cog):
 /va leaderboard : Get the leaderboard of who flew the most flights!
 /va liveries : Get all liveries to get your journey started.
 ```
-                                        """, inline=False)
-                            await interaction.response.edit_message(embed=embva)
-                    if select.values[0] == "Leveling":
-                        embva = discord.Embed(title = "**Help**",color = cfc)
-                        embva.add_field(
-                            name="**Leveling Commands**",
-                            value=f"""
+                                            """, inline=False)
+                                await interaction.response.edit_message(embed=embva)
+                        if select.values[0] == "Leveling":
+                            embva = discord.Embed(title = "**Help**",color = cfc)
+                            embva.add_field(
+                                name="**Leveling Commands**",
+                                value=f"""
 ```yaml
 /level userlevel : Gets the provided user's level.
 /level leaderboard : See the leaderboard of the whole server.
 ```
-                                        """, inline=False)
-                        await interaction.response.edit_message(embed=embva)
-                    if select.values[0] == "Admin":
-                        guild = self.bot.get_guild(965419296937365514)
-                        adminrole = guild.get_role(965422406036488282)
-                        if adminrole in interaction.user.roles:
-                            embad = discord.Embed(title = "**Help**",color = cfc)
-                            embad.add_field(
-                                name="**Admin Commands**",
-                                value=f"""
+                                            """, inline=False)
+                            await interaction.response.edit_message(embed=embva)
+                        if select.values[0] == "Admin":
+                            guild = self.bot.get_guild(965419296937365514)
+                            adminrole = guild.get_role(965422406036488282)
+                            if adminrole in interaction.user.roles:
+                                embad = discord.Embed(title = "**Help**",color = cfc)
+                                embad.add_field(
+                                    name="**Admin Commands**",
+                                    value=f"""
 ```yaml
 /admin spam : Spam the channel to oblivion.
 /admin purge : Delete messages from a channel.
@@ -427,11 +429,14 @@ class UtilityCommands(discord.Cog):
 /admin slowmode : Set the slow mode of a channel.
 /admin embed : Send an embed as the bot.
 ```
-                                            """, inline=False)
-                            await interaction.response.edit_message(embed=embad)
-                        else:
-                            embed = discord.Embed(title="Error 403!", description="You are not an admin, you can't use these commands!", color=errorc)
-                            await interaction.response.edit_message(embed=embed)
+                                                """, inline=False)
+                                await interaction.response.edit_message(embed=embad)
+                            else:
+                                embed = discord.Embed(title="Error 403!", description="You are not an admin, you can't use these commands!", color=errorc)
+                                await interaction.response.edit_message(embed=embed)
+                    else:
+                        embed = discord.Embed(title="Error 403!", description="Run the command yourself to use it!", color=errorc)
+                        await interaction.response.send_message(embed=embed, ephemeral=True)
         embed = discord.Embed(title="Help!", description="Select the command category in the drop down for help.", color=cfc)
         await ctx.respond(embed=embed, view=HelpView(bot=self.bot))
 
