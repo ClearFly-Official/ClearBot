@@ -71,7 +71,7 @@ class LevelingCommands(discord.Cog):
                 embed.set_image(url=f"attachment://userlevel.png")
                 await ctx.respond(embed=embed, file=file)
             else:
-                embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+                embed = discord.Embed(title="Error 404!", description="This most probably means that you never sent a message (slash commands or messages before the introduction of leveling don't count in this server).", color=errorc)
                 await ctx.respond(embed=embed)
         else:
             await user.avatar.save("images/avatarorigin.png")

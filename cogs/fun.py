@@ -16,11 +16,11 @@ class FunCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    fun = discord.SlashCommandGroup(name="fun",description="Commands that are supposed to be fun")
+    fun = discord.SlashCommandGroup(name="fun",description="Fun commands.")
 
 
-    @fun.command(name="ascii",description="Convert texts into big characters using ASCII.")
-    @option("text", description="The text you want to get converted.")
+    @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
+    @option("text", description="The text you want to convert.")
     async def ascii(self, ctx, text):
         try:
             await ctx.respond(f"```{pyfiglet.figlet_format(text)}```")
@@ -31,12 +31,12 @@ class FunCommands(discord.Cog):
 ```
             """)
 
-    @fun.command(name="8ball", description="Ask the bot some questions!")
-    @option("question", description="The question you want to ask to the bot.")
-    @option("mode", description="The mode of the answers, this will determine the answer type", choices=["Normal", "Weird Mode"])
+    @fun.command(name="8ball", description="Roll the eight ball and recieve the wisdom of chance!")
+    @option("question", description="The question you want to ask the bot.")
+    @option("mode", description="The mode of the answers. This will determine the answer type.", choices=["Normal", "Weird Mode"])
     async def VIIIball(self, ctx, question, mode= None):
         if (mode == None) or (mode == "Normal"):
-            answers = [
+            answers = [ 
             "It is certain",
             "Reply hazy, try again",
             "Don't count on it",
@@ -92,24 +92,24 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
             await ctx.respond(embed=embed)
 
-    @fun.command(name="dadjoke", description="Gives a dadjoke")
+    @fun.command(name="dadjoke", description="Get an unfunny dadjoke.")
     async def dadjoke(self, ctx):
         dadjoke = Dadjoke()
         embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
         await ctx.respond(embed=embed)
 
-    @fun.command(name="roast", description="Roast whoever you'd like!")
-    @option("user", description="The person you'd like to roast")
+    @fun.command(name="roast", description="Why roast your friends when the bot can do it for you?")
+    @option("user", description="The person you'd like to roast.")
     async def roast(self, ctx, user: discord.Member):
         roasts = [
             "Your face made the onion cry.",
             "I'm jealous of people who don't know you.",
             "If I had a face like yours, I'd sue my parents.",
-            "You sound reasonable… Time to up my medication.",
+            "You sound reasonable… time to up my medication.",
             "I might be crazy, but crazy is better than stupid.",
             "My middle finger gets a boner every time I see you.",
             "If your brain was made of chocolate, it wouldn't fill an M&M.",
-            "You're not funny, but your life, now that's a joke.",
+            "You're not funny, but your life; now that's a joke.",
             "If laughter is the best medicine, your face must be curing the world.",
             "If you are going to be two faced, at least make one of them pretty.",
             "You're as bright as a black hole, and twice as dense.",
@@ -158,7 +158,7 @@ class FunCommands(discord.Cog):
             isPressed = 0
             
             async def on_timeout(self, interaction):
-                interaction.response.edit_message("You ran out of time! Run the command again to play.")
+                interaction.response.edit_message("You ran out of time! Rerun the command to play again.")
                 for child in self.children:
                     child.disabled = True
 
@@ -171,10 +171,10 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
                     else:
                         if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
@@ -187,10 +187,10 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
                     else:
                         if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
@@ -203,10 +203,10 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
                     else:
                         if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
