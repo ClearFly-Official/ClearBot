@@ -68,7 +68,7 @@ class DevCommands(discord.Cog):
                             value=cogs[5]
                         ),
                         discord.SelectOption(
-                            label=cogs[6].capitalize(),
+                            label=cogs[6].upper(),
                             emoji="✈️",
                             value=cogs[6]
                         )
