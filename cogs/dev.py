@@ -76,7 +76,6 @@ class DevCommands(discord.Cog):
                 )
                 async def select_callback(self, select, interaction):
                     if ctx.author.id in devs:
-                        print(select.values)
                         for cog in select.values:
                             self.bot.reload_extension(f"cogs.{cog}")
                         embed = discord.Embed(title="Selected cogs have been reloaded!", description=f"""
