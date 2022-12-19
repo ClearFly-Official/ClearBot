@@ -75,6 +75,9 @@ Reloaded cogs:
                     else:
                         embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
                         await ctx.respond(embed=embed)
+                
+            embed = discord.Embed(title="Select the cogs you want to reload:", color=cfc)
+            await ctx.respond(embed=embed, view=CogSelectView(bot=self.bot))
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
