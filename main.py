@@ -14,7 +14,7 @@ bot = discord.Bot(intents=discord.Intents.all())
 va = bot.create_group(name="va-admin",description="Commands related to the ClearFly Virtual Airline")
 admin = bot.create_group(name="admin2", description="Commands for admins")
 load_dotenv()
-
+bot_start_time = datetime.utcnow()
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
 cfc = 0x00771d # <- christmas color

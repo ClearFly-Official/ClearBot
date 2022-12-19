@@ -7,6 +7,7 @@ from math import sqrt
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
+from main import bot_start_time
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
@@ -14,8 +15,6 @@ cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 load_dotenv()
-
-bot_start_time = datetime.utcnow()
 
 class UtilityCommands(discord.Cog):
 
