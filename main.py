@@ -20,8 +20,6 @@ from datetime import datetime
 from random import choices
 from math import sqrt
 from discord.ext import commands, tasks
-from discord.ext.commands import (BadArgument, Bot, BucketType,
-                                  clean_content, command, cooldown)
 from discord.ui import Button, View
 from discord.utils import get
 from discord import ButtonStyle, option
@@ -676,10 +674,13 @@ async def avatar_app(ctx, user:discord.Member):
 @option("text", description="The text you want to get converted.")
 async def ascii(ctx, text):
   try:
-    ascii = pyfiglet.figlet_format(text)
-    await ctx.respond(f"```{ascii}```")
-  except Exception as e:
-    await ctx.respond(f'Error:\n{e}', ephemeral  = True)
+    await ctx.respond(f"```{pyfiglet.figlet_format(text)}```")
+  except Exception as error:
+    await ctx.respond(f"""Error:
+```
+{error}
+```
+    """)
 
 @utility.command(name="who-is", description="Fetches a user profile")
 @option("user", description="The user you want the user profile of.")
@@ -733,8 +734,8 @@ async def whois_app(ctx, user:discord.Member):
 
 @utility.command(name="github", description="Shows the bot's GitHub repository.")
 async def github(ctx):
-  emb = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/ClearFly-Official/ClearBot)",color=cfc)
-  await ctx.respond(embed=emb)
+  embed = discord.Embed(title="GitHub:", description="[Here's the repository!](https://github.com/ClearFly-Official/ClearBot)",color=cfc)
+  await ctx.respond(embed=embed)
 
 @fun.command(name="8ball", description="Ask the bot some questions!")
 @option("question", description="The question you want to ask to the bot.")
@@ -812,15 +813,15 @@ async def spam(ctx, amount: int,text):
 
           @discord.ui.button(custom_id="okbutton", style=discord.ButtonStyle.green, emoji="<:yes:765068298004987904>")
           async def button_callback(self, button, interaction):
-            global confirm
-            confirm = 1
-            channel = bot.get_channel(1001405648828891187)
-            await interaction.response.send_message(f"Ok, spamming {ctx.channel} {amount} times", ephemeral=True)
-            embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:", description=text, color=cfc)
-            embed.set_thumbnail(url=ctx.author.avatar.url)
-            await channel.send(embed=embed)
-            for i in range(amount):
-              await ctx.send(text)
+              global confirm
+              confirm = 1
+              channel = bot.get_channel(1001405648828891187)
+              await interaction.response.send_message(f"Ok, spamming {ctx.channel} {amount} times", ephemeral=True)
+              embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:", description=text, color=cfc)
+              embed.set_thumbnail(url=ctx.author.avatar.url)
+              await channel.send(embed=embed)
+              for i in range(amount):
+                await ctx.send(text)
           @discord.ui.button(custom_id="nobutton", style=discord.ButtonStyle.danger, emoji="<:No:744714930946572371>")
           async def second_button_callback(self, button, interaction):
             global confirm
@@ -1010,71 +1011,70 @@ async def roast(ctx, user: discord.Member):
   else:
     await ctx.respond(f"{user.mention} {output}")
 
-class ButtonGame(discord.ui.View):
-  def __init__(self):
-    super().__init__(timeout=None)
-
-  global b, isPressed
-  b = 0
-  isPressed = 0
-
-  @discord.ui.button(label="1", style=discord.ButtonStyle.green)
-  async def first_button_callback(self, button, interaction):
-    global b, isPressed
-    b = 1
-    isPressed = 1
-    opts = [1, 2, 3, 1, 2, 3]
-    output = random.choice(opts)
-    for child in self.children:
-      child.disabled = True
-    if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
-    else:
-      if isPressed == 1:
-        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
-
-  @discord.ui.button(label="2", style=discord.ButtonStyle.green)
-  async def second_button_callback(self, button, interaction):
-    global b, isPressed
-    b = 2
-    isPressed = 1
-    for child in self.children:
-      child.disabled = True
-    opts = [1, 2, 3, 1, 2, 3]
-    output = random.choice(opts)
-    if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
-    else:
-      if isPressed == 1:
-        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
-
-  @discord.ui.button(label="3", style=discord.ButtonStyle.green)
-  async def third_button_callback(self, button, interaction):
-    global b, isPressed
-    b = 3
-    isPressed = 1
-    opts = [1, 2, 3, 1, 2, 3]
-    for child in self.children:
-      child.disabled = True
-    output = random.choice(opts)
-    if output == b:
-        await interaction.response.send_message(":partying_face: You guessed right, congrats!")
-    else:
-      if isPressed == 1:
-        await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
-  
-  async def on_timeout(self, interaction):
-    if isPressed == 0:
-      await interaction.response.edit_message(view=self)
-      await interaction.response.send_message("You waited too long, run the command again to play the game!", ephemeral=True)
-    else:
-      await interaction.response.edit_message(view=self)
-  
-
 
 @fun.command(name="buttongame", description="Play a game with buttons!")
 async def bgame(ctx):
   embed = discord.Embed(title="Choose a button!", color=cfc)
+  class ButtonGame(discord.ui.View):
+    def __init__(self):
+      super().__init__(timeout=30)
+
+    global b, isPressed
+    b = 0
+    isPressed = 0
+    
+    async def on_timeout(self, interaction):
+      interaction.response.edit_message("You ran out of time! Run the command again to play.")
+      for child in self.children:
+        child.disabled = True
+
+    @discord.ui.button(label="1", style=discord.ButtonStyle.green)
+    async def first_button_callback(self, button, interaction):
+      if interaction.user == ctx.author:
+        global b, isPressed
+        b = 1
+        isPressed = 1
+        opts = [1, 2, 3, 1, 2, 3]
+        output = random.choice(opts)
+        if output == b:
+            await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+        else:
+          if isPressed == 1:
+            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+      else:
+        await interaction.followup.send_message("Run the command yourself to use it!", ephemeral=True)
+
+    @discord.ui.button(label="2", style=discord.ButtonStyle.green)
+    async def second_button_callback(self, button, interaction):
+      if interaction.user == ctx.author:
+        global b, isPressed
+        b = 2
+        isPressed = 1
+        opts = [1, 2, 3, 1, 2, 3]
+        output = random.choice(opts)
+        if output == b:
+            await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+        else:
+          if isPressed == 1:
+            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+      else:
+        await interaction.followup.send_message("Run the command yourself to use it!", ephemeral=True)
+
+    @discord.ui.button(label="3", style=discord.ButtonStyle.green)
+    async def third_button_callback(self, button, interaction):
+      if interaction.user == ctx.author:
+        global b, isPressed
+        b = 3
+        isPressed = 1
+        opts = [1, 2, 3, 1, 2, 3]
+        output = random.choice(opts)
+        if output == b:
+            await interaction.response.send_message(":partying_face: You guessed right, congrats!")
+        else:
+          if isPressed == 1:
+            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong, the right answer was {output}")
+      else:
+        await interaction.followup.send_message("Run the command yourself to use it!", ephemeral=True)
   await ctx.respond(embed=embed, view=ButtonGame())
 
 
@@ -1191,6 +1191,8 @@ async def get_airports_o(ctx: discord.AutocompleteContext):
 
 async def get_airports_d(ctx: discord.AutocompleteContext):
     return [destination for destination in airports if destination.startswith(ctx.value.upper())]
+
+
 class InfoB4training(discord.ui.View):
   def __init__(self):
     super().__init__(timeout=None)
@@ -2075,7 +2077,7 @@ async def divert(ctx, airport):
         await ctx.respond(embed=embed)
       else:
         with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
-          f.write(f"/D({airport})")
+          f.write(f"/Divert2({airport})")
         embed = discord.Embed(title=f"Flight diverted to {airport}!", color=cfc)
         await ctx.respond(embed=embed)
     else:
@@ -2090,21 +2092,25 @@ async def cancel(ctx):
   if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
     config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
     if config.get("Student", "end") == "1":
-      with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as f:
+      if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/data.txt"):
+        with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as f:
 
-        f.seek(0, os.SEEK_END)
+          f.seek(0, os.SEEK_END)
 
-        pos = f.tell() - 1
+          pos = f.tell() - 1
 
-        while pos > 0 and f.read(1) != "\n":
-            pos -= 1
-            f.seek(pos, os.SEEK_SET)
+          while pos > 0 and f.read(1) != "\n":
+              pos -= 1
+              f.seek(pos, os.SEEK_SET)
 
-        if pos > 0:
-            f.seek(pos, os.SEEK_SET)
-            f.truncate()
-      embed = discord.Embed(title="Flight canceled!", color=cfc)
-      await ctx.respond(embed=embed)
+          if pos > 0:
+              f.seek(pos, os.SEEK_SET)
+              f.truncate()
+        embed = discord.Embed(title="Flight canceled!", color=cfc)
+        await ctx.respond(embed=embed)
+      else:
+        embed=discord.Embed(title="Error 404!", description="Didn't found any flights, you should file at least one flight to use this command!", color=errorc)
+        await ctx.respond(embed=embed)
     else:
         embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
         await ctx.respond(embed=embed)
@@ -2370,9 +2376,13 @@ class VALivs(discord.ui.View):
 """
 Here are some screenshots of our liveries!
 https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png
+
 https://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG
+
 https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG
+
 https://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png
+
 https://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png
 """, ephemeral=True)
 @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
