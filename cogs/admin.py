@@ -70,8 +70,9 @@ class AdminCommands(discord.Cog):
         confirm = 0
         if amount > 100:
             class Spam(discord.ui.View):
-                def __init__(self):
-                    super().__init__(timeout=10.0)
+                def __init__(self, bot):
+                    self.bot = bot
+                    super().__init__(timeout=15.0)
 
                 @discord.ui.button(custom_id="okbutton", style=discord.ButtonStyle.green, emoji="<:yes:765068298004987904>")
                 async def button_callback(self, button, interaction):
@@ -100,7 +101,7 @@ class AdminCommands(discord.Cog):
                         return
 
             embed=discord.Embed(title="**Do you want to continue?**", description=f"You are spamming **{amount} times**, that's a lot!", color=cfc)
-            await ctx.respond(embed=embed,view=Spam(),ephemeral=True)
+            await ctx.respond(embed=embed,view=Spam(bot=self.bot),ephemeral=True)
         else:
             embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
             embed.set_thumbnail(url=user.avatar.url)
@@ -134,7 +135,8 @@ class AdminCommands(discord.Cog):
         channel = self.bot.get_channel(1001405648828891187)
         if amount > 100:
             class PurgeView(discord.ui.View):
-                def __init__(self):
+                def __init__(self, bot):
+                    self.bot = bot
                     super().__init__(timeout=15.0)
 
                 @discord.ui.button(custom_id="okbutton", style=discord.ButtonStyle.green, emoji="<:yes:765068298004987904>")
@@ -163,7 +165,7 @@ class AdminCommands(discord.Cog):
                     else:
                         return
             embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages**, that's a lot!", color=cfc)
-            await ctx.respond(embed=embed,view=PurgeView(),ephemeral=True)
+            await ctx.respond(embed=embed,view=PurgeView(bot=self.bot),ephemeral=True)
         else:
             await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
             await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
