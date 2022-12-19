@@ -17,7 +17,7 @@ class AdminCommands(discord.Cog):
     
     admin = discord.SlashCommandGroup(name="admin", description="Commands for admins")
         
-    @admin.command(name="echo",description="Send a message as the bot.")
+    @admin.command(name="echo",description="Send a message as ClearBot.")
     @option("text", description="The text you want to send as the bot.")
     @commands.has_permissions(manage_channels=True)
     async def echo(self,ctx, text: str):
@@ -29,9 +29,9 @@ class AdminCommands(discord.Cog):
         emb.set_thumbnail(url=pfp)
         await channel.send(embed=emb)
 
-    @admin.command(name="embed",description="Send an embed as the bot.")
-    @option("title", description="The title of the embed you will as the bot.")
-    @option("description", description="The description of the embed you will as the bot.")
+    @admin.command(name="embed",description="Send an embed as ClearBot.")
+    @option("title", description="The title of the embed.")
+    @option("description", description="The description of the embed.")
     @commands.has_permissions(manage_channels=True)
     async def embed(self,ctx, title: str, description: str):
         await ctx.respond('posted your embed!',ephemeral  = True)
@@ -60,8 +60,8 @@ class AdminCommands(discord.Cog):
         await channel2.send(embed=embed)
 
     @admin.command(name="spam", description="Spam the channel to oblivion.")
-    @option("amount", description="How many times you want to spam the provided text.")
-    @option("text", description="The text you want to spam.")
+    @option("amount", description="Amount of messages to spam.")
+    @option("text", description="What you want to spam.")
     @commands.has_permissions(manage_channels=True)
     async def spam(self, ctx, amount: int,text):
         channel = self.bot.get_channel(1001405648828891187)
@@ -79,7 +79,7 @@ class AdminCommands(discord.Cog):
                     global confirm
                     confirm = 1
                     channel = self.bot.get_channel(1001405648828891187)
-                    await interaction.response.send_message(f"Ok, spamming {ctx.channel} {amount} times", ephemeral=True)
+                    await interaction.response.send_message(f"Ok, here we go! {ctx.channel} {amount} times", ephemeral=True)
                     embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:", description=text, color=cfc)
                     embed.set_thumbnail(url=ctx.author.avatar.url)
                     await channel.send(embed=embed)
@@ -89,18 +89,18 @@ class AdminCommands(discord.Cog):
                 async def second_button_callback(self, button, interaction):
                     global confirm
                     confirm = 1
-                    await interaction.response.send_message(f"Ok, cancelling spam.", ephemeral=True)
+                    await interaction.response.send_message(f"Ok, cancelling.", ephemeral=True)
                     await ctx.edit(view=None)
 
                 async def on_timeout(self):
                     global confirm
                     if confirm == 0:
                         await ctx.edit(view=None)
-                        await ctx.respond("You waited too long, run the command again to spam!", ephemeral=True)
+                        await ctx.respond("You waited too long. Rerun the command to start over!", ephemeral=True)
                     else:
                         return
 
-            embed=discord.Embed(title="**Do you want to continue?**", description=f"You are spamming **{amount} times**, that's a lot!", color=cfc)
+            embed=discord.Embed(title="**Do you want to continue?**", description=f"You are spamming **{amount} times**. That's a lot!", color=cfc)
             await ctx.respond(embed=embed,view=Spam(bot=self.bot),ephemeral=True)
         else:
             embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
@@ -110,13 +110,13 @@ class AdminCommands(discord.Cog):
             for i in range(amount):
                 await ctx.send(text)
 
-    @admin.command(name="slowmode", description="Set the slow mode of a channel")
-    @option("slowmode", description="What the slow mode delay should be.")
-    @option("channel", description="The channel to set a slow mode too.", required=False)
+    @admin.command(name="slowmode", description="Set the slowmode time of a channel.")
+    @option("slowmode", description="The amount of time the slowmode should be, in seconds.")
+    @option("channel", description="The channel to apply the slowmode to.", required=False)
     @commands.has_permissions(manage_channels=True)
     async def sm(self, ctx, slowmode:int, channel: discord.TextChannel):
         if slowmode > 21600:
-            await ctx.respond("Max slowmode is 21600 seconds!")
+            await ctx.respond("Maximum slowmode is 21600 seconds!")
         if channel == None:
             await ctx.channel.edit(slowmode_delay=slowmode)
             embed = discord.Embed(title=f"This channel's slow mode has been set to {slowmode} second(s)!", color=cfc)
@@ -126,8 +126,8 @@ class AdminCommands(discord.Cog):
             embed = discord.Embed(title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!", color=cfc)
             await ctx.respond(embed=embed)
 
-    @admin.command(description='Delete messages from a channel.')
-    @option("amount", description="The amount of messages you want to purge.")
+    @admin.command(description='Delete large amounts of messages from a channel.')
+    @option("amount", description="The number of messages you want to delete.")
     @commands.has_permissions(manage_channels=True)
     async def purge(self, ctx, amount: int):
         global confirm
@@ -161,10 +161,10 @@ class AdminCommands(discord.Cog):
                     global confirm
                     if confirm == 0:
                         await ctx.edit(view=None)
-                        await ctx.respond("You waited too long, run the command again to purge!", ephemeral=True)
+                        await ctx.respond("You waited too long. Rerun the command to purge!", ephemeral=True)
                     else:
                         return
-            embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages**, that's a lot!", color=cfc)
+            embed=discord.Embed(title="**Do you want to continue?**", description=f"You are purging **{amount} messages**. that's a lot!", color=cfc)
             await ctx.respond(embed=embed,view=PurgeView(bot=self.bot),ephemeral=True)
         else:
             await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
