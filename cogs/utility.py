@@ -290,6 +290,9 @@ class UtilityCommands(discord.Cog):
     @discord.command(name="help", description="Need help? This is the right command!")
     async def help(self, ctx):
         class HelpView(discord.ui.View):
+                def __init__(self, bot):
+                    self.bot = bot
+                    
                 @discord.ui.select( 
                     placeholder = "Command category", 
                     min_values = 1, 
@@ -430,7 +433,7 @@ class UtilityCommands(discord.Cog):
                             embed = discord.Embed(title="Error 403!", description="You are not an admin, you can't use these commands!", color=errorc)
                             await interaction.response.edit_message(embed=embed)
         embed = discord.Embed(title="Help!", description="Select the command category in the drop down for help.", color=cfc)
-        await ctx.respond(embed=embed, view=HelpView())
+        await ctx.respond(embed=embed, view=HelpView(bot=self.bot))
 
 def setup(bot):
     bot.add_cog(UtilityCommands(bot))
