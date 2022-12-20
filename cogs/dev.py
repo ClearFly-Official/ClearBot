@@ -185,11 +185,11 @@ Reloaded cogs:
                 datarefs = datarefJson["datarefs"]
                 embed = discord.Embed(title=f"Found this information for dataref {dataref}:", colour=cfc)
                 embed.add_field(name="Dataref Information:", value=f"""
-Path : {datarefs[dataref]["path"]}
-Type : {datarefs[dataref]["type"]}
+Path : **{datarefs[dataref]["path"]}**
+Type : **{datarefs[dataref]["type"]}**
 Description :
-> {datarefs[dataref]["description"]}
-Range : {datarefs[dataref]["range"]}
+> **{datarefs[dataref]["description"]}**
+Range : **{datarefs[dataref]["range"]}**
                 """)
                 await ctx.respond(embed=embed)
             else:
