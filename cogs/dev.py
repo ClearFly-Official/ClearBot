@@ -51,12 +51,13 @@ class DevCommands(discord.Cog):
     @option("doc_part", autocomplete=getattrs)
     async def get_doc(self, ctx, doc_part):
         if ctx.author.id in devs:
+            raw_part = doc_part
             doc_part, path = await self.convert_attr(doc_part)
             if not doc_part:
-                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find `{path}`.", colour=errorc)
+                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find `{raw_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
             if doc_part.__doc__ is None:
-                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find documentation `{path}`.", colour=errorc)
+                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find documentation `{raw_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
             embed = discord.Embed(title=f"Found the following for `{path}`", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
             await ctx.respond(embed=embed)
