@@ -185,18 +185,54 @@ Reloaded cogs:
         if ctx.author.id in acdevs:
             await ctx.defer()
             if dataref in datarefList:
-                with open("dev/aircraft/datarefs.json", "r") as f:
-                    datarefJson = json.load(f)
-                datarefs = datarefJson["datarefs"]
-                embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
-                embed.add_field(name="Dataref Information:", value=f"""
+                if dataref.startswith("ClearFly"):
+                    with open("dev/aircraft/datarefs.json", "r") as f:
+                        datarefJson = json.load(f)
+                    datarefs = datarefJson["datarefs"]
+                    embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                    embed.add_field(name="Dataref Information:", value=f"""
 Path : `{datarefs[dataref]["path"]}`
 Type : **{datarefs[dataref]["type"]}**
 Description :
-> **{datarefs[dataref]["description"]}**
 Range : **{datarefs[dataref]["range"]}**
-                """)
-                await ctx.respond(embed=embed)
+> **{datarefs[dataref]["description"]}**
+                    """)
+                else:
+                    with open("dev/aircraft/defaultDatarefs.json", "r") as f:
+                        datarefJson = json.load(f)
+                    datarefs = datarefJson["datarefs"]
+                    if len(list(datarefs[dataref].keys())) == 5:
+                        embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                        embed.add_field(name="Dataref Information:", value=f"""
+Path : `{datarefs[dataref]["path"]}`
+Type : **{datarefs[dataref]["type"]}**
+Writable : **{datarefs[dataref]["writable"]}**
+Unit : **{datarefs[dataref]["unit"]}**
+Description :
+> **{datarefs[dataref]["description"]}**
+                    """)
+                    if len(list(datarefs[dataref].keys())) == 4:
+                        embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                        embed.add_field(name="Dataref Information:", value=f"""
+Path : `{datarefs[dataref]["path"]}`
+Type : **{datarefs[dataref]["type"]}**
+Writable : **{datarefs[dataref]["writable"]}**
+Unit : **{datarefs[dataref]["unit"]}**
+                    """)
+                    if len(list(datarefs[dataref].keys())) == 3:
+                        embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                        embed.add_field(name="Dataref Information:", value=f"""
+Path : `{datarefs[dataref]["path"]}`
+Type : **{datarefs[dataref]["type"]}**
+Writable : **{datarefs[dataref]["writable"]}**
+                    """)
+                    if len(list(datarefs[dataref].keys())) == 2:
+                        embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                        embed.add_field(name="Dataref Information:", value=f"""
+Path : `{datarefs[dataref]["path"]}`
+Type : **{datarefs[dataref]["type"]}**
+                    """)
+                    await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`", colour=errorc)
         else:
