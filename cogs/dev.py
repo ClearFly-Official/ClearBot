@@ -180,7 +180,7 @@ Reloaded cogs:
             with open("dev/aircraft/datarefs.txt", "r") as f:
                 datarefList = f.readlines()
             if dataref in datarefList:
-                with open("dev/aircraft/datarefs.txt", "r") as f:
+                with open("dev/aircraft/datarefs.txt", "r+") as f:
                     datarefJson = json.load(f)
                 datarefs = datarefJson["datarefs"]
                 embed = discord.Embed(title=f"Found this information for dataref {dataref}:", colour=cfc)
@@ -206,7 +206,7 @@ Range : {datarefs[dataref]["range"]}
     async def drefadd(self, ctx, path, dreftype, description, drefrange):
         if ctx.author.id in acdevs:
             await ctx.defer()
-            with open("dev/aircraft/datarefs.json", "r") as f:
+            with open("dev/aircraft/datarefs.json", "r+") as f:
                 datarefs = json.load(f)
             if dreftype == "string":
                 drefrange = "N/A"
