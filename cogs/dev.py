@@ -9,8 +9,6 @@ from discord import option
 cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
-PASTEBIN_RE = re.compile(r"(https?://pastebin.com)/([a-zA-Z0-9]{8})")
-
 
 async def getattrs(ctx):
     input = ctx.options["doc_part"]
@@ -49,14 +47,19 @@ class DevCommands(discord.Cog):
     @dev.command(name="docs", description="Get information from the Pycord docs.")
     @option("doc_part", autocomplete=getattrs)
     async def get_doc(self, ctx, doc_part):
-        doc_part, path = await self.convert_attr(doc_part)
-        if not doc_part:
-            return await ctx.respond("Item not found.")
-        if doc_part.__doc__ is None:
-            return await ctx.respond(f"Couldn't find documentation for `{path}`.")
-
-        await ctx.respond(f"```\n{cleandoc(doc_part.__doc__)[:1993]}```")
-
+        if ctx.author.id in devs:
+            doc_part = await self.convert_attr(doc_part)
+            if not doc_part:
+                embed = discord.Embed(title=f"Error 404", description=f"Couldn't find `{doc_part}`.", colour=errorc)
+                return await ctx.respond(embed=embed)
+            if doc_part.__doc__ is None:
+                embed = discord.Embed(title=f"Error 404", description=f"Couldn't find documentation `{doc_part}`.", colour=errorc)
+                return await ctx.respond(embed=embed)
+            embed = discord.Embed(title=f"Found the following for {doc_part}", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
+            await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
 
     @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
     async def reloadCogs(self, ctx):
