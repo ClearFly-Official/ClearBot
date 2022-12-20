@@ -115,29 +115,29 @@ class Listeners(discord.Cog):
         if before.bot == False:
             channel = self.bot.get_channel(1001405648828891187)
             if before.name != after.name:
-                user = self.bot.fetch_user(before.id)
+                user = await self.bot.fetch_user(before.id)
                 embed = discord.Embed(title=f"{user.mention} changed their name to `{after.name}`.", colour=cfc)
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.display_name != after.display_name:
-                user = self.bot.fetch_user(before.id)
+                user = await self.bot.fetch_user(before.id)
                 embed = discord.Embed(title=f"{user.mention} changed their nickname to `{after.display_name}`.", colour=cfc)
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.discriminator != after.discriminator:
-                user = self.bot.fetch_user(before.id)
+                user = await self.bot.fetch_user(before.id)
                 embed = discord.Embed(title=f"{user.mention} changed their discriminator to `{after.discriminator}`.", colour=cfc)
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.roles != after.roles:
-                user = self.bot.fetch_user(before.id)
+                user = await self.bot.fetch_user(before.id)
                 embed = discord.Embed(title=f"{user.mention} got their roles changed.", colour=cfc)
                 embed.add_field(name="Roles before", value=f"`{''.join(before.roles)}`")
                 embed.add_field(name="Roles after", value=f"`{''.join(after.roles)}`")
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.avatar != after.avatar:
-                user = self.bot.fetch_user(before.id)
+                user = await self.bot.fetch_user(before.id)
                 embed = discord.Embed(title=f"{user.mention} changed their avatar to the following image.", colour=cfc)
                 embed.set_image(url=after.avatar.url)
                 await channel.send(embed=embed)
