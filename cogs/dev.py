@@ -201,7 +201,7 @@ Range : **{datarefs[dataref]["range"]}**
                 """)
                 await ctx.respond(embed=embed)
             else:
-                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`")
+                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`", colour=errorc)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
@@ -238,8 +238,8 @@ Range : **{datarefs[dataref]["range"]}**
                     json.dump(datarefs, f, indent=4)
                 with open("dev/aircraft/datarefs.txt", "a") as f:
                     f.write(f"\n{path}")
-                embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.")
-                embed.set_footer(text="*Don't forget to make the dateref with SASL if you didn't already do so.*")
+                embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.", color=cfc)
+                embed.set_footer(text="Don't forget to make the dateref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 422!", description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`", colour=errorc)
@@ -282,11 +282,11 @@ Range : **{datarefs[dataref]["range"]}**
 
                 with open("dev/aircraft/datarefs.json", "w") as f:
                     json.dump(datarefs, f, indent=4)
-                embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.")
-                embed.set_footer(text="*Don't forget to edit the dateref with SASL if you didn't already do so.*")
+                embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.", colour=cfc)
+                embed.set_footer(text="Don't forget to edit the dateref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
             else:
-                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!")
+                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!", colour=errorc)
                 await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
