@@ -169,23 +169,31 @@ Reloaded cogs:
     
     async def get_datarefs(self, ctx: discord.AutocompleteContext):
         with open("dev/aircraft/datarefs.txt") as f:
-            datarefs = f.readlines()
-        return [dataref for dataref in datarefs if dataref.startswith(ctx.value)]
+            datarefList = []
+            datarefLoad = f.readlines()
+            for elem in datarefLoad:
+                newElem = elem.replace('\n', '')
+                datarefList.append(newElem)
+        return [dataref for dataref in datarefList if dataref.startswith(ctx.value)]
 
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def datarefs(self, ctx, dataref):
         if ctx.author.id in acdevs:
             await ctx.defer()
-            with open("dev/aircraft/datarefs.txt", "r") as f:
-                datarefList = f.readlines()
+            with open("dev/aircraft/datarefs.txt") as f:
+                datarefList = []
+                datarefLoad = f.readlines()
+                for elem in datarefLoad:
+                    newElem = elem.replace('\n', '')
+                    datarefList.append(newElem)
             if dataref in datarefList:
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefJson = json.load(f)
                 datarefs = datarefJson["datarefs"]
                 embed = discord.Embed(title=f"Found this information for dataref `{dataref}`:", colour=cfc)
                 embed.add_field(name="Dataref Information:", value=f"""
-Path : **{datarefs[dataref]["path"]}**
+Path : `{datarefs[dataref]["path"]}`
 Type : **{datarefs[dataref]["type"]}**
 Description :
 > **{datarefs[dataref]["description"]}**
@@ -243,8 +251,12 @@ Range : **{datarefs[dataref]["range"]}**
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, dataref, dreftype, description, drefrange):
         if ctx.author.id in acdevs:
-            with open("dev/aircraft/datarefs.txt", "r") as f:
-                datarefList = f.readlines()
+            with open("dev/aircraft/datarefs.txt") as f:
+                datarefList = []
+                datarefLoad = f.readlines()
+                for elem in datarefLoad:
+                    newElem = elem.replace('\n', '')
+                    datarefList.append(newElem)
             if dataref in datarefList:
                 await ctx.defer()
                 with open("dev/aircraft/datarefs.json", "r") as f:
