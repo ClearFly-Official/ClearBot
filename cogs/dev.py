@@ -179,6 +179,14 @@ Reloaded cogs:
         datarefList = datarefList1 + datarefList2
         return [dataref for dataref in datarefList if ctx.value in dataref]
 
+    async def get_custom_datarefs(self, ctx: discord.AutocompleteContext):
+        with open("dev/aircraft/datarefs.json") as f:
+            datarefLoad = json.load(f)
+            datarefList1 = list(datarefLoad["datarefs"].keys())
+        global customDatarefList
+        customDatarefList = datarefList1
+        return [dataref for dataref in datarefList if ctx.value in dataref]
+
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def datarefs(self, ctx, dataref):
@@ -282,13 +290,13 @@ Type : **{datarefs[dataref]["type"]}**
             await ctx.respond(embed=embed)
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
-    @option("dataref", description="The path of the dataref you want to edit.", autocomplete=get_datarefs)
+    @option("dataref", description="The path of the dataref you want to edit.", autocomplete=get_custom_datarefs)
     @option("type", description="The type of dataref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, dataref, type, description, range):
         if ctx.author.id in acdevs:
-            if dataref in datarefList:
+            if dataref in customDatarefList:
                 await ctx.defer()
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefs = json.load(f)
