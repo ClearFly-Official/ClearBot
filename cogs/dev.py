@@ -169,12 +169,14 @@ Reloaded cogs:
 
     
     async def get_datarefs(self, ctx: discord.AutocompleteContext):
-        with open("dev/aircraft/datarefs.txt") as f:
-            datarefList = []
-            datarefLoad = f.readlines()
-            for elem in datarefLoad:
-                newElem = elem.replace('\n', '')
-                datarefList.append(newElem)
+        with open("dev/aircraft/datarefs.json") as f:
+            datarefLoad = json.load(f)
+            datarefList1 = list(datarefLoad["datarefs"].keys())
+        with open("dev/aircraft/defaultDatarefs.json") as f:
+            datarefLoad = json.load(f)
+            datarefList2 = list(datarefLoad["datarefs"].keys())
+        global datarefList
+        datarefList = datarefList1 + datarefList2
         return [dataref for dataref in datarefList if dataref.startswith(ctx.value)]
 
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
@@ -182,12 +184,6 @@ Reloaded cogs:
     async def datarefs(self, ctx, dataref):
         if ctx.author.id in acdevs:
             await ctx.defer()
-            with open("dev/aircraft/datarefs.txt") as f:
-                datarefList = []
-                datarefLoad = f.readlines()
-                for elem in datarefLoad:
-                    newElem = elem.replace('\n', '')
-                    datarefList.append(newElem)
             if dataref in datarefList:
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefJson = json.load(f)
@@ -237,8 +233,6 @@ Range : **{datarefs[dataref]["range"]}**
 
                 with open("dev/aircraft/datarefs.json", "w") as f:
                     json.dump(datarefs, f, indent=4)
-                with open("dev/aircraft/datarefs.txt", "a") as f:
-                    f.write(f"\n{path}")
                 embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.", color=cfc)
                 embed.set_footer(text="Don't forget to make the dataref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
@@ -257,12 +251,6 @@ Range : **{datarefs[dataref]["range"]}**
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, dataref, type, description, range):
         if ctx.author.id in acdevs:
-            with open("dev/aircraft/datarefs.txt") as f:
-                datarefList = []
-                datarefLoad = f.readlines()
-                for elem in datarefLoad:
-                    newElem = elem.replace('\n', '')
-                    datarefList.append(newElem)
             if dataref in datarefList:
                 await ctx.defer()
                 with open("dev/aircraft/datarefs.json", "r") as f:

@@ -1,2 +1,0 @@
-ClearFly/731/radome/anims/door
-ClearFly/731/radome/animstgl/door

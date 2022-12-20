@@ -316,7 +316,7 @@ Chat to earn xp!
 
             foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
             embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
-            Chat more to go higher on the list!
+Chat more to go higher on the list!
 ```
 {"".join(foutput[:10])}
 ```
