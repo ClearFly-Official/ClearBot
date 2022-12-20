@@ -208,7 +208,7 @@ Range : **{datarefs[dataref]["range"]}**
 
     @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
-    @option("type", description="The type of dateref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
+    @option("type", description="The type of dataref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the new dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, path, type, description, range):
@@ -239,7 +239,7 @@ Range : **{datarefs[dataref]["range"]}**
                 with open("dev/aircraft/datarefs.txt", "a") as f:
                     f.write(f"\n{path}")
                 embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.", color=cfc)
-                embed.set_footer(text="Don't forget to make the dateref with SASL if you didn't already do so.")
+                embed.set_footer(text="Don't forget to make the dataref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 422!", description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`", colour=errorc)
@@ -251,7 +251,7 @@ Range : **{datarefs[dataref]["range"]}**
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
     @option("dataref", description="The path of the dataref you want to edit.", autocomplete=get_datarefs)
-    @option("type", description="The type of dateref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
+    @option("type", description="The type of dataref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, dataref, type, description, range):
@@ -283,7 +283,7 @@ Range : **{datarefs[dataref]["range"]}**
                 with open("dev/aircraft/datarefs.json", "w") as f:
                     json.dump(datarefs, f, indent=4)
                 embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.", colour=cfc)
-                embed.set_footer(text="Don't forget to edit the dateref with SASL if you didn't already do so.")
+                embed.set_footer(text="Don't forget to edit the dataref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!", colour=errorc)
