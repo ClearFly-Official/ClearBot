@@ -95,6 +95,28 @@ Reloaded cogs:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
+    @dev.command(name="checker", descripton="Check any attribute to see what it outputs.")
+    async def attrchecker(ctx, input):
+        if ctx.author.id in devs:
+            try:
+                await ctx.defer()
+                embed = discord.Embed(title=f"`{input}` gave the following:", description=f"""
+```
+{exec(input)}
+```
+                """)
+                await ctx.respond(embed=embed)
+            except Exception as error:
+                embed = discord.Embed(title=f"`{input}` gave the following error:", description=f"""
+```
+{error}
+```
+                """)
+                await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
+
     
 def setup(bot):
     bot.add_cog(DevCommands(bot))

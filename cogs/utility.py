@@ -264,6 +264,9 @@ class UtilityCommands(discord.Cog):
 **Uptime:**
 > {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
 
+**Latency:**
+> {round(self.bot.latency)}
+
 **Total lines of code:**
 > {loc}
 
@@ -337,7 +340,6 @@ class UtilityCommands(discord.Cog):
 ```
 ```yaml
 /utility stats : Show statistics about the bot and server.
-/utility ping : Shows the latency speed of the bot.
 /utility who-is : Shows all kind of information about a user.
 /utility the-team : Shows The ClearFly Team!
 /utility avatar : Shows your avatar.
