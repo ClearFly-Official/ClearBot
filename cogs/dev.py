@@ -60,7 +60,7 @@ class DevCommands(discord.Cog):
                 embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find documentation `{raw_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
             embed = discord.Embed(title=f"Found the following for `{path}`", description=f"""
-```sccs
+```py
 {cleandoc(doc_part.__doc__)[:1993]}
 ```
             """, colour=cfc)
