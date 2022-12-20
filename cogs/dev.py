@@ -1,6 +1,8 @@
 import subprocess
 import discord
+import urllib.request as ul
 from discord import option
+from bs4 import BeautifulSoup as soup
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
@@ -92,29 +94,6 @@ Reloaded cogs:
                 
             embed = discord.Embed(title="Select the cogs you want to reload:", color=cfc)
             await ctx.respond(embed=embed, view=CogSelectView(bot=self.bot))
-        else:
-            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
-            await ctx.respond(embed=embed)
-
-    @dev.command(name="checker", descripton="Check any attribute to see what it outputs.")
-    @option("input", description="The code you want to check.")
-    async def attrchecker(self, ctx, input):
-        if ctx.author.id in devs:
-            try:
-                await ctx.defer()
-                embed = discord.Embed(title=f"`{input}` gave the following:", description=f"""
-```
-{exec(input)}
-```
-                """, colour=cfc)
-                await ctx.respond(embed=embed)
-            except Exception as error:
-                embed = discord.Embed(title=f"`{input}` gave the following error:", description=f"""
-```
-{error}
-```
-                """, colour=errorc)
-                await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
