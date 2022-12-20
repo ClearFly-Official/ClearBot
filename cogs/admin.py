@@ -79,8 +79,10 @@ class AdminCommands(discord.Cog):
                     global confirm
                     confirm = 1
                     channel = self.bot.get_channel(1001405648828891187)
-                    await interaction.response.send_message(f"Ok, here we go! {ctx.channel} {amount} times", ephemeral=True)
-                    embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:", description=text, color=cfc)
+                    chnlmention = self.bot.fetch_channel(ctx.channel.id)
+                    await interaction.response.send_message(f"Ok, here we go! {chnlmention.mention} {amount} times", ephemeral=True)
+                    usermention = self.bot.fetch_user(ctx.author.id)
+                    embed = discord.Embed(title=f"**{usermention.mention}** spammed `{chnlmention.mention}` **{amount} times**(after confirmation) with the following text:", description=text, color=cfc)
                     embed.set_thumbnail(url=ctx.author.avatar.url)
                     await channel.send(embed=embed)
                     for i in range(amount):
@@ -103,7 +105,9 @@ class AdminCommands(discord.Cog):
             embed=discord.Embed(title="**Do you want to continue?**", description=f"You are spamming **{amount} times**. That's a lot!", color=cfc)
             await ctx.respond(embed=embed,view=Spam(bot=self.bot),ephemeral=True)
         else:
-            embed = discord.Embed(title=f"**{user}** spammed `{ctx.channel}` **{amount} times** with the following text:", description=text, color=cfc)
+            chnlmention = self.bot.fetch_channel(ctx.channel.id)
+            usermention = self.bot.fetch_user(ctx.author.id)
+            embed = discord.Embed(title=f"**{usermention.mention}** spammed {chnlmention.mention} **{amount} times** with the following text:", description=text, color=cfc)
             embed.set_thumbnail(url=user.avatar.url)
             await ctx.respond("Get ready for the show <:aye:965627580743024671>", ephemeral=True)
             await channel.send(embed=embed)
@@ -115,16 +119,26 @@ class AdminCommands(discord.Cog):
     @option("channel", description="The channel to apply the slowmode to.", required=False)
     @commands.has_permissions(manage_channels=True)
     async def sm(self, ctx, slowmode:int, channel: discord.TextChannel):
+        logchannel = self.bot.get_channel(1001405648828891187)
         if slowmode > 21600:
             await ctx.respond("Maximum slowmode is 21600 seconds!")
         if channel == None:
             await ctx.channel.edit(slowmode_delay=slowmode)
             embed = discord.Embed(title=f"This channel's slow mode has been set to {slowmode} second(s)!", color=cfc)
             await ctx.respond(embed=embed)
+            chnlmention = self.bot.fetch_channel(ctx.channel.id)
+            usermention = self.bot.fetch_user(ctx.author.id)
+            embed = discord.Embed(title=f"{usermention.mention} changed {chnlmention.mention}'s slowmode to {slowmode} second(s).")
+            embed.set_thumbnail(url=ctx.author.avatar.url)
+            await logchannel.send(embed=embed)
         else:
             await channel.edit(slowmode_delay=slowmode)
             embed = discord.Embed(title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!", color=cfc)
             await ctx.respond(embed=embed)
+            usermention = self.bot.fetch_user(ctx.author.id)
+            embed = discord.Embed(title=f"{usermention.mention} changed {channel.mention}'s slowmode to {slowmode} second(s).")
+            embed.set_thumbnail(url=ctx.author.avatar.url)
+            await logchannel.send(embed=embed)
 
     @admin.command(description='Delete large amounts of messages from a channel.')
     @option("amount", description="The number of messages you want to delete.")
@@ -146,7 +160,9 @@ class AdminCommands(discord.Cog):
                     channel = self.bot.get_channel(1001405648828891187)
                     await interaction.response.send_message(f"Ok, purging {amount} messages.", ephemeral=True)
                     await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
-                    embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}` after confirmation!", color=cfc)
+                    chnlmention = self.bot.fetch_channel(ctx.channel.id)
+                    usermention = self.bot.fetch_user(ctx.author.id)
+                    embed = discord.Embed(title=f"{usermention} purged **{amount}** messages in `{chnlmention.mention}` after confirmation!", color=cfc)
                     embed.set_thumbnail(url=ctx.author.avatar.url)
                     await channel.send(embed=embed)
                     await ctx.edit(view=None)
@@ -169,7 +185,8 @@ class AdminCommands(discord.Cog):
         else:
             await ctx.channel.purge(limit=amount, check=lambda message: not message.pinned)
             await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
-            embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!", color=cfc)
+            chnlmention = self.bot.get_channel(ctx.channel.id)
+            embed = discord.Embed(title=f"{ctx.author} purged **{amount}** messages in `{chnlmention.mention}`!", color=cfc)
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await channel.send(embed=embed)
 

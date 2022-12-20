@@ -22,7 +22,7 @@ async def getattrs(ctx):
             path += f".{attr}"
             return [f"{path}.{x}" for x in dir(doc_part) if not x.startswith("_")][:25]
         except AttributeError:
-            return [f"{path}.{x}" for x in dir(doc_part) if x.startswith(attr)][:25]
+            return [f"{path}.{x}" for x in dir(doc_part) if ctx.value in x][:25]
 
 devs = [668874138160594985, 871893179450925148]#Matt3o0#7010 & WolfAir#2755
 acdevs = [668874138160594985, 871893179450925148, 917477940650971227]
@@ -259,7 +259,7 @@ Type : **{datarefs[dataref]["type"]}**
     @option("type", description="The type of dataref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the new dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, path, type, description, range):
+    async def drefadd(self, ctx, path, type, range, description):
         if ctx.author.id in acdevs:
             if path.startswith("ClearFly/731"):
                 await ctx.defer()
@@ -300,7 +300,7 @@ Type : **{datarefs[dataref]["type"]}**
     @option("type", description="The type of dataref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, dataref, type, description, range):
+    async def drefadd(self, ctx, dataref, type, range, description):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
                 await ctx.defer()
