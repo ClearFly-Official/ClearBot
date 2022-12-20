@@ -237,12 +237,12 @@ Range : **{datarefs[dataref]["range"]}**
                 with open("dev/aircraft/datarefs.json", "w") as f:
                     json.dump(datarefs, f, indent=4)
                 with open("dev/aircraft/datarefs.txt", "a") as f:
-                    f.write(path)
+                    f.write(f"\n{path}")
                 embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.")
                 embed.set_footer(text="*Don't forget to make the dateref with SASL if you didn't already do so.*")
                 await ctx.respond(embed=embed)
             else:
-                embed = discord.Embed(title="Error 422!", description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n Example dataref: `ClearFly/731/foo/bar`", colour=errorc)
+                embed = discord.Embed(title="Error 422!", description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`", colour=errorc)
                 await ctx.respond(embed=embed)
 
         else:
