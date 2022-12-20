@@ -177,10 +177,10 @@ Reloaded cogs:
     async def datarefs(self, ctx, dataref):
         if ctx.author.id in acdevs:
             await ctx.defer()
-            with open("dev/aircraft/datarefs.txt") as f:
+            with open("dev/aircraft/datarefs.txt", "r") as f:
                 datarefList = f.readlines()
             if dataref in datarefList:
-                with open("dev/aircraft/datarefs.txt") as f:
+                with open("dev/aircraft/datarefs.txt", "r") as f:
                     datarefJson = json.load(f)
                 datarefs = datarefJson["datarefs"]
                 embed = discord.Embed(title=f"Found this information for dataref {dataref}:", colour=cfc)
@@ -206,7 +206,7 @@ Range : {datarefs[dataref]["range"]}
     async def drefadd(self, ctx, path, dreftype, description, drefrange):
         if ctx.author.id in acdevs:
             await ctx.defer()
-            with open("dev/aircraft/datarefs.json", "r+") as f:
+            with open("dev/aircraft/datarefs.json", "r") as f:
                 datarefs = json.load(f)
             if dreftype == "string":
                 drefrange = "N/A"
@@ -243,7 +243,7 @@ Range : {datarefs[dataref]["range"]}
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     async def drefadd(self, ctx, dataref, dreftype, description, drefrange):
         if ctx.author.id in acdevs:
-            with open("dev/aircraft/datarefs.txt") as f:
+            with open("dev/aircraft/datarefs.txt", "r") as f:
                 datarefList = f.readlines()
             if dataref in datarefList:
                 await ctx.defer()
