@@ -58,7 +58,7 @@ class DevCommands(discord.Cog):
             if doc_part.__doc__ is None:
                 embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find documentation `{doc_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
-            embed = discord.Embed(title=f"Found the following for {path}", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
+            embed = discord.Embed(title=f"Found the following for `{path}`", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
             await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
