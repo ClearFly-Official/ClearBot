@@ -250,7 +250,7 @@ Range : **{datarefs[dataref]["range"]}**
             await ctx.respond(embed=embed)
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
-    @option("dataref", description="The path of the dataref you want to edit.")
+    @option("dataref", description="The path of the dataref you want to edit.", autocomplete=get_datarefs)
     @option("type", description="The type of dateref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
