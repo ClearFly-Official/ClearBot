@@ -183,7 +183,7 @@ Reloaded cogs:
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefJson = json.load(f)
                 datarefs = datarefJson["datarefs"]
-                embed = discord.Embed(title=f"Found this information for dataref {dataref}:", colour=cfc)
+                embed = discord.Embed(title=f"Found this information for dataref `{dataref}`:", colour=cfc)
                 embed.add_field(name="Dataref Information:", value=f"""
 Path : **{datarefs[dataref]["path"]}**
 Type : **{datarefs[dataref]["type"]}**
