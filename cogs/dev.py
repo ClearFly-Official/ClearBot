@@ -1,8 +1,6 @@
 import subprocess
 import discord
-import urllib.request as ul
 from discord import option
-from bs4 import BeautifulSoup as soup
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
