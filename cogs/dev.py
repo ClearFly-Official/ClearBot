@@ -1,3 +1,4 @@
+import subprocess
 import discord
 from discord import option
 
@@ -96,6 +97,7 @@ Reloaded cogs:
             await ctx.respond(embed=embed)
 
     @dev.command(name="checker", descripton="Check any attribute to see what it outputs.")
+    @option("input", description="The code you want to check.")
     async def attrchecker(self, ctx, input):
         if ctx.author.id in devs:
             try:
@@ -104,18 +106,27 @@ Reloaded cogs:
 ```
 {exec(input)}
 ```
-                """)
+                """, colour=cfc)
                 await ctx.respond(embed=embed)
             except Exception as error:
                 embed = discord.Embed(title=f"`{input}` gave the following error:", description=f"""
 ```
 {error}
 ```
-                """)
+                """, colour=errorc)
                 await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
+
+    @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
+    async def gitupdate(self, ctx):
+        embed = discord.Embed(description=f"""
+```
+{subprocess.Popen(['git pull https://github.com/ClearFly-Official/ClearBot'], capture_output=True)}
+```
+""", colour=cfc)
+        await ctx.respond(embed=embed)
 
     
 def setup(bot):
