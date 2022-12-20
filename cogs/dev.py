@@ -177,7 +177,7 @@ Reloaded cogs:
             datarefList2 = list(datarefLoad["datarefs"].keys())
         global datarefList
         datarefList = datarefList1 + datarefList2
-        return [dataref for dataref in datarefList if dataref.startswith(ctx.value) or dataref.endswith(ctx.value)]
+        return [dataref for dataref in datarefList if ctx.value in dataref]
 
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
