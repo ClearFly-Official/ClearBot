@@ -1,11 +1,30 @@
 import subprocess
 import discord
+import re
+from inspect import cleandoc
 from discord import option
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
 cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
+
+PASTEBIN_RE = re.compile(r"(https?://pastebin.com)/([a-zA-Z0-9]{8})")
+
+
+async def getattrs(ctx):
+    input = ctx.options["doc_part"]
+    doc_part = discord
+    path = "discord"
+    for attr in input.split("."):
+        try:
+            if attr == "discord":
+                continue
+            doc_part = getattr(doc_part, attr)
+            path += f".{attr}"
+            return [f"{path}.{x}" for x in dir(doc_part) if not x.startswith("_")][:25]
+        except AttributeError:
+            return [f"{path}.{x}" for x in dir(doc_part) if x.startswith(attr)][:25]
 
 devs = [668874138160594985, 871893179450925148]#Matt3o0#7010 & WolfAir#2755
 
@@ -15,6 +34,29 @@ class DevCommands(discord.Cog):
         self.bot = bot
 
     dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
+
+    async def convert_attr(self, path):
+        doc_part = discord
+        for attr in path.split("."):
+            if attr == "discord":
+                continue
+            try:
+                doc_part = getattr(doc_part, attr)
+            except AttributeError:
+                return None, None
+        return doc_part, path
+
+    @dev.command(name="docs", description="Get information from the Pycord docs.")
+    @option("doc_part", autocomplete=getattrs)
+    async def get_doc(self, ctx, doc_part):
+        doc_part, path = await self.convert_attr(doc_part)
+        if not doc_part:
+            return await ctx.respond("Item not found.")
+        if doc_part.__doc__ is None:
+            return await ctx.respond(f"Couldn't find documentation for `{path}`.")
+
+        await ctx.respond(f"```\n{cleandoc(doc_part.__doc__)[:1993]}```")
+
 
     @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
     async def reloadCogs(self, ctx):
