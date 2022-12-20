@@ -177,7 +177,7 @@ Reloaded cogs:
             datarefList2 = list(datarefLoad["datarefs"].keys())
         global datarefList
         datarefList = datarefList1 + datarefList2
-        return [dataref for dataref in datarefList if dataref.startswith(ctx.value)]
+        return [dataref for dataref in datarefList if dataref.startswith(ctx.value) or dataref.endswith(ctx.value)]
 
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
@@ -197,6 +197,7 @@ Description :
 Range : **{datarefs[dataref]["range"]}**
 > **{datarefs[dataref]["description"]}**
                     """)
+                    await ctx.respond(embed=embed)
                 else:
                     with open("dev/aircraft/defaultDatarefs.json", "r") as f:
                         datarefJson = json.load(f)
