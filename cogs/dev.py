@@ -122,7 +122,7 @@ Reloaded cogs:
     @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
     async def gitupdate(self, ctx):
         if ctx.author.id in devs:
-            await ctx.defer
+            await ctx.defer()
             try:
                 embed = discord.Embed(description=f"""
 ```
