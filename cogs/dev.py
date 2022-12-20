@@ -1,6 +1,6 @@
 import subprocess
 import discord
-import re
+import json
 from inspect import cleandoc
 from discord import option
 
@@ -25,6 +25,7 @@ async def getattrs(ctx):
             return [f"{path}.{x}" for x in dir(doc_part) if x.startswith(attr)][:25]
 
 devs = [668874138160594985, 871893179450925148]#Matt3o0#7010 & WolfAir#2755
+acdevs = [668874138160594985, 871893179450925148, 917477940650971227]
 
 class DevCommands(discord.Cog):
 
@@ -32,6 +33,8 @@ class DevCommands(discord.Cog):
         self.bot = bot
 
     dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
+    acdev = discord.SlashCommandGroup(name="acdev", description="Commands for aircraft developers.")
+    dataref = acdev.create_subgroup(name="datarefs", description="Commands related to X-Plane datarefs.")
 
     async def convert_attr(self, path):
         doc_part = discord
@@ -48,14 +51,14 @@ class DevCommands(discord.Cog):
     @option("doc_part", autocomplete=getattrs)
     async def get_doc(self, ctx, doc_part):
         if ctx.author.id in devs:
-            doc_part = await self.convert_attr(doc_part)
+            doc_part, path = await self.convert_attr(doc_part)
             if not doc_part:
-                embed = discord.Embed(title=f"Error 404", description=f"Couldn't find `{doc_part}`.", colour=errorc)
+                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find `{doc_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
             if doc_part.__doc__ is None:
-                embed = discord.Embed(title=f"Error 404", description=f"Couldn't find documentation `{doc_part}`.", colour=errorc)
+                embed = discord.Embed(title=f"Error 404!", description=f"Couldn't find documentation `{doc_part}`.", colour=errorc)
                 return await ctx.respond(embed=embed)
-            embed = discord.Embed(title=f"Found the following for {doc_part}", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
+            embed = discord.Embed(title=f"Found the following for {path}", description=f"```\n{cleandoc(doc_part.__doc__)[:1993]}```", colour=cfc)
             await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
@@ -163,7 +166,116 @@ Reloaded cogs:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-
     
+    async def get_datarefs(self, ctx: discord.AutocompleteContext):
+        with open("dev/aircraft/datarefs.txt") as f:
+            datarefs = f.readlines()
+        return [dataref for dataref in datarefs if dataref.startswith(ctx.value)]
+
+    @dataref.command(name="search", description="Find the custom dataref you're looking for.")
+    @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
+    async def datarefs(self, ctx, dataref):
+        if ctx.author.id in acdevs:
+            await ctx.defer()
+            with open("dev/aircraft/datarefs.txt") as f:
+                datarefList = f.readlines()
+            if dataref in datarefList:
+                with open("dev/aircraft/datarefs.txt") as f:
+                    datarefJson = json.load(f)
+                datarefs = datarefJson["datarefs"]
+                embed = discord.Embed(title=f"Found this information for dataref {dataref}:", colour=cfc)
+                embed.add_field(name="Dataref Information:", value=f"""
+Path : {datarefs[dataref]["path"]}
+Type : {datarefs[dataref]["type"]}
+Description :
+> {datarefs[dataref]["description"]}
+Range : {datarefs[dataref]["range"]}
+                """)
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`")
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
+
+    @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
+    @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
+    @option("type", description="The type of dateref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
+    @option("description", description="The description of the new dataref.")
+    @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
+    async def drefadd(self, ctx, path, dreftype, description, drefrange):
+        if ctx.author.id in acdevs:
+            await ctx.defer()
+            with open("dev/aircraft/datarefs.json", "r+") as f:
+                datarefs = json.load(f)
+            if dreftype == "string":
+                drefrange = "N/A"
+            newDrefPath = f"{path}"
+            newDrefType = f"{dreftype}"
+            newDrefDesc = f"{description}"
+            newDrefRange = f"{drefrange}"
+            newDref = {
+                    f"{newDrefPath}":{
+                        "path":f"{newDrefPath}",
+                        "type":f"{newDrefType}",
+                        "description":f"{newDrefDesc}",
+                        "range":f"{newDrefRange}"
+                    }
+            }
+
+            datarefs["datarefs"].update(newDref)
+
+            with open("dev/aircraft/datarefs.json", "w") as f:
+                json.dump(datarefs, f, indent=4)
+            with open("dev/aircraft/datarefs.txt", "a") as f:
+                f.write(path)
+            embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.")
+            embed.set_footer("*Don't forget to make the dateref with SASL if you didn't already do so.*")
+            await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
+
+    @dataref.command(name="edit", description="Edit an existing dataref.")
+    @option("dataref", description="The path of the dataref you want to edit.")
+    @option("type", description="The type of dateref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
+    @option("description", description="The description of the dataref.")
+    @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
+    async def drefadd(self, ctx, dataref, dreftype, description, drefrange):
+        if ctx.author.id in acdevs:
+            with open("dev/aircraft/datarefs.txt") as f:
+                datarefList = f.readlines()
+            if dataref in datarefList:
+                await ctx.defer()
+                with open("dev/aircraft/datarefs.json", "r+") as f:
+                    datarefs = json.load(f)
+                if dreftype == "string":
+                    drefrange = "N/A"
+                newDrefPath = f"{dataref}"
+                newDrefType = f"{dreftype}"
+                newDrefDesc = f"{description}"
+                newDrefRange = f"{drefrange}"
+                newDref = {
+                            "path":f"{newDrefPath}",
+                            "type":f"{newDrefType}",
+                            "description":f"{newDrefDesc}",
+                            "range":f"{newDrefRange}"
+                }
+                datarefs["datarefs"][dataref].update(newDref)
+
+                with open("dev/aircraft/datarefs.json", "w") as f:
+                    json.dump(datarefs, f, indent=4)
+                embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.")
+                embed.set_footer("*Don't forget to edit the dateref with SASL if you didn't already do so.*")
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!")
+                await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
+
+
+
 def setup(bot):
     bot.add_cog(DevCommands(bot))
