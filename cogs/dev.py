@@ -121,12 +121,23 @@ Reloaded cogs:
 
     @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
     async def gitupdate(self, ctx):
-        embed = discord.Embed(description=f"""
+        if ctx.author.id in devs:
+            await ctx.defer()
+            try:
+                embed = discord.Embed(description=f"""
 ```
-{subprocess.Popen(['git pull https://github.com/ClearFly-Official/ClearBot'], capture_output=True)}
+{subprocess.Popen('git pull https://github.com/ClearFly-Official/ClearBot')}
 ```
 """, colour=cfc)
-        await ctx.respond(embed=embed)
+                await ctx.respond(embed=embed)
+            except Exception as error:
+                embed = discord.Embed(title=f"While pulling I had the following error:", description=f"""
+```
+{error}
+```
+                """, colour=errorc)
+                await ctx.respond(embed=embed)
+
 
     
 def setup(bot):
