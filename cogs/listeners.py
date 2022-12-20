@@ -112,7 +112,7 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        if before.author.bot == False:
+        if before.bot == False:
             channel = self.bot.get_channel(1001405648828891187)
             if before.name != after.name:
                 user = self.bot.fetch_user(before.id)
