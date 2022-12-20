@@ -96,7 +96,7 @@ Reloaded cogs:
             await ctx.respond(embed=embed)
 
     @dev.command(name="checker", descripton="Check any attribute to see what it outputs.")
-    async def attrchecker(ctx, input):
+    async def attrchecker(self, ctx, input):
         if ctx.author.id in devs:
             try:
                 await ctx.defer()
