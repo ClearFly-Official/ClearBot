@@ -16,7 +16,7 @@ class DevCommands(discord.Cog):
 
     dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
 
-    @dev.command(name="reload_cogs")
+    @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
     async def reloadCogs(self, ctx):
         if ctx.author.id in devs:
             cogs = [
