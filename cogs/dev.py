@@ -191,7 +191,7 @@ Reloaded cogs:
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefJson = json.load(f)
                 datarefs = datarefJson["datarefs"]
-                embed = discord.Embed(title=f"Found this information for dataref `{dataref}`:", colour=cfc)
+                embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
                 embed.add_field(name="Dataref Information:", value=f"""
 Path : `{datarefs[dataref]["path"]}`
 Type : **{datarefs[dataref]["type"]}**
@@ -211,35 +211,40 @@ Range : **{datarefs[dataref]["range"]}**
     @option("type", description="The type of dateref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the new dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, path, dreftype, description, drefrange):
+    async def drefadd(self, ctx, path, type, description, range):
         if ctx.author.id in acdevs:
-            await ctx.defer()
-            with open("dev/aircraft/datarefs.json", "r") as f:
-                datarefs = json.load(f)
-            if dreftype == "string":
-                drefrange = "N/A"
-            newDrefPath = f"{path}"
-            newDrefType = f"{dreftype}"
-            newDrefDesc = f"{description}"
-            newDrefRange = f"{drefrange}"
-            newDref = {
-                    f"{newDrefPath}":{
-                        "path":f"{newDrefPath}",
-                        "type":f"{newDrefType}",
-                        "description":f"{newDrefDesc}",
-                        "range":f"{newDrefRange}"
-                    }
-            }
+            if path.startswith("ClearFly/731"):
+                await ctx.defer()
+                with open("dev/aircraft/datarefs.json", "r") as f:
+                    datarefs = json.load(f)
+                if type == "string":
+                    range = "N/A"
+                newDrefPath = f"{path}"
+                newtype = f"{type}"
+                newDrefDesc = f"{description}"
+                newrange = f"{range}"
+                newDref = {
+                        f"{newDrefPath}":{
+                            "path":f"{newDrefPath}",
+                            "type":f"{newtype}",
+                            "description":f"{newDrefDesc}",
+                            "range":f"{newrange}"
+                        }
+                }
 
-            datarefs["datarefs"].update(newDref)
+                datarefs["datarefs"].update(newDref)
 
-            with open("dev/aircraft/datarefs.json", "w") as f:
-                json.dump(datarefs, f, indent=4)
-            with open("dev/aircraft/datarefs.txt", "a") as f:
-                f.write(path)
-            embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.")
-            embed.set_footer("*Don't forget to make the dateref with SASL if you didn't already do so.*")
-            await ctx.respond(embed=embed)
+                with open("dev/aircraft/datarefs.json", "w") as f:
+                    json.dump(datarefs, f, indent=4)
+                with open("dev/aircraft/datarefs.txt", "a") as f:
+                    f.write(path)
+                embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.")
+                embed.set_footer("*Don't forget to make the dateref with SASL if you didn't already do so.*")
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(title="Error 422!", description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n Example dataref: `ClearFly/731/foo/bar`", colour=errorc)
+                await ctx.respond(embed=embed)
+
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
@@ -249,7 +254,7 @@ Range : **{datarefs[dataref]["range"]}**
     @option("type", description="The type of dateref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, dataref, dreftype, description, drefrange):
+    async def drefadd(self, ctx, dataref, type, description, range):
         if ctx.author.id in acdevs:
             with open("dev/aircraft/datarefs.txt") as f:
                 datarefList = []
@@ -261,17 +266,17 @@ Range : **{datarefs[dataref]["range"]}**
                 await ctx.defer()
                 with open("dev/aircraft/datarefs.json", "r") as f:
                     datarefs = json.load(f)
-                if dreftype == "string":
-                    drefrange = "N/A"
+                if type == "string":
+                    range = "N/A"
                 newDrefPath = f"{dataref}"
-                newDrefType = f"{dreftype}"
+                newtype = f"{type}"
                 newDrefDesc = f"{description}"
-                newDrefRange = f"{drefrange}"
+                newrange = f"{range}"
                 newDref = {
                             "path":f"{newDrefPath}",
-                            "type":f"{newDrefType}",
+                            "type":f"{newtype}",
                             "description":f"{newDrefDesc}",
-                            "range":f"{newDrefRange}"
+                            "range":f"{newrange}"
                 }
                 datarefs["datarefs"][dataref].update(newDref)
 
