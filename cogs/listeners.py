@@ -9,6 +9,7 @@ from datetime import datetime
 cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
+adminids = [668874138160594985, 871893179450925148, 917477940650971227]
 
 class Listeners(discord.Cog):
 
@@ -151,13 +152,14 @@ class Listeners(discord.Cog):
             async def button_callback(self, button, interaction):
                 try:
                     await message.author.ban(reason=f"{message.author} sent a scam, confirmed by {interaction.user}")
-                    await interaction.response.send_message(f"Successfully banned {message.author}")
+                    embed = discord.Embed(title=f"Successfully banned `{message.author}`", colour=0x00FF00)
+                    await interaction.response.send_message(embed=embed)
                 except Exception as error:
-                    embed = discord.Embed(title=f"While trying to ban {message.author}, I got the following error:", description=f"\n```{error}\n```", colour=errorc)
+                    embed = discord.Embed(title=f"While trying to ban `{message.author}`, I got the following error:", description=f"\n```{error}\n```", colour=errorc)
                     await interaction.response.send_message(embed=embed)
         def scamChecker(string):
             change = 0
-            blacklist = ["porn", "@everyone"]
+            blacklist = ["porn", "@everyone", "@here"]
             comboBL = ["free", "http", "crypto"]
             for i in blacklist:
                 if blacklist[change] in string:
@@ -167,12 +169,15 @@ class Listeners(discord.Cog):
                 return True
             else:
                 return False
-        if scamChecker(message.content):
-            await message.reply(content="Your message included blacklisted words, and has been deleted.")
-            channel = self.bot.get_channel(1001405648828891187)
-            embed = discord.Embed(title=f"{message.author} might have sent a scam", description=message.content, colour=errorc)
-            await message.delete(reason=f"{message.author} might have sent a scam.")
-            await channel.send(embed=embed, view=BanView(bot=self.bot))
+        if message.author.id not in adminids:
+            if scamChecker(message.content):
+                await message.reply(content="Your message included blacklisted words, and has been deleted.")
+                channel = self.bot.get_channel(1001405648828891187)
+                embed = discord.Embed(title=f"`{message.author}` might have sent a scam", description=message.content, colour=errorc)
+                await message.delete(reason=f"{message.author} might have sent a scam.")
+                await channel.send(embed=embed, view=BanView(bot=self.bot))
+            else:
+                pass
         else:
             pass
 def setup(bot):
