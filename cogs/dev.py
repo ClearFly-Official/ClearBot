@@ -191,6 +191,10 @@ Reloaded cogs:
         customDatarefList = datarefList1
         return [dataref for dataref in customDatarefList if ctx.value in dataref]
 
+    async def get_units(self, ctx: discord.AutocompleteContext):
+        units = ["boolean", "meters", "mps", "kilometers", "feet","kts", "string", "miles", "nautical miles", "ratio", "degrees", "count", "enum", "index"]
+        return [unit for unit in units if ctx.value in unit]
+
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def datarefs(self, ctx, dataref):
@@ -257,9 +261,10 @@ Type : **{datarefs[dataref]["type"]}**
 
     @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
-    @option("type", description="The type of dataref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
-    @option("description", description="The description of the new dataref.")
+    @option("type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
+    @option("unit", description="The unit type of the new dataref.", autocomplete=get_units)
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
+    @option("description", description="The description of the new dataref.")
     async def drefadd(self, ctx, path, type, unit, range, description):
         if ctx.author.id in acdevs:
             if path.startswith("ClearFly/731"):
@@ -292,10 +297,11 @@ Type : **{datarefs[dataref]["type"]}**
             await ctx.respond(embed=embed)
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
-    @option("dataref", description="The path of the dataref you want to edit.", autocomplete=get_custom_datarefs)
-    @option("type", description="The type of dataref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
-    @option("description", description="The description of the dataref.")
+    @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
+    @option("type", description="The type of dataref the edited dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
+    @option("unit", description="The unit type of the edited dataref.", autocomplete=get_units)
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
+    @option("description", description="The description of the edited dataref.")
     async def drefedit(self, ctx, dataref, type, unit, range, description):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
