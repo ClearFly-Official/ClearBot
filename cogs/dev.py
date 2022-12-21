@@ -192,7 +192,35 @@ Reloaded cogs:
         return [dataref for dataref in customDatarefList if ctx.value in dataref]
 
     async def get_units(self, ctx: discord.AutocompleteContext):
-        units = ["boolean", "meters", "mps", "kilometers", "feet","kts", "string", "miles", "nautical miles", "ratio", "degrees", "count", "enum", "index"]
+        units = ["boolean",
+                 "count",
+                 "days",
+                 "degrees",
+                 "enum",
+                 "feet",
+                 "gallons",
+                 "hours",
+                 "IATA",
+                 "ICAO",
+                 "index",
+                 "kilometers",
+                 "kts",
+                 "liters",
+                 "meters",
+                 "miles", 
+                 "minutes", 
+                 "mps", 
+                 "nauticalmiles", 
+                 "percent", 
+                 "psi", 
+                 "ratio", 
+                 "seconds", 
+                 "string", 
+                 "tons", 
+                 "x", 
+                 "y", 
+                 "yards", 
+                 "z"]
         return [unit for unit in units if ctx.value in unit]
 
     @dataref.command(name="search", description="Find the custom dataref you're looking for.")
