@@ -280,7 +280,7 @@ class UtilityCommands(discord.Cog):
 ```
             """)
             embed.add_field(name="Translated Metar Data", value=f"""
-        Barometer : \n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
+        Barometer : \n> hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
         Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
         Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°
