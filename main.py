@@ -55,7 +55,7 @@ async def on_ready():
         await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
         print("The bot is ready for usage!")
 
-@tasks.loop(minutes=5)
+@tasks.loop(minutes=10)
 async def presence():
         statements=[
         "Give me Baby Boeing 😩",

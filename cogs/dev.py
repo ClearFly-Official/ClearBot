@@ -299,7 +299,7 @@ Type : **{datarefs[dataref]["type"]}**
             await ctx.respond(embed=embed)
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
-    @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
+    @option("dataref", description="The dataref you want to edit.", autocomplete=get_custom_datarefs)
     @option("type", description="The type of dataref the edited dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the edited dataref.", autocomplete=get_units)
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
