@@ -142,20 +142,37 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        class BanView(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+                super().__init__(timeout=None)
+
+            @discord.ui.button(label=f"Ban {message.author}", style=discord.ButtonStyle.danger)
+            async def button_callback(self, button, interaction):
+                try:
+                    await message.author.ban(reason=f"{message.author} sent a scam, confirmed by {interaction.user}")
+                    await interaction.response.send_message(f"Successfully banned {message.author}")
+                except Exception as error:
+                    embed = discord.Embed(title=f"While trying to ban {message.author}, I got the following error:", description=f"\n```{error}\n```", colour=errorc)
+                    await interaction.response.send_message(embed=embed)
         def scamChecker(string):
+            change = 0
             blacklist = ["porn", "@everyone"]
-            comboBL = ["free", "https://", "http://", "crypto"]
-            if string in blacklist:
-                return True
-            elif (comboBL[0] or comboBL[3]) and (comboBL[1] or comboBL[2]) in string:
+            comboBL = ["free", "http", "crypto"]
+            for i in blacklist:
+                if blacklist[change] in string:
+                    return True
+                change +=1
+            if ((comboBL[0]in string) or (comboBL[2]in string)) and (comboBL[1]in string):
                 return True
             else:
                 return False
         if scamChecker(message.content):
             await message.reply(content="Your message included blacklisted words, and has been deleted.")
-            await message.delete(reason=f"{message.author} might have sent a scam.")
             channel = self.bot.get_channel(1001405648828891187)
-            await channel.send("detected scam, but too lazy to implement something interesting yet.")
+            embed = discord.Embed(title=f"{message.author} might have sent a scam", description=message.content, colour=errorc)
+            await message.delete(reason=f"{message.author} might have sent a scam.")
+            await channel.send(embed=embed, view=BanView(bot=self.bot))
         else:
             pass
 def setup(bot):
