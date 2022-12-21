@@ -210,6 +210,7 @@ class UtilityCommands(discord.Cog):
         class METARViewM(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
+                super().__init__(timeout=120.0)
 
             @discord.ui.button(label="Change to Metric units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
@@ -237,6 +238,7 @@ class UtilityCommands(discord.Cog):
         class METARViewI(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
+                super().__init__(timeout=120.0)
 
             @discord.ui.button(label="Change to Imperial units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
