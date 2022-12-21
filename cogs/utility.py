@@ -214,16 +214,17 @@ class UtilityCommands(discord.Cog):
 
             @discord.ui.button(label="Change to Metric units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
-                time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-                obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
-                airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
-                embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
-                embed.add_field(name="Raw Metar Data:", value=f"""
+                if ctx.author == interaction.author:
+                    time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
+                    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
+                    airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
+                    embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
+                    embed.add_field(name="Raw Metar Data:", value=f"""
 ```
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
             """)
-                embed.add_field(name="Translated Metar Data", value=f"""
+                    embed.add_field(name="Translated Metar Data", value=f"""
         Barometer : \n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
         Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
@@ -234,7 +235,9 @@ class UtilityCommands(discord.Cog):
         Visibility : \n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
         Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
             """, inline=False)
-                await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
+                    await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
+                else:
+                    await interaction.response.send_message("Run the command yourself to use it!")
         class METARViewI(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -242,16 +245,17 @@ class UtilityCommands(discord.Cog):
 
             @discord.ui.button(label="Change to Imperial units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
-                time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-                obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
-                airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
-                embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
-                embed.add_field(name="Raw Metar Data:", value=f"""
+                if ctx.author == interaction.author:
+                    time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
+                    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
+                    airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
+                    embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
+                    embed.add_field(name="Raw Metar Data:", value=f"""
 ```
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
             """)
-                embed.add_field(name="Translated Metar Data", value=f"""
+                    embed.add_field(name="Translated Metar Data", value=f"""
         Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
         Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
@@ -262,7 +266,9 @@ class UtilityCommands(discord.Cog):
         Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}
         Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
             """, inline=False)
-                await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
+                    await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
+                else:
+                    await interaction.response.send_message("Run the command yourself to use it!")
         if resp['results'] == 1:
             time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
             obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
