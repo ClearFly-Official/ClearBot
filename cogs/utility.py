@@ -225,7 +225,7 @@ class UtilityCommands(discord.Cog):
 ```
             """)
                     embed.add_field(name="Translated Metar Data", value=f"""
-        Barometer : \n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
+        Barometer : \n> hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
         Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
         Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°
@@ -256,14 +256,14 @@ class UtilityCommands(discord.Cog):
 ```
             """)
                     embed.add_field(name="Translated Metar Data", value=f"""
-        Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}
+        Barometer : \n> Hg {json.dumps(resp['data'][0]['barometer']['hg'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
         Temperature : \n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
         Dewpoint : \n>  {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
         Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet
         Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
         Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
-        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}
+        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles
         Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
