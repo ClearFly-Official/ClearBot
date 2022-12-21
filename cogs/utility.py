@@ -214,7 +214,7 @@ class UtilityCommands(discord.Cog):
 
             @discord.ui.button(label="Change to Metric units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
-                if ctx.author == interaction.author:
+                if ctx.author == interaction.user:
                     time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
                     obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
                     airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
@@ -245,7 +245,7 @@ class UtilityCommands(discord.Cog):
 
             @discord.ui.button(label="Change to Imperial units", style=discord.ButtonStyle.primary)
             async def button_callback(self, button, interaction):
-                if ctx.author == interaction.author:
+                if ctx.author == interaction.user:
                     time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
                     obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
                     airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
