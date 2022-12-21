@@ -139,20 +139,21 @@ class Listeners(discord.Cog):
         else:
             pass
 
-    def scamChecker(string):
-        blacklist = ["porn", "@everyone"]
-        comboBL = ["free", "https://", "http://", "crypto"]
-        if string in blacklist:
-            return True
-        elif (comboBL[0] or comboBL[3]) and (comboBL[1] or comboBL[2]) in string:
-            return True
-        else:
-            return False
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.scamChecker(message.content):
+        def scamChecker(string):
+            blacklist = ["porn", "@everyone"]
+            comboBL = ["free", "https://", "http://", "crypto"]
+            if string in blacklist:
+                return True
+            elif (comboBL[0] or comboBL[3]) and (comboBL[1] or comboBL[2]) in string:
+                return True
+            else:
+                return False
+        if scamChecker(message.content):
             await message.reply(content="Your message included blacklisted words, and has been deleted.")
+            await message.delete(reason=f"{message.author} might have sent a scam.")
             channel = self.bot.get_channel(1001405648828891187)
             await channel.send("detected scam, but too lazy to implement something interesting yet.")
         else:
