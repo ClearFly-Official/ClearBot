@@ -258,7 +258,7 @@ class UtilityCommands(discord.Cog):
                     embed.add_field(name="Translated Metar Data", value=f"""
         Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
-        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
+        Temperature : \n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
         Dewpoint : \n>  {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
         Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet
         Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
