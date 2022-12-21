@@ -361,6 +361,19 @@ Type : **{datarefs[dataref]["type"]}**
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
+    @discord.message_command(name="Message Info")
+    async def msginfo(self, ctx, message):
+        if ctx.author.id in devs:
+            await ctx.respond(f"""
+ID: {message.id}
+Content:
+```
+{message.content}
+```
+        """)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
 
 
 def setup(bot):
