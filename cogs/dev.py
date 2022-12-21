@@ -274,11 +274,13 @@ Type : **{datarefs[dataref]["type"]}**
                 if type == "string":
                     range = "N/A"
                 newDref = {
+                    f"{path}":{
                             "path":f"{path}",
                             "type":f"{type}",
                             "unit":f"{unit}",
                             "range":f"{range}",
                             "description":f"{description}"
+                    }
                 }
 
                 datarefs["datarefs"].update(newDref)
