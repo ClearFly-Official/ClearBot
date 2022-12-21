@@ -207,6 +207,60 @@ class UtilityCommands(discord.Cog):
         req = requests.get(f"https://api.checkwx.com/metar/{icao.upper()}/decoded", headers=hdr)
         req.raise_for_status()
         resp = json.loads(req.text)
+        class METARViewM(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+
+            @discord.ui.button(label="Change to Metric units", style=discord.ButtonStyle.primary)
+            async def button_callback(self, button, interaction):
+                time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
+                obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
+                airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
+                embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
+                embed.add_field(name="Raw Metar Data:", value=f"""
+```
+{json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
+```
+            """)
+                embed.add_field(name="Translated Metar Data", value=f"""
+        Barometer : \n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
+        Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
+        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
+        Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°
+        Elevation : \n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
+        Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
+        Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
+        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
+        Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
+            """, inline=False)
+                await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
+        class METARViewI(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+
+            @discord.ui.button(label="Change to Imperial units", style=discord.ButtonStyle.primary)
+            async def button_callback(self, button, interaction):
+                time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
+                obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
+                airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
+                embed = discord.Embed(title=f"Metar data for {airportn} from {time}({obstime})", color=cfc)
+                embed.add_field(name="Raw Metar Data:", value=f"""
+```
+{json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
+```
+            """)
+                embed.add_field(name="Translated Metar Data", value=f"""
+        Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}
+        Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
+        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
+        Dewpoint : \n>  {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
+        Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet
+        Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
+        Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
+        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}
+        Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
+            """, inline=False)
+                await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
         if resp['results'] == 1:
             time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
             obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
@@ -218,18 +272,17 @@ class UtilityCommands(discord.Cog):
 ```
             """)
             embed.add_field(name="Translated Metar Data", value=f"""
-        Airport : \n> {json.dumps(resp['data'][0]['station']['name']).replace('"', "")}({json.dumps(resp['data'][0]['icao']).replace('"', "")})
-        Barometer : \n> Hg : {json.dumps(resp['data'][0]['barometer']['hg'])}\n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
+        Barometer : \n> hPa : {json.dumps(resp['data'][0]['barometer']['hpa'])}
         Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
-        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['temperature']['fahrenheit']).replace('"', "")}F°
-        Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°\n>  {json.dumps(resp['data'][0]['dewpoint']['fahrenheit'])}F°
-        Elevation : \n> {json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet\n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
+        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
+        Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°
+        Elevation : \n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
         Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
         Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
-        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")}\n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
+        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
         Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
             """, inline=False)
-            await ctx.respond(embed=embed)
+            await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
             embed = discord.Embed(title="Error 404!", description="Didn't found metar data for that airport.", color=errorc)
             await ctx.respond(embed=embed)
