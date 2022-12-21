@@ -1,16 +1,5 @@
 {
     "datarefs": {
-        "ClearFly/731/radome/anims/door": {
-            "path": "ClearFly/731/radome/anims/door",
-            "type": "float",
-            "description": "Animation dataref for radome door.",
-            "range": "0.0 - 1.0"
-        },
-        "ClearFly/731/radome/animstgl/door": {
-            "path": "ClearFly/731/radome/animstgl/door",
-            "type": "int",
-            "description": "Toggle dataref for the radome door.",
-            "range": "0 - 1"
-        }
+
     }
 }

@@ -205,6 +205,7 @@ Reloaded cogs:
                     embed.add_field(name="Dataref Information:", value=f"""
 Path : `{datarefs[dataref]["path"]}`
 Type : **{datarefs[dataref]["type"]}**
+Unit : **{datarefs[dataref]["unit"]}**
 Range : **{datarefs[dataref]["range"]}**
 Description :
 
@@ -259,7 +260,7 @@ Type : **{datarefs[dataref]["type"]}**
     @option("type", description="The type of dataref the new dataref will be.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the new dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, path, type, range, description):
+    async def drefadd(self, ctx, path, type, unit, range, description):
         if ctx.author.id in acdevs:
             if path.startswith("ClearFly/731"):
                 await ctx.defer()
@@ -267,17 +268,12 @@ Type : **{datarefs[dataref]["type"]}**
                     datarefs = json.load(f)
                 if type == "string":
                     range = "N/A"
-                newDrefPath = f"{path}"
-                newtype = f"{type}"
-                newDrefDesc = f"{description}"
-                newrange = f"{range}"
                 newDref = {
-                        f"{newDrefPath}":{
-                            "path":f"{newDrefPath}",
-                            "type":f"{newtype}",
-                            "description":f"{newDrefDesc}",
-                            "range":f"{newrange}"
-                        }
+                            "path":f"{path}",
+                            "type":f"{type}",
+                            "unit":f"{unit}",
+                            "range":f"{range}",
+                            "description":f"{description}"
                 }
 
                 datarefs["datarefs"].update(newDref)
@@ -300,7 +296,7 @@ Type : **{datarefs[dataref]["type"]}**
     @option("type", description="The type of dataref the dataref is.", choices=["int", "float", "double", "string", "int array", "float array"])
     @option("description", description="The description of the dataref.")
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
-    async def drefadd(self, ctx, dataref, type, range, description):
+    async def drefedit(self, ctx, dataref, type, unit, range, description):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
                 await ctx.defer()
@@ -308,22 +304,19 @@ Type : **{datarefs[dataref]["type"]}**
                     datarefs = json.load(f)
                 if type == "string":
                     range = "N/A"
-                newDrefPath = f"{dataref}"
-                newtype = f"{type}"
-                newDrefDesc = f"{description}"
-                newrange = f"{range}"
                 newDref = {
-                            "path":f"{newDrefPath}",
-                            "type":f"{newtype}",
-                            "description":f"{newDrefDesc}",
-                            "range":f"{newrange}"
+                            "path":f"{dataref}",
+                            "type":f"{type}",
+                            "unit":f"{unit}",
+                            "range":f"{range}",
+                            "description":f"{description}"
                 }
                 datarefs["datarefs"][dataref].update(newDref)
 
                 with open("dev/aircraft/datarefs.json", "w") as f:
                     json.dump(datarefs, f, indent=4)
                 embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.", colour=cfc)
-                embed.set_footer(text="Don't forget to edit the dataref with SASL if you didn't already do so.")
+                embed.set_footer(text="Don't forget to edit the type of the dataref with SASL, if it changed and if you didn't already do so.")
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!", colour=errorc)
