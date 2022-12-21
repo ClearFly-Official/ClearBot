@@ -370,6 +370,12 @@ Content:
 ```
 {message.content}
 ```
+```
+{message.clean_content}
+```
+```
+{message.system_content}
+```
         """)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
