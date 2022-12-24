@@ -225,15 +225,15 @@ class UtilityCommands(discord.Cog):
 ```
             """)
                     embed.add_field(name="Translated Metar Data", value=f"""
-        Barometer : \n> hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}
-        Clouds : \n> {json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}({json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")})
-        Temperature : \n> {json.dumps(resp['data'][0]['temperature']['celsius'])}C°
-        Dewpoint : \n> {json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°
-        Elevation : \n> {json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters
-        Flight Category :\n> {json.dumps(resp['data'][0]['flight_category']).replace('"', "")}
-        Humidity : \n> {json.dumps(resp['data'][0]['humidity']['percent'])}%
-        Visibility : \n> {json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters
-        Winds : \n> Heading : {json.dumps(resp['data'][0]['wind']['degrees'])}\n>  Speed : {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots
+Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
+Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
+Temperature : **{json.dumps(resp['data'][0]['temperature']['celsius'])}C°**
+Dewpoint : **{json.dumps(resp['data'][0]['dewpoint']['celsius'])}C°**
+Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters**
+Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
+Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
+Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
+Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
                 else:
@@ -264,7 +264,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")
 Flight Category :**{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles**
-Winds : \nHeading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n  Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
                 else:
@@ -288,7 +288,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "
 Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : \n Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n  Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
             await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
