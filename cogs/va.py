@@ -105,6 +105,10 @@ class VACommands(discord.Cog):
     @option("destination", description="The airport(ICAO) you will fly to.")
     async def vatrain(self,ctx, origin, destination):
         class TypeView(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+                super().__init__(timeout=None)
+                
             @discord.ui.select( 
                 placeholder = "Aircraft type", 
                 min_values = 1, 
@@ -192,7 +196,7 @@ class VACommands(discord.Cog):
             if config.get("Student", "hasAccess") == "1":
                 if config.get("Student", "typed") == "0":
                     embed = discord.Embed(title="Choose the aircraf you want to fly!", description="In order to fly for the VA you will need to get a type rating too, to do this select the aircraft you want below and you will be prompted to give origin and a destination. An instructor will approve your flight(just like in your general training), you will need to do 2 flights and then an instructor will check you off once again and then you're good to go to do as many flights for the VA as you want!", color=cfc)
-                    await ctx.respond(embed=embed,view=TypeView())
+                    await ctx.respond(embed=embed,view=TypeView(bot=self.bot))
                 else:
                     if config.get("Student", "ready") == "1":
                         if os.path.exists(f"ClearFly_VA/users/{user.id}/type.txt"):
