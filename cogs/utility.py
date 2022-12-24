@@ -233,7 +233,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "
 Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
                 else:
@@ -264,7 +264,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")
 Flight Category :**{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles**
-Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
                 else:
@@ -288,7 +288,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "
 Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : \n> Heading : **{json.dumps(resp['data'][0]['wind']['degrees'])}**\n> Speed : **{json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
             """, inline=False)
             await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
