@@ -389,6 +389,7 @@ Clean content
 {vars()[variable]}
 ```
                 """, colour=cfc)
+                await ctx.respond(embed=embed)
             except Exception as error:
                 embed = discord.Embed(title=f"I didn't found {variable}", description=f"""
 ```
