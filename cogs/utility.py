@@ -150,9 +150,9 @@ class UtilityCommands(discord.Cog):
         embed.set_thumbnail(url=pfpe)
         await ctx.respond(embed=embed)
 
-    @utility.command(name="github", description="Shows the bot's GitHub repository.")
+    @utility.command(name="github", description="Shows Clearfy's GitHub repositories.")
     async def github(self, ctx):
-        embed = discord.Embed(title="GitHub:", description="[Here's the GitHub repository!](https://github.com/ClearFly-Official/ClearBot)",color=cfc)
+        embed = discord.Embed(title="ClearFly GitHub:", description="-[ClearFly](https://github.com/ClearFly-Official/)\n-[ClearBot](https://github.com/ClearFly-Official/ClearBot)\n-[ClearFly Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",color=cfc)
         await ctx.respond(embed=embed)
 
     @math.command(name="basic", description="Do some basic math.")
