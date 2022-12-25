@@ -365,11 +365,12 @@ Type : **{datarefs[dataref]["type"]}**
     async def msginfo(self, ctx, message):
         if ctx.author.id in devs:
             await ctx.respond(f"""
-ID: {message.id}
+ID: **{message.id}**
 Content:
 ```
 {message.content}
 ```
+Clean content
 ```
 {message.clean_content}
 ```
@@ -377,7 +378,25 @@ Content:
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
-
-
+    @dev.command(name="vars", description="Check the output that a certain variable gives.")
+    @option("variable", description="The variable you want to check the output of.")
+    async def varcheck(self, ctx, variable):
+        if ctx.author.id in acdevs:
+            try:
+                embed = discord.Embed(title=f"`{variable}` gives the following output:", description=f"""
+```
+{vars()[variable]}
+```
+                """, colour=cfc)
+            except Exception as error:
+                embed = discord.Embed(title=f"I didn't found {variable}", description=f"""
+```
+{error}
+```
+                """, colour=errorc)
+                await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
 def setup(bot):
     bot.add_cog(DevCommands(bot))
