@@ -378,6 +378,10 @@ Clean content
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
+            
+    async def get_vars(self, ctx: discord.AutocompleteContext):
+        varList = list(globals().keys())
+        return [variable for variable in varList if ctx.value in variable]
     @dev.command(name="vars", description="Check the output that a certain variable gives.")
     @option("variable", description="The variable you want to check the output of.")
     async def varcheck(self, ctx, variable):
