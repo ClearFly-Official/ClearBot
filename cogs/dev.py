@@ -389,7 +389,7 @@ Clean content
             try:
                 embed = discord.Embed(title=f"`{variable}` gives the following output:", description=f"""
 ```
-{globals()[variable]}
+{eval(variable)}
 ```
                 """, colour=cfc)
                 await ctx.respond(embed=embed)
