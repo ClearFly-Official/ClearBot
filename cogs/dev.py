@@ -383,7 +383,7 @@ Clean content
         varList = list(globals().keys())
         return [variable for variable in varList if ctx.value in variable]
     @dev.command(name="vars", description="Check the output that a certain variable gives.")
-    @option("variable", description="The variable you want to check the output of.")
+    @option("variable", description="The variable you want to check the output of.", autocomplete=get_vars)
     async def varcheck(self, ctx, variable):
         if ctx.author.id in acdevs:
             try:
