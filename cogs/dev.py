@@ -383,6 +383,7 @@ Clean content
     async def varcheck(self, ctx, variable):
         if ctx.author.id in acdevs:
             try:
+                print(vars())
                 embed = discord.Embed(title=f"`{variable}` gives the following output:", description=f"""
 ```
 {vars()[variable]}
