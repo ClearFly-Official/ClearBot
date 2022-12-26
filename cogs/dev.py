@@ -108,37 +108,44 @@ class DevCommands(discord.Cog):
                         discord.SelectOption(
                             label=cogs[0].capitalize(),
                             emoji="🔒",
-                            value=cogs[0]
+                            value=cogs[0],
+                            description="Contains all admin commands."
                         ),
                         discord.SelectOption(
                             label=cogs[1].capitalize(),
                             emoji="💻",
-                            value=cogs[1]
+                            value=cogs[1],
+                            description="Contains all commands for aircraft & bot developers."
                         ),
                         discord.SelectOption(
                             label=cogs[2].capitalize(),
                             emoji="🧩",
-                            value=cogs[2]
+                            value=cogs[2],
+                            description="Contains all commands that are supposed to be fun."
                         ),
                         discord.SelectOption(
                             label=cogs[3].capitalize(),
                             emoji="🏆",
-                            value=cogs[3]
+                            value=cogs[3],
+                            description="Contains all leveling commands."
                         ),
                         discord.SelectOption(
                             label=cogs[4].capitalize(),
                             emoji="👂",
-                            value=cogs[4]
+                            value=cogs[4],
+                            description="Contains all listeners, for logs & more."
                         ),
                         discord.SelectOption(
                             label=cogs[5].capitalize(),
                             emoji="🛠️",
-                            value=cogs[5]
+                            value=cogs[5],
+                            description="Contains all 'useful' commands."
                         ),
                         discord.SelectOption(
                             label=cogs[6].upper(),
                             emoji="✈️",
-                            value=cogs[6]
+                            value=cogs[6],
+                            description="Contains all VA related commands."
                         )
                     ]
                 )
