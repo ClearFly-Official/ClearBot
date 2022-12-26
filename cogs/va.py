@@ -922,14 +922,14 @@ Have a nice and safe flight!
             if config.get("Student", "end") == "1":
                 if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/data.txt"):
                     with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "r+", encoding = "utf-8") as f:
-                              f.seek(0, os.SEEK_END)
-                              pos = f.tell() - 1
-                              while pos > 0 and f.read(1) != "\n":
-                              pos -= 1
-                              f.seek(pos, os.SEEK_SET)
-                              if pos > 0:
-                                  f.seek(pos, os.SEEK_SET)
-                                  f.truncate()
+                        f.seek(0, os.SEEK_END)
+                        pos = f.tell() - 1
+                        while pos > 0 and f.read(1) != "\n":
+                            pos -= 1
+                            f.seek(pos, os.SEEK_SET)
+                        if pos > 0:
+                            f.seek(pos, os.SEEK_SET)
+                            f.truncate()
                     embed = discord.Embed(title="Flight canceled!", color=cfc)
                     await ctx.respond(embed=embed)
                 else:
