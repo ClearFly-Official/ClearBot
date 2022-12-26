@@ -132,13 +132,21 @@ class Listeners(discord.Cog):
                 brole = [str(role.id) for role in before.roles]
                 brole = ["<@&" + str(role) for role in brole]
                 brole = [str(role) + ">" for role in brole]
-                brole = "\n".join(brole)
                 arole = [str(role.id) for role in after.roles]
                 arole = ["<@&" + str(role) for role in arole]
                 arole = [str(role) + ">" for role in arole]
-                arole = "\n".join(arole)
-                embed.add_field(name="Roles before", value=brole)
-                embed.add_field(name="Roles after", value=arole)
+                difr = set(brole) - set(arole)
+                difa = set(arole) - set(brole)
+                if difr == set():
+                    difr = None
+                else
+                    difr = "\n".join(list(difr))
+                if difa == set():
+                    difa = None
+                else
+                    difa = "\n".join(list(difa))
+                embed.add_field(name="Roles removed:", value=difr)
+                embed.add_field(name="Roles added:", value=difa)
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.avatar != after.avatar:
