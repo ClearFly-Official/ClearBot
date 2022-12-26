@@ -131,8 +131,8 @@ class Listeners(discord.Cog):
                 embed = discord.Embed(title=f"{before} got their roles changed.", colour=cfc)
                 bname = [role.name for role in before.roles]
                 aname = [role.name for role in after.roles]
-                embed.add_field(name="Roles before", value=f"`{str(bname).replace("[", "").replace("]", "")}`")
-                embed.add_field(name="Roles after", value=f"`{str(aname).replace("[", "").replace("]", "")}`")
+                embed.add_field(name="Roles before", value=f"`{bname}`")
+                embed.add_field(name="Roles after", value=f"`{aname}`")
                 embed.set_thumbnail(url=after.avatar.url)
                 await channel.send(embed=embed)
             if before.avatar != after.avatar:
