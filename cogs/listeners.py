@@ -131,10 +131,12 @@ class Listeners(discord.Cog):
                 embed = discord.Embed(title=f"{before} got their roles changed.", colour=cfc)
                 brole = [str(role.id) for role in before.roles]
                 brole = ["<@&" + str(role) for role in brole]
-                brole = ">\n".join(brole)
+                brole = [str(role) + "<@&" for role in brole]
+                brole = "\n".join(brole)
                 arole = [str(role.id) for role in after.roles]
                 arole = ["<@&" + str(role) for role in arole]
-                arole = ">\n".join(arole)
+                arole = [str(role) + "<@&" for role in arole]
+                arole = "\n".join(arole)
                 embed.add_field(name="Roles before", value=brole)
                 embed.add_field(name="Roles after", value=arole)
                 embed.set_thumbnail(url=after.avatar.url)
