@@ -23,6 +23,20 @@ async def getattrs(ctx):
             return [f"{path}.{x}" for x in dir(doc_part) if not x.startswith("_")][:25]
         except AttributeError:
             return [f"{path}.{x}" for x in dir(doc_part) if ctx.value in x][:25]
+            
+async def getattrs2(ctx):
+    input = ctx.options["variable"]
+    variable = discord
+    path = "discord"
+    for attr in input.split("."):
+        try:
+            if attr == "discord":
+                continue
+            variable = getattr(variable, attr)
+            path += f".{attr}"
+            return [f"{path}.{x}" for x in dir(variable) if not x.startswith("_")][:25]
+        except AttributeError:
+            return [f"{path}.{x}" for x in dir(variable) if ctx.value in x][:25]
 
 devs = [668874138160594985, 871893179450925148]#Matt3o0#7010 & WolfAir#2755
 acdevs = [668874138160594985, 871893179450925148, 917477940650971227]
@@ -380,7 +394,7 @@ Clean content
             await ctx.respond(embed=embed)
             
     @dev.command(name="vars", description="Check the output that a certain variable gives.")
-    @option("variable", description="The variable you want to check the output of.", autocomplete=getattrs)
+    @option("variable", description="The variable you want to check the output of.", autocomplete=getattrs2)
     async def varcheck(self, ctx, variable):
         if ctx.author.id in acdevs:
             try:
