@@ -130,10 +130,10 @@ class Listeners(discord.Cog):
             if before.roles != after.roles:
                 embed = discord.Embed(title=f"{before} got their roles changed.", colour=cfc)
                 brole = [str(role.id) for role in before.roles]
-                brole = ["<@&" + str(role) for str(role) in brole]
+                brole = ["<@&" + str(role) for role in brole]
                 brole = ">\n".join(brole)
                 arole = [str(role.id) for role in after.roles]
-                brole = ["<@&" + str(role) for str(role) in arole]
+                brole = ["<@&" + str(role) for role in arole]
                 arole = ">\n".join(arole)
                 embed.add_field(name="Roles before", value=brole)
                 embed.add_field(name="Roles after", value=arole)
