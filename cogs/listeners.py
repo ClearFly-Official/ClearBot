@@ -139,11 +139,11 @@ class Listeners(discord.Cog):
                 difa = set(arole) - set(brole)
                 if difr == set():
                     difr = None
-                else
+                else:
                     difr = "\n".join(list(difr))
                 if difa == set():
                     difa = None
-                else
+                else:
                     difa = "\n".join(list(difa))
                 embed.add_field(name="Roles removed:", value=difr)
                 embed.add_field(name="Roles added:", value=difa)
