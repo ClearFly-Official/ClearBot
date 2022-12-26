@@ -307,11 +307,11 @@ Have a nice and safe flight!
                             config.write(configfile)
                     embed = discord.Embed(title="Flight Filed!",description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!", color=cfc)
                     embed.add_field(name=phasetxt, value=f"""
-    ```
-    Departure:{origin}
-    Arrival:{destination}
-    ```
-    Have a nice and safe flight!
+```
+Departure:{origin}
+Arrival:{destination}
+```
+Have a nice and safe flight!
                                 """)
                     if os.path.exists(f"ClearFly_VA/users/{user.id}"):
                         f = open(f"ClearFly_VA/users/{user.id}/student.txt","a")
@@ -433,6 +433,15 @@ Have a nice and safe flight!
                 config.set("Student","ready", "1")
                 with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                         config.write(configfile)
+                embed = discord.Embed(title="Flight Approved!", description=f"{user.mention}'s flight has been approved and they can take off now.", color=cfc)
+                embed.add_field(name="Approved with following data:", value=f"""
+```
+Route : {route.upper()}
+Cruise Altidude : FL{crzalt}
+Comments : {comments}
+```
+                """)
+                await ctx.respond(embed=embed)
             else:
                 with open(f'ClearFly_VA/users/{user.id}/student.txt', 'a') as f:
                     f.write(f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}")
@@ -526,7 +535,7 @@ Comments : {comments}
     @option("aircraft", description="The aircraft you will use for the flight.", choices=["B732", "B738", "B752","A306", "A306F"])
     @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
     @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
-    async def file(ctx, aircraft, origin, destination):
+    async def file(self, ctx, aircraft, origin, destination):
         config = configparser.ConfigParser()
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
             config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
