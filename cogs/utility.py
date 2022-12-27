@@ -238,7 +238,7 @@ Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=true)
+                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
         class METARViewI(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -270,7 +270,7 @@ Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=true)
+                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
         if resp['results'] == 1:
             time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
             obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
