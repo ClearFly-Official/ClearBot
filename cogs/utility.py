@@ -71,11 +71,11 @@ class UtilityCommands(discord.Cog):
 
     @utility.command(name='the-team', description='Shows The ClearFly Team!')
     async def team(self, ctx):
-        embed = discord.Embed(title="**The ClearFly Team:**",color=cfc)
-        logo = "https://cdn.discordapp.com/attachments/927609657655177238/992887468410024026/ClearFly_Logo.png"
-        embed.add_field(name="WolfAir",value="Founder & Modeler",inline=False)
-        embed.add_field(name="Matt3o0",value="Bot Creator & Admin",inline=False)
-        embed.add_field(name="DJ",value="Admin",inline=False)
+        embed = discord.Embed(title="The ClearFly Team:",color=cfc)
+        logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
+        embed.add_field(name="WolfAir",value="> Founder & Modeler",inline=False)
+        embed.add_field(name="Matt3o0",value="> Bot Creator & Admin",inline=False)
+        embed.add_field(name="DJ",value="> Admin",inline=False)
         embed.set_thumbnail(url=logo)
         await ctx.respond(embed=embed)
 
