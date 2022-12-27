@@ -1,5 +1,5 @@
 # ClearBot
-**A discord bot for the [ClearFly](https://discord.gg/jjpwtusf6n) server**
+**A Discord bot for the [ClearFly](https://discord.gg/jjpwtusf6n) server**
 
 Uses the **MIT license**
 
