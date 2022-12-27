@@ -123,14 +123,14 @@ class AdminCommands(discord.Cog):
             await ctx.channel.edit(slowmode_delay=slowmode)
             embed = discord.Embed(title=f"This channel's slow mode has been set to {slowmode} second(s)!", color=cfc)
             await ctx.respond(embed=embed)
-            embed = discord.Embed(title=f"{ctx.author} changed `{ctx.channel}`'s slowmode to {slowmode} second(s).")
+            embed = discord.Embed(title=f"{ctx.author} changed `{ctx.channel}`'s slowmode to {slowmode} second(s).", colour=cfc)
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await logchannel.send(embed=embed)
         else:
             await channel.edit(slowmode_delay=slowmode)
             embed = discord.Embed(title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!", color=cfc)
             await ctx.respond(embed=embed)
-            embed = discord.Embed(title=f"{ctx.author} changed `{channel.mention}` slowmode to {slowmode} second(s).")
+            embed = discord.Embed(title=f"{ctx.author} changed `{channel.mention}` slowmode to {slowmode} second(s).", colour=cfc)
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await logchannel.send(embed=embed)
 
