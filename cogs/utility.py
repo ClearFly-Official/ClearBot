@@ -113,8 +113,8 @@ class UtilityCommands(discord.Cog):
             pfp = author.avatar.url
             emb = discord.Embed(title=f"**Your profile:**", color=cfc)
             emb.add_field(name=f"{author}",value=f"""
-            **Account created on:**{acccrtt}
-            **Account joined this server on:**{accjoint}
+**Account created on:**{acccrtt}
+**Account joined this server on:**{accjoint}
             """)
             emb.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
             emb.set_thumbnail(url=pfp)
@@ -127,8 +127,8 @@ class UtilityCommands(discord.Cog):
             pfpe = user.avatar.url
             embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
             embed.add_field(name=f"{user}",value=f"""
-            **Account created on:**{acccrtte}
-            **Account joined this server on:**{accjointe}
+**Account created on:**{acccrtte}
+**Account joined this server on:**{accjointe}
             """)
             embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
             embed.set_thumbnail(url=pfpe)
@@ -143,8 +143,8 @@ class UtilityCommands(discord.Cog):
         pfpe = user.avatar.url
         embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
         embed.add_field(name=f"{user}",value=f"""
-        **Account created on:**{acccrtte}
-        **Account joined this server on:**{accjointe}
+**Account created on:**{acccrtte}
+**Account joined this server on:**{accjointe}
         """)
         embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
         embed.set_thumbnail(url=pfpe)
