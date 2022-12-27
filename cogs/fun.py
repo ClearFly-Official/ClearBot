@@ -168,7 +168,7 @@ class FunCommands(discord.Cog):
                     global b, isPressed
                     b = 1
                     isPressed = 1
-                    opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
+                    opts = [1, 2, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
                         embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
@@ -185,7 +185,7 @@ class FunCommands(discord.Cog):
                     global b, isPressed
                     b = 2
                     isPressed = 1
-                    opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
+                    opts = [1, 2, 3, 1, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
                         embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
@@ -202,7 +202,7 @@ class FunCommands(discord.Cog):
                     global b, isPressed
                     b = 3
                     isPressed = 1
-                    opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
+                    opts = [1, 2, 3, 1, 2, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
                         embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
