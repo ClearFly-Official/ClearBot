@@ -224,7 +224,7 @@ class UtilityCommands(discord.Cog):
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
             """)
-                    embed.add_field(name="Translated Metar Data", value=f"""
+                    embed.add_field(name="Translated Metar Data:", value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
@@ -256,7 +256,7 @@ Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
             """)
-                    embed.add_field(name="Translated Metar Data", value=f"""
+                    embed.add_field(name="Translated Metar Data:", value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **Hg {json.dumps(resp['data'][0]['barometer']['hg'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
@@ -281,7 +281,7 @@ Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
             """)
-            embed.add_field(name="Translated Metar Data", value=f"""
+            embed.add_field(name="Translated Metar Data:", value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
