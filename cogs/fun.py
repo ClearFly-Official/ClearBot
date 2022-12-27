@@ -151,16 +151,16 @@ class FunCommands(discord.Cog):
         embed = discord.Embed(title="Choose a button!", color=cfc)
         class ButtonGame(discord.ui.View):
             def __init__(self):
-                super().__init__(timeout=30)
+                super().__init__(timeout=20)
 
-            global b, isPressed
-            b = 0
-            isPressed = 0
-            
             async def on_timeout(self, interaction):
                 interaction.response.edit_message("You ran out of time! Rerun the command to play again.")
                 for child in self.children:
                     child.disabled = True
+                
+            global b, isPressed
+            b = 0
+            isPressed = 0
 
             @discord.ui.button(label="1", style=discord.ButtonStyle.green)
             async def first_button_callback(self, button, interaction):
