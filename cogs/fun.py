@@ -171,10 +171,11 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
-                    else:
-                        if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
+                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
+                    elif isPressed == 1:
+                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
@@ -187,10 +188,11 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
-                    else:
-                        if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
+                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
+                    elif isPressed == 1:
+                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
@@ -203,10 +205,11 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        await interaction.response.send_message(":partying_face: You guessed right. Congrats!")
-                    else:
-                        if isPressed == 1:
-                            await interaction.response.send_message(f":disappointed_relieved: You guessed wrong. The right answer was {output}")
+                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
+                    elif isPressed == 1:
+                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        await interaction.response.edit_message(embed=embed)
                 else:
                     await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
 
