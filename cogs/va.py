@@ -953,8 +953,6 @@ Have a nice and safe flight!
 {datar}
 ```
 Number of flights: **{nof}**
-
-*No incidents reported*
             """)
                 if os.path.exists(f"ClearFly_VA/users/{author.id}/reports.txt"):
                     with open(f"ClearFly_VA/users/{author.id}/reports.txt") as f:
@@ -982,8 +980,6 @@ Number of flights: **{nof}**
 {datar}
 ```
 Number of flights: **{nof}**
-
-*No incidents reported*
             """)
                 if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
                     with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
@@ -1014,8 +1010,6 @@ Number of flights: **{nof}**
 {datar}
 ```
 Number of flights: **{nof}**
-
-*No incidents reported*
         """)
             if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
                 with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
