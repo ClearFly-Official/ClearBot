@@ -82,6 +82,7 @@ class UtilityCommands(discord.Cog):
     @utility.command(name="avatar",description="Shows your avatar.")
     @option("user", description="The user you want the avatar of.")
     async def avatar(self, ctx, user: discord.Member = None):
+        await ctx.defer()
         if user == None:
             author = ctx.author
             pfp = author.avatar.url
@@ -96,6 +97,7 @@ class UtilityCommands(discord.Cog):
 
     @discord.user_command(name="User Avatar", description="Get's the avatar from the user")
     async def avatar_app(self, ctx, user:discord.Member):
+        await ctx.defer()
         userAvatarUrl = user.avatar.url    
         embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({userAvatarUrl})", color=cfc)
         embed.set_image(url=userAvatarUrl)
@@ -104,6 +106,7 @@ class UtilityCommands(discord.Cog):
     @utility.command(name="who-is", description="Fetches a user profile")
     @option("user", description="The user you want the user profile of.")
     async def whois(self, ctx, user: discord.Member = None):
+        await ctx.defer()
         if user == None:
             author = ctx.author
             acccrt = author.created_at
@@ -136,6 +139,7 @@ class UtilityCommands(discord.Cog):
 
     @discord.user_command(name="User Profile")
     async def whois_app(self, ctx, user:discord.Member):
+        await ctx.defer()
         acccrte = user.created_at
         accjoine = user.joined_at
         acccrtte = discord.utils.format_dt(acccrte)
@@ -160,6 +164,7 @@ class UtilityCommands(discord.Cog):
     @option("input1", description="The first number.")
     @option("input2", description="The second number.")
     async def basic(self, ctx, type,input1:int, input2:int):
+        await ctx.defer()
         if type == "Addition":
             embed = discord.Embed(description=f"{input1} + {input2} = **{input1+input2}**", color=cfc)
             await ctx.respond(embed=embed)
@@ -182,15 +187,6 @@ class UtilityCommands(discord.Cog):
     @option("power", description="The exponent (not needed for sqrt)", required=False)
     async def advanced(self, ctx, type, input: int, exponent:int = None):
         await ctx.defer()
-        if input > 10000:
-            await ctx.respond("Too big of a number!")
-            return
-        if exponent == None:
-            pass
-        else:
-            if exponent > 1000:
-                await ctx.respond("Too big of an exponent!")
-                return
         if type == "Square root":
             embed = discord.Embed(title=f"The square root of {input} is", description=f"**{sqrt(input)}**", color=cfc)
             await ctx.respond(embed=embed)
@@ -203,6 +199,7 @@ class UtilityCommands(discord.Cog):
     @utility.command(name="metar", description="Get the metar data of an airport.")
     @option("icao", description="The airport you want the metar data of.")
     async def metar(self, ctx, icao):
+        await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
         req = requests.get(f"https://api.checkwx.com/metar/{icao.upper()}/decoded", headers=hdr)
         req.raise_for_status()
