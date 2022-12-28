@@ -870,7 +870,7 @@ Have a nice and safe flight!
             config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
                 with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", 'a') as f:
-                    f.write(f"/I")
+                    f.write(f"/Incident")
                 embed = discord.Embed(title=f"Report submitted!", color=cfc)
                 await ctx.respond(embed=embed)
                 if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
