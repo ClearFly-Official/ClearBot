@@ -536,6 +536,7 @@ Comments : {comments}
     @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
     @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
     async def file(self, ctx, aircraft, origin, destination):
+        await ctx.defer()
         config = configparser.ConfigParser()
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
             config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
@@ -823,8 +824,6 @@ Comments : {comments}
                     await ctx.respond(embed=embed)
                     return
                 user = ctx.author
-                await ctx.respond("Filing flight.")
-                await ctx.edit(content="Filing flight..")
                 embed = discord.Embed(title="Flight Filed!", color=cfc)
                 flightnumber = f"{int(cf1+cf2)}"+str(cf3)
                 embed.add_field(name="Your flight has been filed with the following data:", value=f"""
@@ -836,8 +835,6 @@ Flight Number: CF{flightnumber}
 ```
 Have a nice and safe flight!
                             """)
-                await ctx.edit(content="Filing flight...")
-                await ctx.edit(content="Filing flight.")
                 if os.path.exists(f"ClearFly_VA/users/{user.id}"):
                         f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
                         f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
@@ -847,9 +844,6 @@ Have a nice and safe flight!
                         f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
                         f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
                         f.close()
-                await ctx.edit(content="Uploading to database.")
-                await ctx.edit(content="Uploading to database..")
-                await ctx.edit(content="Uploading to database...")
                 if aircraft == "B732":
                     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060095902330952/1038065978019430430/FJS_732_TwinJet_icon11_thumb.png")
                 if aircraft == "B738":
@@ -858,7 +852,7 @@ Have a nice and safe flight!
                     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
                 if aircraft == "A300F":
                     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038063084733997178/1038065483234164837/A300_F_V2_icon11_thumb.png")
-                await ctx.edit(content=None, embed=embed)
+                await ctx.respond(embed=embed)
             else:
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)
