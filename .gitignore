@@ -1,14 +1,8 @@
 .DS_Store
 .env
-e.py
-test.py
-ClearFly_VA.zip
-city.txt
-city.py
 .onpc
-test.py
 test.ipynb
-.gitignore
 development.py
 test.md
 test.py
+devcogs

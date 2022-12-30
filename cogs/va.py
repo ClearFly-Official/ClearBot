@@ -84,12 +84,41 @@ airports = [
     "KCLE"
     ]
 
+class InfoB4training(discord.ui.View):
+    def __init__(self, bot):
+        self.bot = bot
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Continue to flight training", style=discord.ButtonStyle.green, custom_id="vastudent")
+    async def first_button_callback(self, button, interaction):
+        author = interaction.user
+        guild = self.bot.get_guild(965419296937365514)
+        role = guild.get_role(1040918463763468369)
+        if role in author.roles:
+            author = interaction.user
+            guild = self.bot.get_guild(965419296937365514)
+            role = guild.get_role(1040918463763468369)
+            await author.remove_roles(role)
+            await interaction.response.send_message("You are no longer a student in the ClearFly VA.",ephemeral=True)
+        else:
+            author = interaction.user
+            guild = self.bot.get_guild(965419296937365514)
+            role = guild.get_role(1040918463763468369)
+            await author.add_roles(role)
+            await interaction.response.send_message("You are now part of the ClearFly VA, get ready for some training!",ephemeral=True)
+            channel = self.bot.get_channel(1038062843808972850)
+            await channel.send(f"{interaction.user.mention} continue here, run </va training:1016059999056826479> and input your desired destination and origin.")
 
 class VACommands(discord.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.bot.add_view(InfoB4training(bot=self.bot))
+
+    
     va = discord.SlashCommandGroup(name="va",description="Commands related to the ClearFly Virtual Airline")
     instructor = va.create_subgroup(name="instructor", description="Commands for the ClearFly Instructors")
 
@@ -99,6 +128,57 @@ class VACommands(discord.Cog):
     async def get_airports_d(self, ctx: discord.AutocompleteContext):
         return [destination for destination in airports if destination.startswith(ctx.value.upper())]
 
+    @va.command(name="setup", description="Sends the required message.")
+    @commands.has_role(965422406036488282)
+    async def vasetup(self, ctx):
+        embed = discord.Embed(title="The ClearFly VA", description="""
+
+        -Click the button below
+
+        ======**GENERAL TRAINING**======
+
+        {-Run the command </va training:1016059999056826479>
+        {-Enter your desired origin and destination
+        {-Wait for an instructor to approve and assign you required information
+        {-Do the flight witht the C172(steam gauges)
+        {-Share screenshots of the flight, in one of those screenshots there should be the G430 with the flightplan __clearly visible__
+        ⌞______**2X**______⌟
+        -------------------------------------------------------------------
+        {-Run the command </va training:1016059999056826479> again
+        {-Enter your desired origin and destination
+        {-Wait for an instructor to approve and assign you required information
+        {-Do the flight witht the C172(G1000)
+        {-Share screenshots of the flight, let us see that you can use the autopilot
+        ⌞______**2X**______⌟
+        -------------------------------------------------------------------
+        -An instructor will check you off, so you're ready to go to the next phase, type rating!
+
+        ======**TYPE RATING**======
+
+        -Run the command </va training:1016059999056826479>
+        -Choose the aircraft you want in the dropdown menu
+        {-Run the command </va training:1016059999056826479> again
+        {-Enter your desired origin and destination
+        {-Wait for an instructor to approve and assign you required information
+        {-Share screenshots of the flight were we can see that you are able to use the plane(this includes autopilot except if you're fitted without any navigation system on the B732)
+        ⌞______**2X**______⌟
+        -An instructor will check you off once again for the final time, you can then fly as much as you want for the VA!""", color=cfc)
+        channel1 = self.bot.get_channel(1040927466975404054)
+        channel2 = self.bot.get_channel(1041057335449227314)
+        await channel1.send(embed=embed, view=InfoB4training
+        (bot=self.bot))
+        embed = discord.Embed(title="Required plugin: StableApproach", description="""
+        Download [here](https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/)
+
+        **Setup:**
+        **1.** Open the StableApproach settings in the plugins menu.
+        **2.** Open the “Virtual Airline” category.
+        **3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
+        **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
+        **5.** That’s it! StableApproach will now download our custom aircraft profiles.
+        """, color=cfc)
+        await channel2.send(embed=embed)
+        await ctx.respond("Done", ephemeral=True)
     
     @va.command(name="training", description="Start your career in the ClearFly VA!")
     @option("origin", description="The airport(ICAO) you will fly from.")
@@ -541,318 +621,322 @@ Comments : {comments}
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
             config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
-                dest = 1
-                ori = 1
-                if dest == 1:
-                    if destination == "KDCA":
-                        cf1 = 1
-                    if destination == "KIAD":
-                        cf1 = 2
-                    if destination == "KLGA":
-                        cf1 = 3
-                    if destination == "KMSP":
-                        cf1 = 4
-                    if destination == "KORD":
-                        cf1 = 5
-                    if destination == "KMDW":
-                        cf1 = 6
-                    if destination == "KMKE":
-                        cf1 = 7
-                    if destination == "KSFO":
-                        cf1 = 8
-                    if destination == "KLAX":
-                        cf1 = 9
-                    if destination == "KPHX":
-                        cf1 = 10
-                    if destination == "KSEA":
-                        cf1 = 11
-                    if destination == "KPDX":
-                        cf1 = 12
-                    if destination == "KRIC":
-                        cf1 = 13
-                    if destination == "KMIA":
-                        cf1 = 14
-                    if destination == "KSTL":
-                        cf1 = 15
-                    if destination == "KBOS":
-                        cf1 = 16
-                    if destination == "KIND":
-                        cf1 = 17
-                    if destination == "KIAH":
-                        cf1 = 18
-                    if destination == "KAUS":
-                        cf1 = 19
-                    if destination == "KDFW":
-                        cf1 = 20
-                    if destination == "KPIT":
-                        cf1 = 21
-                    if destination == "KATL":
-                        cf1 = 22
-                    if destination == "KSAN":
-                        cf1 = 23
-                    if destination == "CYVR":
-                        cf1 = 24
-                    if destination == "CYYQ":
-                        cf1 = 25
-                    if destination == "CYVO":
-                        cf1 = 26
-                    if destination == "CYUL":
-                        cf1 = 27
-                    if destination == "CYQB":
-                        cf1 = 28
-                    if destination == "CYYZ":
-                        cf1 = 29
-                    if destination == "CYOW":
-                        cf1 = 30
-                    if destination == "CYYJ":
-                        cf1 = 31
-                    if destination == "PANC":
-                        cf1 = 32
-                    if destination == "PAFA":
-                        cf1 = 33
-                    if destination == "PHOG":
-                        cf1 = 34
-                    if destination == "PHNL":
-                        cf1 = 35
-                    if destination == "PHMK":
-                        cf1 = 36
-                    if destination == "PHTO":
-                        cf1 = 37
-                    if destination == "EDDF":
-                        cf1 = 38
-                    if destination == "EGGL":
-                        cf1 = 39
-                    if destination == "EBBR":
-                        cf1 = 40
-                    if destination == "EGGW":
-                        cf1 = 41
-                    if destination == "EGSS":
-                        cf1 = 42
-                    if destination == "EGKK":
-                        cf1 = 43
-                    if destination == "EDHI":
-                        cf1 = 44
-                    if destination == "EDDB":
-                        cf1 = 45
-                    if destination == "EGGP":
-                        cf1 = 46
-                    if destination == "EIDW":
-                        cf1 = 47
-                    if destination == "EGCC":
-                        cf1 = 48
-                    if destination == "EGPF":
-                        cf1 = 49
-                    if destination == "EBCI":
-                        cf1 = 50
-                    if destination == "ENGM":
-                        cf1 = 51
-                    if destination == "EPWA":
-                        cf1 = 52
-                    if destination == "ESSA":
-                        cf1 = 53
-                    if destination == "EFHK":
-                        cf1 = 54
-                    if destination == "LEMD":
-                        cf1 = 55
-                    if destination == "LFPG":
-                        cf1 = 56
-                    if destination == "LIRF":
-                        cf1 = 57
-                    if destination == "LROP":
-                        cf1 = 58
-                    if destination == "LIPE":
-                        cf1 = 59
-                    if destination == "LIRA":
-                        cf1 = 60
-                    if destination == "LIML":
-                        cf1 = 61
-                    if destination == "LGEL":
-                        cf1 = 62
-                    if destination == "LDZA":
-                        cf1 = 63
-                    if destination == "LOWI":
-                        cf1 = 64
-                    if destination == "LPPT":
-                        cf1 = 65
-                    if destination == "KCLE":
-                        cf1 = 66
-                if ori == 1:
-                    if origin == "KDCA":
-                        cf2 = 23
-                    if origin == "KIAD":
-                        cf2 = 22
-                    if origin == "KLGA":
-                        cf2 = 21
-                    if origin == "KMSP":
-                        cf2 = 20
-                    if origin == "KORD":
-                        cf2 = 19
-                    if origin == "KMDW":
-                        cf2 = 18
-                    if origin == "KMKE":
-                        cf2 = 17
-                    if origin == "KSFO":
-                        cf2 = 16
-                    if origin == "KLAX":
-                        cf2 = 15
-                    if origin == "KPHX":
-                        cf2 = 14
-                    if origin == "KSEA":
-                        cf2 = 13
-                    if origin == "KPDX":
-                        cf2 = 12
-                    if origin == "KRIC":
-                        cf2 = 11
-                    if origin == "KMIA":
-                        cf2 = 10
-                    if origin == "KSTL":
-                        cf2 = 9
-                    if origin == "KBOS":
-                        cf2 = 8
-                    if origin == "KIND":
-                        cf2 = 7
-                    if origin == "KIAH":
-                        cf2 = 6
-                    if origin == "KAUS":
-                        cf2 = 5
-                    if origin == "KDFW":
-                        cf2 = 4
-                    if origin == "KPIT":
-                        cf2 = 3
-                    if origin == "KSAN":
-                        cf2 = 2
-                    if origin == "KATL":
-                        cf2 = 1
-                    if origin == "CYVR":
-                        cf2 = 65
-                    if origin == "CYYQ":
-                        cf2 = 64
-                    if origin == "CYVO":
-                        cf2 = 63
-                    if origin == "CYUL":
-                        cf2 = 62
-                    if origin == "CYQB":
-                        cf2 = 61
-                    if origin == "CYYZ":
-                        cf2 = 60
-                    if origin == "CYOW":
-                        cf2 = 59
-                    if origin == "CYYJ":
-                        cf2 = 58
-                    if origin == "PANC":
-                        cf2 = 57
-                    if origin == "PAFA":
-                        cf2 = 56
-                    if origin == "PHOG":
-                        cf2 = 55
-                    if origin == "PHNL":
-                        cf2 = 54
-                    if origin == "PHMK":
-                        cf2 = 53
-                    if origin == "PHTO":
-                        cf2 = 52
-                    if origin == "EDDF":
-                        cf2 = 51
-                    if origin == "EGGL":
-                        cf2 = 50
-                    if origin == "EBBR":
-                        cf2 = 49
-                    if origin == "EGGW":
-                        cf2 = 48
-                    if origin == "EGSS":
-                        cf2 = 47
-                    if origin == "EGKK":
-                        cf2 = 46
-                    if origin == "EDHI":
-                        cf2 = 45
-                    if origin == "EDDB":
-                        cf2 = 44
-                    if origin == "EGGP":
-                        cf2 = 43
-                    if origin == "EIDW":
-                        cf2 = 42
-                    if origin == "EGCC":
-                        cf2 = 41
-                    if origin == "EGPF":
-                        cf2 = 40
-                    if origin == "EBCI":
-                        cf2 = 39
-                    if origin == "ENGM":
-                        cf2 = 38
-                    if origin == "EPWA":
-                        cf2 = 37
-                    if origin == "ESSA":
-                        cf2 = 36
-                    if origin == "EFHK":
-                        cf2 = 35
-                    if origin == "LEMD":
-                        cf2 = 34
-                    if origin == "LFPG":
-                        cf2 = 33
-                    if origin == "LIRF":
-                        cf2 = 32
-                    if origin == "LROP":
-                        cf2 = 31
-                    if origin == "LIPE":
-                        cf2 = 30
-                    if origin == "LIRA":
-                        cf2 = 29
-                    if origin == "LIML":
-                        cf2 = 28
-                    if origin == "LGEL":
-                        cf2 = 27
-                    if origin == "LDZA":
-                        cf2 = 26
-                    if origin == "LOWI":
-                        cf2 = 25
-                    if origin == "LPPT":
-                        cf2 = 24
-                    if origin == "KCLE":
-                        cf2 = 23
-                if aircraft == "B732":
-                    cf3 = 1
-                if aircraft == "B738":
-                    cf3 = 2
-                if aircraft == "A306":
-                    cf3 = 3
-                if aircraft == "A306F":
-                    cf3 = 4
-                if aircraft == "B752":
-                    cf3 = 5
-                if not aircraft == config.get("Student", "type"):
-                    embed=discord.Embed(title="Error 503!", description="You need to have a type rating of this aircraft if you want to fly it!", color=errorc)
+                if (origin in airports) and (destination in airports):
+                    dest = 1
+                    ori = 1
+                    if dest == 1:
+                        if destination == "KDCA":
+                            cf1 = 1
+                        if destination == "KIAD":
+                            cf1 = 2
+                        if destination == "KLGA":
+                            cf1 = 3
+                        if destination == "KMSP":
+                            cf1 = 4
+                        if destination == "KORD":
+                            cf1 = 5
+                        if destination == "KMDW":
+                            cf1 = 6
+                        if destination == "KMKE":
+                            cf1 = 7
+                        if destination == "KSFO":
+                            cf1 = 8
+                        if destination == "KLAX":
+                            cf1 = 9
+                        if destination == "KPHX":
+                            cf1 = 10
+                        if destination == "KSEA":
+                            cf1 = 11
+                        if destination == "KPDX":
+                            cf1 = 12
+                        if destination == "KRIC":
+                            cf1 = 13
+                        if destination == "KMIA":
+                            cf1 = 14
+                        if destination == "KSTL":
+                            cf1 = 15
+                        if destination == "KBOS":
+                            cf1 = 16
+                        if destination == "KIND":
+                            cf1 = 17
+                        if destination == "KIAH":
+                            cf1 = 18
+                        if destination == "KAUS":
+                            cf1 = 19
+                        if destination == "KDFW":
+                            cf1 = 20
+                        if destination == "KPIT":
+                            cf1 = 21
+                        if destination == "KATL":
+                            cf1 = 22
+                        if destination == "KSAN":
+                            cf1 = 23
+                        if destination == "CYVR":
+                            cf1 = 24
+                        if destination == "CYYQ":
+                            cf1 = 25
+                        if destination == "CYVO":
+                            cf1 = 26
+                        if destination == "CYUL":
+                            cf1 = 27
+                        if destination == "CYQB":
+                            cf1 = 28
+                        if destination == "CYYZ":
+                            cf1 = 29
+                        if destination == "CYOW":
+                            cf1 = 30
+                        if destination == "CYYJ":
+                            cf1 = 31
+                        if destination == "PANC":
+                            cf1 = 32
+                        if destination == "PAFA":
+                            cf1 = 33
+                        if destination == "PHOG":
+                            cf1 = 34
+                        if destination == "PHNL":
+                            cf1 = 35
+                        if destination == "PHMK":
+                            cf1 = 36
+                        if destination == "PHTO":
+                            cf1 = 37
+                        if destination == "EDDF":
+                            cf1 = 38
+                        if destination == "EGGL":
+                            cf1 = 39
+                        if destination == "EBBR":
+                            cf1 = 40
+                        if destination == "EGGW":
+                            cf1 = 41
+                        if destination == "EGSS":
+                            cf1 = 42
+                        if destination == "EGKK":
+                            cf1 = 43
+                        if destination == "EDHI":
+                            cf1 = 44
+                        if destination == "EDDB":
+                            cf1 = 45
+                        if destination == "EGGP":
+                            cf1 = 46
+                        if destination == "EIDW":
+                            cf1 = 47
+                        if destination == "EGCC":
+                            cf1 = 48
+                        if destination == "EGPF":
+                            cf1 = 49
+                        if destination == "EBCI":
+                            cf1 = 50
+                        if destination == "ENGM":
+                            cf1 = 51
+                        if destination == "EPWA":
+                            cf1 = 52
+                        if destination == "ESSA":
+                            cf1 = 53
+                        if destination == "EFHK":
+                            cf1 = 54
+                        if destination == "LEMD":
+                            cf1 = 55
+                        if destination == "LFPG":
+                            cf1 = 56
+                        if destination == "LIRF":
+                            cf1 = 57
+                        if destination == "LROP":
+                            cf1 = 58
+                        if destination == "LIPE":
+                            cf1 = 59
+                        if destination == "LIRA":
+                            cf1 = 60
+                        if destination == "LIML":
+                            cf1 = 61
+                        if destination == "LGEL":
+                            cf1 = 62
+                        if destination == "LDZA":
+                            cf1 = 63
+                        if destination == "LOWI":
+                            cf1 = 64
+                        if destination == "LPPT":
+                            cf1 = 65
+                        if destination == "KCLE":
+                            cf1 = 66
+                    if ori == 1:
+                        if origin == "KDCA":
+                            cf2 = 23
+                        if origin == "KIAD":
+                            cf2 = 22
+                        if origin == "KLGA":
+                            cf2 = 21
+                        if origin == "KMSP":
+                            cf2 = 20
+                        if origin == "KORD":
+                            cf2 = 19
+                        if origin == "KMDW":
+                            cf2 = 18
+                        if origin == "KMKE":
+                            cf2 = 17
+                        if origin == "KSFO":
+                            cf2 = 16
+                        if origin == "KLAX":
+                            cf2 = 15
+                        if origin == "KPHX":
+                            cf2 = 14
+                        if origin == "KSEA":
+                            cf2 = 13
+                        if origin == "KPDX":
+                            cf2 = 12
+                        if origin == "KRIC":
+                            cf2 = 11
+                        if origin == "KMIA":
+                            cf2 = 10
+                        if origin == "KSTL":
+                            cf2 = 9
+                        if origin == "KBOS":
+                            cf2 = 8
+                        if origin == "KIND":
+                            cf2 = 7
+                        if origin == "KIAH":
+                            cf2 = 6
+                        if origin == "KAUS":
+                            cf2 = 5
+                        if origin == "KDFW":
+                            cf2 = 4
+                        if origin == "KPIT":
+                            cf2 = 3
+                        if origin == "KSAN":
+                            cf2 = 2
+                        if origin == "KATL":
+                            cf2 = 1
+                        if origin == "CYVR":
+                            cf2 = 65
+                        if origin == "CYYQ":
+                            cf2 = 64
+                        if origin == "CYVO":
+                            cf2 = 63
+                        if origin == "CYUL":
+                            cf2 = 62
+                        if origin == "CYQB":
+                            cf2 = 61
+                        if origin == "CYYZ":
+                            cf2 = 60
+                        if origin == "CYOW":
+                            cf2 = 59
+                        if origin == "CYYJ":
+                            cf2 = 58
+                        if origin == "PANC":
+                            cf2 = 57
+                        if origin == "PAFA":
+                            cf2 = 56
+                        if origin == "PHOG":
+                            cf2 = 55
+                        if origin == "PHNL":
+                            cf2 = 54
+                        if origin == "PHMK":
+                            cf2 = 53
+                        if origin == "PHTO":
+                            cf2 = 52
+                        if origin == "EDDF":
+                            cf2 = 51
+                        if origin == "EGGL":
+                            cf2 = 50
+                        if origin == "EBBR":
+                            cf2 = 49
+                        if origin == "EGGW":
+                            cf2 = 48
+                        if origin == "EGSS":
+                            cf2 = 47
+                        if origin == "EGKK":
+                            cf2 = 46
+                        if origin == "EDHI":
+                            cf2 = 45
+                        if origin == "EDDB":
+                            cf2 = 44
+                        if origin == "EGGP":
+                            cf2 = 43
+                        if origin == "EIDW":
+                            cf2 = 42
+                        if origin == "EGCC":
+                            cf2 = 41
+                        if origin == "EGPF":
+                            cf2 = 40
+                        if origin == "EBCI":
+                            cf2 = 39
+                        if origin == "ENGM":
+                            cf2 = 38
+                        if origin == "EPWA":
+                            cf2 = 37
+                        if origin == "ESSA":
+                            cf2 = 36
+                        if origin == "EFHK":
+                            cf2 = 35
+                        if origin == "LEMD":
+                            cf2 = 34
+                        if origin == "LFPG":
+                            cf2 = 33
+                        if origin == "LIRF":
+                            cf2 = 32
+                        if origin == "LROP":
+                            cf2 = 31
+                        if origin == "LIPE":
+                            cf2 = 30
+                        if origin == "LIRA":
+                            cf2 = 29
+                        if origin == "LIML":
+                            cf2 = 28
+                        if origin == "LGEL":
+                            cf2 = 27
+                        if origin == "LDZA":
+                            cf2 = 26
+                        if origin == "LOWI":
+                            cf2 = 25
+                        if origin == "LPPT":
+                            cf2 = 24
+                        if origin == "KCLE":
+                            cf2 = 23
+                    if aircraft == "B732":
+                        cf3 = 1
+                    if aircraft == "B738":
+                        cf3 = 2
+                    if aircraft == "A306":
+                        cf3 = 3
+                    if aircraft == "A306F":
+                        cf3 = 4
+                    if aircraft == "B752":
+                        cf3 = 5
+                    if not aircraft == config.get("Student", "type"):
+                        embed=discord.Embed(title="Error 503!", description="You need to have a type rating of this aircraft if you want to fly it!", color=errorc)
+                        await ctx.respond(embed=embed)
+                        return
+                    user = ctx.author
+                    embed = discord.Embed(title="Flight Filed!", color=cfc)
+                    flightnumber = f"{int(cf1+cf2)}"+str(cf3)
+                    embed.add_field(name="Your flight has been filed with the following data:", value=f"""
+    ```
+    Aircraft:{aircraft}
+    Departure:{origin}
+    Arrival:{destination}
+    Flight Number: CF{flightnumber}
+    ```
+    Have a nice and safe flight!
+                                """)
+                    if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                            f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
+                            f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
+                            f.close()
+                    else:
+                            os.mkdir(f"ClearFly_VA/users/{user.id}")
+                            f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
+                            f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
+                            f.close()
+                    if aircraft == "B732":
+                        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060095902330952/1038065978019430430/FJS_732_TwinJet_icon11_thumb.png")
+                    if aircraft == "B738":
+                        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060053896364063/1038065018983432242/b738_4k_icon11_thumb.png")
+                    if aircraft == "A300":
+                        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
+                    if aircraft == "A300F":
+                        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038063084733997178/1038065483234164837/A300_F_V2_icon11_thumb.png")
                     await ctx.respond(embed=embed)
-                    return
-                user = ctx.author
-                embed = discord.Embed(title="Flight Filed!", color=cfc)
-                flightnumber = f"{int(cf1+cf2)}"+str(cf3)
-                embed.add_field(name="Your flight has been filed with the following data:", value=f"""
-```
-Aircraft:{aircraft}
-Departure:{origin}
-Arrival:{destination}
-Flight Number: CF{flightnumber}
-```
-Have a nice and safe flight!
-                            """)
-                if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-                        f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
-                        f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
-                        f.close()
                 else:
-                        os.mkdir(f"ClearFly_VA/users/{user.id}")
-                        f = open(f"ClearFly_VA/users/{user.id}/data.txt","a")
-                        f.write(f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}")
-                        f.close()
-                if aircraft == "B732":
-                    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060095902330952/1038065978019430430/FJS_732_TwinJet_icon11_thumb.png")
-                if aircraft == "B738":
-                    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038060053896364063/1038065018983432242/b738_4k_icon11_thumb.png")
-                if aircraft == "A300":
-                    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.PNG")
-                if aircraft == "A300F":
-                    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1038063084733997178/1038065483234164837/A300_F_V2_icon11_thumb.png")
-                await ctx.respond(embed=embed)
+                    embed=discord.Embed(title="Error 422!", description="The origin/destination you provided are airports we do not fly to, please choose an airport that comes up while using the command.", color=errorc)
+                    await ctx.respond(embed=embed)
             else:
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)

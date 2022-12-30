@@ -7,7 +7,7 @@ from math import sqrt
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
-from main import bot_start_time
+from main import bot_start_time, cogs
 
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
@@ -196,6 +196,11 @@ class UtilityCommands(discord.Cog):
             embed = discord.Embed(title=f"{input} to the power of {exponent} is",description=f"**{input**exponent}**", color=cfc)
             await ctx.respond(embed=embed)
 
+    async def get_airports(self, ctx: discord.AutocompleteContext):
+        with open("airports.json", "r") as f:
+            aptLoad = json.load(f)
+            airports = aptLoad.keys()
+        return [origin for origin in airports if origin.startswith(ctx.value.upper())]
     @utility.command(name="metar", description="Get the metar data of an airport.")
     @option("icao", description="The airport you want the metar data of.")
     async def metar(self, ctx, icao):
@@ -231,7 +236,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "
 Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
                 else:
@@ -263,7 +268,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")
 Flight Category :**{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles**
-Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
             """, inline=False)
                     await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
                 else:
@@ -288,7 +293,7 @@ Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "
 Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp['data'][0]['wind']['speed_kts'])} Knots**
+Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
             """, inline=False)
             await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
@@ -298,15 +303,6 @@ Winds : **{json.dumps(resp['data'][0]['wind']['degrees'])}° at {json.dumps(resp
 
     @utility.command(name="stats",description="Show statistics about the bot and server.")
     async def stats(self, ctx):
-        cogs = [
-        "listeners",
-        "dev",
-        "admin",
-        "fun",
-        "level",
-        "utility",
-        "va"
-        ]
         loc = 0
         f = open("main.py", "r")
         loc += int(len(f.readlines()))
