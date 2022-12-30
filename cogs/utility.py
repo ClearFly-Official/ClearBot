@@ -199,14 +199,18 @@ class UtilityCommands(discord.Cog):
     async def get_airports(self, ctx: discord.AutocompleteContext):
         with open("airports.json", "r") as f:
             aptLoad = json.load(f)
-            airports = aptLoad.keys()
+            aptList = list(aptLoad.keys())
+        airports = []
+        for i in aptList:
+            airports.append(f"{aptLoad[i]['icao']}({aptLoad[i]['name']}, {aptLoad[i]['country']})")
         return [origin for origin in airports if origin.startswith(ctx.value.upper())]
+    
     @utility.command(name="metar", description="Get the metar data of an airport.")
     @option("icao", description="The airport you want the metar data of.", autocomplete=get_airports)
     async def metar(self, ctx, icao):
         await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-        req = requests.get(f"https://api.checkwx.com/metar/{icao.upper()}/decoded", headers=hdr)
+        req = requests.get(f"https://api.checkwx.com/metar/{icao[:4].upper()}/decoded", headers=hdr)
         req.raise_for_status()
         resp = json.loads(req.text)
         class METARViewM(discord.ui.View):
