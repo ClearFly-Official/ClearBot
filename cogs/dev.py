@@ -269,9 +269,8 @@ Description :
                     with open("dev/aircraft/defaultDatarefsCommands.json", "r") as f:
                         datarefJson = json.load(f)
                     datarefs = datarefJson["datarefs"]
-                    if len(list(datarefs[dataref].keys())) == 5:
-                        embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
-                        embed.add_field(name="Dataref Information:", value=f"""
+                    embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
+                    embed.add_field(name="Dataref Information:", value=f"""
 Path : `{datarefs[dataref].get("path", "N/A")}`
 Type : **{datarefs[dataref].get("type", "N/A")}**
 Writable : **{datarefs[dataref].get("writable", "N/A")}**
