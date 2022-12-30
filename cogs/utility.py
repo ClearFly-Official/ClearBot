@@ -8,7 +8,7 @@ from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
 from main import bot_start_time, cogs
-
+from airports import airports
 #cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
 cfc = 0x00771d # <- christmas color
@@ -197,13 +197,6 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     async def get_airports(self, ctx: discord.AutocompleteContext):
-        await ctx.defer()
-        with open("airports.json", "r") as f:
-            aptLoad = json.load(f)
-            aptList = list(aptLoad.keys())
-        airports = []
-        for i in aptList:
-            airports.append(f"{aptLoad[i]['icao']}({aptLoad[i]['name']}, {aptLoad[i]['country']})")
         return [origin for origin in airports if origin.startswith(ctx.value.upper())]
     
     @utility.command(name="metar", description="Get the metar data of an airport.")
