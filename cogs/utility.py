@@ -197,6 +197,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     async def get_airports(self, ctx: discord.AutocompleteContext):
+        await ctx.defer()
         with open("airports.json", "r") as f:
             aptLoad = json.load(f)
             aptList = list(aptLoad.keys())
