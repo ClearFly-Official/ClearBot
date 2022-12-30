@@ -197,14 +197,11 @@ Reloaded cogs:
         with open("dev/aircraft/datarefs.json") as f:
             datarefLoad = json.load(f)
             datarefList1 = list(datarefLoad["datarefs"].keys())
-        with open("dev/aircraft/defaultDatarefs.json") as f:
+        with open("dev/aircraft/defaultDatarefsCommands.json") as f:
             datarefLoad = json.load(f)
             datarefList2 = list(datarefLoad["datarefs"].keys())
-        with open("dev/aircraft/defaultCommands.json") as f:
-            datarefLoad = json.load(f)
-            datarefList3 = list(datarefLoad["commands"].keys())
         global datarefList
-        datarefList = datarefList1 + datarefList2 + datarefList3
+        datarefList = datarefList1 + datarefList2
         return [dataref for dataref in datarefList if ctx.value in dataref]
 
     async def get_custom_datarefs(self, ctx: discord.AutocompleteContext):
@@ -247,7 +244,7 @@ Reloaded cogs:
                  "z"]
         return [unit for unit in units if ctx.value in unit]
 
-    @dataref.command(name="search", description="Find the dataref/commands you're looking for.")
+    @dataref.command(name="search", description="Find the dataref/command you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def datarefs(self, ctx, dataref):
         if ctx.author.id in acdevs:

@@ -202,7 +202,7 @@ class UtilityCommands(discord.Cog):
             airports = aptLoad.keys()
         return [origin for origin in airports if origin.startswith(ctx.value.upper())]
     @utility.command(name="metar", description="Get the metar data of an airport.")
-    @option("icao", description="The airport you want the metar data of.")
+    @option("icao", description="The airport you want the metar data of.", autocomplete=get_airports)
     async def metar(self, ctx, icao):
         await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
