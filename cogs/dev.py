@@ -266,7 +266,7 @@ Description :
                     """)
                     await ctx.respond(embed=embed)
                 else:
-                    with open("dev/aircraft/defaultDatarefs.json", "r") as f:
+                    with open("dev/aircraft/defaultDatarefsCommands.json", "r") as f:
                         datarefJson = json.load(f)
                     datarefs = datarefJson["datarefs"]
                     if len(list(datarefs[dataref].keys())) == 5:
