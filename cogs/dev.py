@@ -279,8 +279,10 @@ Description :
 
 > {datarefs[dataref].get("description", "N/A")}
                     """)
+                    await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(title="Error 404!", description=f"Didn't found the dataref `{dataref}`", colour=errorc)
+                await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
