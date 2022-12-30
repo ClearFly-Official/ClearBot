@@ -197,7 +197,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     async def get_airports(self, ctx: discord.AutocompleteContext):
-        return [airport for airport in airports if ctx.value in airport]
+        return [airport for airport in airports if airport in ctx.value]
     
     @utility.command(name="metar", description="Get the metar data of an airport.")
     @option("icao", description="The airport you want the metar data of.", autocomplete=get_airports)
