@@ -70,8 +70,8 @@ Didn't found {tag}.
     @option("value", description="The value of the new tag.")
     async def add(self, ctx):
         class AddTagModal(discord.ui.View):
-            def __init__(self, *args, **kwargs) -> None:
-                super().__init__(*args, **kwargs)
+            def __init__(self, title) -> None:
+                super().__init__(title)
 
                 self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
                 self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
@@ -96,8 +96,8 @@ Didn't found {tag}.
     @option("value", description="The value of the edited tag.")
     async def edit(self, ctx, edit):
         class EditTagModal(discord.ui.View):
-            def __init__(self, *args, **kwargs) -> None:
-                super().__init__(*args, **kwargs)
+            def __init__(self, title) -> None:
+                super().__init__(title)
 
                 self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
                 self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
