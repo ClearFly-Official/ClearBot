@@ -307,7 +307,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         for cog in cogs:
             f = open(f"cogs/{cog}.py")
             loc += int(len(f.readlines()))
-        cogs = '\n'.join(cogs)
+        cogsList = '\n'.join(cogs)
         delta_uptime = datetime.utcnow() - bot_start_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -324,7 +324,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 
 **Cogs loaded:**
 > ```
-> {cogs}
+> {cogsList}
 > ```
         """, color = cfc)
         members = 0
