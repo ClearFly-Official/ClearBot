@@ -22,7 +22,7 @@ class TagCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    tags = discord.SlashCommandGroup(name="tags", description="Tag related commands")
+    tags = discord.SlashCommandGroup(name="tag", description="Tag related commands")
     
     async def get_tags(ctx: discord.AutocompleteContext):
         tags = []
@@ -68,45 +68,63 @@ Didn't found {tag}.
     @commands.has_permissions(manage_channels=True)
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
-    async def add(self, ctx, name, value):
-        try:
-            tagcol.insert_one({
-                "_id":name,
-                "name":name,
-                "value":value
-            })
-            embed = discord.Embed(title=f"Tag created with following data:",description=f"\n\n**Name:** {name}\n\n**Value:** {value}", colour=cfc)
-            await ctx.respond(embed=embed)
-        except Exception as error:
-            await ctx.respond(f"```{error}```")
+    async def add(self, ctx):
+        class AddTagModal(discord.ui.View):
+            def __init__(self, *args, **kwargs) -> None:
+                super().__init__(*args, **kwargs)
+
+                self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
+                self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
+
+            async def callback(self, interaction: discord.Interaction):
+                try:
+                    tagcol.insert_one({
+                        "_id":self.children[0].value,
+                        "name":self.children[0].value,
+                        "value":self.children[1].value
+                    })
+                    embed = discord.Embed(title=f"Tag created with following data:",description=f"\n\n**Name:** {name}\n\n**Value:** {value}", colour=cfc)
+                    await ctx.respond(embed=embed)
+                except Exception as error:
+                    await ctx.respond(f"```{error}```")
+        await ctx.send_modal(AddTagModal(title="Create a new tag."))
 
     @tags.command(description="Edit a tag.")
     @commands.has_permissions(manage_channels=True)
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
-    async def edit(self, ctx, edit, name, value):
-        try:
-            tags = []
-            for tag_ in tagcol.find():
-                tags.append(tag_.get("name"))
-            if edit in tags:
-                tagcol.update_one({"name":edit}, {
-                    "$set":{
-                        "_id":name,
-                        "name":name,
-                        "value":value
-                    }
-                })
-                embed = discord.Embed(title=f"Tag edited with following data:", description=f"\n\n**Name:** {name}\n\n**Value:** {value}", colour=cfc)
-                await ctx.respond(embed=embed)
-            else:
-                embed = discord.Embed(title="Error 404", description=f"""
+    async def edit(self, ctx, edit):
+        class EditTagModal(discord.ui.View):
+            def __init__(self, *args, **kwargs) -> None:
+                super().__init__(*args, **kwargs)
+
+                self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
+                self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
+
+            async def callback(self, interaction: discord.Interaction):
+                try:
+                    tags = []
+                    for tag_ in tagcol.find():
+                        tags.append(tag_.get("name"))
+                    if edit in tags:
+                        tagcol.update_one({"name":edit}, {
+                            "$set":{
+                                "_id":self.children[0].value,
+                                "name":self.children[0].value,
+                                "value":self.children[1].value
+                            }
+                        })
+                        embed = discord.Embed(title=f"Tag edited with following data:", description=f"\n\n**Name:** {name}\n\n**Value:** {value}", colour=cfc)
+                        await ctx.respond(embed=embed)
+                    else:
+                        embed = discord.Embed(title="Error 404", description=f"""
 Didn't found {edit}. 
-                """, colour=errorc)
-                await ctx.respond(embed=embed)
-        except Exception as error:
-            await ctx.respond(f"```{error}```")
+                        """, colour=errorc)
+                        await ctx.respond(embed=embed)
+                except Exception as error:
+                    await ctx.respond(f"```{error}```")
+        await ctx.send_modal(EditTagModal(title="Edit a tag."))
 
     @tags.command(description="Delete a tag.")
     @commands.has_permissions(manage_channels=True)
