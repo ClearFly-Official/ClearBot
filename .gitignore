@@ -6,3 +6,4 @@ development.py
 test.md
 test.py
 devcogs
+__pycache__/development.cpython-310.pyc

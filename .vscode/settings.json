@@ -1,4 +1,4 @@
 {
     "python.analysis.typeCheckingMode": "off",
-    "discord.enabled": false
+    "discord.enabled": true
 }

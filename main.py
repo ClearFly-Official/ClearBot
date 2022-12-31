@@ -20,9 +20,6 @@ errorc = 0xFF0000
 
 @bot.listen()
 async def on_ready():
-        await bot.change_presence(activity=discord.Game(name="Starting up."),status=discord.Status.online)
-        await bot.change_presence(activity=discord.Game(name="Starting up.."),status=discord.Status.online)
-        await bot.change_presence(activity=discord.Game(name="Starting up..."),status=discord.Status.online)
         channel = bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.now())
         if os.path.exists(".onpc"):
@@ -38,14 +35,6 @@ async def on_ready():
             """,color=0x00FF00)
             await channel.send(embed=embed)
         presence.start()
-        statements=[
-        "Give me Baby Boeing 😩",
-        "Boeing > Airbus",
-        "How are you doing?",
-        "Use me please.",
-        "How can I assist you today?",
-        ]
-        await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
         print("The bot is ready for usage!")
 
 @tasks.loop(minutes=10)
@@ -69,15 +58,10 @@ async def presence():
         await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
 
 
-cogs = [
-    "listeners",
-    "dev",
-    "admin",
-    "fun",
-    "level",
-    "utility",
-    "va"
-]
+cogs = os.listdir("cogs")
+cogs = [x.split('.')[0] for x in cogs]
+cogs.remove("__pycache__")
+
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")
   
