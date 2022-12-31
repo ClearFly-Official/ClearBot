@@ -105,7 +105,7 @@ class Listeners(discord.Cog):
             emb.add_field(name="Content before:", value=f"{msgeditb[:1024]}", inline = False)
             emb.add_field(name="Content after:", value=f"{msgedita[:1024]}", inline = False)
             emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
-            emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
+            emb.add_field(name="Channel:", value=f"{msgcnl}, [link](https://discord.com/channels/965419296937365514/{after.channel.id}/{before.id})", inline = True)
             emb.set_thumbnail(url=pfp)
             await channel.send(embed=emb)
         else:
