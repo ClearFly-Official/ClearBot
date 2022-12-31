@@ -373,10 +373,17 @@ Description :
         if ctx.author.id in devs:
             await ctx.respond(f"""
 ID: **{message.id}**
+
+Content
+```
+{message.content}
+```
+
 System content:
 ```
 {message.system_content}
 ```
+
 Clean content
 ```
 {message.clean_content}
