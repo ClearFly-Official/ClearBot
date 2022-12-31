@@ -79,7 +79,6 @@ Didn't found {tag}.
             async def callback(self, interaction: discord.Interaction):
                 try:
                     tagcol.insert_one({
-                        "_id":self.children[0].value,
                         "name":self.children[0].value,
                         "value":self.children[1].value
                     })
@@ -111,7 +110,6 @@ Didn't found {tag}.
                     if edit in tags:
                         tagcol.update_one({"name":edit}, {
                             "$set":{
-                                "_id":self.children[0].value,
                                 "name":self.children[0].value,
                                 "value":self.children[1].value
                             }
