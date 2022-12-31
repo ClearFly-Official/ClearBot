@@ -84,9 +84,9 @@ Didn't found {tag}.
                         "value":self.children[1].value
                     })
                     embed = discord.Embed(title=f"Tag created with following data:",description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}", colour=cfc)
-                    await ctx.respond(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                 except Exception as error:
-                    await ctx.respond(f"```{error}```")
+                    await interaction.response.send_message(f"```{error}```")
         modal = AddTagModal(title="Create a new tag.")
         await ctx.send_modal(modal)
 
@@ -117,12 +117,12 @@ Didn't found {tag}.
                             }
                         })
                         embed = discord.Embed(title=f"Tag edited with following data:", description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}", colour=cfc)
-                        await ctx.respond(embed=embed)
+                        await interaction.response.send_message(embed=embed)
                     else:
                         embed = discord.Embed(title="Error 404", description=f"""
 Didn't found {edit}. 
                         """, colour=errorc)
-                        await ctx.respond(embed=embed)
+                        await interaction.response.send_message(embed=embed)
                 except Exception as error:
                     await ctx.respond(f"```{error}```")
         modal = EditTagModal(title="Create a new tag.")
