@@ -1,10 +1,14 @@
 import discord
 import pymongo
+import os
 from main import cogs
 from discord import option
 from discord.ext import commands
+from dotenv import load_dotenv
 
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+load_dotenv()
+
+client = pymongo.MongoClient(os.environ['MONGODB_URI'])
 db = client["ClearBotDB"]
 tagcol = db['tags']
 
