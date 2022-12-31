@@ -313,21 +313,17 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         days, hours = divmod(hours, 24)
         owner = await self.bot.fetch_user(668874138160594985)
         embed = discord.Embed(title = "**Bot Stats**", description =    f"""
-**Creator**
-> {owner.mention}
+**Creator:** {owner.mention}
 
-**Uptime:**
-> {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
+**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
 
-**Latency:**
-> **{round(self.bot.latency*1000)}**ms
+**Latency:** **{round(self.bot.latency*1000)}**ms
 
-**Total lines of code:**
-> {loc}
+**Total lines of code:** {loc}
 
 **Cogs loaded:**
-> ```py
-> {cogs}
+> ```
+> {"\n".join(cogs)}
 > ```
         """, color = cfc)
         members = 0
@@ -337,8 +333,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         embed.add_field(
                     name="**Server Stats**",
                     value=f"""
-**Members:** 
-> {memberCount}
+**Members:** {memberCount}
                     """,
                     inline=False
             )
