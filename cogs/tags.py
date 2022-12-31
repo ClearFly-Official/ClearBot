@@ -70,8 +70,8 @@ Didn't found {tag}.
     @option("value", description="The value of the new tag.")
     async def add(self, ctx):
         class AddTagModal(discord.ui.View):
-            def __init__(self, title) -> None:
-                super().__init__(title)
+            def __init__(self, *args, **kwargs) -> None:
+                super().__init__(*args, **kwargs)
 
                 self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
                 self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
@@ -87,7 +87,8 @@ Didn't found {tag}.
                     await ctx.respond(embed=embed)
                 except Exception as error:
                     await ctx.respond(f"```{error}```")
-        await ctx.send_modal(AddTagModal(title="Create a new tag."))
+        modal = AddTagModal(title="Create a new tag.")
+        await ctx.send_modal(modal)
 
     @tags.command(description="Edit a tag.")
     @commands.has_permissions(manage_channels=True)
@@ -96,8 +97,8 @@ Didn't found {tag}.
     @option("value", description="The value of the edited tag.")
     async def edit(self, ctx, edit):
         class EditTagModal(discord.ui.View):
-            def __init__(self, title) -> None:
-                super().__init__(title)
+            def __init__(self, *args, **kwargs) -> None:
+                super().__init__(*args, **kwargs)
 
                 self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
                 self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long), placeholder="A very interesting value.")
@@ -124,7 +125,8 @@ Didn't found {edit}.
                         await ctx.respond(embed=embed)
                 except Exception as error:
                     await ctx.respond(f"```{error}```")
-        await ctx.send_modal(EditTagModal(title="Edit a tag."))
+        modal = EditTagModal(title="Create a new tag.")
+        await ctx.send_modal(modal)
 
     @tags.command(description="Delete a tag.")
     @commands.has_permissions(manage_channels=True)
