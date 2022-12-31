@@ -323,7 +323,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 
 **Cogs loaded:**
 > ```
-> {"\n".join(cogs)}
+> {'\n'.join(cogs)}
 > ```
         """, color = cfc)
         members = 0
