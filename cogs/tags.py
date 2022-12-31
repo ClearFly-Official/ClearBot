@@ -38,7 +38,7 @@ class TagCommands(discord.Cog):
             tags.append(tag_.get("name"))
         if tag in tags:
             output = tagcol.find_one({"name":tag})
-            await ctx.respond(f"{output.get('value')}")
+            await ctx.respond(f"{output.get('value')}", allowed_mentions=discord.AllowedMentions.none())
         else:
             embed = discord.Embed(title="Error 404", description=f"""
 Didn't found {tag}. 
