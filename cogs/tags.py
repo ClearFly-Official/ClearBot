@@ -69,7 +69,7 @@ Didn't found {tag}.
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
     async def add(self, ctx):
-        class AddTagModal(discord.ui.View):
+        class AddTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
 
@@ -96,7 +96,7 @@ Didn't found {tag}.
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
     async def edit(self, ctx, edit):
-        class EditTagModal(discord.ui.View):
+        class EditTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
 
