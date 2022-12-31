@@ -323,9 +323,9 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 **Total lines of code:** {loc}
 
 **Cogs loaded:**
-> ```
-> {cogsList}
-> ```
+```
+{cogsList}
+```
         """, color = cfc)
         members = 0
         for guild in self.bot.guilds:
