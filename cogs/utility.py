@@ -421,12 +421,12 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embva.add_field(
                                 name="**ClearFly Virtual Airline**",
                                 value=f"""
--------Instructor-------
+**-------Instructor-------**
 </va instructor approve:1016059999056826479> : Approve a student's flight and give the required info to them.
 </va instructor check-off:1016059999056826479> : Check off a user to end their training.
---------Training--------
+**--------Training--------**
 </va training:1016059999056826479> : Start your career in the ClearFly VA!
------After Training-----
+**-----After Training-----**
 </va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
 </va cancel:1016059999056826479> : Cancels and removes your last filed flight.
 </va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
@@ -440,9 +440,9 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embva.add_field(
                                 name="**ClearFly Virtual Airline**",
                                 value=f"""
---------Training--------
+**--------Training--------**
 </va training:1016059999056826479> : Start your career in the ClearFly VA!
------After Training-----
+**-----After Training-----**
 </va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
 </va cancel:1016059999056826479> : Cancels and removes your last filed flight.
 </va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
