@@ -2,6 +2,7 @@ import discord
 import json
 import requests
 import os
+import pdf2image
 from datetime import datetime
 from math import sqrt
 from discord import option
@@ -20,6 +21,7 @@ class UtilityCommands(discord.Cog):
 
     utility = discord.SlashCommandGroup(name="utility", description="Commands related to utility")
     math = utility.create_subgroup(name="math", description="Commands related to math")
+    av = utility.create_subgroup(name="aviation", description="Commands related to airports, charts and similar.")
 
     @discord.command(name="report", description="Need help? Use this command to contact the admins!")
     @option("subject",description="What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
@@ -196,12 +198,12 @@ class UtilityCommands(discord.Cog):
     async def get_airports(self, ctx: discord.AutocompleteContext):
         return [airport for airport in airports if airport.startswith(ctx.value.upper())]
     
-    @utility.command(name="metar", description="Get the metar data of an airport.")
-    @option("icao", description="The airport you want the metar data of.", autocomplete=get_airports)
-    async def metar(self, ctx, icao):
+    @av.command(name="metar", description="Get the metar data of an airport.")
+    @option("airport", description="The airport you want the metar data of.", autocomplete=get_airports)
+    async def metar(self, ctx, airport):
         await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-        req = requests.get(f"https://api.checkwx.com/metar/{icao[:4].upper()}/decoded", headers=hdr)
+        req = requests.get(f"https://api.checkwx.com/metar/{airport[:4].upper()}/decoded", headers=hdr)
         req.raise_for_status()
         resp = json.loads(req.text)
         class METARViewM(discord.ui.View):
@@ -293,6 +295,33 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
             embed = discord.Embed(title="Error 404!", description="Didn't found metar data for that airport.", color=errorc)
+            await ctx.respond(embed=embed)
+
+    @av.command(name="airport-diagram", description="Fetches the airport diagram of the provided airport.")
+    @option("airport", description="The airport you want the diagram from.", autocomplete=get_airports)
+    async def apd(self, ctx, airport):
+        if airport[:4].upper().startswith(("K", "P")):
+            await ctx.defer()
+            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
+            load = json.loads(req.text)
+            if load[airport[:4].upper()] == []:
+                embed = discord.Embed(title="Error 404", description="I didn't found that airport.", colour=errorc)
+                await ctx.respond(embed=embed)
+            else:
+                url = load[airport[:4].upper()][0]['pdf_path']
+                r = requests.get(url, stream=True)
+
+                with open(f"images/apd.pdf", "wb") as f:
+                    f.write(r.content)
+                images = pdf2image.convert_from_path('images/apd.pdf')
+                for i in range(len(images)):
+                    images[i].save('images/apd'+ str(i) +'.jpg', 'JPEG')
+                embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
+                dfile = discord.File("images/apd0.jpg", filename="apd.jpg")
+                embed.set_image(url="attachment://apd.jpg")
+                await ctx.respond(embed=embed, file=dfile)
+        else:
+            embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
             await ctx.respond(embed=embed)
 
 

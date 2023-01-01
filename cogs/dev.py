@@ -100,7 +100,7 @@ class DevCommands(discord.Cog):
                 @discord.ui.select(
                     placeholder="Cogs",
                     min_values=1,
-                    max_values=7,
+                    max_values=8,
                     options = [
                         discord.SelectOption(
                             label=cogs[0].capitalize(),
