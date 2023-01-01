@@ -433,7 +433,7 @@ Clean content
                 @discord.ui.button(label="Stop Task", style=discord.ButtonStyle.danger)
                 async def stop_button(self, button, interaction):
                     if ctx.author == interaction.user:
-                        presence.stop()
+                        presence.cancel()
                         await interaction.response.send_message("Presence task stopped successfully",ephemeral=True)
                     else:
                         await interaction.response.send_message("You can't use this command.",ephemeral=True)
@@ -446,7 +446,7 @@ Clean content
                         await interaction.response.send_message("You can't use this command.",ephemeral=True)
 
             await ctx.defer(ephemeral=True)
-            presence.stop()
+            presence.cancel()
             await self.bot.change_presence(activity=discord.CustomActivity(name=text), status=discord.Status.online)
             embed = discord.Embed(title="Status changed successfully!", colour=cfc)
             await ctx.respond(embed=embed, view=TaskView(bot=self.bot))
