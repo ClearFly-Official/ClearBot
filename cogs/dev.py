@@ -447,7 +447,7 @@ Clean content
 
             await ctx.defer(ephemeral=True)
             presence.stop()
-            await self.bot.change_presence(discord.CustomActivity(name=text))
+            await self.bot.change_presence(activity=discord.CustomActivity(name=text), status=discord.Status.online)
             embed = discord.Embed(title="Status changed successfully!")
             await ctx.respond(embed=embed, view=TaskView(bot=self.bot))
         else:

@@ -39,23 +39,24 @@ async def on_ready():
 
 @tasks.loop(minutes=10)
 async def presence():
-        statements_=[
+        statements =[
         "Give me Baby Boeing 😩",
         "Boeing > Airbus",
         "How are you doing?",
         "Use me please.",
         "How can I assist you today?",
         "BABY BOEINGGGG",
-        "If it ain't Boeing, I'm not going.",
+        "If it ain't Boeing, I ain't going.",
         "I'm tired",
         "Nuke airbus smh",
         "Boeing supremacy",
         "*Sends missile to Airbus hq*",
-        "Wolfair is my daddy:)",
+        "Wolfair = Chad",
         "Deep™",
         "What ya looking at 🤨",
+        "What about you stfu.",
+        "Goofy ah"
         ]
-        statements = ["🎉 Happy new year!"]
         await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
 
 
