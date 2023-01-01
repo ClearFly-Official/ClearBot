@@ -391,32 +391,27 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         if select.values[0] == "Utility":
                             embutil = discord.Embed(title = "**Help**",color = cfc)
                             embutil.add_field(name="**Utility commands**", value=f"""
-```
-/help : Shows this information.
-/report : Report a user or situation to the team.
-```
-```yaml
-/utility stats : Show statistics about the bot and server.
-/utility who-is : Shows all kind of information about a user.
-/utility the-team : Shows The ClearFly Team!
-/utility avatar : Shows your avatar.
-/utility github : Shows the bot's GitHub repository.
-/utility math basic: Do some basic math.
-/utility math advanced: Do some advanced math.
-/utitlity metar : Get the metar data of an airport.
-```
+</help:1002512441873281085> : Shows this information.
+</report:1018970055972757506> : Report a user or situation to the team.
+
+</utility stats:1018089106267451432> : Show statistics about the bot and server.
+</utility who-is:1018089106267451432> : Shows all kind of information about a user.
+</utility the-team:1018089106267451432> : Shows The ClearFly Team!
+</utility avatar:1018089106267451432> : Shows your avatar.
+</utility github:1018089106267451432> : Shows the bot's GitHub repository.
+</utility math basic:1018089106267451432> : Do some basic math.
+</utility math advanced:1018089106267451432> : Do some advanced math.
+</utitlity metar:1018089106267451432> : Get the metar data of an airport.
                                     """)
                             await interaction.response.edit_message(embed=embutil)
                         if select.values[0] == "Fun":
                             embfun = discord.Embed(title = "**Help**",color = cfc)
                             embfun.add_field(name="**Fun commands**", value=f"""
-```yaml
-/fun ascii : Converts text in to ascii.
-/fun 8ball : Ask the bot some questions!
-/fun dadjoke: Gets you a dadjoke.
-/fun roast: Roast whoever you'd like!
-/fun buttongame: Play a game with buttons!
-```
+</fun ascii:1016057999195910276> : Converts text in to ascii.
+</fun 8ball:1016057999195910276> : Ask the bot some questions!
+</fun dadjoke:1016057999195910276> : Gets you a dadjoke.
+</fun roast:1016057999195910276> : Roast whoever you'd like!
+</fun buttongame:1016057999195910276> : Play a game with buttons!
                                 """)
                             await interaction.response.edit_message(embed=embfun)
                         if select.values[0] == "VA":
@@ -426,39 +421,35 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embva.add_field(
                                 name="**ClearFly Virtual Airline**",
                                 value=f"""
-```yaml
 -------Instructor-------
-/va instructor approve : Approve a student's flight and give the required info to them.
-/va instructor check-off : Check off a user to end their training
+</va instructor approve:1016059999056826479> : Approve a student's flight and give the required info to them.
+</va instructor check-off:1016059999056826479> : Check off a user to end their training.
 --------Training--------
-/va training : Start your career in the ClearFly VA!
+</va training:1016059999056826479> : Start your career in the ClearFly VA!
 -----After Training-----
-/va file : File a flight you are gonna do for the ClearFly VA.
-/va cancel : Cancels and removes your last filed flight.
-/va divert : If you need to divert to another airport you can with this command.
-/va report-incident : Something happened on your flight? Run this command and tell us what happened!
-/va flights : Fetches information about all flights a user has done.
-/va leaderboard : Get the leaderboard of who flew the most flights!
-/va liveries : Get all liveries to get your journey started.
-```
+</va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
+</va cancel:1016059999056826479> : Cancels and removes your last filed flight.
+</va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
+</va report-incident:1016059999056826479> : Something happened on your flight? Run this command and tell us what happened!
+</va flights:1016059999056826479> : Fetches information about all flights a user has done.
+</va leaderboard:1016059999056826479> : Get the leaderboard of who flew the most flights!
+</va liveries:1016059999056826479> : Get all liveries to get your journey started.
                                             """, inline=False)
                                 await interaction.response.edit_message(embed=embva)
                             else:
                                 embva.add_field(
                                 name="**ClearFly Virtual Airline**",
                                 value=f"""
-```yaml
 --------Training--------
-/va training : Start your career in the ClearFly VA!
+</va training:1016059999056826479> : Start your career in the ClearFly VA!
 -----After Training-----
-/va file : File a flight you are gonna do for the ClearFly VA.
-/va cancel : Cancels and removes your last filed flight.
-/va divert : If you need to divert to another airport you can with this command.
-/va report-incident : Something happened on your flight? Run this command and tell us what happened!
-/va flights : Fetches information about all flights a user has done.
-/va leaderboard : Get the leaderboard of who flew the most flights!
-/va liveries : Get all liveries to get your journey started.
-```
+</va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
+</va cancel:1016059999056826479> : Cancels and removes your last filed flight.
+</va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
+</va report-incident:1016059999056826479> : Something happened on your flight? Run this command and tell us what happened!
+</va flights:1016059999056826479> : Fetches information about all flights a user has done.
+</va leaderboard:1016059999056826479> : Get the leaderboard of who flew the most flights!
+</va liveries:1016059999056826479> : Get all liveries to get your journey started.
                                             """, inline=False)
                                 await interaction.response.edit_message(embed=embva)
                         if select.values[0] == "Leveling":
@@ -466,10 +457,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             embva.add_field(
                                 name="**Leveling Commands**",
                                 value=f"""
-```yaml
-/level userlevel : Gets the provided user's level.
-/level leaderboard : See the leaderboard of the whole server.
-```
+</level userlevel:1032273658305069086> : Gets the provided user's level.
+</level leaderboard:1032273658305069086> : See the leaderboard of the whole server.
                                             """, inline=False)
                             await interaction.response.edit_message(embed=embva)
                         if select.values[0] == "Tags":
@@ -480,13 +469,11 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embed.add_field(
                                     name="**Tag Commands**",
                                     value=f"""
-```yaml
-/tag view : View a tag.
-/tag list : List all the tags.
-/tag add : Add a new tag.
-/tag edit : Edit a tag.
-/tag delete : Deleta a tag.
-```
+</tag view:1058747272596299796> : View a tag.
+</tag list:1058747272596299796> : List all the tags.
+</tag add:1058747272596299796> : Add a new tag.
+</tag edit:1058747272596299796> : Edit a tag.
+</tag delete:1058747272596299796> : Deleta a tag.
                                                 """, inline=False)
                                 await interaction.response.edit_message(embed=embed)
                             else:
@@ -494,10 +481,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embed.add_field(
                                     name="**Tag Commands**",
                                     value=f"""
-```yaml
-/tag view : View a tag.
-/tag list : List all the tags.
-```
+</tag view:1058747272596299796> : View a tag.
+</tag list:1058747272596299796> : List all the tags.
                                                 """, inline=False)
                                 await interaction.response.edit_message(embed=embed)
                         if select.values[0] == "Admin":
@@ -508,13 +493,11 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                                 embad.add_field(
                                     name="**Admin Commands**",
                                     value=f"""
-```yaml
-/admin spam : Spam the channel to oblivion.
-/admin purge : Delete messages from a channel.
-/admin echo : Send a message as the bot.
-/admin slowmode : Set the slow mode of a channel.
-/admin embed : Send an embed as the bot.
-```
+</admin spam:1018056894394409021> : Spam the channel to oblivion.
+</admin purge:1018056894394409021> : Delete messages from a channel.
+</admin echo:1018056894394409021> : Send a message as the bot.
+</admin slowmode:1018056894394409021> : Set the slow mode of a channel.
+</admin embed:1018056894394409021> : Send an embed as the bot.
                                                 """, inline=False)
                                 await interaction.response.edit_message(embed=embad)
                             else:

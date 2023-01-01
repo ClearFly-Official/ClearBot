@@ -428,18 +428,18 @@ Clean content
                 async def on_timeout(self):
                     for child in self.children:
                         child.disabled = True
-                    await self.message.edit(content="Timeout reached, run the command again if you wish to use the buttons.", view=self)
+                    await ctx.edit(content="Timeout reached, run the command again if you wish to use the buttons.", view=self)
                     
                 @discord.ui.button(label="Stop Task", style=discord.ButtonStyle.danger)
                 async def stop_button(self, button, interaction):
-                    if ctx.author == interaction.author:
+                    if ctx.author == interaction.user:
                         presence.stop()
                         await interaction.response.send_message("Presence task stopped successfully",ephemeral=True)
                     else:
                         await interaction.response.send_message("You can't use this command.",ephemeral=True)
                 @discord.ui.button(label="Start Task", style=discord.ButtonStyle.green)
                 async def start_button(self, button, interaction):
-                    if ctx.author == interaction.author:
+                    if ctx.author == interaction.user:
                         presence.start()
                         await interaction.response.send_message("Presence task stopped successfully",ephemeral=True)
                     else:
@@ -448,7 +448,7 @@ Clean content
             await ctx.defer(ephemeral=True)
             presence.stop()
             await self.bot.change_presence(activity=discord.CustomActivity(name=text), status=discord.Status.online)
-            embed = discord.Embed(title="Status changed successfully!")
+            embed = discord.Embed(title="Status changed successfully!", colour=cfc)
             await ctx.respond(embed=embed, view=TaskView(bot=self.bot))
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)

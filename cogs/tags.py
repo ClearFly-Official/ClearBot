@@ -100,7 +100,7 @@ Didn't found {tag}.
                 super().__init__(*args, **kwargs)
 
                 self.add_item(discord.ui.InputText(label="Name of tag", placeholder="foo"))
-                self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long, placeholder="A very interesting value."))
+                self.add_item(discord.ui.InputText(label="Value of tag", style=discord.InputTextStyle.long, placeholder=f"Previous Value: {tagcol.find_one({'name':edit})['value']}"))
 
             async def callback(self, interaction: discord.Interaction):
                 try:
