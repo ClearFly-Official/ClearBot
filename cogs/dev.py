@@ -3,10 +3,11 @@ import discord
 import json
 from inspect import cleandoc
 from discord import option
+from main import presence
 
-#cfc = 0x2681b4 #<- default color
+cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
-cfc = 0x00771d # <- christmas color
+#cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 
@@ -411,6 +412,44 @@ Clean content
 ```
                 """, colour=errorc)
                 await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
+
+    @dev.command(name="change-status", description="Change the status of the bot(this will disable the looping status).")
+    async def status(self, ctx, text):
+        if ctx.author.id in devs:
+            class TaskView(discord.ui.View):
+
+                def __init__(self, bot):
+                    self.bot = bot
+                    super().__init__(timeout=30.0)
+
+                async def on_timeout(self):
+                    for child in self.children:
+                        child.disabled = True
+                    await self.message.edit(content="Timeout reached, run the command again if you wish to use the buttons.", view=self)
+                    
+                @discord.ui.button(label="Stop Task", style=discord.ButtonStyle.danger)
+                async def stop_button(self, button, interaction):
+                    if ctx.author == interaction.author:
+                        presence.stop()
+                        await interaction.response.send_message("Presence task stopped successfully",ephemeral=True)
+                    else:
+                        await interaction.response.send_message("You can't use this command.",ephemeral=True)
+                @discord.ui.button(label="Start Task", style=discord.ButtonStyle.green)
+                async def start_button(self, button, interaction):
+                    if ctx.author == interaction.author:
+                        presence.start()
+                        await interaction.response.send_message("Presence task stopped successfully",ephemeral=True)
+                    else:
+                        await interaction.response.send_message("You can't use this command.",ephemeral=True)
+
+            await ctx.defer(ephemeral=True)
+            presence.stop()
+            await self.bot.change_presence(discord.CustomActivity(name=text))
+            embed = discord.Embed(title="Status changed successfully!")
+            await ctx.respond(embed=embed, view=TaskView(bot=self.bot))
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)

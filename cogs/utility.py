@@ -9,9 +9,10 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from main import bot_start_time, cogs
 from airports import airports
-#cfc = 0x2681b4 #<- default color
+
+cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
-cfc = 0x00771d # <- christmas color
+#cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 load_dotenv()
@@ -368,15 +369,20 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             emoji="✈️"
                         ),
                         discord.SelectOption(
-                        label="Leveling",
-                        description="Commands related to leveling.",
-                        emoji="🏆"
+                            label="Leveling",
+                            description="Commands related to leveling.",
+                            emoji="🏆"
                         ),
                         discord.SelectOption(
-                        label="Admin",
-                        description="Commands for admins only.",
-                        emoji="🔒"
-                        )
+                            label="Tags",
+                            description="Commands related to tags.",
+                            emoji="🏷️"
+                        ),
+                        discord.SelectOption(
+                            label="Admin",
+                            description="Commands for admins only.",
+                            emoji="🔒"
+                        ),
                     ]
                 )
                 async def select_callback(self, select, interaction):
@@ -466,6 +472,34 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 ```
                                             """, inline=False)
                             await interaction.response.edit_message(embed=embva)
+                        if select.values[0] == "Tags":
+                            guild = self.bot.get_guild(965419296937365514)
+                            adminrole = guild.get_role(965422406036488282)
+                            if adminrole in interaction.user.roles:
+                                embed = discord.Embed(title = "**Help**",color = cfc)
+                                embed.add_field(
+                                    name="**Tag Commands**",
+                                    value=f"""
+```yaml
+/tag view : View a tag.
+/tag list : List all the tags.
+/tag add : Add a new tag.
+/tag edit : Edit a tag.
+/tag delete : Deleta a tag.
+```
+                                                """, inline=False)
+                                await interaction.response.edit_message(embed=embed)
+                            else:
+                                embed = discord.Embed(title = "**Help**",color = cfc)
+                                embed.add_field(
+                                    name="**Tag Commands**",
+                                    value=f"""
+```yaml
+/tag view : View a tag.
+/tag list : List all the tags.
+```
+                                                """, inline=False)
+                                await interaction.response.edit_message(embed=embed)
                         if select.values[0] == "Admin":
                             guild = self.bot.get_guild(965419296937365514)
                             adminrole = guild.get_role(965422406036488282)

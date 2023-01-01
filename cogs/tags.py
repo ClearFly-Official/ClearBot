@@ -12,9 +12,9 @@ client = pymongo.MongoClient(os.environ['MONGODB_URI'])
 db = client["ClearBotDB"]
 tagcol = db['tags']
 
-#cfc = 0x2681b4 #<- default color
+cfc = 0x2681b4 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
-cfc = 0x00771d # <- christmas color
+#cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 class TagCommands(discord.Cog):
@@ -64,7 +64,7 @@ Didn't found {tag}.
         """, colour=cfc)
         await ctx.respond(embed=embed)
 
-    @tags.command(description="Add a new tag")
+    @tags.command(description="Add a new tag.")
     @commands.has_permissions(manage_channels=True)
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
