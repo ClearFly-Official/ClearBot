@@ -13,9 +13,9 @@ from discord.ext import commands
 bot = discord.Bot(intents=discord.Intents.all())
 load_dotenv()
 bot_start_time = datetime.utcnow()
-#cfc = 0x2681b4 #<- default color
+cfc = 0x6db2d9 #<- default color
 #cfc = 0xcc8d0e # <- halloween color
-cfc = 0x00771d # <- christmas color
+#cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
 
 @bot.listen()

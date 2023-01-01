@@ -9,11 +9,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from main import bot_start_time, cogs
 from airports import airports
-
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
+from main import cfc, errorc
 
 load_dotenv()
 

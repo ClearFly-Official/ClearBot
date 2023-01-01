@@ -4,11 +4,7 @@ import random
 from dadjokes import Dadjoke
 from discord import option
 from discord.ext import commands
-
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
+from main import cfc, errorc
 
 
 class FunCommands(discord.Cog):

@@ -8,11 +8,7 @@ from discord import option
 from discord.ui import Button, View
 from discord.ext import commands
 from datetime import datetime
-
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
+from main import cfc, errorc
 
 airports = [
     "KDCA",

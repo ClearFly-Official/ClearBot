@@ -5,17 +5,13 @@ from main import cogs
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
+from main import cfc, errorc
 
 load_dotenv()
 
 client = pymongo.MongoClient(os.environ['MONGODB_URI'])
 db = client["ClearBotDB"]
 tagcol = db['tags']
-
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
 
 class TagCommands(discord.Cog):
 

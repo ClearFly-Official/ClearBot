@@ -3,11 +3,8 @@ import os
 import configparser
 from discord.ext import commands, tasks
 from datetime import datetime
+from main import cfc, errorc
 
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
 
 adminids = [668874138160594985, 871893179450925148, 917477940650971227]
 

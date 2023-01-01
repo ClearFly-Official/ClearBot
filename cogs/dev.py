@@ -3,12 +3,7 @@ import discord
 import json
 from inspect import cleandoc
 from discord import option
-from main import presence
-
-cfc = 0x2681b4 #<- default color
-#cfc = 0xcc8d0e # <- halloween color
-#cfc = 0x00771d # <- christmas color
-errorc = 0xFF0000
+from main import cfc, errorc
 
 
 async def getattrs(ctx):
