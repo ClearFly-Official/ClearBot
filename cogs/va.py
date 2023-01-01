@@ -611,7 +611,7 @@ Comments : {comments}
             embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
             await ctx.respond(embed=embed)
 
-    @va.command(name="file", descriprion="File a flight that you will do for the Clearfly VA.")
+    @va.command(name="file", description="File a flight that you will do for the Clearfly VA.")
     @option("aircraft", description="The aircraft you will use for the flight.", choices=["B732", "B738", "B752","A306", "A306F"])
     @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
     @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
@@ -1020,7 +1020,7 @@ Comments : {comments}
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)
 
-    @va.command(name="flights", descripiton="Fetches flights a user has done.")
+    @va.command(name="flights", description="Fetches flights a user has done.")
     @option("user", description="The user you want flight(s) information about.")
     async def flights(self, ctx, user: discord.Member = None):
         await ctx.defer()
