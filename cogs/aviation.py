@@ -120,7 +120,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
             load = json.loads(req.text)
             if load[airport[:4].upper()] == []:
-                embed = discord.Embed(title="Error 404", description="Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
                 await ctx.respond(embed=embed)
             else:
                 url = load[airport[:4].upper()][0]['pdf_path']
