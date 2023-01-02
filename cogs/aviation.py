@@ -1,6 +1,8 @@
 import discord
 import os, requests, json, fitz, datetime
 from discord import option
+from discord.ext.pages import Page, Paginator
+from discord.ext import commands
 from airports import airports
 from main import cfc, errorc
 
@@ -112,35 +114,127 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             embed = discord.Embed(title="Error 404!", description=f"Didn't found metar data for {airport[:4].upper()}.", color=errorc)
             await ctx.respond(embed=embed)
 
-    @av.command(name="airport-diagram", description="Fetches the airport diagram of the provided airport.")
-    @option("airport", description="The airport you want the diagram from.", autocomplete=get_airports)
-    async def apd(self, ctx, airport):
-        if airport[:4].upper().startswith(("K", "P", "0")):
+    @av.command(name="charts", description="Fetches charts of the provided airport.")
+    @commands.cooldown(
+    1, 30, commands.BucketType.user
+    )
+    @discord.option("airport", description="The airport you want charts from.")
+    @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
+    async def chart(self, ctx, airport, chart):
+        if chart == 'Approaches':
             await ctx.defer()
-            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
+            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6")
             load = json.loads(req.text)
-            if load[airport[:4].upper()] == []:
-                embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
-                await ctx.respond(embed=embed)
+            if airport[:4].upper().startswith(("K", "P", "0")):
+                if load[airport[:4].upper()] == []:
+                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    await ctx.respond(embed=embed)
+                else:
+                    url = load[airport[:4].upper()][0]['pdf_path']
+                    r = requests.get(url, stream=True)
+                    i = 0
+                    pages = [
+                    ]
+                    for chart in load[airport[:4].upper()]:
+                        url = load[airport[:4].upper()][i]['pdf_path']
+                        r = requests.get(url, stream=True)
+                        with open(f"charts/chart{i}.pdf", "wb") as f:
+                            f.write(r.content)
+                        doc = fitz.open(f"charts/chart{i}.pdf")
+                        for page in doc:
+                            pix = page.get_pixmap()
+                            pix.save(f"charts/chart{i}.jpg")
+                            i += 1
+                    i = 0
+                    for chart in load[airport.upper()]:
+                        dfile = discord.File(f"charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        pages.append(
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
+                        )
+                        pages[i].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
+                        i += 1
+                    paginator = Paginator(pages=pages)
+                    await paginator.respond(ctx.interaction)
             else:
-                url = load[airport[:4].upper()][0]['pdf_path']
-                r = requests.get(url, stream=True)
+                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                await ctx.respond(embed=embed)
+        if chart == 'Minimums':
+            await ctx.defer()
+            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3")
+            load = json.loads(req.text)
+            if airport[:4].upper().startswith(("K", "P", "0")):
+                if load[airport[:4].upper()] == []:
+                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    await ctx.respond(embed=embed)
+                else:
+                    url = load[airport[:4].upper()][0]['pdf_path']
+                    r = requests.get(url, stream=True)
+                    i, a = 0,0
+                    pages = [
+                    ]
+                    for chart in load[airport[:4].upper()]:
+                        url = load[airport[:4].upper()][i]['pdf_path']
+                        r = requests.get(url, stream=True)
+                        with open(f"charts/chart{i}.pdf", "wb") as f:
+                            f.write(r.content)
+                        doc = fitz.open(f"charts/chart{i}.pdf")
+                        i += 1
+                        for page in doc:
+                            pix = page.get_pixmap()
+                            pix.save(f"charts/chart{a}.jpg")
+                            a += 1
+                    i = 0
+                    a = 0
+                    for chart in load[airport.upper()]:
+                        dfile = discord.File(f"charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        pages.append(
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
+                        )
+                        pages[a].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
+                        i += 1
+                        a += 1
+                    paginator = Paginator(pages=pages)
+                    await paginator.respond(ctx.interaction)
+            else:
+                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                await ctx.respond(embed=embed)
+        if chart == 'Airport Diagram':
+            if airport[:4].upper().startswith(("K", "P", "0")):
+                await ctx.defer()
+                req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
+                load = json.loads(req.text)
+                if load[airport[:4].upper()] == []:
+                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    await ctx.respond(embed=embed)
+                else:
+                    url = load[airport[:4].upper()][0]['pdf_path']
+                    r = requests.get(url, stream=True)
 
-                with open(f"images/apd.pdf", "wb") as f:
-                    f.write(r.content)
-                doc = fitz.open("images/apd.pdf")  # open document
-                i = 0
-                for page in doc:
-                    pix = page.get_pixmap()  # render page to an image
-                    pix.save(f"images/apd{i}.jpg")
-                    i += 1
-                embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
-                dfile = discord.File("images/apd0.jpg", filename="apd.jpg")
-                embed.set_image(url="attachment://apd.jpg")
-                await ctx.respond(embed=embed, file=dfile)
+                    with open(f"images/apd.pdf", "wb") as f:
+                        f.write(r.content)
+                    doc = fitz.open("images/apd.pdf")  # open document
+                    i = 0
+                    for page in doc:
+                        pix = page.get_pixmap()  # render page to an image
+                        pix.save(f"images/apd{i}.jpg")
+                        i += 1
+                    embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
+                    dfile = discord.File("images/apd0.jpg", filename="apd.jpg")
+                    embed.set_image(url="attachment://apd.jpg")
+                    await ctx.respond(embed=embed, file=dfile)
+            else:
+                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                await ctx.respond(embed=embed)
+
+
+    @commands.Cog.listener()
+    async def on_application_command_error(
+        self, ctx: discord.ApplicationContext, error: discord.DiscordException
+    ):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.respond("This command is currently on cooldown.", ephemeral=True)
         else:
-            embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
-            await ctx.respond(embed=embed)
+            raise error
 
 def setup(bot):
     bot.add_cog(AvCommands(bot=bot))

@@ -301,7 +301,7 @@ class UtilityCommands(discord.Cog):
                             embutil = discord.Embed(title = "**Help**",color = cfc)
                             embutil.add_field(name="**Aviation commands**", value=f"""
 </aviation metar:1059269616494460938> : Get the metar data of an airport.
-</aviation airport-diagram:1059269616494460938> : Fetches the airport diagram of the provided airport.
+</aviation charts:1059269616494460938> : Fetches charts of the provided airport.
                                     """)
                             await interaction.response.edit_message(embed=embutil)
                         if select.values[0] == "Fun":
