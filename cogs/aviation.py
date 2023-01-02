@@ -146,7 +146,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             pix.save(f"images/charts/chart{i}.jpg")
                             i += 1
                     i = 0
-                    for chart in load[airport.upper()]:
+                    for chart in load[airport[:4].upper()]:
                         dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
                             Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
@@ -232,7 +232,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         self, ctx: discord.ApplicationContext, error: discord.DiscordException
     ):
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.respond("This command is currently on cooldown.", ephemeral=True)
+            embed = discord.Embed(title="Error 429", description="You're rate limited, wait a bit to use this command again!")
+            await ctx.respond(embed=embed, ephemeral=True)
         else:
             raise error
 
