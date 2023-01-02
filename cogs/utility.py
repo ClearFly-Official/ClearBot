@@ -297,7 +297,7 @@ class UtilityCommands(discord.Cog):
 </utility math advanced:1018089106267451432> : Do some advanced math.
                                     """)
                             await interaction.response.edit_message(embed=embutil)
-                        if select.values[0] == "aviation":
+                        if select.values[0] == "Aviation":
                             embutil = discord.Embed(title = "**Help**",color = cfc)
                             embutil.add_field(name="**Aviation commands**", value=f"""
 </aviation metar:1018089106267451432> : Get the metar data of an airport.
