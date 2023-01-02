@@ -2,7 +2,7 @@ import discord
 import json
 import requests
 import os
-import pdf2image
+import fitz
 from datetime import datetime
 from math import sqrt
 from discord import option
@@ -313,9 +313,12 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 
                 with open(f"images/apd.pdf", "wb") as f:
                     f.write(r.content)
-                images = pdf2image.convert_from_path('images/apd.pdf')
-                for i in range(len(images)):
-                    images[i].save('images/apd'+ str(i) +'.jpg', 'JPEG')
+                doc = fitz.open("images/apd.pdf")  # open document
+                i = 0
+                for page in doc:
+                    pix = page.get_pixmap()  # render page to an image
+                    pix.save(f"images/apd{i}.jpg")
+                    i += 1
                 embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
                 dfile = discord.File("images/apd0.jpg", filename="apd.jpg")
                 embed.set_image(url="attachment://apd.jpg")
