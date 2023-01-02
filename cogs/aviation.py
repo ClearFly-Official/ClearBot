@@ -114,11 +114,11 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             embed = discord.Embed(title="Error 404!", description=f"Didn't found metar data for {airport[:4].upper()}.", color=errorc)
             await ctx.respond(embed=embed)
 
-    @av.command(name="images/charts", description="Fetches images/charts of the provided airport.")
+    @av.command(name="charts", description="Fetches charts of the provided airport.")
     @commands.cooldown(
     1, 30, commands.BucketType.user
     )
-    @discord.option("airport", description="The airport you want images/charts from.", autocomplete=get_airports)
+    @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
     @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
     async def chart(self, ctx, airport, chart):
         if chart == 'Approaches':
