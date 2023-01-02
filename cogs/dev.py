@@ -90,7 +90,8 @@ class DevCommands(discord.Cog):
             "listeners",
             "utility",
             "va",
-            "tags"
+            "tags",
+            "aviation"
             ]
             class CogSelectView(discord.ui.View):
                 def __init__(self, bot):
@@ -149,7 +150,13 @@ class DevCommands(discord.Cog):
                             emoji="🏷️",
                             value=cogs[7],
                             description="Contains all tag related commands."
-                        )
+                        ),
+                        discord.SelectOption(
+                            label=cogs[8].capitalize(),
+                            emoji="🛫",
+                            value=cogs[8],
+                            description="Contains all aviation commands."
+                        ),
                     ]
                 )
                 async def select_callback(self, select, interaction):
