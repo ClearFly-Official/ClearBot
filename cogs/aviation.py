@@ -115,7 +115,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
     @av.command(name="airport-diagram", description="Fetches the airport diagram of the provided airport.")
     @option("airport", description="The airport you want the diagram from.", autocomplete=get_airports)
     async def apd(self, ctx, airport):
-        if airport[:4].upper().startswith(("K", "P")):
+        if airport[:4].upper().startswith(("K", "P", "0")):
             await ctx.defer()
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
             load = json.loads(req.text)
