@@ -11,7 +11,7 @@ class AvCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    av = discord.SlashCommandGroup(name="aviation", description="Commands related to airports, charts and similar.")
+    av = discord.SlashCommandGroup(name="aviation", description="Commands related to airports, images/charts and similar.")
     async def get_airports(self, ctx: discord.AutocompleteContext):
         return [airport for airport in airports if airport.startswith(ctx.value.upper())]
 
@@ -114,16 +114,16 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             embed = discord.Embed(title="Error 404!", description=f"Didn't found metar data for {airport[:4].upper()}.", color=errorc)
             await ctx.respond(embed=embed)
 
-    @av.command(name="charts", description="Fetches charts of the provided airport.")
+    @av.command(name="images/charts", description="Fetches images/charts of the provided airport.")
     @commands.cooldown(
     1, 30, commands.BucketType.user
     )
-    @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
+    @discord.option("airport", description="The airport you want images/charts from.", autocomplete=get_airports)
     @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
     async def chart(self, ctx, airport, chart):
         if chart == 'Approaches':
             await ctx.defer()
-            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6")
+            req = requests.get(f"https://api.aviationapi.com/v1/images/charts?apt={airport[:4].upper()}&group=6")
             load = json.loads(req.text)
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
@@ -138,16 +138,16 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     for chart in load[airport[:4].upper()]:
                         url = load[airport[:4].upper()][i]['pdf_path']
                         r = requests.get(url, stream=True)
-                        with open(f"charts/chart{i}.pdf", "wb") as f:
+                        with open(f"images/charts/chart{i}.pdf", "wb") as f:
                             f.write(r.content)
-                        doc = fitz.open(f"charts/chart{i}.pdf")
+                        doc = fitz.open(f"images/charts/chart{i}.pdf")
                         for page in doc:
                             pix = page.get_pixmap()
-                            pix.save(f"charts/chart{i}.jpg")
+                            pix.save(f"images/charts/chart{i}.jpg")
                             i += 1
                     i = 0
                     for chart in load[airport.upper()]:
-                        dfile = discord.File(f"charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
                             Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
                         )
@@ -160,7 +160,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 await ctx.respond(embed=embed)
         if chart == 'Minimums':
             await ctx.defer()
-            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3")
+            req = requests.get(f"https://api.aviationapi.com/v1/images/charts?apt={airport[:4].upper()}&group=3")
             load = json.loads(req.text)
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
@@ -175,18 +175,18 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     for chart in load[airport[:4].upper()]:
                         url = load[airport[:4].upper()][i]['pdf_path']
                         r = requests.get(url, stream=True)
-                        with open(f"charts/chart{i}.pdf", "wb") as f:
+                        with open(f"images/charts/chart{i}.pdf", "wb") as f:
                             f.write(r.content)
-                        doc = fitz.open(f"charts/chart{i}.pdf")
+                        doc = fitz.open(f"images/charts/chart{i}.pdf")
                         i += 1
                         for page in doc:
                             pix = page.get_pixmap()
-                            pix.save(f"charts/chart{a}.jpg")
+                            pix.save(f"images/charts/chart{a}.jpg")
                             a += 1
                     i = 0
                     a = 0
                     for chart in load[airport.upper()]:
-                        dfile = discord.File(f"charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
                             Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
                         )
@@ -201,7 +201,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if chart == 'Airport Diagram':
             if airport[:4].upper().startswith(("K", "P", "0")):
                 await ctx.defer()
-                req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
+                req = requests.get(f"https://api.aviationapi.com/v1/images/charts?apt={airport[:4].upper()}&group=2")
                 load = json.loads(req.text)
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
@@ -210,23 +210,23 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     url = load[airport[:4].upper()][0]['pdf_path']
                     r = requests.get(url, stream=True)
 
-                    with open(f"charts/apd.pdf", "wb") as f:
+                    with open(f"images/charts/apd.pdf", "wb") as f:
                         f.write(r.content)
-                    doc = fitz.open("charts/apd.pdf")  # open document
+                    doc = fitz.open("images/charts/apd.pdf")  # open document
                     i = 0
                     for page in doc:
                         pix = page.get_pixmap()  # render page to an image
-                        pix.save(f"charts/apd{i}.jpg")
+                        pix.save(f"images/charts/apd{i}.jpg")
                         i += 1
                     embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
-                    dfile = discord.File("charts/apd0.jpg", filename="apd.jpg")
+                    dfile = discord.File("images/charts/apd0.jpg", filename="apd.jpg")
                     embed.set_image(url="attachment://apd.jpg")
                     await ctx.respond(embed=embed, file=dfile)
             else:
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
-        for i in os.listdir("charts"):
-            os.remove(f"charts/{i}")
+        for i in os.listdir("images/charts"):
+            os.remove(f"images/charts/{i}")
 
     @commands.Cog.listener()
     async def on_application_command_error(
