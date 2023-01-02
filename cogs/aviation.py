@@ -210,22 +210,23 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     url = load[airport[:4].upper()][0]['pdf_path']
                     r = requests.get(url, stream=True)
 
-                    with open(f"images/apd.pdf", "wb") as f:
+                    with open(f"charts/apd.pdf", "wb") as f:
                         f.write(r.content)
-                    doc = fitz.open("images/apd.pdf")  # open document
+                    doc = fitz.open("charts/apd.pdf")  # open document
                     i = 0
                     for page in doc:
                         pix = page.get_pixmap()  # render page to an image
-                        pix.save(f"images/apd{i}.jpg")
+                        pix.save(f"charts/apd{i}.jpg")
                         i += 1
                     embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
-                    dfile = discord.File("images/apd0.jpg", filename="apd.jpg")
+                    dfile = discord.File("charts/apd0.jpg", filename="apd.jpg")
                     embed.set_image(url="attachment://apd.jpg")
                     await ctx.respond(embed=embed, file=dfile)
             else:
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
-
+        for i in os.listdir("charts"):
+            os.remove(f"charts/{i}")
 
     @commands.Cog.listener()
     async def on_application_command_error(
