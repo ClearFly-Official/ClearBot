@@ -116,7 +116,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 
     @av.command(name="charts", description="Fetches charts of the provided airport.")
     @commands.cooldown(
-    1, 30, commands.BucketType.user
+    1, 20, commands.BucketType.user
     )
     @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
     @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
@@ -232,7 +232,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         self, ctx: discord.ApplicationContext, error: discord.DiscordException
     ):
         if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(title="Error 429", description="You're rate limited, wait a bit to use this command again!")
+            embed = discord.Embed(title="Error 429", description="You're rate limited, wait a bit to use this command again!", colour=errorc)
             await ctx.respond(embed=embed, ephemeral=True)
         else:
             raise error
