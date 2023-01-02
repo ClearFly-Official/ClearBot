@@ -125,7 +125,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             await ctx.defer()
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6")
             load = json.loads(req.text)
-            print(load)
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
@@ -163,7 +162,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             await ctx.defer()
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3")
             load = json.loads(req.text)
-            print(load)
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
@@ -205,7 +203,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 await ctx.defer()
                 req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
                 load = json.loads(req.text)
-                print(load)
+
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
                     await ctx.respond(embed=embed)
@@ -228,8 +226,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             else:
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
-        for i in os.listdir("images/charts"):
-            os.remove(f"images/charts/{i}")
 
     @commands.Cog.listener()
     async def on_application_command_error(
