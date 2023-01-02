@@ -429,7 +429,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
 </utility github:1018089106267451432> : Shows the bot's GitHub repository.
 </utility math basic:1018089106267451432> : Do some basic math.
 </utility math advanced:1018089106267451432> : Do some advanced math.
-</utitlity metar:1018089106267451432> : Get the metar data of an airport.
+</utitlity aviation metar:1018089106267451432> : Get the metar data of an airport.
+</utility avaiation airport-diagram:1018089106267451432> : Fetches the airport diagram of the provided airport.
                                     """)
                             await interaction.response.edit_message(embed=embutil)
                         if select.values[0] == "Fun":
