@@ -188,7 +188,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     for chart in load[airport[:4].upper()]:
                         dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']}) (All pages are on the link.)", colour=cfc)], files=[dfile])
                         )
                         pages[a].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
