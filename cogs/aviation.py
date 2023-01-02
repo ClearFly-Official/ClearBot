@@ -142,14 +142,14 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             f.write(r.content)
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
                         for page in doc:
-                            pix = page.get_pixmap()
+                            pix = page.get_pixmap(dpi=150)
                             pix.save(f"images/charts/chart{i}.jpg")
                             i += 1
                     i = 0
                     for chart in load[airport[:4].upper()]:
                         dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
                         )
                         pages[i].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
@@ -180,7 +180,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
                         i += 1
                         for page in doc:
-                            pix = page.get_pixmap()
+                            pix = page.get_pixmap(dpi=200)
                             pix.save(f"images/charts/chart{a}.jpg")
                             a += 1
                     i = 0
@@ -188,7 +188,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     for chart in load[airport[:4].upper()]:
                         dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}", colour=cfc)], files=[dfile])
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
                         )
                         pages[a].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
@@ -216,7 +216,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     doc = fitz.open("images/charts/apd.pdf")  # open document
                     i = 0
                     for page in doc:
-                        pix = page.get_pixmap()  # render page to an image
+                        pix = page.get_pixmap(dpi=150)  # render page to an image
                         pix.save(f"images/charts/apd{i}.jpg")
                         i += 1
                     embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
