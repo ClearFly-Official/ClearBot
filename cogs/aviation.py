@@ -118,7 +118,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
     @commands.cooldown(
     1, 30, commands.BucketType.user
     )
-    @discord.option("airport", description="The airport you want charts from.")
+    @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
     @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
     async def chart(self, ctx, airport, chart):
         if chart == 'Approaches':
