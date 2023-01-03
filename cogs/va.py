@@ -77,7 +77,9 @@ airports = [
     "LDZA",
     "LOWI",
     "LPPT",
-    "KCLE"
+    "KCLE",
+    "LOWW",
+    "LOWS"
     ]
 
 class InfoB4training(discord.ui.View):
@@ -753,6 +755,10 @@ Comments : {comments}
                             cf1 = 65
                         if destination == "KCLE":
                             cf1 = 66
+                        if destination == "LOWW":
+                            cf1 = 67
+                        if destination == "LOWS":
+                            cf1 = 68
                     if ori == 1:
                         if origin == "KDCA":
                             cf2 = 23
@@ -886,6 +892,10 @@ Comments : {comments}
                             cf2 = 24
                         if origin == "KCLE":
                             cf2 = 23
+                        if origin == "LOWW":
+                            cf2 = 22
+                        if origin == "LOWS":
+                            cf2 = 21
                     if aircraft == "B732":
                         cf3 = 1
                     if aircraft == "B738":
