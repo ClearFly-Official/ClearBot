@@ -8,7 +8,7 @@ class RulesView(discord.ui.View):
         self.bot = bot
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+    @discord.ui.button(label="I have read and accept the rules", custom_id="rulebutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly:1054526148576559184>")
     async def button_callback(self, button, interaction):
         guilds = self.bot.get_guild(965419296937365514)
         roles = guilds.get_role(1002200398905483285)
@@ -31,7 +31,7 @@ class FAQView(discord.ui.View):
         self.bot = bot
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="I have read the FAQ", custom_id="faqbutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly_half_clear:1009117524677369866>")
+    @discord.ui.button(label="I have read the FAQ", custom_id="faqbutton", style=discord.ButtonStyle.secondary, emoji="<:ClearFly:1054526148576559184>")
     async def button_callback(self, button, interaction):
         author = interaction.user
         guild = self.bot.get_guild(965419296937365514)
