@@ -1,5 +1,6 @@
 import discord
-import os, requests, json, fitz, datetime
+import os, requests, json, fitz
+from datetime import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
 from discord.ext import commands
