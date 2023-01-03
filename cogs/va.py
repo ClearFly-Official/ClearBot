@@ -1234,29 +1234,13 @@ Number of flights: **{nof}**
     @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
     @option("noauth", description="Makes the bot respond or send the output.")
     async def valivs(self, ctx, noauth:bool = False):
-        class VALivs(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=None)
-
-            @discord.ui.button(label="See more screenshots", style=discord.ButtonStyle.blurple, row=1)
-            async def button_callback(self, button, interaction):
-                await interaction.response.send_message(
-            """
-Here are some screenshots of our liveries!
-
-https://cdn.discordapp.com/attachments/1013239106198835300/1015310203832516731/FJS_732_TwinJet_-_2022-09-02_13.20.01.png
-https://cdn.discordapp.com/attachments/1013239106198835300/1015290133601320980/b738_4k_-_2022-08-29_16.09.22.PNG
-https://cdn.discordapp.com/attachments/1013239106198835300/1015290004001542164/A300_P_V2_-_2022-08-31_00.37.05.Png
-https://cdn.discordapp.com/attachments/1013239106198835300/1030891826179231835/A300_F_V2_-_2022-10-15_18.07.50.png
-https://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b738_4k_-_2022-11-02_11.27.20.png
-            """, ephemeral=True)
         if noauth == False:
-            button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/folders/1WcoZpmFNk7jfraZE3VEzl6JRPcRzg7sZ?usp=sharing")
+            button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link")
             button2 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1o1vQk_HG1iJhJH1t_Z8cLBimDwxG90-C/view?usp=share_link")
             button3 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1vdIOYlcM_2kNhooD_CTDE8UpoJ7mIvkk/view?usp=share_link")
             button4 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1w6kd3H0VBiWoTlmcvvvyte5wbqHE7i5k/view?usp=share_link")
             button5 = Button(label="Cessna 172SP by Laminar Research", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/17FqPHGWHXyG8jgXhJBSgDEbKZMWtOqmc/view?usp=share_link")
-            view = VALivs()
+            view = View()
             view.add_item(button1)
             view.add_item(button2)
             view.add_item(button3)
@@ -1265,7 +1249,7 @@ https://cdn.discordapp.com/attachments/1019564716416303184/1037312155566997564/b
             embed=discord.Embed(title="ClearFly VA Official Liveries:",color=cfc)
             await ctx.respond(embed=embed, view=view)
         else:
-            button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/drive/folders/1WcoZpmFNk7jfraZE3VEzl6JRPcRzg7sZ?usp=sharing")
+            button1 = Button(label="Boeing 737-800 by Zibo", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link")
             button2 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1o1vQk_HG1iJhJH1t_Z8cLBimDwxG90-C/view?usp=share_link")
             button3 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1vdIOYlcM_2kNhooD_CTDE8UpoJ7mIvkk/view?usp=share_link")
             button4 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1w6kd3H0VBiWoTlmcvvvyte5wbqHE7i5k/view?usp=share_link")
