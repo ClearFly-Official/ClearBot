@@ -37,7 +37,7 @@ class FAQView(discord.ui.View):
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(1002932992534134814)
         await author.add_roles(role)
-        await interaction.response.send_message("Thanks for reading the FAQ, now you can ask questions in the server!",ephemeral=True)
+        await interaction.response.send_message("Thanks for reading the FAQ!",ephemeral=True)
 
 class AnnounceRoleView(discord.ui.View):
     def __init__(self, bot):
@@ -311,11 +311,14 @@ A: Our current plan is to code VOR navigation only.
     @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
     @commands.has_permissions(manage_channels=True)
     async def buttonroles(self, ctx):
-        embed = discord.Embed(title="Announcement Pings", description="Click on 📣 for announcement pings.\n*(click again to remove.)*", color=cfc)
-        emb = discord.Embed(title="Update Pings", description="Click on 🛠 for update pings.\n*(click again to remove.)*", color=cfc)
+        emb1 = discord.Embed(title="Announcement Pings", description="Click on the 📣 to receive pings when we post any announcements.\n*click again to remove.*", color=cfc)
+        emb2 = discord.Embed(title="Update Pings", description="Click on 🛠️ to receive pings when we post an update on the 737-100.\n*click again to remove.*", color=cfc)
+        emb3 = discord.Embed(title="Livery Painter", description="DM <@871893179450925148> or <@668874138160594985> with some examples of your work.", colour=cfc)
+        emb4 = discord.Embed(title="ClearFly Livery Painter", description="Create a custom livery for the ClearFly virtual airline and share it with <@871893179450925148> or <@668874138160594985>. Full credit will be given to you in <#1041057335449227314>.", colour=cfc)
         await ctx.respond("Button roles posted!",ephemeral=True)
-        await ctx.send(embed=embed,view=AnnounceRoleView(bot=self.bot))
-        await ctx.send(embed=emb,view=UpdateRoleView(bot=self.bot))
+        await ctx.send(embed=emb1,view=AnnounceRoleView(bot=self.bot))
+        await ctx.send(embed=emb2,view=UpdateRoleView(bot=self.bot))
+        await ctx.send(embeds=[emb3, emb4])
 
     
 def setup(bot):
