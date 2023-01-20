@@ -35,7 +35,7 @@ async def on_ready():
             """,color=0x00FF00)
             await channel.send(embed=embed)
         presence.start()
-        print("The bot is ready for usage!")
+        print(f"{bot.user.name} is ready for usage!")
 
 @tasks.loop(minutes=10)
 async def presence():

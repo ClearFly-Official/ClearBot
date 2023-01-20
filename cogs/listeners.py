@@ -1,17 +1,81 @@
 import discord
 import os
 import configparser
+import random
+import pymongo
+import feedparser
 from discord.ext import commands, tasks
 from datetime import datetime
 from main import cfc, errorc
 
 
 adminids = [668874138160594985, 871893179450925148, 917477940650971227]
+client = pymongo.MongoClient(os.environ['MONGODB_URI'])
+db = client["ClearBotDB"]
+rss = db['RSS']
+trescol = rss['Tresholdx']
 
 class Listeners(discord.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.rssfeed.start()
+        self.presence.start()
+        print("All tasks and listeners have started successfully")
+
+    @tasks.loop(minutes=10)
+    async def presence(self):
+        statements =[
+        "Give me Baby Boeing 😩",
+        "Boeing > Airbus",
+        "How are you doing?",
+        "Use me please.",
+        "How can I assist you today?",
+        "BABY BOEINGGGG",
+        "If it ain't Boeing, I ain't going.",
+        "I'm tired",
+        "Nuke airbus smh",
+        "Boeing supremacy",
+        "*Sends missile to Airbus hq*",
+        "Wolfair = Chad",
+        "Deep™",
+        "What ya looking at 🤨",
+        "What about you stfu.",
+        "Goofy ah",
+        "There's an impostor among us.",
+        "Bored"
+        ]
+        await self.bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+    
+    @tasks.loop(seconds=60)
+    async def rssfeed(self):
+        channel = self.bot.get_channel(1066124540318588928)
+        blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml" )
+        feed = dict(blog_feed.entries[0])
+        lastID = trescol.find()
+        ids = []
+        for id in lastID:
+            ids.append(id)
+        if ids == []:
+            ids = [{'lastID':None}]
+        if ids[0]['lastID'] == feed.get('id'):
+            return
+        else:
+            trescol.update_one({"_id": "lastID"},{
+                "$set":{
+                    "lastID": feed.get('id')
+                }
+            })
+            embed = discord.Embed(title=feed.get('title'), description=f"""
+{feed.get('summary')[:-35]}
+
+*{feed.get('published')}* - [link]({feed.get('Article link')})
+            """, colour=cfc)
+            embed.set_image(url=feed.get('media_thumbnail')[0]['url'])
+            await channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_message(self, message):
