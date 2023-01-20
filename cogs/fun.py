@@ -1,9 +1,11 @@
 import discord
 import pyfiglet
 import random
+import textwrap
 from dadjokes import Dadjoke
 from discord import option
 from discord.ext import commands
+from PIL import Image, ImageDraw, ImageFont
 from main import cfc, errorc
 
 
@@ -212,6 +214,26 @@ class FunCommands(discord.Cog):
 
         await ctx.respond(embed=embed, view=ButtonGame())
 
+    @discord.message_command(name='Quote Message')
+    async def quote(self, ctx, message):
+        await message.author.avatar.save("images/avataroriginq.png")
+        avatarorigin = Image.open("images/avataroriginq.png")
+        avatar = avatarorigin.resize((1024, 1024))
+        avatar.save("images/avatarq.png")
+        avatar = Image.open("images/avatarq.png")
+        qclear = Image.open("images/quoteClear.png")
+        qavmask = Image.open("images/quoteAVMask.png")
+        img = Image.new('RGBA', (2048, 1024), 0)
+        img.paste(avatar, qavmask)
+        img.paste(qclear, mask=qclear)
+        font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=100, layout_engine=ImageFont.Layout.BASIC)
+        draw = ImageDraw.ImageDraw(img)
+        text = f"{textwrap.fill(message.clean_content, 25, max_lines=6)}"
+        author = f"- {message.author.name}"
+        draw.text((950, 100), text, font=font)
+        draw.text((1000, 824), author, font=font, fill=(130, 130, 130))
+        img.save("images/qoute.png")
+        await ctx.respond(file=discord.File("images/qoute.png"))
 
 def setup(bot):
     bot.add_cog(FunCommands(bot))

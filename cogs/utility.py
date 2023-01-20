@@ -208,7 +208,7 @@ class UtilityCommands(discord.Cog):
 
 **Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
 
-**Latency:** **{round(self.bot.latency*1000)}**ms
+**Latency:** {round(self.bot.latency*1000)}ms
 
 **Total lines of code:** {loc}
 
