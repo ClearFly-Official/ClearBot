@@ -229,7 +229,7 @@ class FunCommands(discord.Cog):
         img.paste(qclear, mask=qclear)
         font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=100, layout_engine=ImageFont.Layout.BASIC)
         draw = ImageDraw.ImageDraw(img)
-        text = f"{textwrap.fill(message.clean_content, 25, max_lines=6)}"
+        text = f"{textwrap.fill(message.clean_content, 22, max_lines=6)}"
         author = f"- {message.author.name}"
         draw.text((950, 100), text, font=font)
         draw.text((1000, 824), author, font=font, fill=(130, 130, 130))
