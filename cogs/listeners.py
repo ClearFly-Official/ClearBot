@@ -72,7 +72,7 @@ class Listeners(discord.Cog):
             embed = discord.Embed(title=feed.get('title'), description=f"""
 {feed.get('summary')[:-35]}
 
-*{feed.get('published')}* - [link]({feed.get('Article link')})
+*{feed.get('published')}* - [Article link]({feed.get('link')})
             """, colour=cfc)
             embed.set_image(url=feed.get('media_thumbnail')[0]['url'])
             await channel.send(embed=embed)

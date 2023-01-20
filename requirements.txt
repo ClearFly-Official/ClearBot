@@ -8,3 +8,4 @@ dadjokes
 ConfigParser
 numerize
 Pillow
+feedparser
