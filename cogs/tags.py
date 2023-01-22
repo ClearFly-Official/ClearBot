@@ -46,7 +46,6 @@ Didn't found {tag}.
         tags = []
         for tag_ in tagcol.find():
             tags.append(tag_.get("name"))
-        print(tags)
         var = 0
         var2 = 1
         for i in tags:
