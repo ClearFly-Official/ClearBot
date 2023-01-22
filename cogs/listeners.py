@@ -15,7 +15,7 @@ db = client["ClearBotDB"]
 rss = db['RSS']
 trescol = rss['Tresholdx']
 fsacol = rss['FSAddonsXP']
-fsnews = 1001401783689678868 #1066124540318588928
+fsnews =  1066124540318588928 #CB test 1001401783689678868
 
 class Listeners(discord.Cog):
 
