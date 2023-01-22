@@ -14,6 +14,8 @@ client = pymongo.MongoClient(os.environ['MONGODB_URI'])
 db = client["ClearBotDB"]
 rss = db['RSS']
 trescol = rss['Tresholdx']
+fsacol = rss['FSAddonsXP']
+fsnews = 1001401783689678868 #1066124540318588928
 
 class Listeners(discord.Cog):
 
@@ -22,7 +24,8 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.rssfeed.start()
+        self.rssfeed1.start()
+        self.rssfeed2.start()
         self.presence.start()
         print("All tasks and listeners have started successfully")
 
@@ -51,8 +54,8 @@ class Listeners(discord.Cog):
         await self.bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
     
     @tasks.loop(seconds=60)
-    async def rssfeed(self):
-        channel = self.bot.get_channel(1066124540318588928)
+    async def rssfeed1(self):
+        channel = self.bot.get_channel(fsnews)
         blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml" )
         feed = dict(blog_feed.entries[0])
         lastID = trescol.find()
@@ -69,13 +72,36 @@ class Listeners(discord.Cog):
                     "lastID": feed.get('id')
                 }
             })
-            embed = discord.Embed(title=feed.get('title'), description=f"""
-{feed.get('summary')[:-35]}
+            await channel.send(f"""
+**{feed.get('title')}**
 
-*{feed.get('published')}* - [Article link]({feed.get('link')})
-            """, colour=cfc)
-            embed.set_image(url=feed.get('media_thumbnail')[0]['url'])
-            await channel.send(embed=embed)
+{feed.get('link')}
+            """)
+
+    @tasks.loop(seconds=60)
+    async def rssfeed2(self):
+        channel = self.bot.get_channel(fsnews)
+        blog_feed = feedparser.parse("https://fsaddons.online/category/x-plane/rss" )
+        feed = dict(blog_feed.entries[0])
+        lastID = fsacol.find()
+        ids = []
+        for id in lastID:
+            ids.append(id)
+        if ids == []:
+            ids = [{'lastID':None}]
+        if ids[0]['lastID'] == feed.get('id'):
+            return
+        else:
+            fsacol.update_one({"_id": "lastID"},{
+                "$set":{
+                    "lastID": feed.get('id')
+                }
+            })
+            await channel.send(f"""
+**{feed.get('title')}**
+
+{feed.get('link')}
+            """)
 
     @commands.Cog.listener()
     async def on_message(self, message):
