@@ -20,6 +20,10 @@ class TagCommands(discord.Cog):
 
     tags = discord.SlashCommandGroup(name="tag", description="Tag related commands")
     
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Tags cog loaded sucessfully")
+
     async def get_tags(ctx: discord.AutocompleteContext):
         tags = []
         for tag in tagcol.find():

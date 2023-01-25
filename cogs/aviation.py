@@ -16,6 +16,10 @@ class AvCommands(discord.Cog):
     async def get_airports(self, ctx: discord.AutocompleteContext):
         return [airport for airport in airports if airport.startswith(ctx.value.upper())]
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Aviation cog loaded sucessfully")
+
     @av.command(name="metar", description="Get the metar data of an airport.")
     @option("airport", description="The airport you want the metar data of.", autocomplete=get_airports)
     async def metar(self, ctx, airport):

@@ -97,7 +97,7 @@ class AdminCommands(discord.Cog):
         self.bot.add_view(FAQView(bot=self.bot))
         self.bot.add_view(AnnounceRoleView(bot=self.bot))
         self.bot.add_view(UpdateRoleView(bot=self.bot))
-
+        print("| Admin cog loaded sucessfully")
 
     admin = discord.SlashCommandGroup(name="admin", description="Commands for admins")
         

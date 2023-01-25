@@ -4,11 +4,8 @@
 
 import discord#Py-cord
 import os
-import random
 from dotenv import load_dotenv
-from discord.ext import tasks
 from datetime import datetime 
-from discord.ext import commands
 
 bot = discord.Bot(intents=discord.Intents.all())
 load_dotenv()
@@ -34,30 +31,10 @@ async def on_ready():
             *Data save unavailable*
             """,color=0x00FF00)
             await channel.send(embed=embed)
-        presence.start()
-        print(f"{bot.user.name} is ready for usage!")
-
-@tasks.loop(minutes=10)
-async def presence():
-        statements =[
-        "Give me Baby Boeing 😩",
-        "Boeing > Airbus",
-        "How are you doing?",
-        "Use me please.",
-        "How can I assist you today?",
-        "BABY BOEINGGGG",
-        "If it ain't Boeing, I ain't going.",
-        "I'm tired",
-        "Nuke airbus smh",
-        "Boeing supremacy",
-        "*Sends missile to Airbus hq*",
-        "Wolfair = Chad",
-        "Deep™",
-        "What ya looking at 🤨",
-        "What about you stfu.",
-        "Goofy ah"
-        ]
-        await bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+        print(f"""
+|-----------------------------
+| CLEARBOT is ready for usage 
+|-----------------------------""")
 
 
 cogs = os.listdir("cogs")
@@ -66,5 +43,5 @@ cogs.remove("__pycache__")
 
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")
-  
+
 bot.run(os.getenv('TOKEN'))

@@ -3,6 +3,7 @@ import discord
 import json
 from inspect import cleandoc
 from discord import option
+from discord.ext import commands
 from main import cfc, errorc
 
 
@@ -45,6 +46,10 @@ class DevCommands(discord.Cog):
     dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
     acdev = discord.SlashCommandGroup(name="acdev", description="Commands for aircraft developers.")
     dataref = acdev.create_subgroup(name="datarefs", description="Commands related to X-Plane datarefs.")
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Dev cog loaded sucessfully")
 
     async def convert_attr(self, path):
         doc_part = discord

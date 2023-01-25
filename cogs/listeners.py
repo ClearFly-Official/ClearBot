@@ -24,87 +24,87 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        self.presence.start()
         self.rssfeed1.start()
         self.rssfeed2.start()
-        self.presence.start()
-        print("All tasks and listeners have started successfully")
+        print("| All tasks and listeners have started successfully")
 
     @tasks.loop(minutes=10)
     async def presence(self):
-        statements =[
-        "Give me Baby Boeing 😩",
-        "Boeing > Airbus",
-        "How are you doing?",
-        "Use me please.",
-        "How can I assist you today?",
-        "BABY BOEINGGGG",
-        "If it ain't Boeing, I ain't going.",
-        "I'm tired",
-        "Nuke airbus smh",
-        "Boeing supremacy",
-        "*Sends missile to Airbus hq*",
-        "Wolfair = Chad",
-        "Deep™",
-        "What ya looking at 🤨",
-        "What about you stfu.",
-        "Goofy ah",
-        "There's an impostor among us.",
-        "Bored"
-        ]
-        await self.bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
-    
+            statements =[
+            "Give me Baby Boeing 😩",
+            "Boeing > Airbus",
+            "How are you doing?",
+            "Use me please.",
+            "How can I assist you today?",
+            "BABY BOEINGGGG",
+            "If it ain't Boeing, I ain't going.",
+            "I'm tired",
+            "Nuke airbus smh",
+            "Boeing supremacy",
+            "*Sends missile to Airbus hq*",
+            "Wolfair = Chad",
+            "Deep™",
+            "What ya looking at 🤨",
+            "What about you stfu.",
+            "Goofy ah",
+            "There's an impostor among us.",
+            "Bored"
+            ]
+            await self.bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
+        
     @tasks.loop(seconds=60)
     async def rssfeed1(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml" )
-        feed = dict(blog_feed.entries[0])
-        lastID = trescol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{'lastID':None}]
-        if ids[0]['lastID'] == feed.get('id'):
-            return
-        else:
-            trescol.update_one({"_id": "lastID"},{
-                "$set":{
-                    "lastID": feed.get('id')
-                }
-            })
-            await channel.send(f"""
-**{feed.get('title')}**
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml" )
+            feed = dict(blog_feed.entries[0])
+            lastID = trescol.find()
+            ids = []
+            for id in lastID:
+                ids.append(id)
+            if ids == []:
+                ids = [{'lastID':None}]
+            if ids[0]['lastID'] == feed.get('id'):
+                return
+            else:
+                trescol.update_one({"_id": "lastID"},{
+                    "$set":{
+                        "lastID": feed.get('id')
+                    }
+                })
+                await channel.send(f"""
+    **{feed.get('title')}**
 
-{feed.get('link')}
-            """)
+    {feed.get('link')}
+                """)
 
     @tasks.loop(seconds=60)
     async def rssfeed2(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://fsaddons.online/category/x-plane/rss" )
-        feed = dict(blog_feed.entries[0])
-        lastID = fsacol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{'lastID':None}]
-        if ids[0]['lastID'] == feed.get('id'):
-            return
-        else:
-            fsacol.update_one({"_id": "lastID"},{
-                "$set":{
-                    "lastID": feed.get('id')
-                }
-            })
-            await channel.send(f"""
-**{feed.get('title')}**
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://fsaddons.online/category/x-plane/rss" )
+            feed = dict(blog_feed.entries[0])
+            lastID = fsacol.find()
+            ids = []
+            for id in lastID:
+                ids.append(id)
+            if ids == []:
+                ids = [{'lastID':None}]
+            if ids[0]['lastID'] == feed.get('id'):
+                return
+            else:
+                fsacol.update_one({"_id": "lastID"},{
+                    "$set":{
+                        "lastID": feed.get('id')
+                    }
+                })
+                await channel.send(f"""
+    **{feed.get('title')}**
 
-{feed.get('link')}
-            """)
+    {feed.get('link')}
+                """)
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
+    @commands.Cog.listener('on_message')
+    async def levellisten(self, message):
         nowlvlprog = 0
         config = configparser.ConfigParser()
         if message.channel.id == 966077223260004402:
@@ -150,7 +150,6 @@ class Listeners(discord.Cog):
                 lvlprog = config.get("Level", "lvlprog")
                 topprog = config.get("Level", "topprog")
                 lvl = config.get("Level", "lvl")
-
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = self.bot.get_channel(965600413376200726)
@@ -247,8 +246,8 @@ class Listeners(discord.Cog):
             pass
 
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
+    @commands.Cog.listener('on_message')
+    async def scamcheck(self, message):
         class BanView(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -286,5 +285,6 @@ class Listeners(discord.Cog):
                 pass
         else:
             pass
+
 def setup(bot):
-    bot.add_cog(Listeners(bot))
+    bot.add_cog(Listeners(bot=bot))

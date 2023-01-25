@@ -16,6 +16,9 @@ class FunCommands(discord.Cog):
 
     fun = discord.SlashCommandGroup(name="fun",description="Fun commands.")
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Fun cog loaded sucessfully")
 
     @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")

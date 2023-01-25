@@ -17,6 +17,10 @@ class LevelingCommands(discord.Cog):
 
     leveling = discord.SlashCommandGroup(name="level", description="Commands related to leveling")
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Leveling cog loaded sucessfully")
+
     @leveling.command(name="userlevel", description="Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
     async def userlevel(self, ctx, user: discord.Member = None):
@@ -233,7 +237,7 @@ class LevelingCommands(discord.Cog):
                     lvl = int(config.get("Level", "lvl"))
                     lvlprog = int(config.get("Level", "lvlprog"))
                     topprog = int(config.get("Level", "topprog"))
-                    usrid = filename.replace("Leveling/users/", f"")
+                    usrid = filename.replace("Leveling/users/", "").replace("/data.ini", "")
                     user = self.bot.get_user(int(usrid))
                     line = f"""
           {lvlprog+topprog*lvl} LVL: {lvl} XP: {lvlprog}/{n.numerize(topprog)}\n

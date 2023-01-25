@@ -87,6 +87,7 @@ class InfoB4training(discord.ui.View):
         self.bot = bot
         super().__init__(timeout=None)
 
+
     @discord.ui.button(label="Continue to flight training", style=discord.ButtonStyle.green, custom_id="vastudent")
     async def first_button_callback(self, button, interaction):
         author = interaction.user
@@ -115,6 +116,7 @@ class VACommands(discord.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.bot.add_view(InfoB4training(bot=self.bot))
+        print("| VA cog loaded sucessfully")
 
     
     va = discord.SlashCommandGroup(name="va",description="Commands related to the ClearFly Virtual Airline")
@@ -1180,8 +1182,8 @@ Number of flights: **{nof}**
                 with open(os.path.join(os.getcwd(), filename), 'r') as f:
                     nof = f"{int(len(f.readlines()))-1}"
                     filen = filename.replace("ClearFly_VA/users/", f"")
-                    id=os.path.dirname(filen)
-                    user = self.bot.get_user(int(id))
+                    usrid = filen.replace("/data.txt", "")
+                    user = self.bot.get_user(int(usrid))
                     line = f"{nof} Flights flown: \n"
                     line2 = f"{nof} {user.name}"
                     output.append(line)

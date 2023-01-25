@@ -2,6 +2,7 @@ import discord
 from datetime import datetime
 from math import sqrt
 from discord import option
+from discord.ext import commands
 from dotenv import load_dotenv
 from main import bot_start_time, cogs
 from main import cfc, errorc
@@ -15,6 +16,10 @@ class UtilityCommands(discord.Cog):
 
     utility = discord.SlashCommandGroup(name="utility", description="Commands related to utility")
     math = utility.create_subgroup(name="math", description="Commands related to math")
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("| Utility cog loaded sucessfully")
 
     @discord.command(name="report", description="Need help? Use this command to contact the admins!")
     @option("subject",description="What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
