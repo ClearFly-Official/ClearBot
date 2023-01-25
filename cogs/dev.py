@@ -402,9 +402,6 @@ Author: **{message.author.mention}**
 Interaction: {message.interaction}
 Thread: {message.thread}
 Channel: {message.channel.mention}
-
-Creation Date: {discord.utils.format_dt(message.created_at)}
-Edit Date: {discord.utils.format_dt(message.edited_at)}
         """, allowed_mentions=discord.AllowedMentions.none)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
