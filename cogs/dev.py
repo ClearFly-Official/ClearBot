@@ -383,14 +383,13 @@ Description :
 ID: **{message.id}**
 
 Content:
-```
----------------
-Normal        |
----------------
+```md
+#Normal
+
 {message.content}
----------------
-Clean         |
----------------
+
+#Clean
+
 {message.clean_content}
 ```
 
