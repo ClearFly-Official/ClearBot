@@ -233,9 +233,8 @@ class LevelingCommands(discord.Cog):
                     lvl = int(config.get("Level", "lvl"))
                     lvlprog = int(config.get("Level", "lvlprog"))
                     topprog = int(config.get("Level", "topprog"))
-                    filen = filename.replace("Leveling/users/", f"")
-                    id=os.path.dirname(filen)
-                    user = self.bot.get_user(int(id))
+                    usrid = filename.replace("Leveling/users/", f"")
+                    user = self.bot.get_user(int(usrid))
                     line = f"""
           {lvlprog+topprog*lvl} LVL: {lvl} XP: {lvlprog}/{n.numerize(topprog)}\n
           """
@@ -284,9 +283,8 @@ Chat to earn xp!
                     lvlprog = int(config.get("Level", "lvlprog"))
                     topprog = int(config.get("Level", "topprog"))
                     filen = filename.replace("Leveling/users/", f"")
-                    lbn = index+1
-                    id=os.path.dirname(filen)
-                    user = self.bot.get_user(int(id))
+                    userid = os.path.dirname(filen)
+                    user = self.bot.get_user(int(userid))
                     line = f"{lvlprog+topprog*lvl} | Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
                     output.append(line)
             def atoi(text):

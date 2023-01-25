@@ -111,7 +111,9 @@ class Listeners(discord.Cog):
             return
         if message.channel.id == 965600413376200726:
             return
-        if message.author.bot == False:
+        if message.author.bot:
+            return
+        else:
             if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
                 config.read(f"Leveling/users/{message.author.id}/data.ini")
                 belvlprog = config.get("Level", "lvlprog")
@@ -148,6 +150,7 @@ class Listeners(discord.Cog):
                 lvlprog = config.get("Level", "lvlprog")
                 topprog = config.get("Level", "topprog")
                 lvl = config.get("Level", "lvl")
+
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = self.bot.get_channel(965600413376200726)
