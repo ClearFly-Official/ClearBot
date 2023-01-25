@@ -382,21 +382,30 @@ Description :
             await ctx.respond(f"""
 ID: **{message.id}**
 
-Content
+__Content:__
+Normal
 ```
 {message.content}
 ```
-
-System content:
-```
-{message.system_content}
-```
-
-Clean content
+Clean
 ```
 {message.clean_content}
 ```
-        """)
+
+Attachments: `{message.attachments}`
+Reactions: `{message.reactions}`
+Embeds: `{message.embeds}`
+Mentions: `{message.mentions}`
+Pinned: **{message.pinned}**
+Type: **{message.type}**
+Author: **{message.author.mention}**
+Interaction: {message.interaction}
+Thread: {message.thread}
+Channel: {message.channel.mention}
+
+Creation Date: {discord.utils.format_dt(message.created_at)}
+Edit Date: {discord.utils.format_dt(message.edited_at)}
+        """, allowed_mentions=discord.AllowedMentions.none)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
