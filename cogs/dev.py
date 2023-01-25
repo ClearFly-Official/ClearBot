@@ -382,13 +382,15 @@ Description :
             await ctx.respond(f"""
 ID: **{message.id}**
 
-__Content:__
-Normal
+Content:
 ```
+---------------
+Normal        |
+---------------
 {message.content}
-```
-Clean
-```
+---------------
+Clean         |
+---------------
 {message.clean_content}
 ```
 
