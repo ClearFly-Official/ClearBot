@@ -402,7 +402,7 @@ Author: **{message.author.mention}**
 Interaction: {message.interaction}
 Thread: {message.thread}
 Channel: {message.channel.mention}
-        """, allowed_mentions=discord.AllowedMentions.none)
+        """, allowed_mentions=discord.AllowedMentions.none())
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
