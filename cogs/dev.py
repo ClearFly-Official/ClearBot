@@ -87,7 +87,7 @@ class DevCommands(discord.Cog):
     @dev.command(name="reload_cogs", description="Reload the Cogs you want(syncs commands too).")
     async def reloadCogs(self, ctx):
         if ctx.author.id in devs:
-            self.bot.sync_commands()
+            await self.bot.sync_commands()
             cogs = [
             "admin",
             "dev",
