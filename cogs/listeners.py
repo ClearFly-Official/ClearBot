@@ -121,10 +121,8 @@ class Listeners(discord.Cog):
                 last = config.get("Level", "last")
                 now = round(time.time())
                 if (now - int(last)) < 5:
-                    print("it was spam...")
                     return
                 else:
-                    print("not spam!")
                     config.set("Level", "last", f"{now}")
                 if len(message.content) == 0:
                     nowlvlprog = int(belvlprog)+1
