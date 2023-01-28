@@ -117,6 +117,8 @@ class Listeners(discord.Cog):
             if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
                 config.read(f"Leveling/users/{message.author.id}/data.ini")
                 belvlprog = config.get("Level", "lvlprog")
+                if len(message.content) == 0:
+                    nowlvlprog = int(belvlprog)+1
                 if len(message.content) > 0:
                     nowlvlprog = int(belvlprog)+1
                 if len(message.content) > 10:
@@ -124,9 +126,9 @@ class Listeners(discord.Cog):
                 if len(message.content) > 25:
                     nowlvlprog = int(belvlprog)+5
                 if len(message.content) > 50:
-                    nowlvlprog = int(belvlprog)+10
+                    nowlvlprog = int(belvlprog)+7
                 if len(message.content) > 75:
-                    nowlvlprog = int(belvlprog)+15
+                    nowlvlprog = int(belvlprog)+10
                 lvlprog = config.get("Level", "lvlprog")
                 lvl = config.get("Level", "lvl")
                 topprog = config.get("Level", "topprog")
@@ -134,7 +136,7 @@ class Listeners(discord.Cog):
                 if int(lvlprog) >= int(topprog):
                     config.set("Level","lvlprog", "0")
                     config.set("Level","lvl", f"{int(lvl)+1}")
-                    config.set("Level","topprog", f"{int(topprog)*2-(int(lvl)*int(lvl))}")
+                    config.set("Level","topprog", f"{int(topprog)+(int(lvl)*10)}")
                     lvlp = config.get("Level", "lvl")
                     await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
                 with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
