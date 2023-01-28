@@ -4,6 +4,7 @@ import configparser
 import random
 import pymongo
 import feedparser
+import time
 from discord.ext import commands, tasks
 from datetime import datetime
 from main import cfc, errorc
@@ -117,6 +118,13 @@ class Listeners(discord.Cog):
             if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
                 config.read(f"Leveling/users/{message.author.id}/data.ini")
                 belvlprog = config.get("Level", "lvlprog")
+                last = config.get("Level", "last")
+                now = round(time.time())
+                if (now - last) < 5:
+                    print("it was spam...")
+                    return
+                else:
+                    print("not spam!")
                 if len(message.content) == 0:
                     nowlvlprog = int(belvlprog)+1
                 if len(message.content) > 0:
@@ -149,11 +157,9 @@ class Listeners(discord.Cog):
                 config.set("Level","lvlprog", "1")
                 config.set("Level","lvl", "0")
                 config.set("Level","topprog", "25")
+                config.set("Level","last", f"{round(time.time())}")
                 with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
                     config.write(configfile)
-                lvlprog = config.get("Level", "lvlprog")
-                topprog = config.get("Level", "topprog")
-                lvl = config.get("Level", "lvl")
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = self.bot.get_channel(965600413376200726)
