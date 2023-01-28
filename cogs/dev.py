@@ -84,10 +84,9 @@ class DevCommands(discord.Cog):
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dev.command(name="reload_cogs", description="Reload the Cogs you want(syncs commands too).")
+    @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
     async def reloadCogs(self, ctx):
         if ctx.author.id in devs:
-            await self.bot.sync_commands()
             cogs = [
             "admin",
             "dev",
@@ -170,7 +169,7 @@ class DevCommands(discord.Cog):
                         for cog in select.values:
                             self.bot.reload_extension(f"cogs.{cog}")
                         embed = discord.Embed(title="Selected cogs have been reloaded!", description=f"""
-Reloaded cogs and commands:
+Reloaded cogs:
 ```py
 {select.values}
 ```
