@@ -138,7 +138,7 @@ class Listeners(discord.Cog):
                     config.set("Level","lvl", f"{int(lvl)+1}")
                     if int(lvl) == 0:
                         lvl = 1
-                    config.set("Level","topprog", f"{int(topprog)+(int(lvl)*10)}")
+                    config.set("Level","topprog", f"{int(topprog)+(int(lvl)*15)}")
                     lvlp = config.get("Level", "lvl")
                     await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
                 with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
