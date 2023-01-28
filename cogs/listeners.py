@@ -120,7 +120,7 @@ class Listeners(discord.Cog):
                 belvlprog = config.get("Level", "lvlprog")
                 last = config.get("Level", "last")
                 now = round(time.time())
-                if (now - last) < 5:
+                if (now - int(last)) < 5:
                     print("it was spam...")
                     return
                 else:
