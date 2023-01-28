@@ -63,7 +63,7 @@ class DevCommands(discord.Cog):
         return doc_part, path
 
     @dev.command(name="docs", description="Get information from the Pycord docs.")
-    @option("doc_part", autocomplete=getattrs)
+    @option("doc_part", autocomplete=getattrs, description="The part of the doc you want to search for.")
     async def get_doc(self, ctx, doc_part):
         if ctx.author.id in devs:
             raw_part = doc_part
