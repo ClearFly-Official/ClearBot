@@ -84,9 +84,10 @@ class DevCommands(discord.Cog):
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
+    @dev.command(name="reload_cogs", description="Reload the Cogs you want(syncs commands too).")
     async def reloadCogs(self, ctx):
         if ctx.author.id in devs:
+            self.bot.sync_commands()
             cogs = [
             "admin",
             "dev",
@@ -169,7 +170,7 @@ class DevCommands(discord.Cog):
                         for cog in select.values:
                             self.bot.reload_extension(f"cogs.{cog}")
                         embed = discord.Embed(title="Selected cogs have been reloaded!", description=f"""
-Reloaded cogs:
+Reloaded cogs and commands:
 ```py
 {select.values}
 ```
@@ -408,19 +409,20 @@ Channel: {message.channel.mention}
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
             
-    @dev.command(name="vars", description="Check the output that a certain variable gives.")
-    @option("variable", description="The variable you want to check the output of.", autocomplete=getattrs2)
-    async def varcheck(self, ctx, variable):
-        if ctx.author.id in acdevs:
+    @dev.command(name="eval", description="Execute some code")
+    @option("code", description="The code you want to execute", autocomplete=getattrs2)
+    async def evalcmd(self, ctx, code):
+        if ctx.author.id in devs:
             try:
-                embed = discord.Embed(title=f"`{variable}` gives the following output:", description=f"""
+                out = eval(code)
+                embed = discord.Embed(title=f"`{code}` gives the following output:", description=f"""
 ```
-{eval(variable)}
+{out}
 ```
                 """, colour=cfc)
                 await ctx.respond(embed=embed)
             except Exception as error:
-                embed = discord.Embed(title=f"I didn't found `{variable}`", description=f"""
+                embed = discord.Embed(title=f"While running `{code}` I got the following error:", description=f"""
 ```
 {error}
 ```
