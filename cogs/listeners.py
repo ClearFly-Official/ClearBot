@@ -136,6 +136,8 @@ class Listeners(discord.Cog):
                 if int(lvlprog) >= int(topprog):
                     config.set("Level","lvlprog", "0")
                     config.set("Level","lvl", f"{int(lvl)+1}")
+                    if int(lvl) == 0:
+                        lvl = 1
                     config.set("Level","topprog", f"{int(topprog)+(int(lvl)*10)}")
                     lvlp = config.get("Level", "lvl")
                     await message.channel.send(f"{message.author.mention} :partying_face: You reached level {lvlp}!")
@@ -146,7 +148,7 @@ class Listeners(discord.Cog):
                 config.add_section("Level")
                 config.set("Level","lvlprog", "1")
                 config.set("Level","lvl", "0")
-                config.set("Level","topprog", "50")
+                config.set("Level","topprog", "25")
                 with open(f"Leveling/users/{message.author.id}/data.ini", "w") as configfile:
                     config.write(configfile)
                 lvlprog = config.get("Level", "lvlprog")
