@@ -273,7 +273,7 @@ class Listeners(discord.Cog):
                     await interaction.response.send_message(embed=embed)
         def scamChecker(string):
             change = 0
-            blacklist = ["@everyone", "@here", "porn", "nudes", "crypto"]
+            blacklist = ["@everyone", "@here", "porn", "nudes", "crypto", "free nitro"]
             for i in blacklist:
                 if blacklist[change] in string:
                     return True
