@@ -277,9 +277,8 @@ class Listeners(discord.Cog):
             for i in blacklist:
                 if blacklist[change] in string:
                     return True
-                else:
-                    return False
                 change +=1
+            #return False
         if message.author.id not in adminids:
             if scamChecker(message.clean_content):
                 await message.reply(content="Your message included blacklisted words, and has been deleted.")
