@@ -273,18 +273,15 @@ class Listeners(discord.Cog):
                     await interaction.response.send_message(embed=embed)
         def scamChecker(string):
             change = 0
-            blacklist = ["porn", "@everyone", "@here"]
-            comboBL = ["free", "http", "crypto"]
+            blacklist = ["@everyone", "@here", "porn", "nudes", "crypto"]
             for i in blacklist:
                 if blacklist[change] in string:
                     return True
+                else:
+                    return False
                 change +=1
-            if ((comboBL[0]in string) or (comboBL[2]in string)) and (comboBL[1]in string):
-                return True
-            else:
-                return False
         if message.author.id not in adminids:
-            if scamChecker(message.content):
+            if scamChecker(message.clean_content):
                 await message.reply(content="Your message included blacklisted words, and has been deleted.")
                 channel = self.bot.get_channel(1001405648828891187)
                 embed = discord.Embed(title=f"`{message.author}` might have sent a scam", description=message.content, colour=errorc)
