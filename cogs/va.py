@@ -1217,7 +1217,7 @@ Number of flights: **{nof}**
             embed.set_image(url=f"attachment://valb.png")
             await ctx.respond(embed=embed, file=file)
         else:
-            embed = discord.Embed(title="Error 503!", description="This command is currently unavailable, please try again later.")
+            embed = discord.Embed(title="Error 503!", description="This command is currently unavailable, please try again later.", colour=errorc)
             await ctx.respond(embed=embed)
 
 
