@@ -241,12 +241,13 @@ class LevelingCommands(discord.Cog):
                     usrid = filename.replace("Leveling/users/", "").replace("/data.ini", "")
                     print(usrid, type(usrid))
                     user = self.bot.get_user(int(usrid))
+                    print(user.name)
                     line = f"""
           {lvlprog+topprog*lvl} LVL: {lvl} XP: {lvlprog}/{n.numerize(topprog)}\n
           """
                     output.append(line)
                     line2 = f"""
-          {lvlprog+topprog*lvl} {user.name[:50]}\n
+          {lvlprog+topprog*lvl} {user.name}\n
           """
                     nameoutput.append(line2)
             def atoi(text):
