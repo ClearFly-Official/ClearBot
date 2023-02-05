@@ -240,7 +240,7 @@ class LevelingCommands(discord.Cog):
                     print(filename)
                     usrid = filename.replace("Leveling/users/", "").replace("/data.ini", "")
                     print(usrid, type(usrid))
-                    user = self.bot.fetch_user(int(usrid))
+                    user = await self.bot.fetch_user(int(usrid))
                     print(user.name)
                     line = f"""
           {lvlprog+topprog*lvl} LVL: {lvl} XP: {lvlprog}/{n.numerize(topprog)}\n
