@@ -280,48 +280,7 @@ Chat to earn xp!
             embed.set_image(url=f"attachment://lb.png")
             await ctx.respond(embed=embed, file=file)
         else:
-            output = []
-            index = 1
-            config = configparser.ConfigParser()
-            for index, filename in enumerate(glob.glob('Leveling/users/*/*')):
-                with open(os.path.join(os.getcwd(), filename), 'r') as f:
-                    config.read(f"{filename}")
-                    lvl = int(config.get("Level", "lvl"))
-                    lvlprog = int(config.get("Level", "lvlprog"))
-                    topprog = int(config.get("Level", "topprog"))
-                    filen = filename.replace("Leveling/users/", f"")
-                    userid = os.path.dirname(filen)
-                    user = self.bot.get_user(int(userid))
-                    line = f"{lvlprog+topprog*lvl} | Level:{lvl} XP:{lvlprog}/{topprog} {user.name}\n"
-                    output.append(line)
-            def atoi(text):
-                return int(text) if text.isdigit() else text
-            def natural_keys(text):
-                return [ atoi(c) for c in re.split('(\d+)',text) ]
-            output.sort(key=natural_keys, reverse=True)
-            def delstr(lst):
-                return [
-                f"{' '.join(elem.split()[1:]).rstrip()}"
-                for elem in lst
-            ]
-                
-            output = delstr(output)
-
-            def movestr(lst):
-                return [
-                f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
-                for elem in lst
-            ]
-                
-            output = movestr(output)
-
-            foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
-            embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
-Chat more to go higher on the list!
-```
-{"".join(foutput[:10])}
-```
-            """, color=cfc)
+            embed = discord.Embed(title="Error 503!", description="This command is currently unavailable, please try again later.")
             await ctx.respond(embed=embed)
 
 def setup(bot):

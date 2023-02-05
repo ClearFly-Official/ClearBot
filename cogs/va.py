@@ -1183,7 +1183,7 @@ Number of flights: **{nof}**
                     nof = f"{int(len(f.readlines()))-1}"
                     filen = filename.replace("ClearFly_VA/users/", f"")
                     usrid = filen.replace("/data.txt", "")
-                    user = self.bot.get_user(int(usrid))
+                    user = await self.bot.fetch_user(int(usrid))
                     line = f"{nof} Flights flown: \n"
                     line2 = f"{nof} {user.name}"
                     output.append(line)
@@ -1217,29 +1217,7 @@ Number of flights: **{nof}**
             embed.set_image(url=f"attachment://valb.png")
             await ctx.respond(embed=embed, file=file)
         else:
-            output = []
-            for index, filename in enumerate(glob.glob('ClearFly_VA/users/*/data.txt')):
-                with open(os.path.join(os.getcwd(), filename), 'r') as f:
-                    nof = f"{int(len(f.readlines()))-1}"
-                    filen = filename.replace("ClearFly_VA/users/", f"")
-                    id=os.path.dirname(filen)
-                    user = self.bot.get_user(int(id))
-                    line = f"| Flights flown:{nof} {user.name}\n"
-                    output.append(line)
-            output.sort(reverse=True)
-            def movestr(lst):
-                return [
-                    f"{' '.join(elem.split()[3:]).rstrip()} {' '.join(elem.split()[:3])}\n"
-                    for elem in lst
-                ]
-                
-            output = movestr(output)
-            foutput = [f'{index} | {i}' for index, i in enumerate(output, 1)]
-            embed = discord.Embed(title="ClearFly VA Leaderboard", description=f"""
-```
-{"".join(foutput)}
-```
-            """, color=cfc)
+            embed = discord.Embed(title="Error 503!", description="This command is currently unavailable, please try again later.")
             await ctx.respond(embed=embed)
 
 
