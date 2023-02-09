@@ -16,7 +16,9 @@ db = client["ClearBotDB"]
 rss = db['RSS']
 trescol = rss['Tresholdx']
 fsacol = rss['FSAddonsXP']
+sfcol = rss['SimpleFlying']
 fsnews =  1066124540318588928 #CB test 1001401783689678868
+avnews = 1073311685357604956
 
 class Listeners(discord.Cog):
 
@@ -28,7 +30,8 @@ class Listeners(discord.Cog):
         self.presence.start()
         self.rssfeed1.start()
         self.rssfeed2.start()
-        print("| All tasks and listeners have started successfully")
+        self.rssfeed3.start()
+        print("| listeners cog loaded sucessfully")
 
     @tasks.loop(minutes=10)
     async def presence(self):
@@ -74,9 +77,9 @@ class Listeners(discord.Cog):
                     }
                 })
                 await channel.send(f"""
-    **{feed.get('title')}**
+**{feed.get('title')}**
 
-    {feed.get('link')}
+{feed.get('link')}
                 """)
 
     @tasks.loop(seconds=60)
@@ -99,9 +102,34 @@ class Listeners(discord.Cog):
                     }
                 })
                 await channel.send(f"""
-    **{feed.get('title')}**
+**{feed.get('title')}**
 
-    {feed.get('link')}
+{feed.get('link')}
+                """)
+
+    @tasks.loop(seconds=60)
+    async def rssfeed3(self):
+            channel = self.bot.get_channel(avnews)
+            blog_feed = feedparser.parse("https://simpleflying.com/feed")
+            feed = dict(blog_feed.entries[0])
+            lastID = sfcol.find()
+            ids = []
+            for id in lastID:
+                ids.append(id)
+            if ids == []:
+                ids = [{'lastID':None}]
+            if ids[0]['lastID'] == feed.get('id'):
+                return
+            else:
+                sfcol.update_one({"_id": "lastID"},{
+                    "$set":{
+                        "lastID": feed.get('id')
+                    }
+                })
+                await channel.send(f"""
+**{feed.get('title')}**
+
+{feed.get('link')}
                 """)
 
     @commands.Cog.listener('on_message')
