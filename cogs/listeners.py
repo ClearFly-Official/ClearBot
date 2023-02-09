@@ -27,6 +27,10 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        self.presence.start()
+        self.rssfeed1.start()
+        self.rssfeed2.start()
+        self.rssfeed3.start()
         print("| listeners cog loaded sucessfully")
 
     @tasks.loop(minutes=10)
@@ -315,10 +319,5 @@ class Listeners(discord.Cog):
         else:
             pass
 
-    presence.start()
-    rssfeed1.start()
-    rssfeed2.start()
-    rssfeed3.start()
-    
 def setup(bot):
     bot.add_cog(Listeners(bot=bot))
