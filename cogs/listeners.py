@@ -215,11 +215,7 @@ class Listeners(discord.Cog):
                 if message.content == "":
                     message.content = None
                 await interaction.response.send_message(f"""
-Before:
-```md
-{message.content}
-```
-After:
+Message Content:
 ```md
 {message.content}
 ```
@@ -230,7 +226,8 @@ After:
             msgatr = message.author.mention
             msgcnl = message.channel.mention
             pfp = message.author.avatar.url
-            emb = discord.Embed(title="Message Deleted", color=cfc)
+            emb = discord.Embed(color=cfc)
+            emb.add_field(name="Message Deleted", value="", inline=False)
             emb.add_field(name="Content", value=f"{msgdel[:1024]}", inline = False)
             emb.add_field(name="Author", value=f"{msgatr}", inline = True)
             emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
@@ -272,7 +269,8 @@ After:
                 msgatr = before.author.mention
                 msgcnl = before.channel.mention
                 pfp = before.author.avatar.url
-                emb = discord.Embed(title=f"[Message Edited](https://discord.com/channels/965419296937365514/{after.channel.id}/{after.id})", color=cfc)
+                emb = discord.Embed(color=cfc)
+                emb.add_field(name=f"**[Message Edited](https://discord.com/channels/965419296937365514/{after.channel.id}/{after.id})**",value="", inline = False)
                 emb.add_field(name="Content before", value=f"{msgeditb[:1024]}", inline = False)
                 emb.add_field(name="Content after", value=f"{msgedita[:1024]}", inline = False)
                 emb.add_field(name="Author", value=f"{msgatr}", inline = True)
