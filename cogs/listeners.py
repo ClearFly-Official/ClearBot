@@ -17,7 +17,7 @@ rss = db['RSS']
 trescol = rss['Tresholdx']
 fsacol = rss['FSAddonsXP']
 sfcol = rss['SimpleFlying']
-fsnews =  1066124540318588928 #CB test 1001401783689678868
+fsnews =  1066124540318588928 #*CB test 1001401783689678868
 avnews = 1073311685357604956
 
 class Listeners(discord.Cog):
@@ -203,37 +203,87 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
+        class ViewRawMessage(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+                super().__init__(timeout=None)
+
+            @discord.ui.button(label="View Raw Contents", style=discord.ButtonStyle.primary)
+            async def viewRawButtonCallback(self, button, interaction):
+                if message.content == "":
+                    message.content = None
+                if message.content == "":
+                    message.content = None
+                await interaction.response.send_message(f"""
+Before:
+```md
+{message.content}
+```
+After:
+```md
+{message.content}
+```
+                """, ephemeral=True)
         if message.author.bot == False:
             channel = self.bot.get_channel(1001405648828891187)
             msgdel = message.clean_content
             msgatr = message.author.mention
             msgcnl = message.channel.mention
             pfp = message.author.avatar.url
-            emb = discord.Embed(title="**Message Deleted:**", color=cfc)
-            emb.add_field(name="Content:", value=f"{msgdel[:1024]}", inline = False)
-            emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
-            emb.add_field(name="Channel:", value=f"{msgcnl}", inline = True)
+            emb = discord.Embed(title="Message Deleted", color=cfc)
+            emb.add_field(name="Content", value=f"{msgdel[:1024]}", inline = False)
+            emb.add_field(name="Author", value=f"{msgatr}", inline = True)
+            emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
             emb.set_thumbnail(url=pfp)
-            await channel.send(embed=emb)
+            await channel.send(embed=emb, view=ViewRawMessage(self.bot))
         else:
             pass
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
+        class ViewRawMessage(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+                super().__init__(timeout=None)
+
+            @discord.ui.button(label="View Raw Contents", style=discord.ButtonStyle.primary)
+            async def viewRawButtonCallback(self, button, interaction):
+                if before.content == "":
+                    before.content = None
+                if after.content == "":
+                    after.content = None
+                await interaction.response.send_message(f"""
+Before:
+```md
+{before.content}
+```
+After:
+```md
+{after.content}
+```
+                """, ephemeral=True)
         if before.author.bot == False:
-            channel = self.bot.get_channel(1001405648828891187)
-            msgeditb = before.clean_content
-            msgedita = after.clean_content
-            msgatr = before.author.mention
-            msgcnl = before.channel.mention
-            pfp = before.author.avatar.url
-            emb = discord.Embed(title="**Message Edited:**", color=cfc)
-            emb.add_field(name="Content before:", value=f"{msgeditb[:1024]}", inline = False)
-            emb.add_field(name="Content after:", value=f"{msgedita[:1024]}", inline = False)
-            emb.add_field(name="Author:", value=f"{msgatr}", inline = True)
-            emb.add_field(name="Channel:", value=f"{msgcnl}, [link](https://discord.com/channels/965419296937365514/{after.channel.id}/{before.id})", inline = True)
-            emb.set_thumbnail(url=pfp)
-            await channel.send(embed=emb)
+            if (before.content == after.content):
+                pass
+            else:
+                channel = self.bot.get_channel(1001405648828891187)
+                msgeditb = before.clean_content
+                msgedita = after.clean_content
+                msgatr = before.author.mention
+                msgcnl = before.channel.mention
+                pfp = before.author.avatar.url
+                emb = discord.Embed(title=f"[Message Edited](https://discord.com/channels/965419296937365514/{after.channel.id}/{after.id})", color=cfc)
+                emb.add_field(name="Content before", value=f"{msgeditb[:1024]}", inline = False)
+                emb.add_field(name="Content after", value=f"{msgedita[:1024]}", inline = False)
+                emb.add_field(name="Author", value=f"{msgatr}", inline = True)
+                emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
+                emb.add_field(name="Other Information", value=f"""
+Pinnend: **{after.pinned}**
+Type: **{after.type}**
+ID: **{after.id}**
+                """)
+                emb.set_thumbnail(url=pfp)
+                await channel.send(embed=emb, view=ViewRawMessage(self.bot))
         else:
             pass
 
