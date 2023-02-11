@@ -88,7 +88,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
         else:
             userAvatarUrl = user.avatar.url    
-            embed = discord.Embed(title=f"{user}'s avatar!",url=pfp, color=cfc)
+            embed = discord.Embed(title=f"{user}'s avatar!",url=userAvatarUrl, color=cfc)
             embed.set_image(url=userAvatarUrl)
             await ctx.respond(embed=embed)
 
