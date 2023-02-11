@@ -192,9 +192,7 @@ Reloaded cogs:
         if ctx.author.id == 668874138160594985:
             embed = discord.Embed(title="Restarting bot...", color=cfc)
             await ctx.respond(embed=embed)
-            #await self.bot.close()
-            sys.stdout.flush()
-            os.execv(sys.argv[0], sys.argv)
+            os.execv(sys.executable, ['python'] + sys.argv)
         else:
             embed = discord.Embed(title="Error 403!", description="You're not the owner of ClearBot, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
