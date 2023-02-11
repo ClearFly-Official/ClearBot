@@ -278,7 +278,7 @@ Reloaded cogs:
     async def dreflist(self, ctx):
         drefs = []
         for dref in drefcol.find():
-            drefs.append(dref.get("name"))
+            drefs.append(dref.get("path"))
         var = 0
         var2 = 1
         for i in drefs:
