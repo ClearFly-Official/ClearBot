@@ -192,7 +192,7 @@ Reloaded cogs:
         if ctx.author.id == 668874138160594985:
             embed = discord.Embed(title="Restarting bot...", color=cfc)
             await ctx.respond(embed=embed)
-            await self.bot.close()
+            #await self.bot.close()
             sys.stdout.flush()
             os.execv(sys.argv[0], sys.argv)
         else:
