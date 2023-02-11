@@ -230,6 +230,11 @@ Message Content:
             emb.add_field(name="Content", value=f"{msgdel[:1024]}", inline = False)
             emb.add_field(name="Author", value=f"{msgatr}", inline = True)
             emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
+            emb.add_field(name="Other Information", value=f"""
+Pinnend: **{message.pinned}**
+Type: **{message.type}**
+ID: **{message.id}**
+                """)
             emb.set_thumbnail(url=pfp)
             await channel.send(embed=emb, view=ViewRawMessage(self.bot))
         else:
