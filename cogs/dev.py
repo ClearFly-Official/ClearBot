@@ -1,6 +1,8 @@
 import subprocess
 import discord
 import json
+import os
+import sys
 from inspect import cleandoc
 from discord import option
 from discord.ext import commands
@@ -184,6 +186,14 @@ Reloaded cogs:
         else:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
+
+    @dev.command(name="restart", description="Restarst the bot.")
+    async def restart(self, ctx):
+        embed = discord.Embed(title="Restarting bot...", color=cfc)
+        await ctx.respond(embed=embed)
+        await self.bot.close()
+        sys.stdout.flush()
+        os.execv(sys.argv[0], sys.argv)
 
     @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
     async def gitupdate(self, ctx):
