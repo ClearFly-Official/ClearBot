@@ -189,11 +189,15 @@ Reloaded cogs:
 
     @dev.command(name="restart", description="Restarst the bot.")
     async def restart(self, ctx):
-        embed = discord.Embed(title="Restarting bot...", color=cfc)
-        await ctx.respond(embed=embed)
-        await self.bot.close()
-        sys.stdout.flush()
-        os.execv(sys.argv[0], sys.argv)
+        if ctx.author.id == 668874138160594985:
+            embed = discord.Embed(title="Restarting bot...", color=cfc)
+            await ctx.respond(embed=embed)
+            await self.bot.close()
+            sys.stdout.flush()
+            os.execv(sys.argv[0], sys.argv)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You're not the owner of ClearBot, so you can't use this command!", colour=errorc)
+            await ctx.respond(embed=embed)
 
     @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
     async def gitupdate(self, ctx):
