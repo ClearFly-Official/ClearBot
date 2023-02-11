@@ -291,7 +291,7 @@ Reloaded cogs:
 {tagsList}
         """, colour=cfc)
         await ctx.respond(embed=embed)
-        
+
     @dataref.command(name="search", description="Find the dataref/command you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def drefsearch(self, ctx, dataref):
@@ -361,12 +361,12 @@ Description :
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
     @option("dataref", description="The dataref you want to edit.", autocomplete=get_custom_datarefs)
-    @option("path", description="The path that the edited dataref will have(defaults to old one).", required=False)
     @option("type", description="The type of dataref the edited dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the edited dataref.", autocomplete=get_units)
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     @option("description", description="The description of the edited dataref.")
-    async def drefedit(self, ctx, dataref, path, dreftype, unit, range, description):
+    @option("path", description="The path that the edited dataref will have(defaults to old one).", required=False)
+    async def drefedit(self, ctx, dataref, dreftype, unit, description, path):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
                 await ctx.defer()
