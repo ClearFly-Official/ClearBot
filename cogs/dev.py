@@ -274,7 +274,7 @@ Reloaded cogs:
                  "z"]
         return [unit for unit in units if ctx.value in unit]
 
-    @dataref.command(description="List all the custom datarefs.")
+    @dataref.command(name="list",description="List all the custom datarefs.")
     async def dreflist(self, ctx):
         drefs = []
         for dref in drefcol.find():
@@ -334,17 +334,17 @@ Description :
 
     @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
-    @option("type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
+    @option("dataref_type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the new dataref.", autocomplete=get_units)
     @option("description", description="The description of the new dataref.")
-    async def drefadd(self, ctx, path, dreftype, unit, description):
+    async def drefadd(self, ctx, path, dataref_type, unit, description):
         if ctx.author.id in acdevs:
             if path.startswith("ClearFly/731"):
                 await ctx.defer()
                 drefcol.insert_one({
                     "_id":path,
                     "path":path,
-                    "type":dreftype,
+                    "type":dataref_type,
                     "unit":unit,
                     "description":description
                 })
@@ -366,7 +366,7 @@ Description :
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     @option("description", description="The description of the edited dataref.")
     @option("path", description="The path that the edited dataref will have(defaults to old one).", required=False)
-    async def drefedit(self, ctx, dataref, dreftype, unit, description, path):
+    async def drefedit(self, ctx, dataref, dataref_type, unit, description, path):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
                 await ctx.defer()
@@ -378,7 +378,7 @@ Description :
                     {
                         "_id":path,
                         "path":path,
-                        "type":dreftype,
+                        "type":dataref_type,
                         "unit":unit,
                         "description":description
                     }
