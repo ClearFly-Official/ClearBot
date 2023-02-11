@@ -3,11 +3,15 @@ import discord
 import json
 import os
 import sys
+import pymongo
 from inspect import cleandoc
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc
 
+client = pymongo.MongoClient(os.environ['MONGODB_URI'])
+db = client["ClearBotDB"]
+drefcol = db['datarefs']
 
 async def getattrs(ctx):
     input = ctx.options["doc_part"]
@@ -221,9 +225,9 @@ Reloaded cogs:
 
     
     async def get_datarefs(self, ctx: discord.AutocompleteContext):
-        with open("dev/aircraft/datarefs.json") as f:
-            datarefLoad = json.load(f)
-            datarefList1 = list(datarefLoad["datarefs"].keys())
+        datarefList1 = []
+        for dref in drefcol.find():
+            datarefList1.append(dref.get("path"))
         with open("dev/aircraft/defaultDatarefsCommands.json") as f:
             datarefLoad = json.load(f)
             datarefList2 = list(datarefLoad["datarefs"].keys())
@@ -232,11 +236,10 @@ Reloaded cogs:
         return [dataref for dataref in datarefList if ctx.value in dataref]
 
     async def get_custom_datarefs(self, ctx: discord.AutocompleteContext):
-        with open("dev/aircraft/datarefs.json") as f:
-            datarefLoad = json.load(f)
-            datarefList1 = list(datarefLoad["datarefs"].keys())
         global customDatarefList
-        customDatarefList = datarefList1
+        customDatarefList = []
+        for dref in drefcol.find():
+            customDatarefList.append(dref.get("path"))
         return [dataref for dataref in customDatarefList if ctx.value in dataref]
 
     async def get_units(self, ctx: discord.AutocompleteContext):
@@ -271,25 +274,40 @@ Reloaded cogs:
                  "z"]
         return [unit for unit in units if ctx.value in unit]
 
+    @dataref.command(description="List all the custom datarefs.")
+    async def dreflist(self, ctx):
+        drefs = []
+        for dref in drefcol.find():
+            drefs.append(dref.get("name"))
+        var = 0
+        var2 = 1
+        for i in drefs:
+            drefs[var] = f"{var2}: " + drefs[var]
+            var += 1
+            var2 += 1
+        tagsList = '\n'.join(drefs)
+
+        embed = discord.Embed(title="Custom Datarefs List:", description=f"""
+{tagsList}
+        """, colour=cfc)
+        await ctx.respond(embed=embed)
+        
     @dataref.command(name="search", description="Find the dataref/command you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
-    async def datarefs(self, ctx, dataref):
+    async def drefsearch(self, ctx, dataref):
         if ctx.author.id in acdevs:
             await ctx.defer()
             if dataref in datarefList:
                 if dataref.startswith("ClearFly"):
-                    with open("dev/aircraft/datarefs.json", "r") as f:
-                        datarefJson = json.load(f)
-                    datarefs = datarefJson["datarefs"]
+                    dref = drefcol.find_one({"path":dataref})
                     embed = discord.Embed(title=f"Found this information for the provided dataref:", colour=cfc)
                     embed.add_field(name="Dataref Information:", value=f"""
-Path : `{datarefs[dataref]["path"]}`
-Type : **{datarefs[dataref]["type"]}**
-Unit : **{datarefs[dataref]["unit"]}**
-Range : **{datarefs[dataref]["range"]}**
+Path : `{dref.get('path', 'N/A')}`
+Type : **{dref.get('type', 'N/A')}**
+Unit : **{dref.get('unit', 'N/A')}**
 Description :
 
-> {datarefs[dataref]["description"]}
+> {dref.get('description', 'N/A')}
                     """)
                     await ctx.respond(embed=embed)
                 else:
@@ -318,30 +336,18 @@ Description :
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
     @option("type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the new dataref.", autocomplete=get_units)
-    @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     @option("description", description="The description of the new dataref.")
-    async def drefadd(self, ctx, path, type, unit, range, description):
+    async def drefadd(self, ctx, path, dreftype, unit, description):
         if ctx.author.id in acdevs:
             if path.startswith("ClearFly/731"):
                 await ctx.defer()
-                with open("dev/aircraft/datarefs.json", "r") as f:
-                    datarefs = json.load(f)
-                if type == "string":
-                    range = "N/A"
-                newDref = {
-                    f"{path}":{
-                            "path":f"{path}",
-                            "type":f"{type}",
-                            "unit":f"{unit}",
-                            "range":f"{range}",
-                            "description":f"{description}"
-                    }
-                }
-
-                datarefs["datarefs"].update(newDref)
-
-                with open("dev/aircraft/datarefs.json", "w") as f:
-                    json.dump(datarefs, f, indent=4)
+                drefcol.insert_one({
+                    "_id":path,
+                    "path":path,
+                    "type":dreftype,
+                    "unit":unit,
+                    "description":description
+                })
                 embed = discord.Embed(title=f"Added new dataref `{path}` to dataref list successfully.", color=cfc)
                 embed.set_footer(text="Don't forget to make the dataref with SASL if you didn't already do so.")
                 await ctx.respond(embed=embed)
@@ -355,29 +361,28 @@ Description :
 
     @dataref.command(name="edit", description="Edit an existing dataref.")
     @option("dataref", description="The dataref you want to edit.", autocomplete=get_custom_datarefs)
+    @option("path", description="The path that the edited dataref will have(defaults to old one).", required=False)
     @option("type", description="The type of dataref the edited dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the edited dataref.", autocomplete=get_units)
     @option("range", description="The range of the dataref's values(e.g: 0.0 -> 1.0), 'N/A' for string types.")
     @option("description", description="The description of the edited dataref.")
-    async def drefedit(self, ctx, dataref, type, unit, range, description):
+    async def drefedit(self, ctx, dataref, path, dreftype, unit, range, description):
         if ctx.author.id in acdevs:
             if dataref in customDatarefList:
                 await ctx.defer()
-                with open("dev/aircraft/datarefs.json", "r") as f:
-                    datarefs = json.load(f)
-                if type == "string":
-                    range = "N/A"
-                newDref = {
-                            "path":f"{dataref}",
-                            "type":f"{type}",
-                            "unit":f"{unit}",
-                            "range":f"{range}",
-                            "description":f"{description}"
-                }
-                datarefs["datarefs"][dataref].update(newDref)
-
-                with open("dev/aircraft/datarefs.json", "w") as f:
-                    json.dump(datarefs, f, indent=4)
+                oldDref = drefcol.find_one({"path":dataref})
+                if path == None:
+                    path = oldDref.get("path", "N/A: Please report this to Matt3o0.")
+                drefcol.update_one({"path":dataref}, 
+                {"$set":
+                    {
+                        "_id":path,
+                        "path":path,
+                        "type":dreftype,
+                        "unit":unit,
+                        "description":description
+                    }
+                })
                 embed = discord.Embed(title=f"Edited dataref `{dataref}` successfully.", colour=cfc)
                 embed.set_footer(text="Don't forget to edit the type of the dataref with SASL, if it changed and if you didn't already do so.")
                 await ctx.respond(embed=embed)
