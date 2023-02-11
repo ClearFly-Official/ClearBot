@@ -83,12 +83,12 @@ class UtilityCommands(discord.Cog):
         if user == None:
             author = ctx.author
             pfp = author.avatar.url
-            embed = discord.Embed(title="Your avatar!",description=f"[link]({pfp})", color=cfc)
+            embed = discord.Embed(title="Your avatar!",url=pfp, color=cfc)
             embed.set_image(url=pfp)
             await ctx.respond(embed=embed)
         else:
             userAvatarUrl = user.avatar.url    
-            embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({userAvatarUrl})", color=cfc)
+            embed = discord.Embed(title=f"{user}'s avatar!",url=pfp, color=cfc)
             embed.set_image(url=userAvatarUrl)
             await ctx.respond(embed=embed)
 
@@ -96,7 +96,7 @@ class UtilityCommands(discord.Cog):
     async def avatar_app(self, ctx, user:discord.Member):
         await ctx.defer()
         userAvatarUrl = user.avatar.url    
-        embed = discord.Embed(title=f"{user}'s avatar!",description=f"[link]({userAvatarUrl})", color=cfc)
+        embed = discord.Embed(title=f"{user}'s avatar!",url=userAvatarUrl, color=cfc)
         embed.set_image(url=userAvatarUrl)
         await ctx.respond(embed=embed)
 
@@ -116,7 +116,6 @@ class UtilityCommands(discord.Cog):
 **Account created on:**{acccrtt}
 **Account joined this server on:**{accjoint}
             """)
-            emb.add_field(name="Avatar:", value=f"[link]({pfp})", inline=False)
             emb.set_thumbnail(url=pfp)
             await ctx.respond(embed=emb)
         else:
@@ -130,7 +129,6 @@ class UtilityCommands(discord.Cog):
 **Account created on:**{acccrtte}
 **Account joined this server on:**{accjointe}
             """)
-            embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
             embed.set_thumbnail(url=pfpe)
             await ctx.respond(embed=embed)
 
@@ -147,13 +145,12 @@ class UtilityCommands(discord.Cog):
 **Account created on:**{acccrtte}
 **Account joined this server on:**{accjointe}
         """)
-        embed.add_field(name="Avatar:", value=f"[link]({pfpe})", inline=False)
         embed.set_thumbnail(url=pfpe)
         await ctx.respond(embed=embed)
 
     @utility.command(name="github", description="Shows Clearfy's GitHub repositories.")
     async def github(self, ctx):
-        embed = discord.Embed(title="ClearFly GitHub:", description="-[ClearFly](https://github.com/ClearFly-Official/)\n-[ClearBot](https://github.com/ClearFly-Official/ClearBot)\n-[ClearFly Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",color=cfc)
+        embed = discord.Embed(title="ClearFly GitHub:", description="- [ClearFly](https://github.com/ClearFly-Official/)\n- [ClearBot](https://github.com/ClearFly-Official/ClearBot)\n- [ClearFly Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",color=cfc)
         await ctx.respond(embed=embed)
 
     @math.command(name="basic", description="Do some basic math.")
