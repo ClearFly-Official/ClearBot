@@ -334,7 +334,7 @@ Description :
 
     @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
-    @option("dataref_type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
+    @option("dataref_type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string", "command"])
     @option("unit", description="The unit type of the new dataref.", autocomplete=get_units)
     @option("description", description="The description of the new dataref.")
     async def drefadd(self, ctx, path, dataref_type, unit, description):
