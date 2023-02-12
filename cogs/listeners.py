@@ -298,7 +298,6 @@ Before: **{before.name}**
 After: **{after.name}**
             """)
         if (str(before.type) or str(after.type)) == "text":
-            print("yahoo")
             if before.topic != after.topic:
                 embed.add_field(name="Topic", value=f"""
 Before:
@@ -320,29 +319,6 @@ After: **{after.category}**
             embed.add_field(name="Position", value=f"""
 Before: **{before.position+1}**
 After: **{after.position+1}**
-            """)
-        if before.changed_roles != after.changed_roles:
-            brole = [str(role.id) for role in before.changed_roles]
-            brole = ["<@&" + str(role) for role in brole]
-            brole = [str(role) + ">" for role in brole]
-            arole = [str(role.id) for role in after.changed_roles]
-            arole = ["<@&" + str(role) for role in arole]
-            arole = [str(role) + ">" for role in arole]
-            difr = set(brole) - set(arole)
-            difa = set(arole) - set(brole)
-            if difr == set():
-                difr = None
-            else:
-                difr = "\n".join(list(difr))
-            if difa == set():
-                difa = None
-            else:
-                difa = "\n".join(list(difa))
-            embed.add_field(name="Roles", value=f"""
-Added:
-{difa}
-Removed:
-{difr}
             """)
         await channel.send(embed=embed)
 
