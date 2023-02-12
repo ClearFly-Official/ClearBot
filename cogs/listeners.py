@@ -289,6 +289,53 @@ ID: **{after.id}**
             pass
 
     @commands.Cog.listener()
+    async def on_guild_channel_update(self, before, after):
+        embed = discord.Embed(title=f"Channel Updated", colour=cfc)
+        if before.name != after.name:
+            embed.add_field(name="Name", value=f"""
+Before: **{before.name}**
+After: **{after.name}**
+            """)
+        if before.permissions_synced != after.permissions_synced:
+            embed.add_field(name="Synced Permissions", value=f"""
+Before: **{before.permissions_synced}**
+After: **{after.permissions_synced}**
+            """)
+        if before.category != after.category:
+            embed.add_field(name="Category", value=f"""
+Before: **{before.category}**
+After: **{after.category}**
+            """)
+        if before.position != after.position:
+            embed.add_field(name="Position", value=f"""
+Before: **{before.position+1}**
+After: **{after.position+1}**
+            """)
+        if before.changed_roles != after.changed_roles:
+            brole = [str(role.id) for role in before.roles]
+            brole = ["<@&" + str(role) for role in brole]
+            brole = [str(role) + ">" for role in brole]
+            arole = [str(role.id) for role in after.roles]
+            arole = ["<@&" + str(role) for role in arole]
+            arole = [str(role) + ">" for role in arole]
+            difr = set(brole) - set(arole)
+            difa = set(arole) - set(brole)
+            if difr == set():
+                difr = None
+            else:
+                difr = "\n".join(list(difr))
+            if difa == set():
+                difa = None
+            else:
+                difa = "\n".join(list(difa))
+            embed.add_field(name="Roles", value=f"""
+Added:
+{difa}
+Removed:
+{difr}
+            """)
+
+    @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if before.bot == False:
             channel = self.bot.get_channel(1001405648828891187)
