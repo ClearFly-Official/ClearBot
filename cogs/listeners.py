@@ -290,13 +290,20 @@ ID: **{after.id}**
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self, before, after):
-        print(before.type)
         channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
         if before.name != after.name:
             embed.add_field(name="Name", value=f"""
 Before: **{before.name}**
 After: **{after.name}**
+            """)
+        if before.type == "text":
+            if before.topic != after.topic:
+                embed.add_field(name="Name", value=f"""
+Before: 
+{before.topic}
+After: 
+{after.topic}
             """)
         if before.permissions_synced != after.permissions_synced:
             embed.add_field(name="Synced Permissions", value=f"""
@@ -314,10 +321,10 @@ Before: **{before.position+1}**
 After: **{after.position+1}**
             """)
         if before.changed_roles != after.changed_roles:
-            brole = [str(role.id) for role in before.roles]
+            brole = [str(role.id) for role in before.changed_roles]
             brole = ["<@&" + str(role) for role in brole]
             brole = [str(role) + ">" for role in brole]
-            arole = [str(role.id) for role in after.roles]
+            arole = [str(role.id) for role in after.changed_roles]
             arole = ["<@&" + str(role) for role in arole]
             arole = [str(role) + ">" for role in arole]
             difr = set(brole) - set(arole)
