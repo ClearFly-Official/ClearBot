@@ -300,11 +300,11 @@ After: **{after.name}**
         if (str(before.type) or str(after.type)) == "text":
             print("yahoo")
             if before.topic != after.topic:
-                embed.add_field(name="Name", value=f"""
-Before: 
-{before.topic}
-After: 
-{after.topic}
+                embed.add_field(name="Topic", value=f"""
+Before:
+> {before.topic}
+After:
+> {after.topic}
             """)
         if before.permissions_synced != after.permissions_synced:
             embed.add_field(name="Synced Permissions", value=f"""
