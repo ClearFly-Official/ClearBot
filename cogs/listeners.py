@@ -297,7 +297,8 @@ ID: **{after.id}**
 Before: **{before.name}**
 After: **{after.name}**
             """)
-        if before.type == "text":
+        if (str(before.type) or str(after.type)) == "text":
+            print("yahoo")
             if before.topic != after.topic:
                 embed.add_field(name="Name", value=f"""
 Before: 
