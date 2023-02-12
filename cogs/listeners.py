@@ -290,6 +290,7 @@ ID: **{after.id}**
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self, before, after):
+        channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
         if before.name != after.name:
             embed.add_field(name="Name", value=f"""
@@ -334,6 +335,8 @@ Added:
 Removed:
 {difr}
             """)
+        await channel.send(embed=embed)
+
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
