@@ -309,7 +309,8 @@ class UtilityCommands(discord.Cog):
                         if select.values[0] == "Fun":
                             embfun = discord.Embed(title = "**Help**",color = cfc)
                             embfun.add_field(name="**Fun commands**", value=f"""
-</fun ascii:1016057999195910276> : Converts text in to ascii.
+</fun ascii:1016057999195910276> : Converts text in to big ascii characters.
+</fun bigtext:1016057999195910276> : Converts text in to big emoji text.
 </fun 8ball:1016057999195910276> : Ask the bot some questions!
 </fun dadjoke:1016057999195910276> : Gets you a dadjoke.
 </fun roast:1016057999195910276> : Roast whoever you'd like!

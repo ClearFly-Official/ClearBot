@@ -26,7 +26,7 @@ class FunCommands(discord.Cog):
     async def bigtxtconv(self, ctx, text):
         chars = "abcdefghijklmnopqrstuvwxyz"
         convtext = []
-        
+
         for c in list(text):
             if c in list(chars):
                 c = c.replace(c, f":regional_indicator_{c}:")
@@ -52,7 +52,7 @@ class FunCommands(discord.Cog):
                 c = c.replace(c, ":nine:")
             convtext.append(c)
         
-        await ctx.respond("".joint(convtext))
+        await ctx.respond("".join(convtext))
     @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")
     async def asciiconv(self, ctx, text):
