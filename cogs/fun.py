@@ -20,9 +20,42 @@ class FunCommands(discord.Cog):
     async def on_ready(self):
         print("| Fun cog loaded sucessfully")
 
+
+    @fun.command(name="bigtext", description="Convert text into text emoji characters.")
+    @option("text", description="The text you want to convert.")
+    async def bigtxtconv(self, ctx, text):
+        chars = "abcdefghijklmnopqrstuvwxyz"
+        convtext = []
+        
+        for c in list(text):
+            if c in list(chars):
+                c = c.replace(c, f":regional_indicator_{c}:")
+            if c == "0":
+                c = c.replace(c, ":zero:")
+            if c == "1":
+                c = c.replace(c, ":one:")
+            if c == "2":
+                c = c.replace(c, ":two:")
+            if c == "3":
+                c = c.replace(c, ":three:")
+            if c == "4":
+                c = c.replace(c, ":four:")
+            if c == "5":
+                c = c.replace(c, ":five:")
+            if c == "6":
+                c = c.replace(c, ":six:")
+            if c == "7":
+                c = c.replace(c, ":seven:")
+            if c == "8":
+                c = c.replace(c, ":eight:")
+            if c == "9":
+                c = c.replace(c, ":nine:")
+            convtext.append(c)
+        
+        await ctx.respond("".joint(convtext))
     @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")
-    async def ascii(self, ctx, text):
+    async def asciiconv(self, ctx, text):
         try:
             await ctx.respond(f"```{pyfiglet.figlet_format(text)}```")
         except Exception as error:
