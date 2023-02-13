@@ -27,7 +27,7 @@ class FunCommands(discord.Cog):
         chars = "abcdefghijklmnopqrstuvwxyz"
         convtext = []
 
-        for c in list(text):
+        for c in list(text.lower()):
             if c in list(chars):
                 c = c.replace(c, f":regional_indicator_{c}:")
             if c == "0":
