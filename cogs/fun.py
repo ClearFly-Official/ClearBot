@@ -51,8 +51,11 @@ class FunCommands(discord.Cog):
             if c == "9":
                 c = c.replace(c, ":nine:")
             convtext.append(c)
-        
-        await ctx.respond("".join(convtext))
+        if len("".join(convtext)) >= 2000:
+            embed = discord.Embed(title="Error 400", description="The output of the converted text is more than 2000 characters, as Discord allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.", color=errorc)
+            await ctx.respond(embed=embed)
+        else:
+            await ctx.respond("".join(convtext))
     @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")
     async def asciiconv(self, ctx, text):
