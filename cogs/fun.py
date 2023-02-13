@@ -52,7 +52,7 @@ class FunCommands(discord.Cog):
                 c = c.replace(c, ":nine:")
             convtext.append(c)
         if len("".join(convtext)) >= 2000:
-            embed = discord.Embed(title="Error 400", description="The output of the converted text is more than 2000 characters, as Discord allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.", color=errorc)
+            embed = discord.Embed(title="Error 400!", description="The output of the converted text is more than 2000 characters, as Discord only allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.", color=errorc)
             await ctx.respond(embed=embed)
         else:
             await ctx.respond("".join(convtext))
