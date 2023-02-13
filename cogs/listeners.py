@@ -305,6 +305,11 @@ Before:
 After:
 > {after.topic}
             """)
+            if before.slowmode_delay != after.slowmode_delay:
+                embed.add_field(name="Slowmode", value=f"""
+Before: **{before.slowmode_delay}**
+After: **{after.slowmode_delay}**
+                """)
         if before.permissions_synced != after.permissions_synced:
             embed.add_field(name="Synced Permissions", value=f"""
 Before: **{before.permissions_synced}**
