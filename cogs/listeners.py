@@ -291,12 +291,12 @@ ID: **{after.id}**
     async def on_guild_channel_update(self, before, after):
         channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
-        embed.add_field(name="", value=after.mention)
+        embed.add_field(name="", value=after.mention, inline=False)
         if before.name != after.name:
             embed.add_field(name="Name", value=f"""
 Before: **{before.name}**
 After: **{after.name}**
-            """)
+            """, inline=False)
         if (str(before.type) or str(after.type)) == "text":
             if before.topic != after.topic:
                 embed.add_field(name="Topic", value=f"""
@@ -304,27 +304,27 @@ Before:
 > {before.topic}
 After:
 > {after.topic}
-            """)
+            """, inline=False)
             if before.slowmode_delay != after.slowmode_delay:
                 embed.add_field(name="Slowmode", value=f"""
 Before: **{before.slowmode_delay}**
 After: **{after.slowmode_delay}**
-                """)
+                """, inline=False)
         if before.permissions_synced != after.permissions_synced:
             embed.add_field(name="Synced Permissions", value=f"""
 Before: **{before.permissions_synced}**
 After: **{after.permissions_synced}**
-            """)
+            """, inline=False)
         if before.category != after.category:
             embed.add_field(name="Category", value=f"""
 Before: **{before.category}**
 After: **{after.category}**
-            """)
+            """, inline=False)
         if before.position != after.position:
             embed.add_field(name="Position", value=f"""
 Before: **{before.position+1}**
 After: **{after.position+1}**
-            """)
+            """, inline=False)
         await channel.send(embed=embed)
 
 
