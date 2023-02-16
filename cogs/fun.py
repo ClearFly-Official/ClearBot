@@ -24,6 +24,7 @@ class FunCommands(discord.Cog):
     @fun.command(name="bigtext", description="Convert text into text emoji characters.")
     @option("text", description="The text you want to convert.")
     async def bigtxtconv(self, ctx, text):
+        
         chars = "abcdefghijklmnopqrstuvwxyz"
         convtext = []
 
@@ -56,6 +57,7 @@ class FunCommands(discord.Cog):
             await ctx.respond(embed=embed)
         else:
             await ctx.respond("".join(convtext))
+
     @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")
     async def asciiconv(self, ctx, text):

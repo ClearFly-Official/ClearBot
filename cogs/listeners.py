@@ -164,11 +164,10 @@ class Listeners(discord.Cog):
                     nowlvlprog = int(belvlprog)+7
                 if len(message.content) > 75:
                     nowlvlprog = int(belvlprog)+10
-                lvlprog = config.get("Level", "lvlprog")
                 lvl = config.get("Level", "lvl")
                 topprog = config.get("Level", "topprog")
                 config.set("Level","lvlprog", f"{nowlvlprog}")
-                if int(lvlprog) >= int(topprog):
+                if int(nowlvlprog) >= int(topprog):
                     config.set("Level","lvlprog", "0")
                     config.set("Level","lvl", f"{int(lvl)+1}")
                     if int(lvl) == 0:
@@ -292,6 +291,7 @@ ID: **{after.id}**
     async def on_guild_channel_update(self, before, after):
         channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
+        embed.add_field(name="", value=after.mention)
         if before.name != after.name:
             embed.add_field(name="Name", value=f"""
 Before: **{before.name}**
