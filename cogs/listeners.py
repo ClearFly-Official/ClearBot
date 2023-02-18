@@ -230,7 +230,7 @@ Message Content:
             emb.add_field(name="Author", value=f"{msgatr}", inline = True)
             emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
             emb.add_field(name="Other Information", value=f"""
-Pinnend: **{message.pinned}**
+Pinned: **{message.pinned}**
 Type: **{message.type}**
 ID: **{message.id}**
                 """)
@@ -278,7 +278,7 @@ After:
                 emb.add_field(name="Author", value=f"{msgatr}", inline = True)
                 emb.add_field(name="Channel", value=f"{msgcnl}", inline = True)
                 emb.add_field(name="Other Information", value=f"""
-Pinnend: **{after.pinned}**
+Pinned: **{after.pinned}**
 Type: **{after.type}**
 ID: **{after.id}**
                 """)
