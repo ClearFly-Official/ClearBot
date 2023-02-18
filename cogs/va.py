@@ -1229,7 +1229,7 @@ Number of flights: **{nof}**
             button2 = Button(label="Boeing 737-200 by FlyJSim", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1o1vQk_HG1iJhJH1t_Z8cLBimDwxG90-C/view?usp=share_link")
             button3 = Button(label="Airbus A300-600 by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1vdIOYlcM_2kNhooD_CTDE8UpoJ7mIvkk/view?usp=share_link")
             button4 = Button(label="Airbus A300-600F by IniSimulations", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1w6kd3H0VBiWoTlmcvvvyte5wbqHE7i5k/view?usp=share_link")
-            button5 = Button(label="Cessna 172SP by Laminar Research", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/17FqPHGWHXyG8jgXhJBSgDEbKZMWtOqmc/view?usp=share_link")
+            button5 = Button(label="Cessna 172SP by Laminar Research", style=discord.ButtonStyle.url, url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing")
             view = View()
             view.add_item(button1)
             view.add_item(button2)
