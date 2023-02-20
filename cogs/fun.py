@@ -305,7 +305,7 @@ class FunCommands(discord.Cog):
         for ccode in ccodes:
             newText = newText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
 
-        newText = str(textwrap.fill(newText, 32, max_lines=6))
+        newText = str(textwrap.fill(newText, 28, max_lines=2))
 
         with Image.new('RGBA', (2048, 512)) as image:
             font = ImageFont.truetype('fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf', 144)
@@ -314,7 +314,7 @@ class FunCommands(discord.Cog):
             image.save(fileName)
 
         file = discord.File(fileName, filename=fileName)
-        embed = discord.Embed(title="Guess the sentence!", description=f"*Sentence generated with '{difficulty}', reply ping with your answer*", color=cfc)
+        embed = discord.Embed(title="Guess the sentence!", description=f"Hurry up, you only have **2 mins**!\n\n*Sentence generated with '{difficulty}' difficulty, reply ping with your answer*", color=cfc)
         embed.set_image(url=f"attachment://{fileName}")
         embed.set_footer(text="Difficulty level only affects sentences, not flags!")
         await ctx.respond(embed=embed,file=file)
