@@ -3,6 +3,7 @@ import pyfiglet
 import random
 import textwrap
 import os
+import flag
 from dadjokes import Dadjoke
 from discord import option
 from discord.ext import commands
