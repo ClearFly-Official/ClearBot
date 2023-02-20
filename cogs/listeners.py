@@ -28,9 +28,11 @@ class Listeners(discord.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.presence.start()
-        self.rssfeed1.start()
-        self.rssfeed2.start()
-        self.rssfeed3.start()
+        self.rssfeedtres1.start()
+        self.rssfeedtres2.start()
+        self.rssfeedtres3.start()
+        self.rssfeedsf1.start()
+        self.rssfeedfsa1.start()
         print("| listeners cog loaded sucessfully")
 
     @tasks.loop(minutes=10)
@@ -58,7 +60,7 @@ class Listeners(discord.Cog):
             await self.bot.change_presence(activity=discord.Game(name=f"/help | {random.choice(statements)}"),status=discord.Status.online)
         
     @tasks.loop(seconds=60)
-    async def rssfeed1(self):
+    async def rssfeedtres1(self):
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml" )
             feed = dict(blog_feed.entries[0])
@@ -81,9 +83,59 @@ class Listeners(discord.Cog):
 
 {feed.get('link')}
                 """)
+            
+    @tasks.loop(seconds=60)
+    async def rssfeedtres2(self):
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml" )
+            feed = dict(blog_feed.entries[0])
+            lastID = trescol.find()
+            ids = []
+            for id in lastID:
+                ids.append(id)
+            if ids == []:
+                ids = [{'lastIDopinion':None}]
+            if ids[0]['lastIDopinion'] == feed.get('id'):
+                return
+            else:
+                trescol.update_one({"_id": "lastIDopinion"},{
+                    "$set":{
+                        "lastIDopinion": feed.get('id')
+                    }
+                })
+                await channel.send(f"""
+**{feed.get('title')}**
+
+{feed.get('link')}
+                """)
 
     @tasks.loop(seconds=60)
-    async def rssfeed2(self):
+    async def rssfeedtres3(self):
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml" )
+            feed = dict(blog_feed.entries[0])
+            lastID = trescol.find()
+            ids = []
+            for id in lastID:
+                ids.append(id)
+            if ids == []:
+                ids = [{'lastIDarticle':None}]
+            if ids[0]['lastIDarticle'] == feed.get('id'):
+                return
+            else:
+                trescol.update_one({"_id": "lastIDarticle"},{
+                    "$set":{
+                        "lastIDarticle": feed.get('id')
+                    }
+                })
+                await channel.send(f"""
+**{feed.get('title')}**
+
+{feed.get('link')}
+                """)
+
+    @tasks.loop(seconds=60)
+    async def rssfeedfsa1(self):
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://fsaddons.online/category/x-plane/rss" )
             feed = dict(blog_feed.entries[0])
@@ -108,7 +160,7 @@ class Listeners(discord.Cog):
                 """)
 
     @tasks.loop(seconds=60)
-    async def rssfeed3(self):
+    async def rssfeedsf1(self):
             channel = self.bot.get_channel(avnews)
             blog_feed = feedparser.parse("https://simpleflying.com/feed")
             feed = dict(blog_feed.entries[0])
