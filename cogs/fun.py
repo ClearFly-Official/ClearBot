@@ -331,7 +331,7 @@ class FunCommands(discord.Cog):
                 embed = discord.Embed(title="🥲 Sadness, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
                 await msg.reply(embed=embed)
         except Exception:
-            embed = discord.Embed(title="Error 408", description="You ran out of time!", colour=errorc)
+            embed = discord.Embed(title="Error 408", description=f"You ran out of time! The answer was: `{oldText}`", colour=errorc)
             await ctx.respond(embed=embed)
         os.remove(fileName)
 
