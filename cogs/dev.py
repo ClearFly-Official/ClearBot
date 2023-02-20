@@ -68,7 +68,7 @@ class DevCommands(discord.Cog):
                 return None, None
         return doc_part, path
 
-    @dev.command(name="docs", description="Get information from the Pycord docs.")
+    @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
     @option("doc_part", autocomplete=getattrs, description="The part of the doc you want to search for.")
     async def get_doc(self, ctx, doc_part):
         if ctx.author.id in devs:
@@ -90,7 +90,7 @@ class DevCommands(discord.Cog):
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dev.command(name="reload_cogs", description="Reload the Cogs you want.")
+    @dev.command(name="reload_cogs", description="🔄 Reload the Cogs you want.")
     async def reloadCogs(self, ctx):
         if ctx.author.id in devs:
             cogs = [
@@ -191,7 +191,7 @@ Reloaded cogs:
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dev.command(name="restart", description="Restarst the bot.")
+    @dev.command(name="restart", description="🔁 Restarst the bot.")
     async def restart(self, ctx):
         if ctx.author.id == 668874138160594985:
             embed = discord.Embed(title="Restarting bot...", color=cfc)
@@ -201,7 +201,7 @@ Reloaded cogs:
             embed = discord.Embed(title="Error 403!", description="You're not the owner of ClearBot, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dev.command(name="update", description="Pull the latest version of the bot from the GitHub repo.")
+    @dev.command(name="update", description="⬇️ Pull the latest version of the bot from the GitHub repo.")
     async def gitupdate(self, ctx):
         if ctx.author.id in devs:
             await ctx.defer()
@@ -274,7 +274,7 @@ Reloaded cogs:
                  "z"]
         return [unit for unit in units if ctx.value in unit]
 
-    @dataref.command(name="list",description="List all the custom datarefs.")
+    @dataref.command(name="list",description="📂 List all the custom datarefs.")
     async def dreflist(self, ctx):
         drefs = []
         for dref in drefcol.find():
@@ -292,7 +292,7 @@ Reloaded cogs:
         """, colour=cfc)
         await ctx.respond(embed=embed)
 
-    @dataref.command(name="search", description="Find the dataref/command you're looking for.")
+    @dataref.command(name="search", description="🔎 Find the dataref/command you're looking for.")
     @option("dataref", description="The dataref you want information about.", autocomplete=get_datarefs)
     async def drefsearch(self, ctx, dataref):
         if ctx.author.id in acdevs:
@@ -332,7 +332,7 @@ Description :
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dataref.command(name="add", description="Add a new dataref to the list of datarefs.")
+    @dataref.command(name="add", description="➕ Add a new dataref to the list of datarefs.")
     @option("path", description="The path of the new dataref(e.g: ClearFly/731/foo/bar).")
     @option("dataref_type", description="The type of dataref the new dataref will be.", choices=["double", "float", "float array", "int", "int array", "string", "command"])
     @option("unit", description="The unit type of the new dataref.", autocomplete=get_units)
@@ -359,7 +359,7 @@ Description :
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @dataref.command(name="edit", description="Edit an existing dataref.")
+    @dataref.command(name="edit", description="✍️ Edit an existing dataref.")
     @option("dataref", description="The dataref you want to edit.", autocomplete=get_custom_datarefs)
     @option("type", description="The type of dataref the edited dataref will be.", choices=["double", "float", "float array", "int", "int array", "string"])
     @option("unit", description="The unit type of the edited dataref.", autocomplete=get_units)
@@ -393,7 +393,7 @@ Description :
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
 
-    @discord.message_command(name="Message Info")
+    @discord.message_command(name="ℹ️ Message Info")
     async def msginfo(self, ctx, message):
         if ctx.author.id in devs:
             await ctx.respond(f"""
@@ -425,7 +425,7 @@ Channel: {message.channel.mention}
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
             
-    @dev.command(name="eval", description="Execute some code.")
+    @dev.command(name="eval", description="💻 Execute some code.")
     @option("code", description="The code you want to execute", autocomplete=getattrs2)
     async def evalcmd(self, ctx, code):
         if ctx.author.id in devs:

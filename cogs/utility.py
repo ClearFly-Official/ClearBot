@@ -21,7 +21,7 @@ class UtilityCommands(discord.Cog):
     async def on_ready(self):
         print("| Utility cog loaded sucessfully")
 
-    @discord.command(name="report", description="Need help? Use this command to contact the admins!")
+    @discord.command(name="report", description="⛑️ Need help? Use this command to contact the admins!")
     @option("subject",description="What is your report about?",choices=["Misbehaving User", "Spam", "Hacked/Compromised Account", "Raid"])
     @option("priority", description="The priority level of the report", choices=["low", "medium", "high"])
     @option("user", description="The user involved(if more than one mention in comments unless raid)", required=False)
@@ -66,7 +66,7 @@ class UtilityCommands(discord.Cog):
             await channel.send("<@&965422406036488282> ATTENTION ALL ADMINS", embed=embed)
             await channel.send("<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT")
 
-    @utility.command(name='the-team', description='Shows The ClearFly Team!')
+    @utility.command(name='the-team', description='🧑‍🤝‍🧑 Shows The ClearFly Team!')
     async def team(self, ctx):
         embed = discord.Embed(title="The ClearFly Team:",color=cfc)
         logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
@@ -76,7 +76,7 @@ class UtilityCommands(discord.Cog):
         embed.set_thumbnail(url=logo)
         await ctx.respond(embed=embed)
 
-    @utility.command(name="avatar",description="Shows your avatar.")
+    @utility.command(name="avatar",description="🌌 Shows your avatar.")
     @option("user", description="The user you want the avatar of.")
     async def avatar(self, ctx, user: discord.Member = None):
         await ctx.defer()
@@ -100,7 +100,7 @@ class UtilityCommands(discord.Cog):
         embed.set_image(url=userAvatarUrl)
         await ctx.respond(embed=embed)
 
-    @utility.command(name="who-is", description="Fetches a user profile.")
+    @utility.command(name="who-is", description="📰 Fetches a user profile.")
     @option("user", description="The user you want the user profile of.")
     async def whois(self, ctx, user: discord.Member = None):
         await ctx.defer()
@@ -148,12 +148,12 @@ class UtilityCommands(discord.Cog):
         embed.set_thumbnail(url=pfpe)
         await ctx.respond(embed=embed)
 
-    @utility.command(name="github", description="Shows Clearfy's GitHub repositories.")
+    @utility.command(name="github", description="🗄️ Shows Clearfy's GitHub repositories.")
     async def github(self, ctx):
         embed = discord.Embed(title="ClearFly GitHub:", description="- [ClearFly](https://github.com/ClearFly-Official/)\n- [ClearBot](https://github.com/ClearFly-Official/ClearBot)\n- [ClearFly Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",color=cfc)
         await ctx.respond(embed=embed)
 
-    @math.command(name="basic", description="Do some basic math.")
+    @math.command(name="basic", description="🧮 Do some basic math.")
     @option("type", description="The type of basic math you want to do.", choices=["Addition","Subtraction","Multiplication","Division"])
     @option("input1", description="The first number.")
     @option("input2", description="The second number.")
@@ -175,7 +175,7 @@ class UtilityCommands(discord.Cog):
                 embed = discord.Embed(description=f"{input1} : {input2} = **{input1/input2}**", color=cfc)
                 await ctx.respond(embed=embed)
 
-    @math.command(name="advanced", description="Do some more advanced math.")
+    @math.command(name="advanced", description="♾️ Do some more advanced math.")
     @option("type", description="The type of advanced math you want to do.", choices=["Square root", "Power"])
     @option("input", description="The first number")
     @option("power", description="The exponent (not needed for sqrt)", required=False)
@@ -191,7 +191,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
 
-    @utility.command(name="stats",description="Show statistics about the bot and server.")
+    @utility.command(name="stats",description="📈 Show statistics about the bot and server.")
     async def stats(self, ctx):
         loc = 0
         f = open("main.py", "r")
@@ -232,7 +232,7 @@ class UtilityCommands(discord.Cog):
             )
         await ctx.respond(embed = embed)
     
-    @discord.command(name="help", description="Need help? This is the right command!")
+    @discord.command(name="help", description="❓ Need help? This is the right command!")
     async def help(self, ctx):
         class HelpView(discord.ui.View):
                 def __init__(self, bot):

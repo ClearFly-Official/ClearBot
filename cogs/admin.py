@@ -101,7 +101,7 @@ class AdminCommands(discord.Cog):
 
     admin = discord.SlashCommandGroup(name="admin", description="Commands for admins")
         
-    @admin.command(name="echo",description="Send a message as ClearBot.")
+    @admin.command(name="echo",description="💬 Send a message as ClearBot.")
     @option("text", description="The text you want to send as the bot.")
     @commands.has_permissions(manage_channels=True)
     async def echo(self,ctx, text: str):
@@ -113,7 +113,7 @@ class AdminCommands(discord.Cog):
         emb.set_thumbnail(url=pfp)
         await channel.send(embed=emb)
 
-    @admin.command(name="embed",description="Send an embed as ClearBot.")
+    @admin.command(name="embed",description="📦 Send an embed as ClearBot.")
     @option("title", description="The title of the embed.")
     @option("description", description="The description of the embed.")
     @commands.has_permissions(manage_channels=True)
@@ -143,7 +143,7 @@ class AdminCommands(discord.Cog):
         embed.set_thumbnail(url=pfp)
         await channel2.send(embed=embed)
 
-    @admin.command(name="spam", description="Spam the channel to oblivion.")
+    @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
     @option("text", description="What you want to spam.")
     @commands.has_permissions(manage_channels=True)
@@ -195,7 +195,7 @@ class AdminCommands(discord.Cog):
             for i in range(amount):
                 await ctx.send(text)
 
-    @admin.command(name="slowmode", description="Set the slowmode time of a channel.")
+    @admin.command(name="slowmode", description="⏰ Set the slowmode time of a channel.")
     @option("slowmode", description="The amount of time the slowmode should be, in seconds.")
     @option("channel", description="The channel to apply the slowmode to.", required=False)
     @commands.has_permissions(manage_channels=True)
@@ -218,7 +218,7 @@ class AdminCommands(discord.Cog):
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await logchannel.send(embed=embed)
 
-    @admin.command(description='Delete large amounts of messages from a channel.')
+    @admin.command(description='🗑️ Delete large amounts of messages from a channel.')
     @option("amount", description="The number of messages you want to delete.")
     @commands.has_permissions(manage_channels=True)
     async def purge(self, ctx, amount: int):

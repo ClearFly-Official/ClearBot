@@ -20,7 +20,7 @@ class AvCommands(discord.Cog):
     async def on_ready(self):
         print("| Aviation cog loaded sucessfully")
 
-    @av.command(name="metar", description="Get the metar data of an airport.")
+    @av.command(name="metar", description="⛅️ Get the metar data of an airport.")
     @option("airport", description="The airport you want the metar data of.", autocomplete=get_airports)
     async def metar(self, ctx, airport):
         await ctx.defer()
@@ -119,7 +119,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             embed = discord.Embed(title="Error 404!", description=f"Didn't found metar data for {airport[:4].upper()}.", color=errorc)
             await ctx.respond(embed=embed)
 
-    @av.command(name="charts", description="Fetches charts of the provided airport.")
+    @av.command(name="charts", description="🗺️ Fetches charts of the provided airport.")
     @commands.cooldown(
     1, 20, commands.BucketType.user
     )

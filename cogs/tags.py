@@ -30,7 +30,7 @@ class TagCommands(discord.Cog):
             tags.append(tag.get("name"))
         return [tag for tag in tags if ctx.value in tag]
 
-    @tags.command(description="View a tag.")
+    @tags.command(description="🔎 View a tag.")
     @option("tag", description="The tag you want to view.",autocomplete=get_tags)
     async def view(self, ctx, tag):
         tags = []
@@ -45,7 +45,7 @@ Didn't found {tag}.
             """, colour=errorc)
             await ctx.respond(embed=embed)
 
-    @tags.command(description="List all the tags.")
+    @tags.command(description="📂 List all the tags.")
     async def list(self, ctx):
         tags = []
         for tag_ in tagcol.find():
@@ -63,7 +63,7 @@ Didn't found {tag}.
         """, colour=cfc)
         await ctx.respond(embed=embed)
 
-    @tags.command(description="Add a new tag.")
+    @tags.command(description="➕ Add a new tag.")
     @commands.has_permissions(manage_channels=True)
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
@@ -88,7 +88,7 @@ Didn't found {tag}.
         modal = AddTagModal(title="Create a new tag.")
         await ctx.send_modal(modal)
 
-    @tags.command(description="Edit a tag.")
+    @tags.command(description="✍️ Edit a tag.")
     @commands.has_permissions(manage_channels=True)
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
@@ -125,7 +125,7 @@ Didn't found {edit}.
         modal = EditTagModal(title="Create a new tag.")
         await ctx.send_modal(modal)
 
-    @tags.command(description="Delete a tag.")
+    @tags.command(description="⛔️ Delete a tag.")
     @commands.has_permissions(manage_channels=True)
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
     async def delete(self, ctx, tag):

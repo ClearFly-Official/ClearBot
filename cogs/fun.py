@@ -25,7 +25,7 @@ class FunCommands(discord.Cog):
         print("| Fun cog loaded sucessfully")
 
 
-    @fun.command(name="bigtext", description="Convert text into text emoji characters.")
+    @fun.command(name="bigtext", description="📚 Convert text into text emoji characters.")
     @option("text", description="The text you want to convert.")
     async def bigtxtconv(self, ctx, text):
         
@@ -62,7 +62,7 @@ class FunCommands(discord.Cog):
         else:
             await ctx.respond("".join(convtext))
 
-    @fun.command(name="ascii",description="Convert text into big characters using ASCII.")
+    @fun.command(name="ascii",description="📑 Convert text into big characters using ASCII.")
     @option("text", description="The text you want to convert.")
     async def asciiconv(self, ctx, text):
         try:
@@ -74,7 +74,7 @@ class FunCommands(discord.Cog):
 ```
             """)
 
-    @fun.command(name="8ball", description="Roll the eight ball and recieve the wisdom of chance!")
+    @fun.command(name="8ball", description="🎱  Roll the eight ball and recieve the wisdom of chance!")
     @option("question", description="The question you want to ask the bot.")
     @option("mode", description="The mode of the answers. This will determine the answer type.", choices=["Normal", "Weird Mode"])
     async def VIIIball(self, ctx, question, mode= None):
@@ -135,13 +135,13 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
             await ctx.respond(embed=embed)
 
-    @fun.command(name="dadjoke", description="Get an unfunny dadjoke.")
+    @fun.command(name="dadjoke", description="🃏 Get an unfunny dadjoke.")
     async def dadjoke(self, ctx):
         dadjoke = Dadjoke()
         embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
         await ctx.respond(embed=embed)
 
-    @fun.command(name="roast", description="Why roast your friends when the bot can do it for you?")
+    @fun.command(name="roast", description="🔥 Why roast your friends when the bot can do it for you?")
     @option("user", description="The person you'd like to roast.")
     async def roast(self, ctx, user: discord.Member):
         roasts = [
@@ -189,7 +189,7 @@ class FunCommands(discord.Cog):
         else:
             await ctx.respond(f"{user.mention} {output}")
 
-    @fun.command(name="button-game", description="Play a game with buttons!")
+    @fun.command(name="button-game", description="🔘 Play a game with buttons!")
     async def bgame(self, ctx):
         embed = discord.Embed(title="Choose a button!", color=cfc)
         class ButtonGame(discord.ui.View):
@@ -259,7 +259,7 @@ class FunCommands(discord.Cog):
 
         await ctx.respond(embed=embed, view=ButtonGame())
 
-    @discord.message_command(name='Quote Message')
+    @discord.message_command(name='📰 Quote Message')
     async def quote(self, ctx, message):
         await ctx.defer()
         await message.author.avatar.save("images/avataroriginq.png")
@@ -281,7 +281,7 @@ class FunCommands(discord.Cog):
         img.save("images/qoute.png")
         await ctx.respond(file=discord.File("images/qoute.png"))
 
-    @fun.command(name="flag-game", description="Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
+    @fun.command(name="flag-game", description="🏳️ Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
     @option("difficulty", description="Difficulty level of the game(only affects sentences, not flags!)", choices=["Very Easy", "Easy", "Normal", "Hard"])
     async def flagsgame(self, ctx, difficulty):
         await ctx.defer()

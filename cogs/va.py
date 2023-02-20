@@ -181,7 +181,7 @@ class VACommands(discord.Cog):
         await channel2.send(embed=embed)
         await ctx.respond("Done", ephemeral=True)
     
-    @va.command(name="training", description="Start your career in the ClearFly VA!")
+    @va.command(name="training", description="🏋️ Start your career in the ClearFly VA!")
     @option("origin", description="The airport(ICAO) you will fly from.")
     @option("destination", description="The airport(ICAO) you will fly to.")
     async def vatrain(self,ctx, origin, destination):
@@ -500,7 +500,7 @@ Have a nice and safe flight!
                 embed = discord.Embed(title="Error 403!", description="You do not have the <@&1040918463763468369> role. \nGet it in <#965686982304997466> before using this command!", color=errorc)
                 await ctx.respond(embed=embed)
 
-    @instructor.command(name="approve", description="Approve a student's flight and give the required info to them.")
+    @instructor.command(name="approve", description="✅ Approve a student's flight and give the required info to them.")
     @option("comments", required=False)
     async def vaapprove(self, ctx, user: discord.Member, route, crzalt, comments):
         guild = self.bot.get_guild(965419296937365514)
@@ -542,7 +542,7 @@ Comments : {comments}
             embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
             await ctx.respond(embed=embed)
 
-    @instructor.command(name="check-off", description="Check off a user to end their training")
+    @instructor.command(name="check-off", description="☑️ Check off a user to end their training")
     async def vacheckoff(self, ctx, user: discord.Member):
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(1040918528565444618)
@@ -612,7 +612,7 @@ Comments : {comments}
             embed = discord.Embed(title="Error 503!", description=f"You are not a {role.mention}!", color=errorc)
             await ctx.respond(embed=embed)
 
-    @va.command(name="file", description="File a flight that you will do for the Clearfly VA.")
+    @va.command(name="file", description="📝 File a flight that you will do for the Clearfly VA.")
     @option("aircraft", description="The aircraft you will use for the flight.", choices=["B732", "B738", "B752","A306", "A306F"])
     @option("origin", description="The airport(ICAO) you will fly from.", autocomplete=get_airports_o)
     @option("destination", description="The airport(ICAO) you will fly to.", autocomplete=get_airports_d)
@@ -954,7 +954,7 @@ Comments : {comments}
                 await ctx.respond(embed=embed)
 
     
-    @va.command(name="report-incident", description="Something happened on your flight? Run this command and tell us what happened!")
+    @va.command(name="report-incident", description="🖊️ Something happened on your flight? Run this command and tell us what happened!")
     @option("flightnumber", description="The flight number of the flight where the accident happened.")
     @option("report", description="A short text that explained what happened.")
     async def vareport(self, ctx, flightnumber,report):
@@ -979,7 +979,7 @@ Comments : {comments}
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)
             
-    @va.command(name="divert", description="If you need to divert to another airport you can with this command.")
+    @va.command(name="divert", description="🛬 If you need to divert to another airport you can with this command.")
     @option("divert", description="The airport you will divert/have diverted to.")
     async def divert(self, ctx, airport):
         config = configparser.ConfigParser()
@@ -1001,7 +1001,7 @@ Comments : {comments}
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)
 
-    @va.command(name="cancel", description="Cancels and removes your last filed flight.")
+    @va.command(name="cancel", description="❌ Cancels and removes your last filed flight.")
     async def cancel(self, ctx):
         config = configparser.ConfigParser()
         if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
@@ -1029,7 +1029,7 @@ Comments : {comments}
                 embed=discord.Embed(title="Error 503!", description="You need to train before using this command", color=errorc)
                 await ctx.respond(embed=embed)
 
-    @va.command(name="flights", description="Fetches flights a user has done.")
+    @va.command(name="flights", description="🛫 Fetches flights a user has done.")
     @option("user", description="The user you want flight(s) information about.")
     async def flights(self, ctx, user: discord.Member = None):
         await ctx.defer()
@@ -1119,7 +1119,7 @@ Number of flights: **{nof}**
             embed = discord.Embed(title="Error 404!", description=f"No flights were found for {user.mention}, make sure they have flights filed!", color=errorc)
             await ctx.respond(embed=embed)
 
-    @va.command(name="stats", description="Show general statistics about the whole VA.")
+    @va.command(name="stats", description="📈 Show general statistics about the whole VA.")
     async def vastats(self, ctx):
         cmnac = []
         output = 0
@@ -1172,7 +1172,7 @@ Number of flights: **{nof}**
         embed.add_field(name="_ _", value="\n*Notice: Both 'Most Common Aircraft' and 'Most Common Destination' will have a random selected value of 2 or more elements with the same frequency if that is the case.*", inline=True)
         await ctx.respond(embed=embed)
 
-    @va.command(name="leaderboard", description="Get the leaderboard of who flew the most flights!")
+    @va.command(name="leaderboard", description="📊 Get the leaderboard of who flew the most flights!")
     async def valb(self, ctx):
         await ctx.defer()
         if os.path.exists(".onpc"):
@@ -1223,7 +1223,7 @@ Number of flights: **{nof}**
             await ctx.respond(embed=embed)
 
 
-    @va.command(name="liveries", description="Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
+    @va.command(name="liveries", description="🌄 Looking to fly for the ClearFly VA? Here are the liveries to get you started!")
     @option("noauth", description="Makes the bot respond or send the output.")
     async def valivs(self, ctx, noauth:bool = False):
         if noauth == False:

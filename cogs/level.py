@@ -22,7 +22,7 @@ class LevelingCommands(discord.Cog):
     async def on_ready(self):
         print("| Leveling cog loaded sucessfully")
 
-    @leveling.command(name="userlevel", description="Gets the provided user's level.")
+    @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
     async def userlevel(self, ctx, user: discord.Member = None):
         await ctx.defer()
@@ -125,7 +125,7 @@ class LevelingCommands(discord.Cog):
                     embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
                     await ctx.respond(embed=embed)
 
-    @discord.user_command(name="User Level", description="Gets the provided user's level.")
+    @discord.user_command(name="User Level", description="🥇 Gets the provided user's level.")
     async def userlevel_app(self, ctx, user: discord.Member = None):
         await ctx.defer()
         config = configparser.ConfigParser()
@@ -227,7 +227,7 @@ class LevelingCommands(discord.Cog):
                     embed = discord.Embed(title="Error 404!", description="This most probably means that you never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
                     await ctx.respond(embed=embed)
 
-    @leveling.command(name="leaderboard", description="See the leaderboard of the whole server.")
+    @leveling.command(name="leaderboard", description="📊 See the leaderboard of the whole server.")
     async def lb(self, ctx):
         if os.path.exists(".onpc"):
             await ctx.defer()
