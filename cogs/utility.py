@@ -100,7 +100,7 @@ class UtilityCommands(discord.Cog):
         embed.set_image(url=userAvatarUrl)
         await ctx.respond(embed=embed)
 
-    @utility.command(name="who-is", description="Fetches a user profile")
+    @utility.command(name="who-is", description="Fetches a user profile.")
     @option("user", description="The user you want the user profile of.")
     async def whois(self, ctx, user: discord.Member = None):
         await ctx.defer()
@@ -314,7 +314,8 @@ class UtilityCommands(discord.Cog):
 </fun 8ball:1016057999195910276> : Ask the bot some questions!
 </fun dadjoke:1016057999195910276> : Gets you a dadjoke.
 </fun roast:1016057999195910276> : Roast whoever you'd like!
-</fun buttongame:1016057999195910276> : Play a game with buttons!
+</fun button-game:1016057999195910276> : Play a game with buttons!
+</fun flag-game:1016057999195910276> : Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).
                                 """)
                             await interaction.response.edit_message(embed=embfun)
                         if select.values[0] == "VA":

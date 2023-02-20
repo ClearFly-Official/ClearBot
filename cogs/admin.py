@@ -266,7 +266,7 @@ class AdminCommands(discord.Cog):
             embed.set_thumbnail(url=ctx.author.avatar.url)
             await channel.send(embed=embed)
 
-    @admin.command(name="rules", descritpion="sends the rules(admin only)")
+    @admin.command(name="rules", description="Sends the rules.")
     @commands.has_permissions(manage_channels=True)
     async def rules(self, ctx):
         embed1 = discord.Embed(color=cfc)
@@ -289,7 +289,7 @@ class AdminCommands(discord.Cog):
         await ctx.respond("Rules posted!",ephemeral=True)
         await ctx.send(embeds=[embed1, embed2],view=RulesView(bot=self.bot))
 
-    @admin.command(name="faq", descritpion="sends the faq(admin only)")
+    @admin.command(name="faq", description="Sends the faq.")
     @commands.has_permissions(manage_channels=True)
     async def faq(self, ctx):
         embed = discord.Embed(title="ClearFly FAQ", description="""
@@ -308,7 +308,7 @@ A: Our current plan is to code VOR navigation only.
         await ctx.respond("FAQ posted!",ephemeral=True)
         await ctx.send(embed=embed,view=FAQView(bot=self.bot))
 
-    @admin.command(name="buttonroles", descritpion="sends the button roles(admin only)")
+    @admin.command(name="buttonroles", description="Sends the button roles.")
     @commands.has_permissions(manage_channels=True)
     async def buttonroles(self, ctx):
         emb1 = discord.Embed(title="Announcement Pings", description="Click on the 📣 to receive pings when we post any announcements.\n*click again to remove.*", color=cfc)

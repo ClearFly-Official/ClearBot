@@ -9,6 +9,7 @@ from discord.ui import Button, View
 from discord.ext import commands
 from datetime import datetime
 from main import cfc, errorc
+from pilmoji import Pilmoji
 
 airports = [
     "KDCA",
@@ -1210,8 +1211,9 @@ Number of flights: **{nof}**
             embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
             I1 = ImageDraw.Draw(img)
             font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=44, layout_engine=ImageFont.Layout.BASIC)
-            I1.text((790, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
-            I1.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+            with Pilmoji(img) as pilmoji:
+                pilmoji.text((790, 30), "".join(output[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                pilmoji.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
             img.save(f"images/valb.png")
             file = discord.File(f"images/valb.png", filename="valb.png")
             embed.set_image(url=f"attachment://valb.png")

@@ -425,7 +425,7 @@ Channel: {message.channel.mention}
             embed = discord.Embed(title="Error 403!", description="You're not a developer, so you can't use this command!", colour=errorc)
             await ctx.respond(embed=embed)
             
-    @dev.command(name="eval", description="Execute some code")
+    @dev.command(name="eval", description="Execute some code.")
     @option("code", description="The code you want to execute", autocomplete=getattrs2)
     async def evalcmd(self, ctx, code):
         if ctx.author.id in devs:

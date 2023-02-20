@@ -2,9 +2,12 @@ import discord
 import pyfiglet
 import random
 import textwrap
+import os
 from dadjokes import Dadjoke
 from discord import option
 from discord.ext import commands
+from pilmoji import Pilmoji
+from wonderwords import RandomSentence
 from PIL import Image, ImageDraw, ImageFont
 from main import cfc, errorc
 
@@ -185,7 +188,7 @@ class FunCommands(discord.Cog):
         else:
             await ctx.respond(f"{user.mention} {output}")
 
-    @fun.command(name="buttongame", description="Play a game with buttons!")
+    @fun.command(name="button-game", description="Play a game with buttons!")
     async def bgame(self, ctx):
         embed = discord.Embed(title="Choose a button!", color=cfc)
         class ButtonGame(discord.ui.View):
@@ -276,6 +279,60 @@ class FunCommands(discord.Cog):
         draw.text((1000, 824), author, font=font, fill=(130, 130, 130))
         img.save("images/qoute.png")
         await ctx.respond(file=discord.File("images/qoute.png"))
+
+    @fun.command(name="flags-game", description="Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
+    @option("difficulty", description="Difficulty level of the game(only affects sentences, not flags!)", choices=["Very Easy", "Easy", "Normal", "Hard"])
+    async def flagsgame(self, ctx, difficulty):
+        await ctx.defer()
+        fileName = "flaggame"+str(random.randint(0,100))+".png"
+
+        s = RandomSentence()
+        if difficulty == "Very Easy":
+            oldText = s.bare_bone_sentence()
+        if difficulty == "Easy":
+            oldText = s.simple_sentence()
+        if difficulty == "Normal":
+            oldText = s.bare_bone_with_adjective()
+        if difficulty == "Hard":
+            oldText = s.sentence()
+
+        with open("countrycodes.txt", "r") as f:
+            ccodes = f.readlines()
+
+        newText = oldText
+
+        for ccode in ccodes:
+            newText = newText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
+
+        newText = str(textwrap.fill(newText, 32, max_lines=6))
+
+        with Image.new('RGBA', (2048, 512)) as image:
+            font = ImageFont.truetype('fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf', 144)
+            with Pilmoji(image) as pilmoji:
+                pilmoji.text((10, 10), newText, (255, 255, 255), font, emoji_position_offset=(0, 10))
+            image.save(fileName)
+
+        file = discord.File(fileName, filename=fileName)
+        embed = discord.Embed(title="Guess the sentence!", description=f"*Sentence generated with '{difficulty}', reply ping with your answer*", color=cfc)
+        embed.set_image(url=f"attachment://{fileName}")
+        embed.set_footer(text="Difficulty level only affects sentences, not flags!")
+        await ctx.respond(embed=embed,file=file)
+
+        def check(m):
+            return m.author == ctx.author and str(m.type) == "MessageType.reply" and self.bot.user in m.mentions
+        
+        try:
+            msg = await self.bot.wait_for('message', check=check, timeout=120.0)
+            if msg.content.lower().replace(".", "") == oldText.lower().replace(".", ""):
+                embed = discord.Embed(title="🎉 Congrats, you got it!", color=0x00FF00)
+                await msg.reply(embed=embed)
+            else:
+                embed = discord.Embed(title="🥲 Sadness, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
+                await msg.reply(embed=embed)
+        except Exception:
+            embed = discord.Embed(title="Error 408", description="You ran out of time!", colour=errorc)
+            await ctx.respond(embed=embed)
+        os.remove(fileName)
 
 def setup(bot):
     bot.add_cog(FunCommands(bot))

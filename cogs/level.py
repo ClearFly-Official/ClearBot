@@ -3,6 +3,7 @@ import os
 import configparser
 import glob
 import re
+from pilmoji import Pilmoji
 from numerize import numerize as n
 from PIL import Image, ImageDraw, ImageFont
 from discord import option
@@ -50,12 +51,13 @@ class LevelingCommands(discord.Cog):
                 fontbig = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=150, layout_engine=ImageFont.Layout.BASIC)
                 img.paste(masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612)))
                 I1 = ImageDraw.ImageDraw(img)
-                I1.text((860, 120), str(ctx.author.name), fill=(255, 255, 255), font=fontbig)
-                I1.text((2310, 120), f"#{ctx.author.discriminator}", fill=(200, 200, 200), font=fontbig)
-                I1.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font)
-                x3, y3 = x1, y1
-                x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
-                I1.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font)
+                with Pilmoji(img) as pilmoji:
+                    pilmoji.text((860, 120), str(ctx.author.name), fill=(255, 255, 255), font=fontbig)
+                    pilmoji.text((2310, 120), f"#{ctx.author.discriminator}", fill=(200, 200, 200), font=fontbig, emoji_position_offset=(0, 10))
+                    pilmoji.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                    x3, y3 = x1, y1
+                    x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
+                    pilmoji.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
                 bar = Image.new('RGBA', img.size, 1)
                 I3 = ImageDraw.ImageDraw(bar)
                 I3.ellipse((x1-((y2-y1)/2), y1, x1+((y2-y1)/2), y2), fill=(9, 57, 97))
@@ -94,12 +96,13 @@ class LevelingCommands(discord.Cog):
                 fontbig = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=150, layout_engine=ImageFont.Layout.BASIC)
                 img.paste(masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612)))
                 I1 = ImageDraw.ImageDraw(img)
-                I1.text((860, 120), str(user.name), fill=(255, 255, 255), font=fontbig)
-                I1.text((2310, 120), f"#{user.discriminator}", fill=(200, 200, 200), font=fontbig)
-                I1.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font)
-                x3, y3 = x1, y1
-                x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
-                I1.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font)
+                with Pilmoji(img) as pilmoji:
+                    pilmoji.text((860, 120), str(user.name), fill=(255, 255, 255), font=fontbig)
+                    pilmoji.text((2310, 120), f"#{user.discriminator}", fill=(200, 200, 200), font=fontbig, emoji_position_offset=(0, 10))
+                    pilmoji.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                    x3, y3 = x1, y1
+                    x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
+                    pilmoji.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
                 bar = Image.new('RGBA', img.size, 1)
                 I3 = ImageDraw.ImageDraw(bar)
                 I3.ellipse((x1-((y2-y1)/2), y1, x1+((y2-y1)/2), y2), fill=(9, 57, 97))
@@ -150,12 +153,13 @@ class LevelingCommands(discord.Cog):
                 fontbig = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=150, layout_engine=ImageFont.Layout.BASIC)
                 img.paste(masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612)))
                 I1 = ImageDraw.ImageDraw(img)
-                I1.text((860, 120), str(ctx.author.name), fill=(255, 255, 255), font=fontbig)
-                I1.text((2310, 120), f"#{ctx.author.discriminator}", fill=(200, 200, 200), font=fontbig)
-                I1.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font)
-                x3, y3 = x1, y1
-                x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
-                I1.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font)
+                with Pilmoji(img) as pilmoji:
+                    pilmoji.text((860, 120), str(ctx.author.name), fill=(255, 255, 255), font=fontbig)
+                    pilmoji.text((2310, 120), f"#{ctx.author.discriminator}", fill=(200, 200, 200), font=fontbig, emoji_position_offset=(0, 10))
+                    pilmoji.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                    x3, y3 = x1, y1
+                    x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
+                    pilmoji.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
                 bar = Image.new('RGBA', img.size, 1)
                 I3 = ImageDraw.ImageDraw(bar)
                 I3.ellipse((x1-((y2-y1)/2), y1, x1+((y2-y1)/2), y2), fill=(9, 57, 97))
@@ -194,12 +198,13 @@ class LevelingCommands(discord.Cog):
                 fontbig = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=150, layout_engine=ImageFont.Layout.BASIC)
                 img.paste(masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612)))
                 I1 = ImageDraw.ImageDraw(img)
-                I1.text((860, 120), str(user.name), fill=(255, 255, 255), font=fontbig)
-                I1.text((2310, 120), f"#{user.discriminator}", fill=(200, 200, 200), font=fontbig)
-                I1.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font)
-                x3, y3 = x1, y1
-                x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
-                I1.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font)
+                with Pilmoji(img) as pilmoji:
+                    pilmoji.text((860, 120), str(user.name), fill=(255, 255, 255), font=fontbig)
+                    pilmoji.text((2310, 120), f"#{user.discriminator}", fill=(200, 200, 200), font=fontbig, emoji_position_offset=(0, 10))
+                    pilmoji.text((900, 380), f"LVL: {n.numerize(int(lvl))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                    x3, y3 = x1, y1
+                    x4, y4 = x1+((x2-x1)*(int(lvlprog)/int(topprog))), y2
+                    pilmoji.text((2000,380), f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}", fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
                 bar = Image.new('RGBA', img.size, 1)
                 I3 = ImageDraw.ImageDraw(bar)
                 I3.ellipse((x1-((y2-y1)/2), y1, x1+((y2-y1)/2), y2), fill=(9, 57, 97))
@@ -268,10 +273,10 @@ class LevelingCommands(discord.Cog):
             embed = discord.Embed(title="ClearFly Level Leaderboard", description=f"""
 Chat to earn xp!
             """, color=cfc)
-            I1 = ImageDraw.Draw(img)
             font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=44, layout_engine=ImageFont.Layout.BASIC)
-            I1.text((800, 30), "".join(output[:10]), fill=(255, 255, 255), font=font)
-            I1.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font)
+            with Pilmoji(img) as pilmoji:
+                pilmoji.text((800, 30), "".join(output[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                pilmoji.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
             img.save(f"images/lb.png")
             file = discord.File(f"images/lb.png", filename="lb.png")
             embed.set_image(url=f"attachment://lb.png")
