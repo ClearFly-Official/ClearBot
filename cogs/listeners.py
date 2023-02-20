@@ -87,7 +87,7 @@ class Listeners(discord.Cog):
     @tasks.loop(seconds=60)
     async def rssfeedtres2(self):
             channel = self.bot.get_channel(fsnews)
-            blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml" )
+            blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
             feed = dict(blog_feed.entries[0])
             lastID = trescol.find()
             ids = []
@@ -95,7 +95,7 @@ class Listeners(discord.Cog):
                 ids.append(id)
             if ids == []:
                 ids = [{'lastIDopinion':None}]
-            if ids[0]['lastIDopinion'] == feed.get('id'):
+            if ids[1]['lastIDopinion'] == feed.get('id'):
                 return
             else:
                 trescol.update_one({"_id": "lastIDopinion"},{
@@ -120,7 +120,7 @@ class Listeners(discord.Cog):
                 ids.append(id)
             if ids == []:
                 ids = [{'lastIDarticle':None}]
-            if ids[0]['lastIDarticle'] == feed.get('id'):
+            if ids[2]['lastIDarticle'] == feed.get('id'):
                 return
             else:
                 trescol.update_one({"_id": "lastIDarticle"},{
