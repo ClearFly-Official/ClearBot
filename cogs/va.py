@@ -1210,10 +1210,10 @@ Number of flights: **{nof}**
             nameoutput = [direction + '\n\n' for direction in nameoutput]
             embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
             I1 = ImageDraw.Draw(img)
-            font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=44, layout_engine=ImageFont.Layout.BASIC)
+            font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=43, layout_engine=ImageFont.Layout.BASIC)
             with Pilmoji(img) as pilmoji:
-                pilmoji.text((790, 30), "".join(output[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
-                pilmoji.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 10))
+                pilmoji.text((790, 30), "".join(output[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 20))
+                pilmoji.text((27,30), "".join(nameoutput[:10]), fill=(255, 255, 255), font=font, emoji_position_offset=(0, 20))
             img.save(f"images/valb.png")
             file = discord.File(f"images/valb.png", filename="valb.png")
             embed.set_image(url=f"attachment://valb.png")

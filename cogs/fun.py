@@ -323,7 +323,7 @@ class FunCommands(discord.Cog):
         with Image.new('RGBA', (2048, 512)) as image:
             font = ImageFont.truetype('fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf', 144)
             with Pilmoji(image) as pilmoji:
-                pilmoji.text((10, 10), newText, (255, 255, 255), font, emoji_position_offset=(0, 10))
+                pilmoji.text((10, 10), newText, (255, 255, 255), font, emoji_position_offset=(0, 20))
             image.save(fileName)
 
         file = discord.File(fileName, filename=fileName)
@@ -339,17 +339,17 @@ class FunCommands(discord.Cog):
             if msg.content.lower().replace(".", "") == oldText.lower().replace(".", ""):
                 embed = discord.Embed(title="🎉 Congrats, you got it!", color=0x00FF00)
                 await msg.reply(embed=embed)
-                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, player won**\n\nDifficulty: **{difficulty}**", color=cfc)
+                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} won!**\n\nDifficulty: **{difficulty}**", color=cfc)
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
             else:
                 embed = discord.Embed(title="🥲 Sadness, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
                 await msg.reply(embed=embed)
-                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, player lost**\n\nDifficulty: **{difficulty}**", color=cfc)
+                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} lost...**\n\nDifficulty: **{difficulty}**", color=cfc)
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
         except Exception:
-            embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, player lost**\n\nDifficulty: **{difficulty}**", color=cfc)
+            embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} ran out of time...**\n\nDifficulty: **{difficulty}**", color=cfc)
             embed.set_image(url=f"attachment://{fileName}")
             await ctx.edit(embed=embed)
             embed = discord.Embed(title="Error 408", description=f"You ran out of time! The answer was: `{oldText}`", colour=errorc)
