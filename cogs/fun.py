@@ -297,7 +297,7 @@ class FunCommands(discord.Cog):
         if difficulty == "Hard":
             oldText = s.sentence()
 
-        def flagGen(self, text, difficulty):
+        def flagGen(text, difficulty):
             if difficulty == "Very Easy":
                 diff = "countrycodes_veasy.txt"
             if difficulty == "Easy":
