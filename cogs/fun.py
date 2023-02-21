@@ -297,7 +297,7 @@ class FunCommands(discord.Cog):
         if difficulty == "Hard":
             oldText = s.sentence()
 
-        def flagGen(text, difficulty):
+        def flagGen(self, text, difficulty):
             if difficulty == "Very Easy":
                 diff = "countrycodes_veasy.txt"
             if difficulty == "Easy":
@@ -316,7 +316,7 @@ class FunCommands(discord.Cog):
 
             return convText
 
-        newText = flagGen(text=oldText, difficulty=difficulty)
+        newText = flagGen(self, text=oldText, difficulty=difficulty)
         newText = str(textwrap.fill(newText, 28, max_lines=2))
 
         with Image.new('RGBA', (2048, 512)) as image:
