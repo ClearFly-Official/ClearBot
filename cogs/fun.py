@@ -297,14 +297,26 @@ class FunCommands(discord.Cog):
         if difficulty == "Hard":
             oldText = s.sentence()
 
-        with open("countrycodes.txt", "r") as f:
-            ccodes = f.readlines()
+        def flagGen(self, text, difficulty):
+            if difficulty == "Very Easy":
+                diff = "countrycodes_veasy.txt"
+            if difficulty == "Easy":
+                diff = "countrycodes_easy.txt"
+            if difficulty == "Normal":
+                diff = "countrycodes_normal.txt"
+            if difficulty == "Hard":
+                diff = "countrycodes_hard.txt"
+            with open(f"ccodes/{diff}", "r") as f:
+                ccodes = f.readlines()
 
-        newText = oldText
+            convText = text
 
-        for ccode in ccodes:
-            newText = newText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
+            for ccode in ccodes:
+                convText = convText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
 
+            return convText
+
+        newText = flagGen(text=oldText, difficulty=difficulty)
         newText = str(textwrap.fill(newText, 28, max_lines=2))
 
         with Image.new('RGBA', (2048, 512)) as image:
@@ -316,7 +328,6 @@ class FunCommands(discord.Cog):
         file = discord.File(fileName, filename=fileName)
         embed = discord.Embed(title="Guess the sentence!", description=f"Hurry up, you only have **2 mins**!\n\n*Sentence generated with '{difficulty}' difficulty, reply ping with your answer*", color=cfc)
         embed.set_image(url=f"attachment://{fileName}")
-        embed.set_footer(text="Difficulty level only affects sentences, not flags!")
         await ctx.respond(embed=embed,file=file)
 
         def check(m):
