@@ -339,9 +339,13 @@ class FunCommands(discord.Cog):
             if msg.content.lower().replace(".", "") == oldText.lower().replace(".", ""):
                 embed = discord.Embed(title="🎉 Congrats, you got it!", color=0x00FF00)
                 await msg.reply(embed=embed)
+                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, player won**\n\nDifficulty: **{difficulty}**", color=cfc)
+                await ctx.edit(embed=embed)
             else:
                 embed = discord.Embed(title="🥲 Sadness, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
                 await msg.reply(embed=embed)
+                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, player lost**\n\nDifficulty: **{difficulty}**", color=cfc)
+                await ctx.edit(embed=embed)
         except Exception:
             embed = discord.Embed(title="Error 408", description=f"You ran out of time! The answer was: `{oldText}`", colour=errorc)
             await ctx.respond(embed=embed)
