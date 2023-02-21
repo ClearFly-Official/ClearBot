@@ -326,7 +326,7 @@ class FunCommands(discord.Cog):
             image.save(fileName)
 
         file = discord.File(fileName, filename=fileName)
-        embed = discord.Embed(title="Guess the sentence!", description=f"Hurry up, you only have **2 mins**!\n\n*Sentence generated with '{difficulty}' difficulty, reply ping with your answer*", color=cfc)
+        embed = discord.Embed(title="Guess the sentence!", description=f"Hurry up, you only have **2 mins**!\n\nDifficulty: **{difficulty}**\n*Reply ping with your answer!*", color=cfc)
         embed.set_image(url=f"attachment://{fileName}")
         await ctx.respond(embed=embed,file=file)
 
