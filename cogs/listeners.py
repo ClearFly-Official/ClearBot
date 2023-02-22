@@ -27,6 +27,13 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        self.ready.start()
+        self.presence.start()
+        self.rssfeedtres1.start()
+        self.rssfeedtres2.start()
+        self.rssfeedtres3.start()
+        self.rssfeedsf1.start()
+        self.rssfeedfsa1.start()
         print("| listeners cog loaded sucessfully")
 
     @tasks.loop()
@@ -475,10 +482,3 @@ After: **{after.position+1}**
 
 def setup(bot):
     bot.add_cog(Listeners(bot=bot))
-    Listeners.ready.start()
-    Listeners.presence.start()
-    Listeners.rssfeedtres1.start()
-    Listeners.rssfeedtres2.start()
-    Listeners.rssfeedtres3.start()
-    Listeners.rssfeedsf1.start()
-    Listeners.rssfeedfsa1.start()
