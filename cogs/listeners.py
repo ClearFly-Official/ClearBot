@@ -27,17 +27,12 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.ready.start()
         self.presence.start()
         self.rssfeedtres1.start()
         self.rssfeedtres2.start()
         self.rssfeedtres3.start()
         self.rssfeedsf1.start()
         self.rssfeedfsa1.start()
-        print("| listeners cog loaded sucessfully")
-
-    @tasks.loop()
-    async def ready(self):
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.now())
         if os.path.exists(".onpc"):
@@ -52,6 +47,8 @@ class Listeners(discord.Cog):
         *Data save unavailable*
             """,color=0x00FF00)
             await channel.send(embed=embed)
+        print("| listeners cog loaded sucessfully")
+
 
     @tasks.loop(minutes=10)
     async def presence(self):
