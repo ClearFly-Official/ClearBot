@@ -27,13 +27,24 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.presence.start()
-        self.rssfeedtres1.start()
-        self.rssfeedtres2.start()
-        self.rssfeedtres3.start()
-        self.rssfeedsf1.start()
-        self.rssfeedfsa1.start()
         print("| listeners cog loaded sucessfully")
+
+    @tasks.loop()
+    async def ready(self):
+        channel = self.bot.get_channel(1001405648828891187)
+        now = discord.utils.format_dt(datetime.now())
+        if os.path.exists(".onpc"):
+            embed = discord.Embed(title="I started up!", description=f"""
+        Started bot up on {now}
+        *Data save available*
+            """,color=0x00FF00)
+            await channel.send(embed=embed)
+        else:
+            embed=discord.Embed(title="I started up!", description=f"""
+        Started bot up on {now}
+        *Data save unavailable*
+            """,color=0x00FF00)
+            await channel.send(embed=embed)
 
     @tasks.loop(minutes=10)
     async def presence(self):
@@ -464,3 +475,10 @@ After: **{after.position+1}**
 
 def setup(bot):
     bot.add_cog(Listeners(bot=bot))
+    Listeners.ready.start()
+    Listeners.presence.start()
+    Listeners.rssfeedtres1.start()
+    Listeners.rssfeedtres2.start()
+    Listeners.rssfeedtres3.start()
+    Listeners.rssfeedsf1.start()
+    Listeners.rssfeedfsa1.start()

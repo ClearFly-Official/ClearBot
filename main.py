@@ -17,20 +17,6 @@ errorc = 0xFF0000
 
 @bot.listen()
 async def on_ready():
-        channel = bot.get_channel(1001405648828891187)
-        now = discord.utils.format_dt(datetime.now())
-        if os.path.exists(".onpc"):
-            embed = discord.Embed(title="I started up!", description=f"""
-            Started bot up on {now}
-            *Data save available*
-            """,color=0x00FF00)
-            await channel.send(embed=embed)
-        else:
-            embed=discord.Embed(title="I started up!", description=f"""
-            Started bot up on {now}
-            *Data save unavailable*
-            """,color=0x00FF00)
-            await channel.send(embed=embed)
         print(f"""
 |-----------------------------
 | CLEARBOT is ready for usage 
@@ -43,5 +29,5 @@ cogs.remove("__pycache__")
 
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")
-
+    
 bot.run(os.getenv('TOKEN'))
