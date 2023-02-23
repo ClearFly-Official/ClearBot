@@ -192,7 +192,11 @@ URL: `{url}`
             ademb.set_thumbnail(url=ctx.author.avatar.url)
             await logchannel.send(embed=ademb)
         except Exception as e:
-            embed = discord.Embed(title="Error!", description=e, colour=errorc)
+            embed = discord.Embed(title="Error!", description=f"""
+```py
+{e}
+```
+            """, colour=errorc)
             await ctx.respond(embed=embed)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
