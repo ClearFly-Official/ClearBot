@@ -143,9 +143,16 @@ class AdminCommands(discord.Cog):
                     colour: int
                     ):
         ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
-        await ctx.respond("Posted your embed!", ephemeral  = True)
         if colour == None:
             colour = cfc
+        ademb.add_field(name="General", value=f"""
+Title: {title}
+Description: {description}
+Colour: {colour}
+Timestamp: {timestamp}
+URL: `{url}`
+                        """)
+        await ctx.respond("Posted your embed!", ephemeral  = True)
         if timestamp == True:
             timestamp = datetime.now()
         else:
