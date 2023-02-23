@@ -6,6 +6,7 @@ development.py
 test.md
 test.py
 devcogs
+db_rss_insert.py
 __pycache__
 images/avataroriginq.png
 images/avatarq.png

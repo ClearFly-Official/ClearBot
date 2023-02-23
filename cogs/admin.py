@@ -140,17 +140,17 @@ class AdminCommands(discord.Cog):
                     image_url, 
                     thumbnail_url,
                     timestamp: bool,
-                    colour: int
+                    colour
                     ):
         ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
         if colour == None:
             colour = cfc
         else:
-            colour = f"0x{colour}"
+            colour = colour
         ademb.add_field(name="General", value=f"""
 Title: {title}
 Description: {description}
-Colour: {colour}
+Colour: #{colour}
 Timestamp: {timestamp}
 URL: `{url}`
                         """, inline=False)
@@ -162,7 +162,7 @@ URL: `{url}`
         emb = discord.Embed(
             title=title, 
             description=description, 
-            colour=int(colour), 
+            colour=int(colour, 16), 
             url=url, 
             timestamp=timestamp,
             )
