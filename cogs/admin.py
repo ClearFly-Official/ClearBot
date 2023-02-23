@@ -161,7 +161,7 @@ class AdminCommands(discord.Cog):
             emb.set_footer(text=footer_text)
             ademb.add_field(name="Footer Text:", value=footer_text)
         if footer_icon_url != None:
-            emb.set_footer(url=footer_icon_url)
+            emb.set_footer(icon_url=footer_icon_url)
             ademb.add_field(name="Footer Icon URL:", value=footer_icon_url)
         if author_text != None:
             emb.set_author(name=author_text)
