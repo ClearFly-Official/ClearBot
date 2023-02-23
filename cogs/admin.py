@@ -162,22 +162,16 @@ class AdminCommands(discord.Cog):
             ademb.add_field(name="Footer Text:", value=footer_text)
         if footer_icon_url != None:
             emb.set_footer(icon_url=footer_icon_url)
-            ademb.add_field(name="Footer Icon URL:", value=footer_icon_url)
+            ademb.add_field(name="Footer Icon URL:", value=f"`{footer_icon_url}`")
         if author_text != None:
-            emb.set_author(name=author_text)
-            ademb.add_field(name="Author Text:", value=author_text)
-        if author_icon_url != None:
-            emb.set_author(icon_url=author_icon_url)
-            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
-        if author_url != None:
-            emb.set_author(url=author_url)
-            ademb.add_field(name="Author URL:", value=author_url)
+            emb.set_author(name=author_text, url=author_url, icon_url=author_icon_url)
+            ademb.add_field(name="Author:", value=f"Text: {author_text}\nURL: `{author_url}`\nIcon URL: `{author_icon_url}`")
         if image_url != None:
             emb.set_image(url=image_url)
-            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
+            ademb.add_field(name="Image URL:", value=f"`{image_url}`")
         if thumbnail_url != None:
             emb.set_thumbnail(url=thumbnail_url)
-            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
+            ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
         await ctx.channel.send(embed=emb)
         logchannel = self.bot.get_channel(1001405648828891187)
         await logchannel.send(embed=ademb)
