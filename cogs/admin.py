@@ -142,7 +142,6 @@ class AdminCommands(discord.Cog):
                     timestamp: bool,
                     colour
                     ):
-        await ctx.defer()
         try:
             ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
             if colour == None:
@@ -185,7 +184,7 @@ URL: `{url}`
             if thumbnail_url != None:
                 emb.set_thumbnail(url=thumbnail_url)
                 ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
-            await ctx.respond("Posted your embed!", ephemeral = True)
+            await ctx.respond("Posted your embed!", ephemeral=True)
             await ctx.channel.send(embed=emb)
             logchannel = self.bot.get_channel(1001405648828891187)
             ademb.set_thumbnail(url=ctx.author.avatar.url)
