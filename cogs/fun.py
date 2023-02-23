@@ -318,8 +318,10 @@ class FunCommands(discord.Cog):
 
             for ccode in ccodes:
                 convText = convText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
-
-            return convText
+            if convText == text:
+                flagGen(text)
+            else:
+                return convText
 
         newText = flagGen(self, text=oldText, difficulty=difficulty)
         newText = str(textwrap.fill(newText, 28, max_lines=2))

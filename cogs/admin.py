@@ -2,6 +2,7 @@ import discord
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc
+from datetime import datetime
 
 class RulesView(discord.ui.View):
     def __init__(self, bot):
@@ -115,33 +116,71 @@ class AdminCommands(discord.Cog):
 
     @admin.command(name="embed",description="📦 Send an embed as ClearBot.")
     @option("title", description="The title of the embed.")
-    @option("description", description="The description of the embed.")
+    @option("url", description="The url of the embed, will show up as hyperlink in the title.", required=False)
+    @option("description", description="The description of the embed.", required=False)
+    @option("footer_text", description="The footer's text of the embed.", required=False)
+    @option("footer_icon_url", description="The footer's icon url of the embed.", required=False)
+    @option("author_text", description="The author's text of the embed.", required=False)
+    @option("author_icon_url", description="The author's icon url of the embed.", required=False)
+    @option("author_url", description="The url of the author, will show up as hyperlink in the author's text.", required=False)
+    @option("image_url", description="The image's url of the embed.", required=False)
+    @option("thumbnail_url", description="The thumbnail's url of the embed.", required=False)
+    @option("timestamp", description="Determines if the timestamp will show up.", required=False)
+    @option("colour", description=f"The colour of the embed, in hex.({cfc} by default)", required=False)
     @commands.has_permissions(manage_channels=True)
-    async def embed(self,ctx, title: str, description: str):
-        await ctx.respond('posted your embed!',ephemeral  = True)
-        emb = discord.Embed(title=title, description=description, color=cfc)
+    async def embed(self, ctx, 
+                    title, 
+                    url,
+                    description, 
+                    footer_text, 
+                    footer_icon_url, 
+                    author_text, 
+                    author_icon_url,
+                    author_url,
+                    image_url, 
+                    thumbnail_url,
+                    timestamp,
+                    colour
+                    ):
+        ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
+        await ctx.respond("Posted your embed!", ephemeral  = True)
+        if colour == None:
+            colour = cfc
+        if timestamp == True:
+            timestamp = datetime.now()
+        else:
+            timestamp = None
+        emb = discord.Embed(
+            title=title, 
+            description=description, 
+            colour=colour, 
+            url=url, 
+            timestamp=timestamp,
+            )
+        if footer_text != None:
+            emb.set_footer(text=footer_text)
+            ademb.add_field(name="Footer Text:", value=footer_text)
+        if footer_icon_url != None:
+            emb.set_footer(url=footer_icon_url)
+            ademb.add_field(name="Footer Icon URL:", value=footer_icon_url)
+        if author_text != None:
+            emb.set_author(name=author_text)
+            ademb.add_field(name="Author Text:", value=author_text)
+        if author_icon_url != None:
+            emb.set_author(icon_url=author_icon_url)
+            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
+        if author_url != None:
+            emb.set_author(url=author_url)
+            ademb.add_field(name="Author URL:", value=author_url)
+        if image_url != None:
+            emb.set_image(url=image_url)
+            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
+        if thumbnail_url != None:
+            emb.set_thumbnail(url=thumbnail_url)
+            ademb.add_field(name="Author Icon URL:", value=author_icon_url)
         await ctx.channel.send(embed=emb)
-        pfp = ctx.author.avatar.url
-        channel2 = self.bot.get_channel(1001405648828891187)
-        embed = discord.Embed(title=f"{ctx.author} used embed:", color = cfc)
-        embed.add_field(
-            name="Title",
-            value=f"""
-```
-{title}
-```
-                """
-        )
-        embed.add_field(
-                name="Description",
-                value=f"""
-```
-{description}
-```
-                """
-        , inline = False)
-        embed.set_thumbnail(url=pfp)
-        await channel2.send(embed=embed)
+        logchannel = self.bot.get_channel(1001405648828891187)
+        await logchannel.send(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
