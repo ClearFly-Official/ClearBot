@@ -283,7 +283,7 @@ class FunCommands(discord.Cog):
         await ctx.respond(file=discord.File("images/qoute.png"))
 
     @fun.command(name="flag-game", description="🏳️ Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
-    @option("difficulty", description="Difficulty level of the game(only affects sentences, not flags!)", choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"])
+    @option("difficulty", description="Difficulty level of the game", choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"])
     async def flagsgame(self, ctx, difficulty):
         await ctx.defer()
         fileName = "flaggame"+str(random.randint(0,100))+".png"
