@@ -144,9 +144,9 @@ class AdminCommands(discord.Cog):
                     ):
         ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
         if colour == None:
-            colour = str(cfc)
+            colour = f"6db2d9"
         else:
-            colour = int(colour, 16)
+            colour = colour
         ademb.add_field(name="General", value=f"""
 Title: {title}
 Description: {description}
@@ -160,17 +160,23 @@ URL: `{url}`
         else:
             timestamp = None
         emb = discord.Embed(
-            title=title, 
-            description=description, 
-            colour=int(colour, 16), 
-            url=url, 
+            title=title,
+            description=description,
+            colour=int(colour, 16),
+            url=url,
             timestamp=timestamp,
             )
         if footer_text != None:
-            emb.set_footer(text=footer_text, icon_url=footer_icon_url)
+            if footer_icon_url != None:
+                emb.set_footer(text=footer_text, icon_url=footer_icon_url)
+            else:
+                emb.set_footer(text=footer_text)
             ademb.add_field(name="Footer:", value=f"**Text:** {footer_text}\n**Icon URL:** `{footer_icon_url}`", inline=False)
         if author_text != None:
-            emb.set_author(name=author_text, url=author_url, icon_url=author_icon_url)
+            if author_icon_url != None:
+                emb.set_author(name=author_text, icon_url=author_icon_url)
+            else:
+                emb.set_author(name=author_text)
             ademb.add_field(name="Author:", value=f"**Text:** {author_text}\n**URL:** `{author_url}`\n**Icon URL:** `{author_icon_url}`", inline=False)
         if image_url != None:
             emb.set_image(url=image_url)
@@ -178,8 +184,10 @@ URL: `{url}`
         if thumbnail_url != None:
             emb.set_thumbnail(url=thumbnail_url)
             ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
+
         await ctx.channel.send(embed=emb)
         logchannel = self.bot.get_channel(1001405648828891187)
+        ademb.set_thumbnail(url=ctx.author.avatar.url)
         await logchannel.send(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
