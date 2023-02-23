@@ -156,7 +156,6 @@ Colour: `#{colour}`
 Timestamp: {timestamp}
 URL: `{url}`
                             """, inline=False)
-            await ctx.respond("Posted your embed!", ephemeral  = True)
             if timestamp == True:
                 timestamp = datetime.now()
             else:
@@ -186,7 +185,7 @@ URL: `{url}`
             if thumbnail_url != None:
                 emb.set_thumbnail(url=thumbnail_url)
                 ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
-
+            await ctx.respond("Posted your embed!", ephemeral = True)
             await ctx.channel.send(embed=emb)
             logchannel = self.bot.get_channel(1001405648828891187)
             ademb.set_thumbnail(url=ctx.author.avatar.url)
