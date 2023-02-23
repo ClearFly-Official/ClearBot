@@ -142,53 +142,58 @@ class AdminCommands(discord.Cog):
                     timestamp: bool,
                     colour
                     ):
-        ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
-        if colour == None:
-            colour = f"6db2d9"
-        else:
-            colour = colour
-        ademb.add_field(name="General", value=f"""
+        await ctx.defer()
+        try:
+            ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
+            if colour == None:
+                colour = f"6db2d9"
+            else:
+                colour = colour
+            ademb.add_field(name="General", value=f"""
 Title: {title}
 Description: {description}
-Colour: #{colour}
+Colour: `#{colour}`
 Timestamp: {timestamp}
 URL: `{url}`
-                        """, inline=False)
-        await ctx.respond("Posted your embed!", ephemeral  = True)
-        if timestamp == True:
-            timestamp = datetime.now()
-        else:
-            timestamp = None
-        emb = discord.Embed(
-            title=title,
-            description=description,
-            colour=int(colour, 16),
-            url=url,
-            timestamp=timestamp,
-            )
-        if footer_text != None:
-            if footer_icon_url != None:
-                emb.set_footer(text=footer_text, icon_url=footer_icon_url)
+                            """, inline=False)
+            await ctx.respond("Posted your embed!", ephemeral  = True)
+            if timestamp == True:
+                timestamp = datetime.now()
             else:
-                emb.set_footer(text=footer_text)
-            ademb.add_field(name="Footer:", value=f"**Text:** {footer_text}\n**Icon URL:** `{footer_icon_url}`", inline=False)
-        if author_text != None:
-            if author_icon_url != None:
-                emb.set_author(name=author_text, icon_url=author_icon_url)
-            else:
-                emb.set_author(name=author_text)
-            ademb.add_field(name="Author:", value=f"**Text:** {author_text}\n**URL:** `{author_url}`\n**Icon URL:** `{author_icon_url}`", inline=False)
-        if image_url != None:
-            emb.set_image(url=image_url)
-            ademb.add_field(name="Image URL:", value=f"`{image_url}`")
-        if thumbnail_url != None:
-            emb.set_thumbnail(url=thumbnail_url)
-            ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
+                timestamp = None
+            emb = discord.Embed(
+                title=title,
+                description=description,
+                colour=int(colour, 16),
+                url=url,
+                timestamp=timestamp,
+                )
+            if footer_text != None:
+                if footer_icon_url != None:
+                    emb.set_footer(text=footer_text, icon_url=footer_icon_url)
+                else:
+                    emb.set_footer(text=footer_text)
+                ademb.add_field(name="Footer:", value=f"**Text:** {footer_text}\n**Icon URL:** `{footer_icon_url}`", inline=False)
+            if author_text != None:
+                if author_icon_url != None:
+                    emb.set_author(name=author_text, icon_url=author_icon_url)
+                else:
+                    emb.set_author(name=author_text)
+                ademb.add_field(name="Author:", value=f"**Text:** {author_text}\n**URL:** `{author_url}`\n**Icon URL:** `{author_icon_url}`", inline=False)
+            if image_url != None:
+                emb.set_image(url=image_url)
+                ademb.add_field(name="Image URL:", value=f"`{image_url}`")
+            if thumbnail_url != None:
+                emb.set_thumbnail(url=thumbnail_url)
+                ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
 
-        await ctx.channel.send(embed=emb)
-        logchannel = self.bot.get_channel(1001405648828891187)
-        ademb.set_thumbnail(url=ctx.author.avatar.url)
-        await logchannel.send(embed=ademb)
+            await ctx.channel.send(embed=emb)
+            logchannel = self.bot.get_channel(1001405648828891187)
+            ademb.set_thumbnail(url=ctx.author.avatar.url)
+            await logchannel.send(embed=ademb)
+        except Exception as e:
+            embed = discord.Embed(title="Error!", description=e, colour=errorc)
+            await ctx.respond(embed=embed)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
