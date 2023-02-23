@@ -139,8 +139,8 @@ class AdminCommands(discord.Cog):
                     author_url,
                     image_url, 
                     thumbnail_url,
-                    timestamp,
-                    colour
+                    timestamp: bool,
+                    colour: int
                     ):
         ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
         await ctx.respond("Posted your embed!", ephemeral  = True)
