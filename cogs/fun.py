@@ -283,7 +283,7 @@ class FunCommands(discord.Cog):
         await ctx.respond(file=discord.File("images/qoute.png"))
 
     @fun.command(name="flag-game", description="🏳️ Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
-    @option("difficulty", description="Difficulty level of the game(only affects sentences, not flags!)", choices=["Very Easy", "Easy", "Normal", "Hard"])
+    @option("difficulty", description="Difficulty level of the game(only affects sentences, not flags!)", choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"])
     async def flagsgame(self, ctx, difficulty):
         await ctx.defer()
         fileName = "flaggame"+str(random.randint(0,100))+".png"
@@ -297,6 +297,8 @@ class FunCommands(discord.Cog):
             oldText = s.bare_bone_with_adjective()
         if difficulty == "Hard":
             oldText = s.sentence()
+        if difficulty == "Very Hard":
+            oldText = s.sentence()
 
         def flagGen(self, text, difficulty):
             if difficulty == "Very Easy":
@@ -307,6 +309,8 @@ class FunCommands(discord.Cog):
                 diff = "countrycodes_normal.txt"
             if difficulty == "Hard":
                 diff = "countrycodes_hard.txt"
+            if difficulty == "Very Hard":
+                diff = "countrycodes_vhard.txt"
             with open(f"ccodes/{diff}", "r") as f:
                 ccodes = f.readlines()
 
@@ -343,7 +347,7 @@ class FunCommands(discord.Cog):
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
             else:
-                embed = discord.Embed(title="🥲 Sadness, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
+                embed = discord.Embed(title="🥲 Sad, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
                 await msg.reply(embed=embed)
                 embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} lost...**\n\nDifficulty: **{difficulty}**", color=cfc)
                 embed.set_image(url=f"attachment://{fileName}")
