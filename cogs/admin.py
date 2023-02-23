@@ -144,7 +144,7 @@ class AdminCommands(discord.Cog):
                     ):
         ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
         if colour == None:
-            colour = cfc
+            colour = str(cfc)
         else:
             colour = int(colour, 16)
         ademb.add_field(name="General", value=f"""
