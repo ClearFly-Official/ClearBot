@@ -32,13 +32,17 @@ class TagCommands(discord.Cog):
 
     @tags.command(description="🔎 View a tag.")
     @option("tag", description="The tag you want to view.",autocomplete=get_tags)
-    async def view(self, ctx, tag):
+    @option("raw", description="Toggles if you want to view the tag raw, for copying/editing.", required=False)
+    async def view(self, ctx, tag, raw: bool):
         tags = []
         for tag_ in tagcol.find():
             tags.append(tag_.get("name"))
         if tag in tags:
             output = tagcol.find_one({"name":tag})
-            await ctx.respond(f"{output.get('value')}", allowed_mentions=discord.AllowedMentions.none())
+            if raw:
+                await ctx.respond(f"```\n{output.get('value')}\n```", allowed_mentions=discord.AllowedMentions.none())
+            else:
+                await ctx.respond(f"{output.get('value')}", allowed_mentions=discord.AllowedMentions.none())
         else:
             embed = discord.Embed(title="Error 404", description=f"""
 Didn't found {tag}. 
@@ -53,7 +57,7 @@ Didn't found {tag}.
         var = 0
         var2 = 1
         for i in tags:
-            tags[var] = f"{var2}: " + tags[var]
+            tags[var] = f"{var2}: " + f"`{tags[var]}`"
             var += 1
             var2 += 1
         tagsList = '\n'.join(tags)

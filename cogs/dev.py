@@ -282,7 +282,7 @@ Reloaded cogs:
         var = 0
         var2 = 1
         for i in drefs:
-            drefs[var] = f"{var2}: " + drefs[var]
+            drefs[var] = f"{var2}: " + f"`{drefs[var]}`"
             var += 1
             var2 += 1
         tagsList = '\n'.join(drefs)
