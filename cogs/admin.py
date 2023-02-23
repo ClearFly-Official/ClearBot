@@ -184,6 +184,11 @@ URL: `{url}`
             if thumbnail_url != None:
                 emb.set_thumbnail(url=thumbnail_url)
                 ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
+            await ctx.channel.send(embed=emb)
+            await ctx.respond("Posted your embed!", ephemeral=True)
+            logchannel = self.bot.get_channel(1001405648828891187)
+            ademb.set_thumbnail(url=ctx.author.avatar.url)
+            await logchannel.send(embed=ademb)
         except Exception as e:
             embed = discord.Embed(title="Error!", description=f"""
 ```py
@@ -192,11 +197,6 @@ URL: `{url}`
             """, colour=errorc)
             await ctx.respond(embed=embed)
             return
-        await ctx.respond("Posted your embed!", ephemeral=True)
-        await ctx.channel.send(embed=emb)
-        logchannel = self.bot.get_channel(1001405648828891187)
-        ademb.set_thumbnail(url=ctx.author.avatar.url)
-        await logchannel.send(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
