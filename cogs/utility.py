@@ -71,8 +71,8 @@ class UtilityCommands(discord.Cog):
         embed = discord.Embed(title="The ClearFly Team:",color=cfc)
         logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
         embed.add_field(name="WolfAir",value="> Founder & Modeler",inline=False)
-        embed.add_field(name="Matt3o0",value="> Bot Creator & Admin",inline=False)
-        embed.add_field(name="DJ",value="> Admin",inline=False)
+        embed.add_field(name="Matt3o0",value="> Bot and SASL developer & Admin",inline=False)
+        embed.add_field(name="DJ",value="> Admin & Advisor",inline=False)
         embed.set_thumbnail(url=logo)
         await ctx.respond(embed=embed)
 
