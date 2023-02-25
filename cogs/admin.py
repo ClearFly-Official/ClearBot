@@ -282,7 +282,7 @@ URL: `{url}`
                     super().__init__(timeout=15.0)
 
                 @discord.ui.button(
-                    custom_id="okbutton", style=discord.ButtonStyle.green, emoji="✔️"
+                    custom_id="okbutton", style=discord.ButtonStyle.green, label="Yes"
                 )
                 async def button_callback(self, button, interaction):
                     global confirm
@@ -303,7 +303,7 @@ URL: `{url}`
                         await ctx.send(text)
 
                 @discord.ui.button(
-                    custom_id="nobutton", style=discord.ButtonStyle.danger, emoji="❌"
+                    custom_id="nobutton", style=discord.ButtonStyle.danger, label="No"
                 )
                 async def second_button_callback(self, button, interaction):
                     global confirm
@@ -345,9 +345,7 @@ URL: `{url}`
             for i in range(amount):
                 await ctx.send(text)
 
-    @admin.command(
-        name="slowmode", description="⏰ Set the slowmode time of a channel."
-    )
+    @admin.command(name="slowmode", description="⏰ Set the slowmode time of a channel.")
     @option(
         "slowmode", description="The amount of time the slowmode should be, in seconds."
     )
@@ -379,9 +377,7 @@ URL: `{url}`
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await logchannel.send(embed=embed)
 
-    @admin.command(
-        description="🗑️ Delete large amounts of messages from a channel."
-    )
+    @admin.command(description="🗑️ Delete large amounts of messages from a channel.")
     @option("amount", description="The number of messages you want to delete.")
     @commands.has_permissions(manage_channels=True)
     async def purge(self, ctx: discord.ApplicationContext, amount: int):
@@ -396,7 +392,7 @@ URL: `{url}`
                     super().__init__(timeout=15.0)
 
                 @discord.ui.button(
-                    custom_id="okbutton", style=discord.ButtonStyle.green, emoji="✔️"
+                    custom_id="okbutton", style=discord.ButtonStyle.green, label="Yes"
                 )
                 async def button_callback(self, button, interaction):
                     global confirm
@@ -417,7 +413,7 @@ URL: `{url}`
                     await ctx.edit(view=None)
 
                 @discord.ui.button(
-                    custom_id="nobutton", style=discord.ButtonStyle.danger, emoji="❌"
+                    custom_id="nobutton", style=discord.ButtonStyle.danger, label="No"
                 )
                 async def second_button_callback(self, button, interaction):
                     global confirm

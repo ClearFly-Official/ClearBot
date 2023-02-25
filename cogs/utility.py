@@ -136,9 +136,9 @@ class UtilityCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-            embed = discord.Embed(title="Your avatar", colour=cfc)
+            embed = discord.Embed(title="Your avatar", url=user.avatar.url,colour=cfc)
         else:
-            embed = discord.Embed(title=f"{user.name}'s avatar", colour=cfc)
+            embed = discord.Embed(title=f"{user.name}'s avatar", url=user.avatar.url, colour=cfc)
 
         embed.set_image(url=user.avatar.url)
         await ctx.respond(embed=embed)
@@ -148,7 +148,7 @@ class UtilityCommands(discord.Cog):
     )
     async def avatar_app(self, ctx, user: discord.Member):
         await ctx.defer()
-        embed = discord.Embed(title=f"{user.name}'s avatar", colour=cfc)
+        embed = discord.Embed(title=f"{user.name}'s avatar", url=user.avatar.url,colour=cfc)
         embed.set_image(url=user.avatar.url)
         await ctx.respond(embed=embed)
 
