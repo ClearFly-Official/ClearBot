@@ -122,7 +122,7 @@ class LevelingCommands(discord.Cog):
                     embed = discord.Embed(title="Error 404!", description="I didn't found any data of leveling, because the provided user is a bot. They don't get to use this amazing leveling system!", color=errorc)
                     await ctx.respond(embed=embed)
                 else:
-                    embed = discord.Embed(title="Error 404!", description=f"This most probably means that {user.mention} never sended a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
+                    embed = discord.Embed(title="Error 404!", description=f"This most probably means that {user.mention} never sent a message(slash commands or messages before the introduction of leveling don't count) in this server.", color=errorc)
                     await ctx.respond(embed=embed)
 
     @discord.user_command(name="User Level", description="🥇 Gets the provided user's level.")
