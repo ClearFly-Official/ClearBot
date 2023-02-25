@@ -5,6 +5,7 @@ test.ipynb
 development.py
 test.md
 test.py
+.vscode
 devcogs
 db_rss_insert.py
 __pycache__

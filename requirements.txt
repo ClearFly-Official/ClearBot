@@ -1,11 +1,13 @@
 py-cord
-datetime
 pyfiglet
 python-dotenv
-python-dateutil
-requests
+pymongo
 dadjokes
+fitz
 ConfigParser
 numerize
+pilmoji
+wonderwords
+flag
 Pillow
 feedparser

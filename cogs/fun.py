@@ -15,21 +15,20 @@ from main import cfc, errorc
 
 
 class FunCommands(discord.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
-    fun = discord.SlashCommandGroup(name="fun",description="Fun commands.")
+    fun = discord.SlashCommandGroup(name="fun", description="Fun commands.")
 
     @commands.Cog.listener()
     async def on_ready(self):
         print("| Fun cog loaded sucessfully")
 
-
-    @fun.command(name="bigtext", description="📚 Convert text into text emoji characters.")
+    @fun.command(
+        name="bigtext", description="📚 Convert text into text emoji characters."
+    )
     @option("text", description="The text you want to convert.")
-    async def bigtxtconv(self, ctx, text):
-        
+    async def bigtxtconv(self, ctx: discord.ApplicationContext, text: str):
         chars = "abcdefghijklmnopqrstuvwxyz"
         convtext = []
 
@@ -58,93 +57,108 @@ class FunCommands(discord.Cog):
                 c = c.replace(c, ":nine:")
             convtext.append(c)
         if len("".join(convtext)) >= 2000:
-            embed = discord.Embed(title="Error 400!", description="The output of the converted text is more than 2000 characters, as Discord only allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.", color=errorc)
+            embed = discord.Embed(
+                title="Error 400!",
+                description="The output of the converted text is more than 2000 characters, as Discord only allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.",
+                color=errorc,
+            )
             await ctx.respond(embed=embed)
         else:
             await ctx.respond("".join(convtext))
 
-    @fun.command(name="ascii",description="📑 Convert text into big characters using ASCII.")
+    @fun.command(
+        name="ascii", description="📑 Convert text into big characters using ASCII."
+    )
     @option("text", description="The text you want to convert.")
-    async def asciiconv(self, ctx, text):
-        try:
-            await ctx.respond(f"```{pyfiglet.figlet_format(text)}```")
-        except Exception as error:
-            await ctx.respond(f"""Error:
-```
-{error}
-```
-            """)
+    async def asciiconv(self, ctx: discord.ApplicationContext, text: str):
+        await ctx.respond(f"```{pyfiglet.figlet_format(text)}```")
 
-    @fun.command(name="8ball", description="🎱  Roll the eight ball and recieve the wisdom of chance!")
+    @fun.command(
+        name="8ball",
+        description="🎱  Roll the eight ball and recieve the wisdom of chance!",
+    )
     @option("question", description="The question you want to ask the bot.")
-    @option("mode", description="The mode of the answers. This will determine the answer type.", choices=["Normal", "Weird Mode"])
-    async def VIIIball(self, ctx, question, mode= None):
+    @option(
+        "mode",
+        description="The mode of the answers. This will determine the answer type.",
+        choices=["Normal", "Weird Mode"],
+    )
+    async def VIIIball(
+        self, ctx: discord.ApplicationContext, question: str, mode: str = None
+    ):
         if (mode == None) or (mode == "Normal"):
-            answers = [ 
-            "It is certain",
-            "Reply hazy, try again",
-            "Don't count on it",
-            "It is decidedly so",
-            "Ask again later",
-            "My reply is no",
-            "Without a doubt",
-            "Better not tell you now",
-            "My sources say no",
-            "Yes definitely",
-            "Cannot predict now",
-            "Outlook not so good",
-            "You may rely on it",
-            "Concentrate and ask again",
-            "Very doubtful",
-            "As I see it, yes",
-            "Most likely",
-            "Outlook good",
-            "Yes",
-            "Signs point to yes",
+            answers = [
+                "It is certain",
+                "Reply hazy, try again",
+                "Don't count on it",
+                "It is decidedly so",
+                "Ask again later",
+                "My reply is no",
+                "Without a doubt",
+                "Better not tell you now",
+                "My sources say no",
+                "Yes definitely",
+                "Cannot predict now",
+                "Outlook not so good",
+                "You may rely on it",
+                "Concentrate and ask again",
+                "Very doubtful",
+                "As I see it, yes",
+                "Most likely",
+                "Outlook good",
+                "Yes",
+                "Signs point to yes",
             ]
-            embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
+            embed = discord.Embed(
+                title=f"{question}:", description=f"{random.choice(answers)}", color=cfc
+            )
             await ctx.respond(embed=embed)
         else:
             answers = [
-            "No.",
-            "Yes.",
-            "Maybe.",
-            "Never.",
-            "Ok",
-            "Uhm ok...",
-            "For legal purposes, I can't respond to that question",
-            "No thank you.",
-            "You're joking right?",
-            "I don't think so...",
-            "Ask Google, don't bother me.|| Not Bing, I dare you.||",
-            "Go to sleep, you're tired.",
-            "I'm not qualified to give medical advice, sorry.",
-            "Ask again later.",
-            "What?",
-            "Haha, no.",
-            "I'd go with yes",
-            "Sure",
-            "Yeah",
-            "I'm concerned.",
-            "Really good question to be honest, I still have no clue.",
-            "WolfAir probably knows.",
-            "A bit suspicious<:susge:965624336956407838>.",
-            "Eh, probably not.",
-            "Respectfully, shut up.",
-            "I politely ask you to shut up."
+                "No.",
+                "Yes.",
+                "Maybe.",
+                "Never.",
+                "Ok",
+                "Uhm ok...",
+                "For legal purposes, I can't respond to that question",
+                "No thank you.",
+                "You're joking right?",
+                "I don't think so...",
+                "Ask Google, don't bother me.|| Not Bing, I dare you.||",
+                "Go to sleep, you're tired.",
+                "I'm not qualified to give medical advice, sorry.",
+                "Ask again later.",
+                "What?",
+                "Haha, no.",
+                "I'd go with yes",
+                "Sure",
+                "Yeah",
+                "I'm concerned.",
+                "Really good question to be honest, I still have no clue.",
+                "WolfAir probably knows.",
+                "A bit suspicious<:susge:965624336956407838>.",
+                "Eh, probably not.",
+                "Respectfully, shut up.",
+                "I politely ask you to shut up.",
             ]
-            embed = discord.Embed(title=f'{question}:', description=f'{random.choice(answers)}', color=cfc)
+            embed = discord.Embed(
+                title=f"{question}:", description=f"{random.choice(answers)}", color=cfc
+            )
             await ctx.respond(embed=embed)
 
     @fun.command(name="dadjoke", description="🃏 Get an unfunny dadjoke.")
-    async def dadjoke(self, ctx):
+    async def dadjoke(self, ctx: discord.ApplicationContext):
         dadjoke = Dadjoke()
         embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
         await ctx.respond(embed=embed)
 
-    @fun.command(name="roast", description="🔥 Why roast your friends when the bot can do it for you?")
+    @fun.command(
+        name="roast",
+        description="🔥 Why roast your friends when the bot can do it for you?",
+    )
     @option("user", description="The person you'd like to roast.")
-    async def roast(self, ctx, user: discord.Member):
+    async def roast(self, ctx: discord.ApplicationContext, user: discord.Member):
         roasts = [
             "Your face made the onion cry.",
             "I'm jealous of people who don't know you.",
@@ -160,7 +174,7 @@ class FunCommands(discord.Cog):
             "I may love to shop but I'm not buying your bullshit.",
             "I'm not saying I hate you, but I would unplug your life support to charge my phone.",
             "You shouldn't play hide and seek, no one would look for you.",
-            "You're so fat, when you wear a yellow rain coat people scream \"taxi\".",
+            'You\'re so fat, when you wear a yellow rain coat people scream "taxi".',
             "If I gave you a penny for your thoughts, I'd get change.",
             "If you really want to know about mistakes, you should ask your parents.",
             "Don't feel sad, don't feel blue, Frankenstein was ugly too.",
@@ -191,17 +205,20 @@ class FunCommands(discord.Cog):
             await ctx.respond(f"{user.mention} {output}")
 
     @fun.command(name="button-game", description="🔘 Play a game with buttons!")
-    async def bgame(self, ctx):
+    async def bgame(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(title="Choose a button!", color=cfc)
+
         class ButtonGame(discord.ui.View):
             def __init__(self):
                 super().__init__(timeout=20)
 
             async def on_timeout(self, interaction):
-                interaction.response.edit_message("You ran out of time! Rerun the command to play again.")
+                interaction.response.edit_message(
+                    "You ran out of time! Rerun the command to play again."
+                )
                 for child in self.children:
                     child.disabled = True
-                
+
             global b, isPressed
             b = 0
             isPressed = 0
@@ -215,13 +232,21 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 1, 2, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        embed = discord.Embed(
+                            description=":partying_face: You guessed right. Congrats!",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
-                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        embed = discord.Embed(
+                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
 
             @discord.ui.button(label="2", style=discord.ButtonStyle.green)
             async def second_button_callback(self, button, interaction):
@@ -232,13 +257,21 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 3, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        embed = discord.Embed(
+                            description=":partying_face: You guessed right. Congrats!",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
-                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        embed = discord.Embed(
+                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
 
             @discord.ui.button(label="3", style=discord.ButtonStyle.green)
             async def third_button_callback(self, button, interaction):
@@ -249,19 +282,26 @@ class FunCommands(discord.Cog):
                     opts = [1, 2, 3, 1, 2, 3, 1, 2]
                     output = random.choice(opts)
                     if output == b:
-                        embed = discord.Embed(description=":partying_face: You guessed right. Congrats!", colour=cfc)
+                        embed = discord.Embed(
+                            description=":partying_face: You guessed right. Congrats!",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
-                        embed = discord.Embed(description=f":disappointed_relieved: You guessed wrong. The right answer was {output}", colour=cfc)
+                        embed = discord.Embed(
+                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
+                            colour=cfc,
+                        )
                         await interaction.response.edit_message(embed=embed)
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
-
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
 
         await ctx.respond(embed=embed, view=ButtonGame())
 
-    @discord.message_command(name='Quote Message')
-    async def quote(self, ctx, message):
+    @discord.message_command(name="Quote Message")
+    async def quote(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.defer()
         await message.author.avatar.save("images/avataroriginq.png")
         avatarorigin = Image.open("images/avataroriginq.png")
@@ -270,23 +310,40 @@ class FunCommands(discord.Cog):
         avatar = Image.open("images/avatarq.png")
         qclear = Image.open("images/quoteClear.png")
         qavmask = Image.open("images/quoteAVMask.png")
-        img = Image.new('RGBA', (2048, 1024), 0)
+        img = Image.new("RGBA", (2048, 1024), 0)
         img.paste(avatar, qavmask)
         img.paste(qclear, mask=qclear)
-        font = ImageFont.truetype("fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", size=100, layout_engine=ImageFont.Layout.BASIC)
+        font = ImageFont.truetype(
+            "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+            size=100,
+            layout_engine=ImageFont.Layout.BASIC,
+        )
         text = f"{textwrap.fill(message.clean_content, 22, max_lines=6)}"
         author = f"- {message.author.name}"
         with Pilmoji(img) as pilmoji:
             pilmoji.text((950, 100), text, font=font, emoji_position_offset=(0, 20))
-            pilmoji.text((1000, 824), author, font=font, fill=(130, 130, 130), emoji_position_offset=(0, 20))
+            pilmoji.text(
+                (1000, 824),
+                author,
+                font=font,
+                fill=(130, 130, 130),
+                emoji_position_offset=(0, 20),
+            )
         img.save("images/qoute.png")
         await ctx.respond(file=discord.File("images/qoute.png"))
 
-    @fun.command(name="flag-game", description="🏳️ Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).")
-    @option("difficulty", description="Difficulty level of the game", choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"])
-    async def flagsgame(self, ctx, difficulty):
+    @fun.command(
+        name="flag-game",
+        description="🏳️ Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).",
+    )
+    @option(
+        "difficulty",
+        description="Difficulty level of the game",
+        choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
+    )
+    async def flagsgame(self, ctx: discord.ApplicationContext, difficulty: str):
         await ctx.defer()
-        fileName = "flaggame"+str(random.randint(0,100))+".png"
+        fileName = "flaggame" + str(random.randint(0, 100)) + ".png"
 
         s = RandomSentence()
         if difficulty == "Very Easy":
@@ -326,41 +383,78 @@ class FunCommands(discord.Cog):
         newText = flagGen(self, text=oldText, difficulty=difficulty)
         newText = str(textwrap.fill(newText, 28, max_lines=2))
 
-        with Image.new('RGBA', (2048, 512)) as image:
-            font = ImageFont.truetype('fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf', 144)
+        with Image.new("RGBA", (2048, 512)) as image:
+            font = ImageFont.truetype(
+                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", 144
+            )
             with Pilmoji(image) as pilmoji:
-                pilmoji.text((10, 10), newText, (255, 255, 255), font, emoji_position_offset=(0, 20))
+                pilmoji.text(
+                    (10, 10),
+                    newText,
+                    (255, 255, 255),
+                    font,
+                    emoji_position_offset=(0, 20),
+                )
             image.save(fileName)
 
         file = discord.File(fileName, filename=fileName)
-        embed = discord.Embed(title="Guess the sentence!", description=f"Hurry up, game ends <t:{round(time.time())+120}:R>!\n\nDifficulty: **{difficulty}**\n*Reply ping with your answer!*", color=cfc)
+        embed = discord.Embed(
+            title="Guess the sentence!",
+            description=f"Hurry up, game ends <t:{round(time.time())+120}:R>!\n\nDifficulty: **{difficulty}**\n*Reply ping with your answer!*",
+            color=cfc,
+        )
         embed.set_image(url=f"attachment://{fileName}")
-        await ctx.respond(embed=embed,file=file)
+        await ctx.respond(embed=embed, file=file)
 
         def check(m):
-            return m.author == ctx.author and str(m.type) == "MessageType.reply" and self.bot.user in m.mentions
-        
+            return (
+                m.author == ctx.author
+                and str(m.type) == "MessageType.reply"
+                and self.bot.user in m.mentions
+            )
+
         try:
-            msg = await self.bot.wait_for('message', check=check, timeout=120.0)
+            msg = await self.bot.wait_for("message", check=check, timeout=120.0)
             if msg.content.lower().replace(".", "") == oldText.lower().replace(".", ""):
                 embed = discord.Embed(title="🎉 Congrats, you got it!", color=0x00FF00)
                 await msg.reply(embed=embed)
-                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} won!**\n\nDifficulty: **{difficulty}**", color=cfc)
+                embed = discord.Embed(
+                    title="Guess the sentence!",
+                    description=f"**Game finished, {ctx.author.mention} won!**\n\nDifficulty: **{difficulty}**",
+                    color=cfc,
+                )
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
             else:
-                embed = discord.Embed(title="🥲 Sad, you got it wrong...", description=f"The correct answer was: `{oldText}`", color=errorc)
+                embed = discord.Embed(
+                    title="🥲 Sad, you got it wrong...",
+                    description=f"The correct answer was: `{oldText}`",
+                    color=errorc,
+                )
                 await msg.reply(embed=embed)
-                embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} lost...**\n\nDifficulty: **{difficulty}**", color=cfc)
+                embed = discord.Embed(
+                    title="Guess the sentence!",
+                    description=f"**Game finished, {ctx.author.mention} lost...**\n\nDifficulty: **{difficulty}**",
+                    color=cfc,
+                )
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
         except Exception:
-            embed = discord.Embed(title="Guess the sentence!", description=f"**Game finished, {ctx.author.mention} ran out of time...**\n\nDifficulty: **{difficulty}**", color=cfc)
+            embed = discord.Embed(
+                title="Guess the sentence!",
+                description=f"**Game finished, {ctx.author.mention} ran out of time...**\n\nDifficulty: **{difficulty}**",
+                color=cfc,
+            )
             embed.set_image(url=f"attachment://{fileName}")
             await ctx.edit(embed=embed)
-            embed = discord.Embed(title="Error 408", description=f"You ran out of time! The answer was: `{oldText}`", colour=errorc)
+            embed = discord.Embed(
+                title="Error 408",
+                description=f"You ran out of time! The answer was: `{oldText}`",
+                colour=errorc,
+            )
             await ctx.respond(embed=embed)
         os.remove(fileName)
+
 
 def setup(bot):
     bot.add_cog(FunCommands(bot))

@@ -1,5 +1,7 @@
 import discord
-import os, requests, json, fitz
+import aiohttp
+import os, json, fitz
+import requests
 from datetime import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
@@ -7,13 +9,21 @@ from discord.ext import commands
 from airports import airports
 from main import cfc, errorc
 
-class AvCommands(discord.Cog):
 
+class AvCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    av = discord.SlashCommandGroup(name="aviation", description="Commands related to airports, images/charts and similar.")
+    av = discord.SlashCommandGroup(
+        name="aviation",
+        description="Commands related to airports, images/charts and similar.",
+    )
+
     async def get_airports(self, ctx: discord.AutocompleteContext):
+        if ctx.value == "":
+            return [
+                "Start typing the name of an airport for results to appear(e.g. KJFK)"
+            ]
         return [airport for airport in airports if airport.startswith(ctx.value.upper())]
 
     @commands.Cog.listener()
@@ -21,31 +31,54 @@ class AvCommands(discord.Cog):
         print("| Aviation cog loaded sucessfully")
 
     @av.command(name="metar", description="⛅️ Get the metar data of an airport.")
-    @option("airport", description="The airport you want the metar data of.", autocomplete=get_airports)
-    async def metar(self, ctx, airport):
+    @option(
+        "airport",
+        description="The airport you want the metar data of.",
+        autocomplete=get_airports,
+    )
+    async def metar(self, ctx: discord.ApplicationContext, airport):
         await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-        req = requests.get(f"https://api.checkwx.com/metar/{airport[:4].upper()}/decoded", headers=hdr)
-        req.raise_for_status()
-        resp = json.loads(req.text)
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(
+                f"https://api.checkwx.com/metar/{airport[:4].upper()}/decoded",
+                headers=hdr,
+            ) as r:
+                r.raise_for_status()
+                resp = await r.json()
+
         class METARViewM(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
-                super().__init__(timeout=120.0)
+                super().__init__(timeout=60.0)
 
-            @discord.ui.button(label="Change to Metric units", style=discord.ButtonStyle.primary)
+            @discord.ui.button(
+                label="Change to Metric units", style=discord.ButtonStyle.primary
+            )
             async def button_callback(self, button, interaction):
                 if ctx.author == interaction.user:
-                    time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-                    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
-                    airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
-                    embed = discord.Embed(title=f"Metar data for **{airportn}** from **{time}** ({obstime})", color=cfc)
-                    embed.add_field(name="Raw Metar Data:", value=f"""
+                    time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
+                    obstime = discord.utils.format_dt(
+                        datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+                    )
+                    airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
+                        "'", ""
+                    )
+                    embed = discord.Embed(
+                        title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
+                        color=cfc,
+                    )
+                    embed.add_field(
+                        name="Raw Metar Data:",
+                        value=f"""
 ```
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
-            """)
-                    embed.add_field(name="Translated Metar Data:", value=f"""
+            """,
+                    )
+                    embed.add_field(
+                        name="Translated Metar Data:",
+                        value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
@@ -56,28 +89,49 @@ Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"',
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
 Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
-            """, inline=False)
-                    await interaction.response.edit_message(embed=embed, view=METARViewI(bot=self.bot))
+            """,
+                        inline=False,
+                    )
+                    await interaction.response.edit_message(
+                        embed=embed, view=METARViewI(bot=self.bot)
+                    )
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
+
         class METARViewI(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
                 super().__init__(timeout=120.0)
 
-            @discord.ui.button(label="Change to Imperial units", style=discord.ButtonStyle.primary)
+            @discord.ui.button(
+                label="Change to Imperial units", style=discord.ButtonStyle.primary
+            )
             async def button_callback(self, button, interaction):
                 if ctx.author == interaction.user:
-                    time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-                    obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
-                    airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
-                    embed = discord.Embed(title=f"Metar data for **{airportn}** from **{time}** ({obstime})", color=cfc)
-                    embed.add_field(name="Raw Metar Data:", value=f"""
+                    time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
+                    obstime = discord.utils.format_dt(
+                        datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+                    )
+                    airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
+                        "'", ""
+                    )
+                    embed = discord.Embed(
+                        title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
+                        color=cfc,
+                    )
+                    embed.add_field(
+                        name="Raw Metar Data:",
+                        value=f"""
 ```
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
-            """)
-                    embed.add_field(name="Translated Metar Data:", value=f"""
+            """,
+                    )
+                    embed.add_field(
+                        name="Translated Metar Data:",
+                        value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **Hg {json.dumps(resp['data'][0]['barometer']['hg'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
@@ -88,21 +142,38 @@ Flight Category :**{json.dumps(resp['data'][0]['flight_category']).replace('"', 
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles**
 Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
-            """, inline=False)
-                    await interaction.response.edit_message(embed=embed, view=METARViewM(bot=self.bot))
+            """,
+                        inline=False,
+                    )
+                    await interaction.response.edit_message(
+                        embed=embed, view=METARViewM(bot=self.bot)
+                    )
                 else:
-                    await interaction.response.send_message("Run the command yourself to use it!", ephemeral=True)
-        if resp['results'] == 1:
-            time = str(json.dumps(resp['data'][0]['observed']).replace('"', ""))
-            obstime = discord.utils.format_dt(datetime.fromisoformat(time.replace("Z", "+00:00")), "R")
-            airportn = json.dumps(resp['data'][0]['station']['name']).replace("'", "")
-            embed = discord.Embed(title=f"Metar data for **{airportn}** from **{time}** ({obstime})", color=cfc)
-            embed.add_field(name="Raw Metar Data:", value=f"""
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
+
+        if resp["results"] == 1:
+            time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
+            obstime = discord.utils.format_dt(
+                datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+            )
+            airportn = json.dumps(resp["data"][0]["station"]["name"]).replace("'", "")
+            embed = discord.Embed(
+                title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
+                color=cfc,
+            )
+            embed.add_field(
+                name="Raw Metar Data:",
+                value=f"""
 ```
 {json.dumps(resp['data'][0]['raw_text']).replace('"', "")}
 ```
-            """)
-            embed.add_field(name="Translated Metar Data:", value=f"""
+            """,
+            )
+            embed.add_field(
+                name="Translated Metar Data:",
+                value=f"""
 Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
 Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
 Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
@@ -113,10 +184,16 @@ Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"',
 Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
 Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
 Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
-            """, inline=False)
+            """,
+                inline=False,
+            )
             await ctx.respond(embed=embed, view=METARViewI(bot=self.bot))
         else:
-            embed = discord.Embed(title="Error 404!", description=f"Didn't found metar data for {airport[:4].upper()}.", color=errorc)
+            embed = discord.Embed(
+                title="Error 404!",
+                description=f"Didn't found metar data for {airport[:4].upper()}.",
+                color=errorc,
+            )
             await ctx.respond(embed=embed)
 
     @av.command(name="charts", description="🗺️ Fetches charts of the provided airport.")
@@ -126,8 +203,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
     @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
     @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
     async def chart(self, ctx, airport, chart):
+        await ctx.defer()
         if chart == 'Approaches':
-            await ctx.defer()
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6")
             load = json.loads(req.text)
             if airport[:4].upper().startswith(("K", "P", "0")):
@@ -164,7 +241,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
         if chart == 'Minimums':
-            await ctx.defer()
             req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3")
             load = json.loads(req.text)
             if airport[:4].upper().startswith(("K", "P", "0")):
@@ -205,7 +281,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 await ctx.respond(embed=embed)
         if chart == 'Airport Diagram':
             if airport[:4].upper().startswith(("K", "P", "0")):
-                await ctx.defer()
                 req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
                 load = json.loads(req.text)
 
@@ -232,15 +307,6 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_application_command_error(
-        self, ctx: discord.ApplicationContext, error: discord.DiscordException
-    ):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(title="Error 429", description="You're rate limited, wait a bit to use this command again!", colour=errorc)
-            await ctx.respond(embed=embed, ephemeral=True)
-        else:
-            raise error
 
 def setup(bot):
     bot.add_cog(AvCommands(bot=bot))

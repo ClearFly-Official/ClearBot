@@ -1,4 +1,5 @@
 {
     "python.analysis.typeCheckingMode": "off",
-    "discord.enabled": true
+    "discord.enabled": true,
+    "python.formatting.provider": "black"
 }
