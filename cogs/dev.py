@@ -8,6 +8,7 @@ from inspect import cleandoc
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc
+from discord.ext.pages import Page, Paginator
 
 client = pymongo.MongoClient(os.environ["MONGODB_URI"])
 db = client["ClearBotDB"]
@@ -71,9 +72,7 @@ class DevCommands(discord.Cog):
                 return None, None
         return doc_part, path
 
-    @dev.command(
-        name="docs", description="🗃️ Get information from the Pycord docs."
-    )
+    @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
     @commands.has_role(965422406036488282)
     @option(
         "doc_part",
@@ -297,16 +296,22 @@ Reloaded cogs:
             drefs[var] = f"{var2}: " + f"`{drefs[var]}`"
             var += 1
             var2 += 1
-        tagsList = "\n".join(drefs)
 
-        embed = discord.Embed(
-            title="Custom Datarefs List:",
-            description=f"""
-{tagsList}
-        """,
-            colour=cfc,
-        )
-        await ctx.respond(embed=embed)
+        chunks = [drefs[i : i + 50] for i in range(0, len(drefs), 50)]
+
+        pages = [
+            Page(
+                embeds=[
+                    discord.Embed(
+                        title=f"Tags {i+1}-{i+len(chunk)}",
+                        description="\n".join(chunk),
+                    ).set_footer(text=f"Showing 50/page, total of {len(drefs)} tags")
+                ]
+            )
+            for i, chunk in enumerate(chunks)
+        ]
+        paginator = Paginator(pages)
+        await paginator.respond(ctx.interaction)
 
     @dataref.command(
         name="search", description="🔎 Find the dataref/command you're looking for."

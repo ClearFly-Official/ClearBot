@@ -1,7 +1,7 @@
 import discord
 import aiohttp
 import os, json, fitz
-import requests
+import aiofiles
 from datetime import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
@@ -59,10 +59,10 @@ class AvCommands(discord.Cog):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+                        datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
-                        "'", ""
+                        '"', ""
                     )
                     embed = discord.Embed(
                         title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
@@ -112,10 +112,10 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+                        datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
-                        "'", ""
+                        '"', ""
                     )
                     embed = discord.Embed(
                         title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
@@ -156,9 +156,9 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
             obstime = discord.utils.format_dt(
-                datetime.fromisoformat(time.replace("Z", "+00:00")), "R"
+                datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
             )
-            airportn = json.dumps(resp["data"][0]["station"]["name"]).replace("'", "")
+            airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(
                 title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
                 color=cfc,
@@ -205,23 +205,26 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
     async def chart(self, ctx, airport, chart):
         await ctx.defer()
         if chart == 'Approaches':
-            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6")
-            load = json.loads(req.text)
+            async with aiohttp.ClientSession() as cs:
+                async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6") as r:
+                    load = r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
                     await ctx.respond(embed=embed)
                 else:
                     url = load[airport[:4].upper()][0]['pdf_path']
-                    r = requests.get(url, stream=True)
-                    i = 0
-                    pages = [
-                    ]
+                    async with aiohttp.ClientSession() as cs:
+                        async with cs.get(url) as r:
+                                i = 0
+                                pages = [
+                                ]
                     for chart in load[airport[:4].upper()]:
                         url = load[airport[:4].upper()][i]['pdf_path']
-                        r = requests.get(url, stream=True)
-                        with open(f"images/charts/chart{i}.pdf", "wb") as f:
-                            f.write(r.content)
+                        async with aiohttp.ClientSession() as cs:
+                            async with cs.get(url) as r:
+                                async with aiofiles.open(f"images/charts/chart{i}.pdf", "wb") as f:
+                                    await f.write(await r.content.read())
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
                         for page in doc:
                             pix = page.get_pixmap(dpi=150)
@@ -241,39 +244,39 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
         if chart == 'Minimums':
-            req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3")
-            load = json.loads(req.text)
+            async with aiohttp.ClientSession() as cs:
+                async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3") as r:
+                    load = r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
                     await ctx.respond(embed=embed)
                 else:
                     url = load[airport[:4].upper()][0]['pdf_path']
-                    r = requests.get(url, stream=True)
-                    i, a = 0,0
-                    pages = [
-                    ]
+                    async with aiohttp.ClientSession() as cs:
+                        async with cs.get(url) as r:
+                                i = 0
+                                pages = [
+                                ]
                     for chart in load[airport[:4].upper()]:
                         url = load[airport[:4].upper()][i]['pdf_path']
-                        r = requests.get(url, stream=True)
-                        with open(f"images/charts/chart{i}.pdf", "wb") as f:
-                            f.write(r.content)
+                        async with aiohttp.ClientSession() as cs:
+                            async with cs.get(url) as r:
+                                async with aiofiles.open(f"images/charts/chart{i}.pdf", "wb") as f:
+                                    await f.write(await r.content.read())
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
-                        i += 1
                         for page in doc:
-                            pix = page.get_pixmap(dpi=200)
-                            pix.save(f"images/charts/chart{a}.jpg")
-                            a += 1
+                            pix = page.get_pixmap(dpi=150)
+                            pix.save(f"images/charts/chart{i}.jpg")
+                            i += 1
                     i = 0
-                    a = 0
                     for chart in load[airport[:4].upper()]:
                         dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']}) (All pages are on the link.)", colour=cfc)], files=[dfile])
+                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
                         )
-                        pages[a].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
+                        pages[i].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
-                        a += 1
                     paginator = Paginator(pages=pages)
                     await paginator.respond(ctx.interaction)
             else:
@@ -281,18 +284,19 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 await ctx.respond(embed=embed)
         if chart == 'Airport Diagram':
             if airport[:4].upper().startswith(("K", "P", "0")):
-                req = requests.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2")
-                load = json.loads(req.text)
+                async with aiohttp.ClientSession() as cs:
+                    async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2") as r:
+                        load = await r.json()
 
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
                     await ctx.respond(embed=embed)
                 else:
                     url = load[airport[:4].upper()][0]['pdf_path']
-                    r = requests.get(url, stream=True)
-
-                    with open(f"images/charts/apd.pdf", "wb") as f:
-                        f.write(r.content)
+                    async with aiohttp.ClientSession() as cs:
+                        async with cs.get(url) as r:
+                            async with aiofiles.open(f"images/charts/apd.pdf", "wb") as f:
+                                await f.write(await r.content.read())
                     doc = fitz.open("images/charts/apd.pdf")  # open document
                     i = 0
                     for page in doc:

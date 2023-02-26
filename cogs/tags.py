@@ -6,6 +6,7 @@ from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
 from main import cfc, errorc
+from discord.ext.pages import Page, Paginator
 
 load_dotenv()
 
@@ -74,17 +75,22 @@ Didn't found {tag}.
             tags[var] = f"{var2}: " + f"`{tags[var]}`"
             var += 1
             var2 += 1
-        tagsList = "\n".join(tags)
 
-        embed = discord.Embed(
-            title="Tag list:",
-            description=f"""
-{tagsList}
-        """,
-            colour=cfc,
-        )
-        embed.set_footer(text=f"There are a total of {len(tags)} tags.")
-        await ctx.respond(embed=embed)
+        chunks = [tags[i : i + 50] for i in range(0, len(tags), 50)]
+
+        pages = [
+            Page(
+                embeds=[
+                    discord.Embed(
+                        title=f"Tags {i+1}-{i+len(chunk)}",
+                        description="\n".join(chunk),
+                    ).set_footer(text=f"Showing 50/page, total of {len(tags)} tags")
+                ]
+            )
+            for i, chunk in enumerate(chunks)
+        ]
+        paginator = Paginator(pages)
+        await paginator.respond(ctx.interaction)
 
     @tags.command(description="➕ Add a new tag.")
     @commands.has_role(965422406036488282)

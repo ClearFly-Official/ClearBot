@@ -1,6 +1,7 @@
 py-cord
 pyfiglet
 python-dotenv
+aiofiles
 pymongo
 dadjokes
 fitz
