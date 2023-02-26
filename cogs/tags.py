@@ -113,7 +113,6 @@ Didn't found {tag}.
         await paginator.respond(ctx.interaction)
 
     @tags.command(description="➕ Add a new tag.")
-    @commands.has_role(965422406036488282)
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
     async def add(self, ctx: discord.ApplicationContext):
@@ -156,7 +155,6 @@ Didn't found {tag}.
         await ctx.send_modal(modal)
 
     @tags.command(description="✍️ Edit a tag.")
-    @commands.has_role(965422406036488282)
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
@@ -206,17 +204,32 @@ Didn't found {edit}.
                         colour=errorc,
                     )
                     await interaction.response.send_message(embed=embed)
+        editTag = tagcol.find_one({"name": edit})
+        if int(editTag['author']) == ctx.author.id:
+            modal = EditTagModal(title="Create a new tag.")
+            await ctx.send_modal(modal)
+        elif 965422406036488282 in ctx.author.roles:
+            modal = EditTagModal(title="Create a new tag.")
+            await ctx.send_modal(modal)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You are not authorised to edit this tag!", colour=errorc)
+            await ctx.respond(embed=embed)
 
-        modal = EditTagModal(title="Create a new tag.")
-        await ctx.send_modal(modal)
 
     @tags.command(description="⛔️ Delete a tag.")
-    @commands.has_role(965422406036488282)
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
-        tagcol.delete_one({"name": tag})
-        embed = discord.Embed(title="Tag deleted successfully", colour=cfc)
-        await ctx.respond(embed=embed)
+        deltag = tagcol.find_one({"name": tag})
+        if int(deltag['author']) == ctx.author.id:
+            tagcol.delete_one({"name": tag})
+            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
+        elif 965422406036488282 in ctx.author.roles:
+            tagcol.delete_one({"name": tag})
+            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
+        else:
+            embed = discord.Embed(title="Error 403!", description="You are not authorised to delete this tag!", colour=errorc)
+            
+        await ctx.resopnd(embed=embed)
 
 
 def setup(bot):
