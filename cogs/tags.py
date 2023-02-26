@@ -208,7 +208,7 @@ Didn't found {edit}.
         if int(editTag['author']) == ctx.author.id:
             modal = EditTagModal(title="Edit a tag.")
             await ctx.send_modal(modal)
-        elif ctx.author.roles in 965422406036488282:
+        elif ctx.author.roles in [965422406036488282]:
             modal = EditTagModal(title="Edit a tag(this is not your tag!).")
             await ctx.send_modal(modal)
         else:
@@ -223,7 +223,7 @@ Didn't found {edit}.
         if int(deltag['author']) == ctx.author.id:
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
-        elif ctx.author.roles in 965422406036488282:
+        elif ctx.author.roles in [965422406036488282]:
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully(it was not yours)", colour=cfc)
         else:
