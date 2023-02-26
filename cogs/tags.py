@@ -83,7 +83,7 @@ Didn't found {tag}.
         """,
             colour=cfc,
         )
-        embed.set_footer(text=f"There are a total of {len(tagsList)} tags.")
+        embed.set_footer(text=f"There are a total of {len(tags)} tags.")
         await ctx.respond(embed=embed)
 
     @tags.command(description="➕ Add a new tag.")
