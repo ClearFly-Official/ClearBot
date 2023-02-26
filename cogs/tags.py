@@ -205,10 +205,11 @@ Didn't found {edit}.
                     )
                     await interaction.response.send_message(embed=embed)
         editTag = tagcol.find_one({"name": edit})
+        authroles = [role.id for role in ctx.author.roles]
         if int(editTag['author']) == ctx.author.id:
             modal = EditTagModal(title="Edit a tag.")
             await ctx.send_modal(modal)
-        elif ctx.author.roles in [965422406036488282]:
+        elif 965422406036488282 in authroles:
             modal = EditTagModal(title="Edit a tag(this is not your tag!).")
             await ctx.send_modal(modal)
         else:
@@ -220,10 +221,11 @@ Didn't found {edit}.
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
         deltag = tagcol.find_one({"name": tag})
+        authroles = [role.id for role in ctx.author.roles]
         if int(deltag['author']) == ctx.author.id:
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
-        elif ctx.author.roles in [965422406036488282]:
+        elif 965422406036488282 in authroles:
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully(it was not yours)", colour=cfc)
         else:
