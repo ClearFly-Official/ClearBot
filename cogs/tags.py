@@ -1,6 +1,7 @@
 import discord
 import pymongo
 import os
+import time
 from main import cogs
 from discord import option
 from discord.ext import commands
@@ -38,7 +39,12 @@ class TagCommands(discord.Cog):
         description="Toggles if you want to view the tag raw, for copying/editing.",
         required=False,
     )
-    async def view(self, ctx: discord.ApplicationContext, tag, raw: bool):
+    @option(
+        "info",
+        description="Toggles if you want to view information about the tag.",
+        required=False
+    )
+    async def view(self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool):
         tags = []
         for tag_ in tagcol.find():
             tags.append(tag_.get("name"))
@@ -49,6 +55,17 @@ class TagCommands(discord.Cog):
                     f"```\n{output.get('value')}\n```",
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
+            elif info:
+                embed = discord.Embed(
+                    title="Tag information",
+                    colour=cfc
+                )
+                embed.add_field(name="Name", value=output.get("name"), inline=False)
+                embed.add_field(name="Value", value=output.get("value"), inline=False)
+                embed.add_field(name="Author", value=await self.bot.fetch_user(output.get("author")).mention, inline=False)
+                embed.add_field(name="Created At", value=f"<t:{round(output.get('created_at'))}:f>(<t:{round(output.get('created_at'))}:R>)")
+                embed.add_field(name="Edited At", value=f"<t:{round(output.get('edited_at'))}:f>(<t:{round(output.get('edited_at'))}:R>)")
+                await ctx.respond(embed=embed)
             else:
                 await ctx.respond(
                     f"{output.get('value')}",
@@ -119,6 +136,9 @@ Didn't found {tag}.
                         {
                             "name": self.children[0].value,
                             "value": self.children[1].value,
+                            "author": ctx.author.id,
+                            "created_at": time.time(),
+                            "edited_at": time.time(),
                         }
                     )
                     embed = discord.Embed(
@@ -165,6 +185,7 @@ Didn't found {tag}.
                             "$set": {
                                 "name": self.children[0].value,
                                 "value": self.children[1].value,
+                                "edited_at": time.time()
                             }
                         },
                     )
