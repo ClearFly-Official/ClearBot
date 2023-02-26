@@ -229,7 +229,7 @@ Didn't found {edit}.
         else:
             embed = discord.Embed(title="Error 403!", description="You are not authorised to delete this tag!", colour=errorc)
             
-        await ctx.resopnd(embed=embed)
+        await ctx.respond(embed=embed)
 
 
 def setup(bot):
