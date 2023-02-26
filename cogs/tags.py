@@ -206,10 +206,10 @@ Didn't found {edit}.
                     await interaction.response.send_message(embed=embed)
         editTag = tagcol.find_one({"name": edit})
         if int(editTag['author']) == ctx.author.id:
-            modal = EditTagModal(title="Create a new tag.")
+            modal = EditTagModal(title="Edit a tag.")
             await ctx.send_modal(modal)
-        elif 965422406036488282 in ctx.author.roles:
-            modal = EditTagModal(title="Create a new tag.")
+        elif ctx.author.roles in 965422406036488282:
+            modal = EditTagModal(title="Edit a tag(this is not your tag!).")
             await ctx.send_modal(modal)
         else:
             embed = discord.Embed(title="Error 403!", description="You are not authorised to edit this tag!", colour=errorc)
@@ -223,9 +223,9 @@ Didn't found {edit}.
         if int(deltag['author']) == ctx.author.id:
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
-        elif 965422406036488282 in ctx.author.roles:
+        elif ctx.author.roles in 965422406036488282:
             tagcol.delete_one({"name": tag})
-            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
+            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully(it was not yours)", colour=cfc)
         else:
             embed = discord.Embed(title="Error 403!", description="You are not authorised to delete this tag!", colour=errorc)
             
