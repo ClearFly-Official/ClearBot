@@ -297,15 +297,16 @@ Reloaded cogs:
             var += 1
             var2 += 1
 
-        chunks = [drefs[i : i + 50] for i in range(0, len(drefs), 50)]
+        chunks = [drefs[i : i + 25] for i in range(0, len(drefs), 25)]
 
         pages = [
             Page(
                 embeds=[
                     discord.Embed(
-                        title=f"Tags {i+1}-{i+len(chunk)}",
+                        title=f"DataRefs {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                    ).set_footer(text=f"Showing 50/page, total of {len(drefs)} tags")
+                        colour=cfc
+                    ).set_footer(text=f"Showing 25/page, total of {len(drefs)} DataRefs")
                 ]
             )
             for i, chunk in enumerate(chunks)

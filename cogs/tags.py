@@ -76,7 +76,7 @@ Didn't found {tag}.
             var += 1
             var2 += 1
 
-        chunks = [tags[i : i + 50] for i in range(0, len(tags), 50)]
+        chunks = [tags[i : i + 25] for i in range(0, len(tags), 25)]
 
         pages = [
             Page(
@@ -84,7 +84,8 @@ Didn't found {tag}.
                     discord.Embed(
                         title=f"Tags {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                    ).set_footer(text=f"Showing 50/page, total of {len(tags)} tags")
+                        colour=cfc
+                    ).set_footer(text=f"Showing 25/page, total of {len(tags)} tags")
                 ]
             )
             for i, chunk in enumerate(chunks)
