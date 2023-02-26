@@ -207,7 +207,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if chart == 'Approaches':
             async with aiohttp.ClientSession() as cs:
                 async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6") as r:
-                    load = r.json()
+                    load = await r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
@@ -246,7 +246,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if chart == 'Minimums':
             async with aiohttp.ClientSession() as cs:
                 async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3") as r:
-                    load = r.json()
+                    load = await r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
                     embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
