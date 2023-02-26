@@ -62,7 +62,7 @@ class TagCommands(discord.Cog):
                 )
                 embed.add_field(name="Name", value=output.get("name"), inline=False)
                 embed.add_field(name="Value", value=output.get("value"), inline=False)
-                embed.add_field(name="Author", value=await self.bot.fetch_user(output.get("author")).mention, inline=False)
+                embed.add_field(name="Author", value=await self.bot.fetch_user(int(output.get("author"))).mention, inline=False)
                 embed.add_field(name="Created At", value=f"<t:{round(output.get('created_at'))}:f>(<t:{round(output.get('created_at'))}:R>)")
                 embed.add_field(name="Edited At", value=f"<t:{round(output.get('edited_at'))}:f>(<t:{round(output.get('edited_at'))}:R>)")
                 await ctx.respond(embed=embed)
