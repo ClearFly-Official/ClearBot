@@ -62,7 +62,7 @@ class AvCommands(discord.Cog):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
+                        datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -118,7 +118,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
+                        datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -162,7 +162,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
             obstime = discord.utils.format_dt(
-                datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"), "R"
+                datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
             )
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(
