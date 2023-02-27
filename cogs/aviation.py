@@ -51,7 +51,10 @@ class AvCommands(discord.Cog):
             def __init__(self, bot):
                 self.bot = bot
                 super().__init__(timeout=60.0)
-
+                
+            async def on_timeout(self):
+                await ctx.edit(view=self)
+                
             @discord.ui.button(
                 label="Change to Metric units", style=discord.ButtonStyle.primary
             )
@@ -105,6 +108,9 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 self.bot = bot
                 super().__init__(timeout=120.0)
 
+            async def on_timeout(self):
+                await ctx.edit(view=self)
+                
             @discord.ui.button(
                 label="Change to Imperial units", style=discord.ButtonStyle.primary
             )
