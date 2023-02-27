@@ -474,6 +474,7 @@ class FunCommands(discord.Cog):
                 description="You gave too big of a number for the `limit` option!",
                 colour=errorc,
             )
+            await ctx.respond(embed=embed)
         else:
             subms = []
             subreddit = await reddit.subreddit("aviationmemes")
