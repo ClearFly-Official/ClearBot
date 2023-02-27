@@ -414,6 +414,7 @@ class UtilityCommands(discord.Cog):
 </fun roast:1016057999195910276> : Roast whoever you'd like!
 </fun button-game:1016057999195910276> : Play a game with buttons!
 </fun flag-game:1016057999195910276> : Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).
+</fun meme:1016057999195910276> : Get a fresh meme from r/aviationmemes.
                                 """,
                         )
                         await interaction.response.edit_message(embed=embfun)

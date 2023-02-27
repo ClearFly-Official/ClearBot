@@ -480,7 +480,7 @@ class FunCommands(discord.Cog):
                 description=f"<t:{subm.created_utc}:R>",
             )
             embed.set_author(name=f"r/aviatonmemes | by {subm.author}", url=subm.permalink)
-            embed.set_footer(f"Votes: {subm.score} | Comments: {subm.num_comments}")
+            embed.set_footer(text=f"Votes: {subm.score} | Comments: {subm.num_comments}")
             embed.set_image(url=subm.url)
             await ctx.respond(embed=embed)
 
