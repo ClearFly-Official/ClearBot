@@ -465,6 +465,7 @@ class FunCommands(discord.Cog):
 
     @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
     async def avmeme(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         subms = []
         for subm in reddit.subreddit("aviationmemes").hot(limit=25):
             if subm.url.endswith((".jpg", ".png", ".gif")):
@@ -480,7 +481,7 @@ class FunCommands(discord.Cog):
                 description=f"<t:{round(int(subm.created_utc))}:R>",
                 colour=cfc
             )
-            embed.set_author(name=f"r/aviatonmemes | by {subm.author}", url="https://reddit.com" + subm.permalink)
+            embed.set_author(name=f"r/aviatonmemes | by {subm.author}", url="https://reddit.com" + subm.permalink, icon_url="https://styles.redditmedia.com/t5_2wzek/styles/communityIcon_jj75v4o3fok81.jpg?width=256&format=pjpg&v=enabled&s=0eb5711d62d7818f07b590a84dce0e3a36b44fac")
             embed.set_footer(text=f"Votes: {subm.score} | Comments: {subm.num_comments}")
             embed.set_image(url=subm.url)
             await ctx.respond(embed=embed)
