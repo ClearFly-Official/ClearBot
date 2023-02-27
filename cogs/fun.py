@@ -464,10 +464,13 @@ class FunCommands(discord.Cog):
         os.remove(fileName)
 
     @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
-    async def avmeme(self, ctx: discord.ApplicationContext):
+    @option("limit", description="How back far in time the bot should look for memes(in posts).", required=False)
+    async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
+        if limit == None:
+            limit = 25
         subms = []
-        for subm in reddit.subreddit("aviationmemes").hot(limit=25):
+        for subm in reddit.subreddit("aviationmemes").new(limit=limit):
             if subm.url.endswith((".jpg", ".png", ".gif")):
                 subms.append(subm)
         if subms == []:
