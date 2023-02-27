@@ -469,6 +469,12 @@ class FunCommands(discord.Cog):
         await ctx.defer()
         if limit == None:
             limit = 25
+        if limit < 256:
+            embed = discord.Embed(
+                title="Error 422!",
+                description="You gave too big of a number for the `limit` option!",
+                colour=errorc,
+            )
         subms = []
         for subm in reddit.subreddit("aviationmemes").new(limit=limit):
             if subm.url.endswith((".jpg", ".png", ".gif")):
