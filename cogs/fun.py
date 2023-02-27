@@ -13,6 +13,14 @@ from wonderwords import RandomSentence
 from PIL import Image, ImageDraw, ImageFont
 from main import cfc, errorc
 
+import praw
+
+reddit = praw.Reddit(
+    client_id=os.getenv("RED_C_ID"),
+    client_secret=os.getenv("RED_C_SECR"),
+    user_agent=f"linuxDebian:{os.getenv('RED_C_ID')}:v0.0.2 (by /u/duvbolone)",
+)
+
 
 class FunCommands(discord.Cog):
     def __init__(self, bot):
@@ -454,6 +462,27 @@ class FunCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
         os.remove(fileName)
+
+    @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
+    async def avmeme(self, ctx: discord.ApplicationContext):
+        subms = []
+        for subm in reddit.subreddit("aviationmemes").hot(limit=25):
+            if subm.url.endswith((".jpg", ".png", ".gif")):
+                subms.append(subm)
+        if subms == []:
+            embed = discord.Embed(title="Error 404!", description="I did not find any valid posts, try again later.", colour=errorc)
+            await ctx.respond(embed=embed)
+        else:
+            subm = random.choice(subms)
+
+            embed = discord.Embed(
+                title=subm.title,
+                description=f"<t:{subm.created_utc}:R>",
+            )
+            embed.set_author(name=f"r/aviatonmemes | by {subm.author}", url=subm.permalink)
+            embed.set_footer(f"Votes: {subm.score} | Comments: {subm.num_comments}")
+            embed.set_image(url=subm.url)
+            await ctx.respond(embed=embed)
 
 
 def setup(bot):
