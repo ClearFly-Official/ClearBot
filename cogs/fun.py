@@ -477,7 +477,8 @@ class FunCommands(discord.Cog):
 
             embed = discord.Embed(
                 title=subm.title,
-                description=f"<t:{subm.created_utc}:R>",
+                description=f"<t:{round(int(subm.created_utc))}:R>",
+                colour=cfc
             )
             embed.set_author(name=f"r/aviatonmemes | by {subm.author}", url="https://reddit.com" + subm.permalink)
             embed.set_footer(text=f"Votes: {subm.score} | Comments: {subm.num_comments}")
