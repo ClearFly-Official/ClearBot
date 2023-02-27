@@ -4,6 +4,7 @@ import random
 import textwrap
 import os
 import flag
+import asyncpraw
 import time
 from dadjokes import Dadjoke
 from discord import option
@@ -13,9 +14,7 @@ from wonderwords import RandomSentence
 from PIL import Image, ImageDraw, ImageFont
 from main import cfc, errorc
 
-import praw
-
-reddit = praw.Reddit(
+reddit = asyncpraw.Reddit(
     client_id=os.getenv("RED_C_ID"),
     client_secret=os.getenv("RED_C_SECR"),
     user_agent=f"linuxDebian:{os.getenv('RED_C_ID')}:v0.0.2 (by /u/duvbolone)",
@@ -469,14 +468,15 @@ class FunCommands(discord.Cog):
         await ctx.defer()
         if limit == None:
             limit = 25
-        if limit < 256:
+        if limit > 128:
             embed = discord.Embed(
                 title="Error 422!",
                 description="You gave too big of a number for the `limit` option!",
                 colour=errorc,
             )
         subms = []
-        for subm in reddit.subreddit("aviationmemes").new(limit=limit):
+        subreddit = await reddit.subreddit("aviationmemes")
+        async for subm in subreddit.new(limit=limit):
             if subm.url.endswith((".jpg", ".png", ".gif")):
                 subms.append(subm)
         if subms == []:
