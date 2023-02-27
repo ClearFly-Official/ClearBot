@@ -474,37 +474,38 @@ class FunCommands(discord.Cog):
                 description="You gave too big of a number for the `limit` option!",
                 colour=errorc,
             )
-        subms = []
-        subreddit = await reddit.subreddit("aviationmemes")
-        async for subm in subreddit.new(limit=limit):
-            if subm.url.endswith((".jpg", ".png", ".gif")):
-                subms.append(subm)
-        if subms == []:
-            embed = discord.Embed(
-                title="Error 404!",
-                description="I did not find any valid posts, try again later.",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
         else:
-            subm = random.choice(subms)
+            subms = []
+            subreddit = await reddit.subreddit("aviationmemes")
+            async for subm in subreddit.new(limit=limit):
+                if subm.url.endswith((".jpg", ".png", ".gif")):
+                    subms.append(subm)
+            if subms == []:
+                embed = discord.Embed(
+                    title="Error 404!",
+                    description="I did not find any valid posts, try again later.",
+                    colour=errorc,
+                )
+                await ctx.respond(embed=embed)
+            else:
+                subm = random.choice(subms)
 
-            embed = discord.Embed(
-                title=subm.title,
-                url="https://reddit.com" + subm.permalink,
-                description=f"<t:{round(int(subm.created_utc))}:R>",
-                colour=cfc,
-            )
-            embed.set_author(
-                name=f"r/aviatonmemes | by {subm.author}",
-                url="https://reddit.com" + subm.permalink,
-                icon_url="https://styles.redditmedia.com/t5_2wzek/styles/communityIcon_jj75v4o3fok81.jpg?width=256&format=pjpg&v=enabled&s=0eb5711d62d7818f07b590a84dce0e3a36b44fac",
-            )
-            embed.set_footer(
-                text=f"Votes: {subm.score} | Ratio: {subm.upvote_ratio} | Comments: {subm.num_comments} | OC: {subm.is_original_content}"
-            )
-            embed.set_image(url=subm.url)
-            await ctx.respond(embed=embed)
+                embed = discord.Embed(
+                    title=subm.title,
+                    url="https://reddit.com" + subm.permalink,
+                    description=f"<t:{round(int(subm.created_utc))}:R>",
+                    colour=cfc,
+                )
+                embed.set_author(
+                    name=f"r/aviatonmemes | by {subm.author}",
+                    url="https://reddit.com" + subm.permalink,
+                    icon_url="https://styles.redditmedia.com/t5_2wzek/styles/communityIcon_jj75v4o3fok81.jpg?width=256&format=pjpg&v=enabled&s=0eb5711d62d7818f07b590a84dce0e3a36b44fac",
+                )
+                embed.set_footer(
+                    text=f"Votes: {subm.score} | Ratio: {subm.upvote_ratio} | Comments: {subm.num_comments} | OC: {subm.is_original_content}"
+                )
+                embed.set_image(url=subm.url)
+                await ctx.respond(embed=embed)
 
 
 def setup(bot):
