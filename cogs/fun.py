@@ -494,7 +494,7 @@ class FunCommands(discord.Cog):
             else:
                 random.seed(time.time())
                 subm = random.choice(subms)
-                self.bot.shown_rsubms.append(subm.id)
+                self.bot.shownrsubms.append(subm.id)
                 embed = discord.Embed(
                     title=subm.title,
                     url="https://reddit.com" + subm.permalink,
