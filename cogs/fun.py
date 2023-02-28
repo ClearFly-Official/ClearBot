@@ -467,7 +467,11 @@ class FunCommands(discord.Cog):
     async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
         if limit == None:
+<<<<<<< Updated upstream
             limit = 64
+=======
+            limit = 32
+>>>>>>> Stashed changes
         if limit > 128:
             embed = discord.Embed(
                 title="Error 422!",
@@ -479,6 +483,8 @@ class FunCommands(discord.Cog):
             subms = []
             subreddit = await reddit.subreddit("aviationmemes")
             async for subm in subreddit.new(limit=limit):
+                if subm.id in subm.rshownsubms:
+                    continue
                 if subm.url.endswith((".jpg", ".png", ".gif")):
                     subms.append(subm)
             if subms == []:
@@ -491,7 +497,7 @@ class FunCommands(discord.Cog):
             else:
                 random.seed(time.time())
                 subm = random.choice(subms)
-
+                self.bot.shown_rsubms.append(subm.id)
                 embed = discord.Embed(
                     title=subm.title,
                     url="https://reddit.com" + subm.permalink,

@@ -4,7 +4,7 @@ from math import sqrt
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
-from main import bot_start_time, cogs
+from main import cogs
 from main import cfc, errorc
 
 load_dotenv()
@@ -284,7 +284,7 @@ class UtilityCommands(discord.Cog):
             f = open(f"cogs/{cog}.py")
             loc += int(len(f.readlines()))
         cogsList = "\n".join(cogs)
-        delta_uptime = datetime.utcnow() - bot_start_time
+        delta_uptime = datetime.utcnow() - self.bot.start_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)

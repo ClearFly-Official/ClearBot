@@ -33,14 +33,15 @@ class Listeners(discord.Cog):
         self.rssfeedtres3.start()
         self.rssfeedsf1.start()
         self.rssfeedfsa1.start()
+        self.resetRShownSubms.start()
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.now())
         if os.path.exists(".onpc"):
             embed = discord.Embed(
                 title="I started up!",
                 description=f"""
-        Started bot up on {now}
-        *Data save available*
+Started bot up on {now}
+*Data save available*
             """,
                 color=0x00FF00,
             )
@@ -49,8 +50,8 @@ class Listeners(discord.Cog):
             embed = discord.Embed(
                 title="I started up!",
                 description=f"""
-        Started bot up on {now}
-        *Data save unavailable*
+Started bot up on {now}
+*Data save unavailable*
             """,
                 color=0x00FF00,
             )
@@ -202,6 +203,10 @@ class Listeners(discord.Cog):
 {feed.get('link')}
                 """
             )
+
+    @tasks.loop(hours=36.0)
+    async def resetRShownSubms(self):
+        self.bot.rshownsubms = []
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):

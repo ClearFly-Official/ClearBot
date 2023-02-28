@@ -9,7 +9,8 @@ from datetime import datetime
 
 bot = discord.Bot(intents=discord.Intents.all())
 load_dotenv()
-bot_start_time = datetime.utcnow()
+bot.start_time = datetime.utcnow()
+bot.rshownsubms = []
 cfc = 0x6DB2D9  # <- default color
 # cfc = 0xcc8d0e # <- halloween color
 # cfc = 0x00771d # <- christmas color
