@@ -467,11 +467,8 @@ class FunCommands(discord.Cog):
     async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
         if limit == None:
-<<<<<<< Updated upstream
             limit = 64
-=======
             limit = 32
->>>>>>> Stashed changes
         if limit > 128:
             embed = discord.Embed(
                 title="Error 422!",
