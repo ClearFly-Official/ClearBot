@@ -480,7 +480,7 @@ class FunCommands(discord.Cog):
             subms = []
             subreddit = await reddit.subreddit("aviationmemes")
             async for subm in subreddit.new(limit=limit):
-                if subm.id in subm.rshownsubms:
+                if subm.id in self.bot.rshownsubms:
                     continue
                 if subm.url.endswith((".jpg", ".png", ".gif")):
                     subms.append(subm)
