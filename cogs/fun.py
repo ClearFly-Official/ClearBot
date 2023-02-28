@@ -489,6 +489,7 @@ class FunCommands(discord.Cog):
                 )
                 await ctx.respond(embed=embed)
             else:
+                random.seed(time.time())
                 subm = random.choice(subms)
 
                 embed = discord.Embed(
