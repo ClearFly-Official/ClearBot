@@ -500,7 +500,7 @@ A: Our current plan is to code VOR navigation only.
             color=cfc,
         )
         await ctx.respond("FAQ posted!", ephemeral=True)
-        await ctx.send(embed=[embed1, embed2], view=FAQView(bot=self.bot))
+        await ctx.send(embeds=[embed1, embed2], view=FAQView(bot=self.bot))
 
     @admin.command(name="buttonroles", description="Sends the button roles.")
     @commands.has_permissions(administrator=True)
