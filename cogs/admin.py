@@ -456,10 +456,7 @@ URL: `{url}`
     @admin.command(name="rules", description="Sends the rules.")
     @commands.has_permissions(administrator=True)
     async def rules(self, ctx: discord.ApplicationContext):
-        embed1 = discord.Embed(color=cfc)
-        embed1.set_image(
-            url="https://cdn.discordapp.com/attachments/1001845626956427265/1050885748439662612/CFRules.png"
-        )
+        embed1 = discord.Embed(color=cfc).set_image(url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true")
         embed2 = discord.Embed(
             color=cfc,
             description="""
@@ -484,14 +481,15 @@ URL: `{url}`
     @admin.command(name="faq", description="Sends the faq.")
     @commands.has_permissions(administrator=True)
     async def faq(self, ctx: discord.ApplicationContext):
-        embed = discord.Embed(
+        embed1 = discord.Embed(colour=cfc).set_image(url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true")
+        embed2 = discord.Embed(
             title="ClearFly FAQ",
             description="""
 **Q: When will the Boeing 737-100 be released?**
 A: When it’s finished.
 
 **Q: Is the project dead?**
-A: Nope! To see the latest updates, go to the 737 Updates channel.
+A: Nope! We're just not working on it 24/7. To see the latest updates, go to the 737 Updates channel.
 
 **Q: Will there be a 3D cabin?**
 A: Yes!
@@ -502,7 +500,7 @@ A: Our current plan is to code VOR navigation only.
             color=cfc,
         )
         await ctx.respond("FAQ posted!", ephemeral=True)
-        await ctx.send(embed=embed, view=FAQView(bot=self.bot))
+        await ctx.send(embed=[embed1, embed2], view=FAQView(bot=self.bot))
 
     @admin.command(name="buttonroles", description="Sends the button roles.")
     @commands.has_permissions(administrator=True)
