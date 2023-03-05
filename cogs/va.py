@@ -25,6 +25,7 @@ airports = [
     "KSEA",
     "KPDX",
     "KRIC",
+    "KMEM",
     "KMIA",
     "KSTL",
     "KBOS",
@@ -978,6 +979,8 @@ Comments : {comments}
                             cf1 = 67
                         if destination == "LOWS":
                             cf1 = 68
+                        if destination == "KMEM":
+                            cf1 = 69
                     if ori == 1:
                         if origin == "KDCA":
                             cf2 = 23
@@ -1115,6 +1118,8 @@ Comments : {comments}
                             cf2 = 22
                         if origin == "LOWS":
                             cf2 = 21
+                        if origin == "KMEM":
+                            cf2 = 20
                     if aircraft == "B732":
                         cf3 = 1
                     if aircraft == "B738":
