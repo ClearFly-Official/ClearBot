@@ -605,20 +605,20 @@ Have a nice and safe flight!
                         f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
-                    embed = discord.Embed(
-                        title="Flight Filed!",
-                        description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!",
-                        color=cfc,
-                    )
-                    embed.add_field(
-                        name=phasetxt,
-                        value=f"""
+                embed = discord.Embed(
+                    title="Flight Filed!",
+                    description="**Wait for a <@&1040918528565444618> to assign you the required information before flying!**\n\n Show screenshots of you doing the flight for confirmation too!",
+                    color=cfc,
+                )
+                embed.add_field(
+                    name=phasetxt,
+                    value=f"""
 ```
 Departure:{origin}
 Arrival:{destination}
 ```
 Have a nice and safe flight!
-                            """,
+                        """,
                     )
                 if os.path.exists(f"ClearFly_VA/users/{user.id}"):
                     f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
