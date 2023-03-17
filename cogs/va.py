@@ -620,21 +620,21 @@ Arrival:{destination}
 Have a nice and safe flight!
                             """,
                     )
-                    if os.path.exists(f"ClearFly_VA/users/{user.id}"):
-                        f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
-                        f.write(
-                            f"\nTraining {phase}({paneltype}) {origin}-{destination}"
-                        )
-                        f.close()
+                if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                    f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
+                    f.write(
+                        f"\nTraining {phase}({paneltype}) {origin}-{destination}"
+                    )
+                    f.close()
                 else:
                     os.mkdir(f"ClearFly_VA/users/{user.id}")
                     f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
                     f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
                     f.close()
-                    await ctx.respond(embed=embed)
-                    await ctx.send(
-                        f"<@&1040918528565444618> someone needs to get in the air for their {phasen} flight, give them the required info!"
-                    )
+                await ctx.respond(embed=embed)
+                await ctx.send(
+                    f"<@&1040918528565444618> someone needs to get in the air for their {phasen} flight, give them the required info!"
+                )
             else:
                 embed = discord.Embed(
                     title="Error 403!",
