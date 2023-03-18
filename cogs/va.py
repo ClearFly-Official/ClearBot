@@ -1360,7 +1360,7 @@ Comments : {comments}
 ```
 Number of flights: **{nof}**
             """,
-            ).set_image(url=user.display_avatar.url)
+            ).set_thumbnail(url=user.display_avatar.url)
             if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
                 with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
                     reports = f.read()
