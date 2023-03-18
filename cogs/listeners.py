@@ -405,7 +405,7 @@ ID: **{after.id}**
             pass
 
     @commands.Cog.listener()
-    async def on_guild_channel_update(self, before, after):
+    async def on_guild_channel_update(self, before: discord.channel, after: discord.channel):
         channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
         embed.add_field(name="", value=after.mention, inline=False)
@@ -466,6 +466,64 @@ After: **{after.position+1}**
             """,
                 inline=False,
             )
+        if before.overwrites != after.overwrites:
+            permoverwritesB = {}
+            permoverwritesA = {}
+            out = []
+            for key, val in before.overwrites.items():
+                itobj = iter(before.overwrites[key])
+                for perm in before.overwrites[key]:
+                    it = next(itobj)
+                    if it[1] == None:
+                        continue
+                    else:
+                        permoverwritesB.setdefault(key.id, []).append(it)
+            for key, val in after.overwrites.items():
+                itobj = iter(after.overwrites[key])
+                for perm in after.overwrites[key]:
+                    it = next(itobj)
+                    if it[1] == None:
+                        continue
+                    else:
+                        permoverwritesA.setdefault(key.id, []).append(it)
+            permoverwrites = {}
+            for id in permoverwritesA:
+                diffA = set(permoverwritesA[id]) - set(permoverwritesB[id])
+                diffB = set(permoverwritesB[id]) - set(permoverwritesA[id])
+                permoverwrites.setdefault(id, []).append(diffA)
+                if (list(diffA) == []) and (list(diffB) == []):
+                    continue
+                else:
+                    perms = []
+                    if self.bot.get_user(id):
+                        mention = f"<@{id}>"
+                    else:
+                        mention = f"<@&{id}>"
+                    for perm in list(permoverwrites[id])[0]:
+                        if list(diffB) == []:
+                            diffB = {(perm, "None")}
+                        if list(diffA) == []:
+                            diffA = {(perm, "None")}
+                        perms.append(
+                            str(perm[0])
+                            + " : "
+                            + str(list(diffB)[0][1])
+                            + " -> "
+                            + str(perm[1])
+                        )
+                    fperm = (
+                        "\n".join(perms)
+                        .replace("True", "✅")
+                        .replace("False", "❌")
+                        .replace("None", "◻️")
+                    )
+                    out.append(
+                        f"""
+{mention}
+{fperm}
+                        """
+                    )
+            embed.add_field(name="Permissions", value="\n".join(out), inline=False)
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
