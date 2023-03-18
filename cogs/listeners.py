@@ -287,7 +287,7 @@ Started bot up on {now}
             color=cfc,
             description=f"Joined on {discord.utils.format_dt(member.joined_at)}",
         )
-        pfp = member.avatar.url
+        pfp = member.display_avatar.url
         emb.set_thumbnail(url=pfp)
         await channel.send(embed=emb)
 
@@ -321,7 +321,7 @@ Message Content:
             msgdel = message.clean_content
             msgatr = message.author.mention
             msgcnl = message.channel.mention
-            pfp = message.author.avatar.url
+            pfp = message.author.display_avatar.url
             emb = discord.Embed(title="Message Deleted", color=cfc)
             emb.add_field(name="Content", value=f"{msgdel[:1024]}", inline=False)
             emb.add_field(name="Author", value=f"{msgatr}", inline=True)
@@ -377,7 +377,7 @@ After:
                 msgedita = after.clean_content
                 msgatr = before.author.mention
                 msgcnl = before.channel.mention
-                pfp = before.author.avatar.url
+                pfp = before.author.display_avatar.url
                 emb = discord.Embed(
                     title="Message Edited",
                     color=cfc,
@@ -534,21 +534,21 @@ After: **{after.position+1}**
                 embed = discord.Embed(
                     title=f"{before} changed their name to `{after.name}`.", colour=cfc
                 )
-                embed.set_thumbnail(url=after.avatar.url)
+                embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.display_name != after.display_name:
                 embed = discord.Embed(
                     title=f"{before} changed their nickname to `{after.display_name}`.",
                     colour=cfc,
                 )
-                embed.set_thumbnail(url=after.avatar.url)
+                embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.discriminator != after.discriminator:
                 embed = discord.Embed(
                     title=f"{before} changed their discriminator to `{after.discriminator}`.",
                     colour=cfc,
                 )
-                embed.set_thumbnail(url=after.avatar.url)
+                embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.roles != after.roles:
                 embed = discord.Embed(
@@ -572,14 +572,14 @@ After: **{after.position+1}**
                     difa = "\n".join(list(difa))
                 embed.add_field(name="Roles removed:", value=difr)
                 embed.add_field(name="Roles added:", value=difa)
-                embed.set_thumbnail(url=after.avatar.url)
+                embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
-            if before.avatar != after.avatar:
+            if before.display_avatar != after.display_avatar:
                 embed = discord.Embed(
                     title=f"{before} changed their avatar to the following image.",
                     colour=cfc,
                 )
-                embed.set_image(url=after.avatar.url)
+                embed.set_image(url=after.display_avatar.url)
                 await channel.send(embed=embed)
         else:
             pass

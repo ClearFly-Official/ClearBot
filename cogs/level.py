@@ -37,7 +37,7 @@ class LevelingCommands(discord.Cog):
         x1, y1 = 860, 547
         x2, y2 = 2740, 710
         img = Image.open("images/userlevelClear.png")
-        await user.avatar.save("images/avatarorigin.png")
+        await user.display_avatar.save("images/avatarorigin.png")
         avatarorigin = Image.open("images/avatarorigin.png")
         avatar = avatarorigin.resize((256, 256))
         avatar.save("images/avatar.png")
@@ -153,7 +153,7 @@ class LevelingCommands(discord.Cog):
         x1, y1 = 860, 547
         x2, y2 = 2740, 710
         img = Image.open("images/userlevelClear.png")
-        await user.avatar.save("images/avatarorigin.png")
+        await user.display_avatar.save("images/avatarorigin.png")
         avatarorigin = Image.open("images/avatarorigin.png")
         avatar = avatarorigin.resize((256, 256))
         avatar.save("images/avatar.png")

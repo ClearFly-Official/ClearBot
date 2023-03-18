@@ -9,7 +9,6 @@ from main import cfc, errorc
 
 load_dotenv()
 
-
 class UtilityCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -56,7 +55,7 @@ class UtilityCommands(discord.Cog):
         await ctx.defer(ephemeral=True)
         channel = self.bot.get_channel(965655791468183612)
         embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
-        embed.set_thumbnail(url=ctx.author.avatar.url)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
         confirmembed = discord.Embed(
             title="Report send!",
             description="The team will come to help you as soon as possible.",
@@ -136,11 +135,11 @@ class UtilityCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-            embed = discord.Embed(title="Your avatar", url=user.avatar.url,colour=cfc)
+            embed = discord.Embed(title="Your avatar", url=user.display_avatar.url,colour=cfc)
         else:
-            embed = discord.Embed(title=f"{user.name}'s avatar", url=user.avatar.url, colour=cfc)
+            embed = discord.Embed(title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc)
 
-        embed.set_image(url=user.avatar.url)
+        embed.set_image(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
 
     @discord.user_command(
@@ -148,8 +147,8 @@ class UtilityCommands(discord.Cog):
     )
     async def avatar_app(self, ctx, user: discord.Member):
         await ctx.defer()
-        embed = discord.Embed(title=f"{user.name}'s avatar", url=user.avatar.url,colour=cfc)
-        embed.set_image(url=user.avatar.url)
+        embed = discord.Embed(title=f"{user.name}'s avatar", url=user.display_avatar.url,colour=cfc)
+        embed.set_image(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
 
     @utility.command(name="who-is", description="📰 Fetches a user profile.")
@@ -162,7 +161,7 @@ class UtilityCommands(discord.Cog):
         accjoine = user.joined_at
         acccrtte = discord.utils.format_dt(acccrte)
         accjointe = discord.utils.format_dt(accjoine)
-        pfpe = user.avatar.url
+        pfpe = user.display_avatar.url
         embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
         embed.add_field(
             name=f"{user}",
@@ -181,7 +180,7 @@ class UtilityCommands(discord.Cog):
         accjoine = user.joined_at
         acccrtte = discord.utils.format_dt(acccrte)
         accjointe = discord.utils.format_dt(accjoine)
-        pfpe = user.avatar.url
+        pfpe = user.display_avatar.url
         embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
         embed.add_field(
             name=f"{user}",

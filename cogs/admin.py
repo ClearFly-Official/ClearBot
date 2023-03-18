@@ -138,7 +138,7 @@ class AdminCommands(discord.Cog):
         emb = discord.Embed(
             title=f"{ctx.author} used echo:", description=text, color=cfc
         )
-        emb.set_thumbnail(url=ctx.author.avatar.url)
+        emb.set_thumbnail(url=ctx.author.display_avatar.url)
         await channel.send(embed=emb)
 
     @admin.command(name="embed", description="📦 Send an embed as ClearBot.")
@@ -257,7 +257,7 @@ URL: `{url}`
         await ctx.channel.send(embed=emb)
         await ctx.respond("Posted your embed!", ephemeral=True)
         logchannel = self.bot.get_channel(1001405648828891187)
-        ademb.set_thumbnail(url=ctx.author.avatar.url)
+        ademb.set_thumbnail(url=ctx.author.display_avatar.url)
         await logchannel.send(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
@@ -292,7 +292,7 @@ URL: `{url}`
                         description=text,
                         color=cfc,
                     )
-                    embed.set_thumbnail(url=ctx.author.avatar.url)
+                    embed.set_thumbnail(url=ctx.author.display_avatar.url)
                     await channel.send(embed=embed)
                     for i in range(amount):
                         await ctx.send(text)
@@ -332,7 +332,7 @@ URL: `{url}`
                 description=text,
                 color=cfc,
             )
-            embed.set_thumbnail(url=user.avatar.url)
+            embed.set_thumbnail(url=user.display_avatar.url)
             await ctx.respond(
                 "Get ready for the show <:aye:965627580743024671>", ephemeral=True
             )
@@ -369,7 +369,7 @@ URL: `{url}`
             title=f"{ctx.author} changed `{channel.mention}` slowmode to {slowmode} second(s).",
             colour=cfc,
         )
-        embed.set_thumbnail(url=ctx.author.avatar.url)
+        embed.set_thumbnail(url=ctx.author.display_avatar.url)
         await logchannel.send(embed=embed)
 
     @admin.command(description="🗑️ Delete large amounts of messages from a channel.")
@@ -403,7 +403,7 @@ URL: `{url}`
                         title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}` after confirmation!",
                         color=cfc,
                     )
-                    embed.set_thumbnail(url=ctx.author.avatar.url)
+                    embed.set_thumbnail(url=ctx.author.display_avatar.url)
                     await channel.send(embed=embed)
                     await ctx.edit(view=None)
 
@@ -445,7 +445,7 @@ URL: `{url}`
                 title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!",
                 color=cfc,
             )
-            embed.set_thumbnail(url=ctx.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.display_avatar.url)
             await channel.send(embed=embed)
 
     @admin.command(name="rules", description="Sends the rules.")

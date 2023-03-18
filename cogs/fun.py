@@ -310,7 +310,7 @@ class FunCommands(discord.Cog):
     @discord.message_command(name="Quote Message")
     async def quote(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.defer()
-        await message.author.avatar.save("images/avataroriginq.png")
+        await message.author.display_avatar.save("images/avataroriginq.png")
         avatarorigin = Image.open("images/avataroriginq.png")
         avatar = avatarorigin.resize((1024, 1024))
         avatar.save("images/avatarq.png")
