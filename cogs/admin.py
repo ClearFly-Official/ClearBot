@@ -25,17 +25,12 @@ class RulesView(discord.ui.View):
             )
         else:
             author = interaction.user
-            channel = self.bot.get_channel(1001405648828891187)
-            pfp = author.avatar.url
             guild = self.bot.get_guild(965419296937365514)
             role = guild.get_role(1002200398905483285)
-            embed = discord.Embed(title=f"{author} accepted the rules!", color=cfc)
-            embed.set_thumbnail(url=pfp)
             await author.add_roles(role)
             await interaction.response.send_message(
                 "Rules accepted, have fun in the server!", ephemeral=True
             )
-            await channel.send(embed=embed)
 
 
 class FAQView(discord.ui.View):
