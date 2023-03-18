@@ -110,6 +110,7 @@ class DevCommands(discord.Cog):
     @dev.command(name="reload_cogs", description="🔄 Reload the Cogs you want.")
     @commands.has_role(965422406036488282)
     async def reloadCogs(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         cogs = [
             "admin",
             "dev",
