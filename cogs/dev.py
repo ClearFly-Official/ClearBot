@@ -288,6 +288,7 @@ Reloaded cogs:
     @dataref.command(name="list", description="📂 List all the custom datarefs.")
     @commands.has_role(965422406036488282)
     async def dreflist(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         drefs = []
         for dref in drefcol.find():
             drefs.append(dref.get("path"))

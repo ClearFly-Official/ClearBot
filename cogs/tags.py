@@ -46,6 +46,7 @@ class TagCommands(discord.Cog):
     )
     async def view(self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool):
         tags = []
+        await ctx.defer()
         for tag_ in tagcol.find():
             tags.append(tag_.get("name"))
         if tag in tags:
@@ -85,6 +86,7 @@ Didn't found {tag}.
 
     @tags.command(description="📂 List all the tags.")
     async def list(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         tags = []
         for tag_ in tagcol.find():
             tags.append(tag_.get("name"))
@@ -116,6 +118,7 @@ Didn't found {tag}.
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
     async def add(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         class AddTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
@@ -159,6 +162,7 @@ Didn't found {tag}.
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
     async def edit(self, ctx: discord.ApplicationContext, edit: str):
+        await ctx.defer()
         class EditTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
@@ -220,6 +224,7 @@ Didn't found {edit}.
     @tags.command(description="⛔️ Delete a tag.")
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
+        await ctx.defer()
         deltag = tagcol.find_one({"name": tag})
         authroles = [role.id for role in ctx.author.roles]
         if int(deltag['author']) == ctx.author.id:
