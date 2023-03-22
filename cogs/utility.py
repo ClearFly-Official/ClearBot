@@ -298,7 +298,7 @@ class UtilityCommands(discord.Cog):
 **Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
 **Latency:** {round(self.bot.latency*1000)}ms
 **CPU usage:** {psutil.cpu_percent(interval=0.1)}
-**RAM usage:** {psutil.virtual_memory()[2]}({psutil.virtual_memory()[3]/1000000000})
+**RAM usage:** {psutil.virtual_memory()[2]}({psutil.virtual_memory()[3]/1000000}MB)
 **Total lines of code:** {loc}
 
 **Cogs loaded:**
