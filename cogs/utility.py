@@ -157,41 +157,74 @@ class UtilityCommands(discord.Cog):
     @option("user", description="The user you want the user profile of.")
     async def whois(self, ctx: discord.ApplicationContext, user: discord.Member = None):
         await ctx.defer()
+        roles = []
+        status = str(user.status)
+        for role in user.roles:
+            roles.append(f"<@&{role.id}>")
+        roles = "\n".join(reversed(roles))
         if user == None:
             user = ctx.author
-        acccrte = user.created_at
-        accjoine = user.joined_at
-        acccrtte = discord.utils.format_dt(acccrte)
-        accjointe = discord.utils.format_dt(accjoine)
-        pfpe = user.display_avatar.url
-        embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
-        embed.add_field(
-            name=f"{user}",
-            value=f"""
-**Account created on:**{acccrtte}
-**Account joined this server on:**{accjointe}
+        if user.is_on_mobile():
+            device = "Mobile"
+        else:
+            if status == "offline":
+                device = "User is offline"
+            else:
+                device = "Desktop/Web"
+        embed = discord.Embed(
+            title=f"**{user}'s profile:**", 
+            color=cfc,
+            description=f"""
+{user.mention}
+**Created on:** {discord.utils.format_dt(user.created_at)}
+**Status:** `{status.title()}`
+**Activity:** {user.activity}
+**Device:** `{device}`
+
+**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
+**Nickname:** {user.nick}
+**Roles:** 
+{roles}
         """,
         )
-        embed.set_thumbnail(url=pfpe)
+        embed.set_thumbnail(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
+
 
     @discord.user_command(name="User Profile")
     async def whois_app(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
-        acccrte = user.created_at
-        accjoine = user.joined_at
-        acccrtte = discord.utils.format_dt(acccrte)
-        accjointe = discord.utils.format_dt(accjoine)
-        pfpe = user.display_avatar.url
-        embed = discord.Embed(title=f"**{user}'s profile:**", color=cfc)
-        embed.add_field(
-            name=f"{user}",
-            value=f"""
-**Account created on:**{acccrtte}
-**Account joined this server on:**{accjointe}
+        roles = []
+        status = str(user.status)
+        for role in user.roles:
+            roles.append(f"<@&{role.id}>")
+        roles = "\n".join(reversed(roles))
+        if user == None:
+            user = ctx.author
+        if user.is_on_mobile():
+            device = "Mobile"
+        else:
+            if status == "offline":
+                device = "User is offline"
+            else:
+                device = "Desktop/Web"
+        embed = discord.Embed(
+            title=f"**{user}'s profile:**", 
+            color=cfc,
+            description=f"""
+{user.mention}
+**Created on:** {discord.utils.format_dt(user.created_at)}
+**Status:** `{status.title()}`
+**Activity:** {user.activity}
+**Device:** `{device}`
+
+**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
+**Nickname:** {user.nick}
+**Roles:** 
+{roles}
         """,
         )
-        embed.set_thumbnail(url=pfpe)
+        embed.set_thumbnail(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
 
     @utility.command(
@@ -298,7 +331,7 @@ class UtilityCommands(discord.Cog):
 **Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
 **Latency:** {round(self.bot.latency*1000)}ms
 **CPU usage:** {round(psutil.cpu_percent(interval=0.1), 1)}%
-**RAM usage:** {psutil.virtual_memory()[2]}({round(psutil.virtual_memory()[3]/1000000, 1)}MB)
+**RAM usage:** {psutil.virtual_memory()[2]}% ({round(psutil.virtual_memory()[3]/1000000, 1)}MB)
 **Total lines of code:** {loc}
 
 **Cogs loaded:**
