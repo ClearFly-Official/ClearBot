@@ -535,8 +535,8 @@ Channel: {message.channel.mention}
         )
 
     @dev.command(name="eval", description="💻 Execute some code.")
-    @option("code", description="The code you want to execute", autocomplete=getattrs2)
-    @commands.has_role(965422406036488282)
+    @option("code", description="The code you want to execute.", autocomplete=getattrs2)
+    @commands.is_owner()
     async def evalcmd(self, ctx: discord.ApplicationContext, code: str):
         out = eval(code)
         embed = discord.Embed(
@@ -550,6 +550,20 @@ Channel: {message.channel.mention}
         )
         await ctx.respond(embed=embed)
 
+    @dev.command(name="run_cmd", description="🖲️ Run a terminal command.")
+    @option("command", description="The command you want to run.")
+    @commands.is_owner()
+    async def run_cmd(self, ctx: discord.ApplicationContext, command: str):
+        await ctx.defer()
+        embed = discord.Embed(
+            description=f"""
+```
+{subprocess.check_output(command.split(" "))}
+```
+""",
+            colour=cfc,
+        )
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(DevCommands(bot))
