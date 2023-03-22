@@ -157,13 +157,13 @@ class UtilityCommands(discord.Cog):
     @option("user", description="The user you want the user profile of.")
     async def whois(self, ctx: discord.ApplicationContext, user: discord.Member = None):
         await ctx.defer()
+        if user == None:
+            user = ctx.author
         roles = []
         status = str(user.status)
         for role in user.roles:
             roles.append(f"<@&{role.id}>")
         roles = "\n".join(reversed(roles))
-        if user == None:
-            user = ctx.author
         if user.is_on_mobile():
             device = "Mobile"
         else:
