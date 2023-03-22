@@ -13,3 +13,4 @@ wonderwords
 flag
 Pillow
 feedparser
+psutil

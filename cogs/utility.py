@@ -1,4 +1,5 @@
 import discord
+import psutil
 from datetime import datetime
 from math import sqrt
 from discord import option
@@ -6,6 +7,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from main import cogs
 from main import cfc, errorc
+
 
 load_dotenv()
 
@@ -293,10 +295,10 @@ class UtilityCommands(discord.Cog):
             description=f"""
 **Creator:** {owner.mention}
 
-**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Lightbulb Hosting](https://discord.gg/nnkKUS4DnV)'s servers
-
+**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
 **Latency:** {round(self.bot.latency*1000)}ms
-
+**CPU usage:** {psutil.cpu_percent(interval=0.1)}
+**RAM usage:** {psutil.virtual_memory()[2]}(psutil.virtual_memory()[3]/1000000000)
 **Total lines of code:** {loc}
 
 **Cogs loaded:**
