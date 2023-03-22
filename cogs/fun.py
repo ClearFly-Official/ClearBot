@@ -117,7 +117,7 @@ class FunCommands(discord.Cog):
                 "Signs point to yes",
             ]
             embed = discord.Embed(
-                title=f"{question}:", description=f"{random.choice(answers)}", color=cfc
+                title=f"{question}", description=f"{random.choice(answers)}", color=cfc
             )
             await ctx.respond(embed=embed)
         else:
@@ -150,7 +150,7 @@ class FunCommands(discord.Cog):
                 "I politely ask you to shut up.",
             ]
             embed = discord.Embed(
-                title=f"{question}:", description=f"{random.choice(answers)}", color=cfc
+                title=f"{question}", description=f"{random.choice(answers)}", color=cfc
             )
             await ctx.respond(embed=embed)
 
