@@ -224,7 +224,7 @@ Started bot up on {now}
                 usrs.append(usr.get("id"))
             if message.author.id in usrs:
                 usrdata = lvlcol.find_one({"id": message.author.id})
-                belvlnom = usrdata.get("lvlnom", "N/A")
+                belvlnom = usrdata.get("nom", "N/A")
                 last = usrdata.get("last_msg", "N/A")
                 now = round(time.time())
                 if (now - int(last)) < 5:
@@ -250,7 +250,7 @@ Started bot up on {now}
                 lvlcol.update_one(
                     {"id": message.author.id},
                         {"$set", {
-                            "nom":nowlvlnom
+                            "nom": nowlvlnom
                             }
                         }
                 )
