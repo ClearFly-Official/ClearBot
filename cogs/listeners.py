@@ -14,6 +14,7 @@ adminids = [668874138160594985, 871893179450925148, 917477940650971227]
 client = pymongo.MongoClient(os.environ["MONGODB_URI"])
 db = client["ClearBotDB"]
 rss = db["RSS"]
+lvlcol = db["leveling"]
 trescol = rss["Tresholdx"]
 fsacol = rss["FSAddonsXP"]
 sfcol = rss["SimpleFlying"]
@@ -208,10 +209,9 @@ Started bot up on {now}
     async def resetRShownSubms(self):
         self.bot.rshownsubms = []
 
-    @commands.Cog.listener("on_message")
+    #@commands.Cog.listener("on_message")
     async def levellisten(self, message):
-        nowlvlprog = 0
-        config = configparser.ConfigParser()
+        nowlvlnom = 0
         if message.channel.id == 966077223260004402:
             return
         if message.channel.id == 965600413376200726:
@@ -219,55 +219,75 @@ Started bot up on {now}
         if message.author.bot:
             return
         else:
-            if os.path.exists(f"Leveling/users/{message.author.id}/data.ini"):
-                config.read(f"Leveling/users/{message.author.id}/data.ini")
-                belvlprog = config.get("Level", "lvlprog")
-                last = config.get("Level", "last")
+            usrs = []
+            for usr in lvlcol.find():
+                usrs.append(usr.get(id))
+            if message.author.id in usrs:
+                usrdata = lvlcol.find_one({"id": message.author.id})
+                belvlnom = usrdata.get("lvlnom", "N/A")
+                last = usrdata.get("last_msg", "N/A")
                 now = round(time.time())
                 if (now - int(last)) < 5:
                     return
                 else:
-                    config.set("Level", "last", f"{now}")
+                    usrdata.update_one({"id", message.author.id}, {"$set": {
+                        "last_msg": now
+                    }})
                 if len(message.content) == 0:
-                    nowlvlprog = int(belvlprog) + 1
+                    nowlvlnom = int(belvlnom) + 1
                 if len(message.content) > 0:
-                    nowlvlprog = int(belvlprog) + 1
+                    nowlvlnom = int(belvlnom) + 1
                 if len(message.content) > 10:
-                    nowlvlprog = int(belvlprog) + 2
+                    nowlvlnom = int(belvlnom) + 2
                 if len(message.content) > 25:
-                    nowlvlprog = int(belvlprog) + 5
+                    nowlvlnom = int(belvlnom) + 5
                 if len(message.content) > 50:
-                    nowlvlprog = int(belvlprog) + 7
+                    nowlvlnom = int(belvlnom) + 7
                 if len(message.content) > 75:
-                    nowlvlprog = int(belvlprog) + 10
-                lvl = config.get("Level", "lvl")
-                topprog = config.get("Level", "topprog")
-                config.set("Level", "lvlprog", f"{nowlvlprog}")
-                if int(nowlvlprog) >= int(topprog):
-                    config.set("Level", "lvlprog", "0")
-                    config.set("Level", "lvl", f"{int(lvl)+1}")
+                    nowlvlnom = int(belvlnom) + 10
+                lvl = usrdata.get("level", "N/A")
+                denom = usrdata.get("denom", "N/A")
+                usrdata.update_one(
+                    {"id": message.author.id},
+                    {"$set", {
+                        "nom":nowlvlnom
+                    }}
+                )
+                if int(nowlvlnom) >= int(denom):
+                    usrdata.update_one(
+                        {"id": message.author.id},
+                        {"$set", {
+                            "nom":0
+                        }}
+                    )
+                    usrdata.update_one(
+                        {"id": message.author.id},
+                        {"$set", {
+                            "level":lvl+1
+                        }}
+                    )
                     if int(lvl) == 0:
                         lvl = 1
-                    config.set("Level", "topprog", f"{int(topprog)+(int(lvl)*20)}")
-                    lvlp = config.get("Level", "lvl")
+                    usrdata.update_one(
+                        {"id": message.author.id},
+                        {"$set", {
+                            "denom":int(denom)+(int(lvl)*20)
+                        }}
+                    )
+                    lvlp = usrdata.get("level", "N/A")
                     await message.channel.send(
                         f"{message.author.mention} :partying_face: You reached level {lvlp}!"
                     )
-                with open(
-                    f"Leveling/users/{message.author.id}/data.ini", "w"
-                ) as configfile:
-                    config.write(configfile)
             else:
-                os.mkdir(f"Leveling/users/{message.author.id}")
-                config.add_section("Level")
-                config.set("Level", "lvlprog", "1")
-                config.set("Level", "lvl", "0")
-                config.set("Level", "topprog", "25")
-                config.set("Level", "last", f"{round(time.time())}")
-                with open(
-                    f"Leveling/users/{message.author.id}/data.ini", "w"
-                ) as configfile:
-                    config.write(configfile)
+                lvlcol.insert_one(
+                    {
+                        "id": message.author.id,
+                        "level": lvl,
+                        "nom": 1,
+                        "denom": 25,
+                        "last_msg": round(time.time()),
+                    }
+                )
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -405,7 +425,9 @@ ID: **{after.id}**
             pass
 
     @commands.Cog.listener()
-    async def on_guild_channel_update(self, before: discord.channel, after: discord.channel):
+    async def on_guild_channel_update(
+        self, before: discord.channel, after: discord.channel
+    ):
         channel = self.bot.get_channel(1001405648828891187)
         embed = discord.Embed(title=f"Channel Updated", colour=cfc)
         embed.add_field(name="", value=after.mention, inline=False)

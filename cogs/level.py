@@ -3,6 +3,7 @@ import os
 import configparser
 import glob
 import re
+import pymongo
 from pilmoji import Pilmoji
 from numerize import numerize as n
 from PIL import Image, ImageDraw, ImageFont
@@ -10,6 +11,9 @@ from discord import option
 from discord.ext import commands
 from main import cfc, errorc
 
+client = pymongo.MongoClient(os.environ["MONGODB_URI"])
+db = client["ClearBotDB"]
+lvlcol = db["leveling"]
 
 class LevelingCommands(discord.Cog):
     def __init__(self, bot):
@@ -33,20 +37,22 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-        config = configparser.ConfigParser()
-        x1, y1 = 860, 547
-        x2, y2 = 2740, 710
-        img = Image.open("images/userlevelClear.png")
-        await user.display_avatar.save("images/avatarorigin.png")
-        avatarorigin = Image.open("images/avatarorigin.png")
-        avatar = avatarorigin.resize((256, 256))
-        avatar.save("images/avatar.png")
-        avatar = Image.open("images/avatar.png")
-        if os.path.exists(f"Leveling/users/{user.id}/data.ini"):
-            config.read(f"Leveling/users/{user.id}/data.ini")
-            lvlprog = config.get("Level", "lvlprog")
-            lvl = config.get("Level", "lvl")
-            topprog = config.get("Level", "topprog")
+        usrs = []
+        for usr in lvlcol.find():
+            usrs.append(usr.get(id))
+        if user.id in usrs:
+            usrdata = lvlcol.find_one({"id":user.id})
+            x1, y1 = 860, 547
+            x2, y2 = 2740, 710
+            img = Image.open("images/userlevelClear.png")
+            await user.display_avatar.save("images/avatarorigin.png")
+            avatarorigin = Image.open("images/avatarorigin.png")
+            avatar = avatarorigin.resize((256, 256))
+            avatar.save("images/avatar.png")
+            avatar = Image.open("images/avatar.png")
+            lvlnom = usrdata.get("nom", 0)
+            lvl = usrdata.get("level", 0)
+            lvldenom = usrdata.get("denom", 1)
             h, w = avatar.size
             avmask = Image.new("L", (h, w), 0)
             clear = Image.new("RGBA", (h, w), 1)
@@ -85,10 +91,10 @@ class LevelingCommands(discord.Cog):
                     emoji_position_offset=(0, 10),
                 )
                 x3, y3 = x1, y1
-                x4, y4 = x1 + ((x2 - x1) * (int(lvlprog) / int(topprog))), y2
+                x4, y4 = x1 + ((x2 - x1) * (int(lvlnom) / int(lvldenom))), y2
                 pilmoji.text(
                     (2000, 380),
-                    f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}",
+                    f"XP: {n.numerize(int(lvlnom))} / {n.numerize(int(lvldenom))}",
                     fill=(255, 255, 255),
                     font=font,
                     emoji_position_offset=(0, 10),
@@ -149,20 +155,22 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-        config = configparser.ConfigParser()
-        x1, y1 = 860, 547
-        x2, y2 = 2740, 710
-        img = Image.open("images/userlevelClear.png")
-        await user.display_avatar.save("images/avatarorigin.png")
-        avatarorigin = Image.open("images/avatarorigin.png")
-        avatar = avatarorigin.resize((256, 256))
-        avatar.save("images/avatar.png")
-        avatar = Image.open("images/avatar.png")
-        if os.path.exists(f"Leveling/users/{user.id}/data.ini"):
-            config.read(f"Leveling/users/{user.id}/data.ini")
-            lvlprog = config.get("Level", "lvlprog")
-            lvl = config.get("Level", "lvl")
-            topprog = config.get("Level", "topprog")
+        usrs = []
+        for usr in lvlcol.find():
+            usrs.append(usr.get(id))
+        if user.id in usrs:
+            usrdata = lvlcol.find_one({"id":user.id})
+            x1, y1 = 860, 547
+            x2, y2 = 2740, 710
+            img = Image.open("images/userlevelClear.png")
+            await user.display_avatar.save("images/avatarorigin.png")
+            avatarorigin = Image.open("images/avatarorigin.png")
+            avatar = avatarorigin.resize((256, 256))
+            avatar.save("images/avatar.png")
+            avatar = Image.open("images/avatar.png")
+            lvlnom = usrdata.get("nom", 0)
+            lvl = usrdata.get("level", 0)
+            lvldenom = usrdata.get("denom", 1)
             h, w = avatar.size
             avmask = Image.new("L", (h, w), 0)
             clear = Image.new("RGBA", (h, w), 1)
@@ -201,10 +209,10 @@ class LevelingCommands(discord.Cog):
                     emoji_position_offset=(0, 10),
                 )
                 x3, y3 = x1, y1
-                x4, y4 = x1 + ((x2 - x1) * (int(lvlprog) / int(topprog))), y2
+                x4, y4 = x1 + ((x2 - x1) * (int(lvlnom) / int(lvldenom))), y2
                 pilmoji.text(
                     (2000, 380),
-                    f"XP: {n.numerize(int(lvlprog))} / {n.numerize(int(topprog))}",
+                    f"XP: {n.numerize(int(lvlnom))} / {n.numerize(int(lvldenom))}",
                     fill=(255, 255, 255),
                     font=font,
                     emoji_position_offset=(0, 10),
@@ -260,31 +268,23 @@ class LevelingCommands(discord.Cog):
         name="leaderboard", description="📊 See the leaderboard of the whole server."
     )
     async def lb(self, ctx: discord.ApplicationContext):
-        if os.path.exists(".onpc"):
             await ctx.defer()
             output = []
             nameoutput = []
-            index = 1
-            config = configparser.ConfigParser()
             img = Image.open(f"images/lbClear.png")
-            for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
-                with open(os.path.join(os.getcwd(), filename), "r") as f:
-                    config.read(f"{filename}")
-                    lvl = int(config.get("Level", "lvl"))
-                    lvlprog = int(config.get("Level", "lvlprog"))
-                    topprog = int(config.get("Level", "topprog"))
-                    usrid = filename.replace("Leveling/users/", "").replace(
-                        "/data.ini", ""
-                    )
-                    user = await self.bot.fetch_user(int(usrid))
-                    line = f"""
-          {lvlprog+topprog*lvl} LVL: {lvl} XP: {lvlprog}/{n.numerize(topprog)}\n
-          """
-                    output.append(line)
-                    line2 = f"""
-          {lvlprog+topprog*lvl} {user.name}\n
-          """
-                    nameoutput.append(line2)
+            for usr in lvlcol.find():
+                lvl = usr.get("level", 0)
+                lvlnom = usr.get("nom", 0)
+                lvldenom = usr.get("denom", 0)
+                user = await self.bot.fetch_user(int(usr.get("id", 0)))
+                line = f"""
+      {lvlnom+lvldenom*lvl} LVL: {lvl} XP: {lvlnom}/{n.numerize(lvldenom)}\n
+        """
+                output.append(line)
+                line2 = f"""
+        {lvlnom+lvldenom*lvl} {user.name}\n
+      """
+                nameoutput.append(line2)
 
             def atoi(text):
                 return int(text) if text.isdigit() else text
@@ -335,13 +335,28 @@ Chat to earn xp!
             file = discord.File(f"images/lb.png", filename="lb.png")
             embed.set_image(url=f"attachment://lb.png")
             await ctx.respond(embed=embed, file=file)
-        else:
-            embed = discord.Embed(
-                title="Error 503!",
-                description="This command is currently unavailable, please try again later.",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
+
+    @leveling.command()
+    async def transfer(self, ctx):
+        config = configparser.ConfigParser()
+        for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
+            with open(os.path.join(os.getcwd(), filename), "r") as f:
+                config.read(f"{filename}")
+                usrid = filename.replace("Leveling/users/", "").replace(
+                        "/data.ini", ""
+                    )
+                lvl = int(config.get("Level", "lvl"))
+                lvlprog = int(config.get("Level", "lvlprog"))
+                topprog = int(config.get("Level", "topprog"))
+                lvlcol.insert_one(
+                    {
+                        "id":usrid,
+                        "level":lvl,
+                        "nom":lvlprog,
+                        "denom":topprog,
+                        "last_msg":0
+                    }
+                    )
 
 
 def setup(bot):
