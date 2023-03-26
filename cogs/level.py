@@ -335,29 +335,35 @@ Chat to earn xp!
             file = discord.File(f"images/lb.png", filename="lb.png")
             embed.set_image(url=f"attachment://lb.png")
             await ctx.respond(embed=embed, file=file)
-    
-    @leveling.command(description="Transfer data from local files to DB")
-    async def transfer2db(self, ctx):
-        await ctx.defer()
-        config = configparser.ConfigParser()
-        for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
-            with open(os.path.join(os.getcwd(), filename), "r") as f:
-                config.read(f"{filename}")
-                usrid = filename.replace("Leveling/users/", "").replace(
-                        "/data.ini", ""
-                    )
-                lvl = int(config.get("Level", "lvl"))
-                lvlprog = int(config.get("Level", "lvlprog"))
-                topprog = int(config.get("Level", "topprog"))
-                lvlcol.insert_one(
-                    {
-                        "id":int(usrid),
-                        "level":lvl,
-                        "nom":lvlprog,
-                        "denom":topprog,
-                        "last_msg":0
-                    }
-                    )
-        await ctx.respond("Success!")
+
+    # |--------------------------------------------------------------|
+    # |Command to transfer data stored in local files to the DataBase.|
+    # |--------------------------------------------------------------|
+    #
+    # @leveling.command(description="Transfer data from local files to DB")
+    # async def transfer2db(self, ctx):
+    #     await ctx.defer()
+    #     config = configparser.ConfigParser()
+    #     for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
+    #         with open(os.path.join(os.getcwd(), filename), "r") as f:
+    #             config.read(f"{filename}")
+    #             usrid = filename.replace("Leveling/users/", "").replace(
+    #                     "/data.ini", ""
+    #                 )
+    #             lvl = int(config.get("Level", "lvl"))
+    #             lvlprog = int(config.get("Level", "lvlprog"))
+    #             topprog = int(config.get("Level", "topprog"))
+    #             lvlcol.insert_one(
+    #                 {
+    #                     "id":int(usrid),
+    #                     "level":lvl,
+    #                     "nom":lvlprog,
+    #                     "denom":topprog,
+    #                     "last_msg":0
+    #                 }
+    #                 )
+    #     await ctx.respond("Success!")
+
+
 def setup(bot):
     bot.add_cog(LevelingCommands(bot))

@@ -209,7 +209,7 @@ Started bot up on {now}
     async def resetRShownSubms(self):
         self.bot.rshownsubms = []
 
-    #@commands.Cog.listener("on_message")
+    @commands.Cog.listener("on_message")
     async def levellisten(self, message):
         nowlvlnom = 0
         if message.channel.id == 966077223260004402:
