@@ -336,28 +336,6 @@ Chat to earn xp!
             embed.set_image(url=f"attachment://lb.png")
             await ctx.respond(embed=embed, file=file)
 
-    @leveling.command()
-    async def transfer(self, ctx):
-        config = configparser.ConfigParser()
-        for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
-            with open(os.path.join(os.getcwd(), filename), "r") as f:
-                config.read(f"{filename}")
-                usrid = filename.replace("Leveling/users/", "").replace(
-                        "/data.ini", ""
-                    )
-                lvl = int(config.get("Level", "lvl"))
-                lvlprog = int(config.get("Level", "lvlprog"))
-                topprog = int(config.get("Level", "topprog"))
-                lvlcol.insert_one(
-                    {
-                        "id":usrid,
-                        "level":lvl,
-                        "nom":lvlprog,
-                        "denom":topprog,
-                        "last_msg":0
-                    }
-                    )
-
 
 def setup(bot):
     bot.add_cog(LevelingCommands(bot))
