@@ -221,7 +221,7 @@ Started bot up on {now}
         else:
             usrs = []
             for usr in lvlcol.find():
-                usrs.append(usr.get(id))
+                usrs.append(usr.get("id"))
             if message.author.id in usrs:
                 usrdata = lvlcol.find_one({"id": message.author.id})
                 belvlnom = usrdata.get("lvlnom", "N/A")

@@ -39,7 +39,7 @@ class LevelingCommands(discord.Cog):
             user = ctx.author
         usrs = []
         for usr in lvlcol.find():
-            usrs.append(usr.get(id))
+            usrs.append(usr.get("id"))
         if user.id in usrs:
             usrdata = lvlcol.find_one({"id":user.id})
             x1, y1 = 860, 547
@@ -157,7 +157,7 @@ class LevelingCommands(discord.Cog):
             user = ctx.author
         usrs = []
         for usr in lvlcol.find():
-            usrs.append(usr.get(id))
+            usrs.append(usr.get("id"))
         if user.id in usrs:
             usrdata = lvlcol.find_one({"id":user.id})
             x1, y1 = 860, 547
