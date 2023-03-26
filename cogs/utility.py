@@ -161,6 +161,8 @@ class UtilityCommands(discord.Cog):
             user = ctx.author
         roles = []
         status = str(user.status)
+        if status = "Dnd":
+            status = "Do Not Disturb"
         for role in user.roles:
             roles.append(f"<@&{role.id}>")
         roles = "\n".join(reversed(roles))
