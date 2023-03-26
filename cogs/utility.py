@@ -161,7 +161,7 @@ class UtilityCommands(discord.Cog):
             user = ctx.author
         roles = []
         status = str(user.status)
-        if status = "dnd":
+        if status == "dnd":
             status = "Do Not Disturb"
         for role in user.roles:
             roles.append(f"<@&{role.id}>")
@@ -201,7 +201,7 @@ class UtilityCommands(discord.Cog):
         for role in user.roles:
             roles.append(f"<@&{role.id}>")
         roles = "\n".join(reversed(roles))
-        if status = "dnd":
+        if status == "dnd":
             status = "Do Not Disturb"
         if user == None:
             user = ctx.author
