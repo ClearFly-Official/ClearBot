@@ -224,8 +224,8 @@ Started bot up on {now}
                 usrs.append(usr.get("id"))
             if message.author.id in usrs:
                 usrdata = lvlcol.find_one({"id": message.author.id})
-                belvlnom = usrdata.get("nom", "N/A")
-                last = usrdata.get("last_msg", "N/A")
+                belvlnom = usrdata.get("nom", 0)
+                last = usrdata.get("last_msg", 0)
                 now = round(time.time())
                 if (now - int(last)) < 5:
                     return
@@ -245,11 +245,11 @@ Started bot up on {now}
                     nowlvlnom = int(belvlnom) + 7
                 if len(message.content) > 75:
                     nowlvlnom = int(belvlnom) + 10
-                lvl = usrdata.get("level", "N/A")
-                denom = usrdata.get("denom", "N/A")
+                lvl = usrdata.get("level", 0)
+                denom = usrdata.get("denom", 0)
                 lvlcol.update_one(
                     {"id": message.author.id},
-                        {"$set", {
+                        {"$set": {
                             "nom": nowlvlnom
                             }
                         }
@@ -257,13 +257,13 @@ Started bot up on {now}
                 if int(nowlvlnom) >= int(denom):
                     lvlcol.update_one(
                         {"id": message.author.id},
-                        {"$set", {
+                        {"$set": {
                             "nom":0
                         }}
                     )
                     lvlcol.update_one(
                         {"id": message.author.id},
-                        {"$set", {
+                        {"$set": {
                             "level":lvl+1
                         }}
                     )
@@ -271,7 +271,7 @@ Started bot up on {now}
                         lvl = 1
                     lvlcol.update_one(
                         {"id": message.author.id},
-                        {"$set", {
+                        {"$set": {
                             "denom":int(denom)+(int(lvl)*20)
                         }}
                     )
