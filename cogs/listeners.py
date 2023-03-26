@@ -230,7 +230,7 @@ Started bot up on {now}
                 if (now - int(last)) < 5:
                     return
                 else:
-                    lvlcol.update_one({"id", message.author.id}, {"$set": {
+                    lvlcol.update_one({"id": message.author.id}, {"$set": {
                         "last_msg": now
                     }})
                 if len(message.content) == 0:
@@ -249,9 +249,10 @@ Started bot up on {now}
                 denom = usrdata.get("denom", "N/A")
                 lvlcol.update_one(
                     {"id": message.author.id},
-                    {"$set", {
-                        "nom":nowlvlnom
-                    }}
+                        {"$set", {
+                            "nom":nowlvlnom
+                            }
+                        }
                 )
                 if int(nowlvlnom) >= int(denom):
                     lvlcol.update_one(
