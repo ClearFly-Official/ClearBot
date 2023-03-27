@@ -593,7 +593,7 @@ Description :
     @option(
         "dataref_type",
         description="The type of dataref the new dataref will be.",
-        autocomplet=get_types,
+        autocomplete=get_types,
     )
     @option(
         "unit", description="The unit type of the new dataref.", autocomplete=get_units
@@ -644,7 +644,7 @@ Description :
     @option(
         "type",
         description="The type of dataref the edited dataref will be.",
-        choices=["double", "float", "float array", "int", "int array", "string"],
+        autocomplete=get_types,
     )
     @option(
         "unit",
@@ -713,9 +713,15 @@ Description :
         await ctx.defer()
         if dataref in customDatarefList:
             drefcol.delete_one({"path": dataref})
-            embed = discord.Embed(title=f"Dataref `{dataref}` successfully deleted.", colour=cfc)
+            embed = discord.Embed(
+                title=f"Dataref `{dataref}` successfully deleted.", colour=cfc
+            )
         else:
-            embed = discord.Embed(title=f"Error 404!", description=f"Didn't found the dateref `{dataref}`. I can't delete a dataref if it doesn't exist!", colour=errorc)
+            embed = discord.Embed(
+                title=f"Error 404!",
+                description=f"Didn't found the dateref `{dataref}`. I can't delete a dataref if it doesn't exist!",
+                colour=errorc,
+            )
         await ctx.respond(embed=embed)
 
     @discord.message_command(name="Message Info")
@@ -752,7 +758,7 @@ Channel: {message.channel.mention}
 
     def get_code_attrs(obj_str):
         try:
-            module, _, obj = obj_str.rpartition('.')
+            module, _, obj = obj_str.rpartition(".")
             if not module:
                 # No module specified, assume built-in module
                 module = obj_str
@@ -767,16 +773,24 @@ Channel: {message.channel.mention}
             if inspect.ismodule(obj):
                 return dir(obj)
             else:
-                return [attr for attr in dir(obj) if not inspect.isroutine(getattr(obj, attr))]
+                return [
+                    attr
+                    for attr in dir(obj)
+                    if not inspect.isroutine(getattr(obj, attr))
+                ]
         except (ImportError, AttributeError):
-            return ['No attributes found, check your spelling and try again!']
-    
+            return ["No attributes found, check your spelling and try again!"]
+
     async def code_autocomplete(self, ctx: discord.AutocompleteContext):
         attrs = self.get_code_attrs(ctx.value)
         return [attr for attr in attrs if ctx.value in attr]
-    
+
     @dev.command(name="eval", description="💻 Execute some code.")
-    @option("code", description="The code you want to execute.", autocomplete=code_autocomplete)
+    @option(
+        "code",
+        description="The code you want to execute.",
+        autocomplete=code_autocomplete,
+    )
     @commands.is_owner()
     async def evalcmd(self, ctx: discord.ApplicationContext, code: str):
         out = eval(code)
