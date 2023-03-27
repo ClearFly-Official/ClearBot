@@ -118,7 +118,6 @@ Didn't found {tag}.
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
     async def add(self, ctx: discord.ApplicationContext):
-        await ctx.defer()
         class AddTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
@@ -162,7 +161,6 @@ Didn't found {tag}.
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
     async def edit(self, ctx: discord.ApplicationContext, edit: str):
-        await ctx.defer()
         class EditTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
                 super().__init__(*args, **kwargs)
