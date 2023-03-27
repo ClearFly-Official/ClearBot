@@ -1,3 +1,4 @@
+import inspect
 import subprocess
 import discord
 import json
@@ -251,37 +252,243 @@ Reloaded cogs:
             customDatarefList.append(dref.get("path"))
         return [dataref for dataref in customDatarefList if ctx.value in dataref]
 
+    async def get_types(self, ctx: discord.AutocompleteContext):
+        types = [
+            "byte[1024]",
+            "byte[150]",
+            "byte[240]",
+            "byte[24]",
+            "byte[250]",
+            "byte[256]",
+            "byte[260]",
+            "byte[2920]",
+            "byte[40]",
+            "byte[500]",
+            "byte[512]",
+            "byte[8]",
+            "byte[96]",
+            "byte[]",
+            "double",
+            "float",
+            "float[10]",
+            "float[128]",
+            "float[12]",
+            "float[14]",
+            "float[16]",
+            "float[16][10]",
+            "float[16][12]",
+            "float[16][3]",
+            "float[1]",
+            "float[20]",
+            "float[24]",
+            "float[25]",
+            "float[2]",
+            "float[32]",
+            "float[3]",
+            "float[480]",
+            "float[48]",
+            "float[4]",
+            "float[500]",
+            "float[50]",
+            "float[56]",
+            "float[56][10]",
+            "float[56][10][4]",
+            "float[56][2]",
+            "float[56][2][2]",
+            "float[56][2][2][721]",
+            "float[56][4]",
+            "float[5]",
+            "float[64]",
+            "float[6]",
+            "float[730]",
+            "float[73]",
+            "float[8]",
+            "float[95]",
+            "float[9]",
+            "int",
+            "int[10]",
+            "int[12]",
+            "int[16]",
+            "int[19]",
+            "int[200]",
+            "int[20]",
+            "int[24]",
+            "int[25]",
+            "int[2]",
+            "int[3200]",
+            "int[3]",
+            "int[4]",
+            "int[500]",
+            "int[50]",
+            "int[56]",
+            "int[56][10]",
+            "int[64]",
+            "int[667]",
+            "int[6]",
+            "int[73]",
+            "int[8]",
+            "int[9]",
+        ]
+        return [type for type in types if ctx.value in type]
+
     async def get_units(self, ctx: discord.AutocompleteContext):
         units = [
+            "-1..1",
+            "0-1",
+            "0..1",
+            "0..8",
+            "1",
+            "10Hz",
+            "10hertz",
+            "-1,0,1",
+            "???",
+            "Celsius",
+            "Deg",
+            "Degrees",
+            "EPR",
+            "GLenum",
+            "Gs",
+            "HWND",
+            "Knots",
+            "Matrix4x4",
+            "Mhz",
+            "Newton",
+            "OGLcoords",
+            "PSI",
+            "Pixels",
+            "RGB",
+            "Read:",
+            "TODOV11",
+            "V11TODO",
+            "[-0.5..1]",
+            "[-1..1]",
+            "[0..1.5]",
+            "[0..1]",
+            "ampere",
+            "amps",
+            "any",
+            "bhp",
+            "bitfield",
+            "bool",
             "boolean",
+            "byte[8]",
+            "celsius",
+            "channel",
+            "code",
             "count",
+            "day",
             "days",
+            "deg",
+            "deg/meter",
+            "deg/sec",
+            "deg/sec2",
+            "degC",
+            "degc_or_f",
+            "degm",
+            "degree",
             "degrees",
+            "degrees(true)",
+            "degreesC",
+            "degreesF",
+            "degrees_C",
+            "degrees_C_or_F",
+            "degrees_magnetic",
+            "degs",
+            "degt",
+            "dots",
             "enum",
+            "enums",
+            "failure_enum",
             "feet",
-            "gallons",
+            "feet/min",
+            "feet/minute",
+            "flags",
+            "float",
+            "fpm",
+            "ft-lbs",
+            "ftmsl",
+            "gal/hr_or_lb/hr",
+            "hertz",
             "hours",
-            "IATA",
-            "ICAO",
+            "hz",
+            "inHg",
+            "inches_hg",
             "index",
-            "kilometers",
+            "inhg",
+            "int",
+            "integer",
+            "ip",
+            "keas",
+            "kg",
+            "kg/Wattsecond",
+            "kg/h",
+            "kg/kg",
+            "kg/s",
+            "kgs",
+            "khz",
+            "kias",
+            "kilograms/second",
+            "knots",
+            "knots/mach",
+            "knots/second",
+            "knots_mach",
             "kts",
+            "lb/in2",
+            "lbs",
+            "light",
+            "liter",
             "liters",
+            "m/s",
+            "m/s^2",
+            "m^3/s^2",
+            "mach",
+            "meter",
+            "meter/s",
             "meters",
-            "miles",
+            "meters/second",
+            "meters^2",
+            "mins",
             "minutes",
-            "mps",
-            "nauticalmiles",
+            "mode",
+            "month",
+            "mtr/sec2",
+            "multiplier",
+            "nautical_miles",
+            "newton_meters",
+            "newtonmeters",
+            "newtons",
+            "offset",
+            "pascals",
             "percent",
+            "percentMAC",
+            "pixels",
+            "pos",
+            "pounds/square_inch",
+            "prcnt",
+            "psf",
             "psi",
+            "quaternion",
+            "rad/sec",
+            "radians",
+            "radians/second",
             "ratio",
+            "revolutions/minute",
+            "scalar",
+            "second",
             "seconds",
+            "secs",
+            "square_meters",
             "string",
-            "tons",
-            "x",
-            "y",
-            "yards",
-            "z",
+            "string[40]",
+            "strings",
+            "todo",
+            "transponder_code",
+            "vector",
+            "volt",
+            "voltage",
+            "volts",
+            "watt/hours",
+            "watts",
         ]
         return [unit for unit in units if ctx.value in unit]
 
@@ -307,8 +514,10 @@ Reloaded cogs:
                     discord.Embed(
                         title=f"DataRefs {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                        colour=cfc
-                    ).set_footer(text=f"Showing 25/page, total of {len(drefs)} DataRefs")
+                        colour=cfc,
+                    ).set_footer(
+                        text=f"Showing 25/page, total of {len(drefs)} DataRefs"
+                    )
                 ]
             )
             for i, chunk in enumerate(chunks)
@@ -384,15 +593,7 @@ Description :
     @option(
         "dataref_type",
         description="The type of dataref the new dataref will be.",
-        choices=[
-            "double",
-            "float",
-            "float array",
-            "int",
-            "int array",
-            "string",
-            "command",
-        ],
+        autocomplet=get_types,
     )
     @option(
         "unit", description="The unit type of the new dataref.", autocomplete=get_units
@@ -502,6 +703,18 @@ Description :
             )
             await ctx.respond(embed=embed)
 
+    @dataref.command(description="⛔️ Delete a dataref.")
+    @option(
+        "dataref",
+        description="The dataref you want to delete.",
+        autocomplete=get_datarefs,
+    )
+    async def drefdel(self, ctx: discord.ApplicationContext, dataref):
+        await ctx.defer()
+        drefcol.delete_one({"path": dataref})
+        embed = discord.Embed(title=f"Dataref `{dataref}` successfully deleted.")
+        await ctx.respond(embed=embed)
+
     @discord.message_command(name="Message Info")
     @commands.has_role(965422406036488282)
     async def msginfo(self, ctx: discord.ApplicationContext, message: discord.Message):
@@ -534,8 +747,33 @@ Channel: {message.channel.mention}
             allowed_mentions=discord.AllowedMentions.none(),
         )
 
+    def get_code_attrs(obj_str):
+        try:
+            module, _, obj = obj_str.rpartition('.')
+            if not module:
+                # No module specified, assume built-in module
+                module = obj_str
+                obj = None
+            elif not obj:
+                # Module specified, but no object
+                return dir(__import__(module))
+            else:
+                # Module and object specified
+                module = __import__(module, fromlist=[obj])
+                obj = getattr(module, obj)
+            if inspect.ismodule(obj):
+                return dir(obj)
+            else:
+                return [attr for attr in dir(obj) if not inspect.isroutine(getattr(obj, attr))]
+        except (ImportError, AttributeError):
+            return ['No attributes found, check your spelling and try again!']
+    
+    async def code_autocomplete(self, ctx: discord.AutocompleteContext):
+        attrs = self.get_code_attrs(ctx.value)
+        return [attr for attr in attrs if ctx.value in attr]
+    
     @dev.command(name="eval", description="💻 Execute some code.")
-    @option("code", description="The code you want to execute.", autocomplete=getattrs2)
+    @option("code", description="The code you want to execute.", autocomplete=code_autocomplete)
     @commands.is_owner()
     async def evalcmd(self, ctx: discord.ApplicationContext, code: str):
         out = eval(code)
@@ -564,6 +802,7 @@ Channel: {message.channel.mention}
             colour=cfc,
         )
         await ctx.respond(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(DevCommands(bot))
