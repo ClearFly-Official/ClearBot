@@ -199,7 +199,7 @@ Started bot up on {now}
             sfcol.update_one({"_id": "lastID"}, {"$set": {"lastID": feed.get("id")}})
             await channel.send(
                 f"""
-**{feed.get('title')}**
+**{feed.get('title').replace('&quot;', '"')}**
 
 {feed.get('link')}
                 """

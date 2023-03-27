@@ -1,5 +1,6 @@
 import discord
 import psutil
+import urllib.parse
 from datetime import datetime
 from math import sqrt
 from discord import option
@@ -311,6 +312,41 @@ class UtilityCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
 
+    @utility.command(description="🔎 Search the web!")
+    async def search(self, ctx: discord.ApplicationContext, query: str):
+        convquery = urllib.parse.quote_plus(query)
+        view = discord.ui.View()
+        google = discord.ui.Button(
+            label = "Google",
+            url = f"https://google.com/search?q={convquery}"
+        )
+        bing = discord.ui.Button(
+            label = "Microsoft Bing",
+            url = f"https://bing.com/search?q={convquery}"
+        )
+        duckduckgo = discord.ui.Button(
+            label = "DuckDuckGo",
+            url = f"https://duckduckgo.com/?q={convquery}"
+        )
+        ecosia = discord.ui.Button(
+            label = "Ecosia",
+            url = f"https://ecosia.org/search?q={convquery}"
+        )
+        yahoo = discord.ui.Button(
+            label = "Yahoo! Search",
+            url = f"https://yahoo.com/search?p={convquery}"
+        )
+        view.add_item(google)
+        view.add_item(bing)
+        view.add_item(duckduckgo)
+        view.add_item(ecosia)
+        view.add_item(yahoo)
+        embed = discord.Embed(title=f"Click the links below to view the results of your search: '{query}'.", colour=cfc)
+        embed.set_author(name=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar.url)
+        await ctx.respond(view=view, embed=embed)
+
+
+
     @utility.command(
         name="stats", description="📈 Show statistics about the bot and server."
     )
@@ -427,6 +463,7 @@ class UtilityCommands(discord.Cog):
 </utility github:1018089106267451432> : Shows the bot's GitHub repository.
 </utility math basic:1018089106267451432> : Do some basic math.
 </utility math advanced:1018089106267451432> : Do some advanced math.
+</utility search:1> : Search the web!
                                     """,
                         )
                         await interaction.response.edit_message(embed=embutil)
