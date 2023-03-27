@@ -642,7 +642,7 @@ Description :
         autocomplete=get_custom_datarefs,
     )
     @option(
-        "type",
+        "dataref_type",
         description="The type of dataref the edited dataref will be.",
         autocomplete=get_types,
     )
