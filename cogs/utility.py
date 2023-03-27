@@ -313,6 +313,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     @utility.command(description="🔎 Search the web!")
+    @option("query", description="The content you want to search for.")
     async def search(self, ctx: discord.ApplicationContext, query: str):
         convquery = urllib.parse.quote_plus(query)
         view = discord.ui.View()
@@ -334,14 +335,14 @@ class UtilityCommands(discord.Cog):
         )
         yahoo = discord.ui.Button(
             label = "Yahoo! Search",
-            url = f"https://yahoo.com/search?p={convquery}"
+            url = f"https://search.yahoo.com/search?p={convquery}"
         )
         view.add_item(google)
         view.add_item(bing)
         view.add_item(duckduckgo)
         view.add_item(ecosia)
         view.add_item(yahoo)
-        embed = discord.Embed(title=f"Click the links below to view the results of your search: '{query}'.", colour=cfc)
+        embed = discord.Embed(title=f"Click the links below to view the results of your search: '**{query}**'.", colour=cfc)
         embed.set_author(name=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar.url)
         await ctx.respond(view=view, embed=embed)
 
@@ -463,7 +464,7 @@ class UtilityCommands(discord.Cog):
 </utility github:1018089106267451432> : Shows the bot's GitHub repository.
 </utility math basic:1018089106267451432> : Do some basic math.
 </utility math advanced:1018089106267451432> : Do some advanced math.
-</utility search:1> : Search the web!
+</utility search:1018089106267451432> : Search the web!
                                     """,
                         )
                         await interaction.response.edit_message(embed=embutil)
