@@ -703,16 +703,19 @@ Description :
             )
             await ctx.respond(embed=embed)
 
-    @dataref.command(description="⛔️ Delete a dataref.")
+    @dataref.command(name="delete", description="⛔️ Delete a dataref.")
     @option(
         "dataref",
         description="The dataref you want to delete.",
-        autocomplete=get_datarefs,
+        autocomplete=get_custom_datarefs,
     )
     async def drefdel(self, ctx: discord.ApplicationContext, dataref):
         await ctx.defer()
-        drefcol.delete_one({"path": dataref})
-        embed = discord.Embed(title=f"Dataref `{dataref}` successfully deleted.")
+        if dataref in customDatarefList:
+            drefcol.delete_one({"path": dataref})
+            embed = discord.Embed(title=f"Dataref `{dataref}` successfully deleted.", colour=cfc)
+        else:
+            embed = discord.Embed(title=f"Error 404!", description=f"Didn't found the dateref `{dataref}`. I can't delete a dataref if it doesn't exist!", colour=errorc)
         await ctx.respond(embed=embed)
 
     @discord.message_command(name="Message Info")
