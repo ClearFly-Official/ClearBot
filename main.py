@@ -34,5 +34,4 @@ cogs.remove("__pycache__")
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")
 
-# bot.run(os.getenv("TOKEN"))
-bot.run("MTAzODAwNTY1NTk4Mzg5ODYzNA.GtlwVg.aEXVNokQUU1mtIX6TrfweGOqCxPUaLvMngQ8TI")
+bot.run(os.getenv("TOKEN"))
