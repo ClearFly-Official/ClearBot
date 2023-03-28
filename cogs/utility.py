@@ -48,6 +48,7 @@ class UtilityCommands(discord.Cog):
     @option(
         "comments", description="Anything else to say about the report?", required=False
     )
+    @commands.cooldown(2, 120)
     async def report(
         self,
         ctx: discord.ApplicationContext,
@@ -354,6 +355,7 @@ class UtilityCommands(discord.Cog):
     @utility.command(
         name="stats", description="📈 Show statistics about the bot and server."
     )
+    @commands.cooldown(1, 5)
     async def stats(self, ctx: discord.ApplicationContext):
         loc = 0
         f = open("main.py", "r")

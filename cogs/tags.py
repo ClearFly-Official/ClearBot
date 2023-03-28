@@ -44,6 +44,7 @@ class TagCommands(discord.Cog):
         description="Toggles if you want to view information about the tag.",
         required=False
     )
+    @commands.cooldown(2, 10)
     async def view(self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool):
         tags = []
         await ctx.defer()
@@ -85,6 +86,7 @@ Didn't found {tag}.
             await ctx.respond(embed=embed)
 
     @tags.command(description="📂 List all the tags.")
+    @commands.cooldown(1, 5)
     async def list(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         tags = []
@@ -117,6 +119,7 @@ Didn't found {tag}.
     @tags.command(description="➕ Add a new tag.")
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
+    @commands.cooldown(1, 60)
     async def add(self, ctx: discord.ApplicationContext):
         class AddTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
@@ -160,6 +163,7 @@ Didn't found {tag}.
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
+    @commands.cooldown(1, 30)
     async def edit(self, ctx: discord.ApplicationContext, edit: str):
         class EditTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
@@ -221,6 +225,7 @@ Didn't found {edit}.
 
     @tags.command(description="⛔️ Delete a tag.")
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
+    @commands.cooldown(1, 120)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
         await ctx.defer()
         deltag = tagcol.find_one({"name": tag})

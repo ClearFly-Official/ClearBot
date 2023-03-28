@@ -514,7 +514,7 @@ A: This is unlikely, but not impossible in the future.
         )
         emb4 = discord.Embed(
             title="ClearFly Livery Painter",
-            description="Create a custom livery for the ClearFly virtual airline and share it with <@871893179450925148> or <@668874138160594985>. Full credit will be given to you in <#1041057335449227314>.",
+            description="Create a custom livery for the ClearFly virtual airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).",
             colour=cfc,
         )
         embimg = discord.Embed(

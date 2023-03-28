@@ -155,6 +155,7 @@ class FunCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     @fun.command(name="dadjoke", description="🃏 Get an unfunny dadjoke.")
+    @commands.cooldown(2, 10)
     async def dadjoke(self, ctx: discord.ApplicationContext):
         dadjoke = Dadjoke()
         embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
@@ -348,6 +349,7 @@ class FunCommands(discord.Cog):
         description="Difficulty level of the game",
         choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
     )
+    @commands.cooldown(1, 20)
     async def flagsgame(self, ctx: discord.ApplicationContext, difficulty: str):
         await ctx.defer()
         fileName = "flaggame" + str(random.randint(0, 100)) + ".png"
@@ -464,6 +466,7 @@ class FunCommands(discord.Cog):
 
     @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
     @option("limit", description="How back far in time the bot should look for memes(in posts).", required=False)
+    @commands.cooldown(1, 15)
     async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
         if limit == None:
