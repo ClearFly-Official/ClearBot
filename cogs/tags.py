@@ -20,7 +20,7 @@ class TagCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    tags = discord.SlashCommandGroup(name="tag", description="Tag related commands")
+    tags = discord.SlashCommandGroup(name="tag", description="🏷️ Commands related to the tag system.")
 
     @commands.Cog.listener()
     async def on_ready(self):

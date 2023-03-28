@@ -25,7 +25,7 @@ class FunCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    fun = discord.SlashCommandGroup(name="fun", description="Fun commands.")
+    fun = discord.SlashCommandGroup(name="fun", description="🧩 Commands that are supposed to be fun (highly subjective).")
 
     @commands.Cog.listener()
     async def on_ready(self):

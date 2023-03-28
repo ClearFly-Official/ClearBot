@@ -126,7 +126,7 @@ class AdminCommands(discord.Cog):
         self.bot.add_view(UpdateRoleView(bot=self.bot))
         print("| Admin cog loaded sucessfully")
 
-    admin = discord.SlashCommandGroup(name="admin", description="Commands for admins")
+    admin = discord.SlashCommandGroup(name="admin", description="🔒 Commands for admins only.")
 
     @admin.command(name="echo", description="💬 Send a message as ClearBot.")
     @option("text", description="The text you want to send as the bot.")

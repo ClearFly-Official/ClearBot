@@ -12,12 +12,13 @@ from main import cfc, errorc
 
 load_dotenv()
 
+
 class UtilityCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     utility = discord.SlashCommandGroup(
-        name="utility", description="Commands related to utility"
+        name="utility", description="🛠️ Commands that are supposed to be useful."
     )
     math = utility.create_subgroup(name="math", description="Commands related to math")
 
@@ -116,9 +117,7 @@ class UtilityCommands(discord.Cog):
                 "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
             )
 
-    @utility.command(
-        name="the-team", description="🧑‍🤝‍🧑 Shows The ClearFly Team!"
-    )
+    @utility.command(name="the-team", description="🧑‍🤝‍🧑 Shows The ClearFly Team!")
     async def team(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(title="The ClearFly Team:", color=cfc)
         logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
@@ -138,9 +137,13 @@ class UtilityCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-            embed = discord.Embed(title="Your avatar", url=user.display_avatar.url,colour=cfc)
+            embed = discord.Embed(
+                title="Your avatar", url=user.display_avatar.url, colour=cfc
+            )
         else:
-            embed = discord.Embed(title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc)
+            embed = discord.Embed(
+                title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc
+            )
 
         embed.set_image(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
@@ -150,7 +153,9 @@ class UtilityCommands(discord.Cog):
     )
     async def avatar_app(self, ctx, user: discord.Member):
         await ctx.defer()
-        embed = discord.Embed(title=f"{user.name}'s avatar", url=user.display_avatar.url,colour=cfc)
+        embed = discord.Embed(
+            title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc
+        )
         embed.set_image(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
 
@@ -175,7 +180,7 @@ class UtilityCommands(discord.Cog):
             else:
                 device = "Desktop/Web"
         embed = discord.Embed(
-            title=f"**{user}'s profile:**", 
+            title=f"**{user}'s profile:**",
             color=cfc,
             description=f"""
 {user.mention}
@@ -192,7 +197,6 @@ class UtilityCommands(discord.Cog):
         )
         embed.set_thumbnail(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
-
 
     @discord.user_command(name="User Profile")
     async def whois_app(self, ctx: discord.ApplicationContext, user: discord.Member):
@@ -214,7 +218,7 @@ class UtilityCommands(discord.Cog):
             else:
                 device = "Desktop/Web"
         embed = discord.Embed(
-            title=f"**{user}'s profile:**", 
+            title=f"**{user}'s profile:**",
             color=cfc,
             description=f"""
 {user.mention}
@@ -318,35 +322,34 @@ class UtilityCommands(discord.Cog):
         convquery = urllib.parse.quote_plus(query)
         view = discord.ui.View()
         google = discord.ui.Button(
-            label = "Google",
-            url = f"https://google.com/search?q={convquery}"
+            label="Google", url=f"https://google.com/search?q={convquery}"
         )
         bing = discord.ui.Button(
-            label = "Microsoft Bing",
-            url = f"https://bing.com/search?q={convquery}"
+            label="Microsoft Bing", url=f"https://bing.com/search?q={convquery}"
         )
         duckduckgo = discord.ui.Button(
-            label = "DuckDuckGo",
-            url = f"https://duckduckgo.com/?q={convquery}"
+            label="DuckDuckGo", url=f"https://duckduckgo.com/?q={convquery}"
         )
         ecosia = discord.ui.Button(
-            label = "Ecosia",
-            url = f"https://ecosia.org/search?q={convquery}"
+            label="Ecosia", url=f"https://ecosia.org/search?q={convquery}"
         )
         yahoo = discord.ui.Button(
-            label = "Yahoo! Search",
-            url = f"https://search.yahoo.com/search?p={convquery}"
+            label="Yahoo! Search", url=f"https://search.yahoo.com/search?p={convquery}"
         )
         view.add_item(google)
         view.add_item(bing)
         view.add_item(duckduckgo)
         view.add_item(ecosia)
         view.add_item(yahoo)
-        embed = discord.Embed(title=f"Click the links below to view the results of your search: '**{query}**'.", colour=cfc)
-        embed.set_author(name=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar.url)
+        embed = discord.Embed(
+            title=f"Click the links below to view the results of your search: '**{query}**'.",
+            colour=cfc,
+        )
+        embed.set_author(
+            name=f"Requested by {ctx.author.name}",
+            icon_url=ctx.author.display_avatar.url,
+        )
         await ctx.respond(view=view, embed=embed)
-
-
 
     @utility.command(
         name="stats", description="📈 Show statistics about the bot and server."
@@ -395,224 +398,120 @@ class UtilityCommands(discord.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @discord.command(
-        name="help", description="❓ Need help? This is the right command!"
+    async def get_commands(self, ctx: discord.AutocompleteContext):
+        cmds = []
+        for cmd in self.bot.walk_application_commands():
+            if isinstance(cmd, discord.commands.SlashCommand):
+                cmds.append(str(cmd))
+        return [cmd for cmd in cmds if ctx.value in cmd]
+
+    @discord.command(name="help", description="❓ Need help? This is the right command!")
+    @option(
+        "command",
+        description="Get information for a specific command by inputting this option.",
+        autocomplete=get_commands,
     )
-    async def help(self, ctx: discord.ApplicationContext):
-        class HelpView(discord.ui.View):
-            def __init__(self, bot):
-                self.bot = bot
-                super().__init__(timeout=None)
-
-            @discord.ui.select(
-                placeholder="Command category",
-                min_values=1,
-                max_values=1,
-                options=[
-                    discord.SelectOption(
-                        label="Utility",
-                        description="Command that are supposed to be useful.",
-                        emoji="🛠️",
-                    ),
-                    discord.SelectOption(
-                        label="Aviation",
-                        description="Command that are related to aviation.",
-                        emoji="🛫",
-                    ),
-                    discord.SelectOption(
-                        label="Fun",
-                        description="Commands to run when you have nothing else to do.",
-                        emoji="🧩",
-                    ),
-                    discord.SelectOption(
-                        label="VA",
-                        description="Everything needed for the Virtual Airline.",
-                        emoji="✈️",
-                    ),
-                    discord.SelectOption(
-                        label="Leveling",
-                        description="Commands related to leveling.",
-                        emoji="🏆",
-                    ),
-                    discord.SelectOption(
-                        label="Tags",
-                        description="Commands related to tags.",
-                        emoji="🏷️",
-                    ),
-                    discord.SelectOption(
-                        label="Admin",
-                        description="Commands for admins only.",
-                        emoji="🔒",
-                    ),
-                ],
-            )
-            async def select_callback(self, select, interaction):
-                if interaction.user.id == ctx.author.id:
-                    guild = self.bot.get_guild(965419296937365514)
-                    if select.values[0] == "Utility":
-                        embutil = discord.Embed(title="**Help**", color=cfc)
-                        embutil.add_field(
-                            name="**Utility commands**",
-                            value=f"""
-</help:1002512441873281085> : Shows this information.
-</report:1018970055972757506> : Report a user or situation to the team.
-
-</utility stats:1018089106267451432> : Show statistics about the bot and server.
-</utility who-is:1018089106267451432> : Shows all kind of information about a user.
-</utility the-team:1018089106267451432> : Shows The ClearFly Team!
-</utility avatar:1018089106267451432> : Shows your avatar.
-</utility github:1018089106267451432> : Shows the bot's GitHub repository.
-</utility math basic:1018089106267451432> : Do some basic math.
-</utility math advanced:1018089106267451432> : Do some advanced math.
-</utility search:1018089106267451432> : Search the web!
-                                    """,
-                        )
-                        await interaction.response.edit_message(embed=embutil)
-                    if select.values[0] == "Aviation":
-                        embutil = discord.Embed(title="**Help**", color=cfc)
-                        embutil.add_field(
-                            name="**Aviation commands**",
-                            value=f"""
-</aviation metar:1059269616494460938> : Get the metar data of an airport.
-</aviation charts:1059269616494460938> : Fetches charts of the provided airport.
-                                    """,
-                        )
-                        await interaction.response.edit_message(embed=embutil)
-                    if select.values[0] == "Fun":
-                        embfun = discord.Embed(title="**Help**", color=cfc)
-                        embfun.add_field(
-                            name="**Fun commands**",
-                            value=f"""
-</fun ascii:1016057999195910276> : Converts text in to big ascii characters.
-</fun bigtext:1016057999195910276> : Converts text in to big emoji text.
-</fun 8ball:1016057999195910276> : Ask the bot some questions!
-</fun dadjoke:1016057999195910276> : Gets you a dadjoke.
-</fun roast:1016057999195910276> : Roast whoever you'd like!
-</fun button-game:1016057999195910276> : Play a game with buttons!
-</fun flag-game:1016057999195910276> : Guess a sentence where country codes get replace by flags(e.g. after -> 🇦🇫ter).
-</fun meme:1016057999195910276> : Get a fresh meme from r/aviationmemes.
-                                """,
-                        )
-                        await interaction.response.edit_message(embed=embfun)
-                    if select.values[0] == "VA":
-                        role = guild.get_role(1040918528565444618)
-                        embva = discord.Embed(title="**Help**", color=cfc)
-                        if role in interaction.user.roles:
-                            embva.add_field(
-                                name="**ClearFly Virtual Airline**",
-                                value=f"""
-**-------Instructor-------**
-</va instructor approve:1016059999056826479> : Approve a student's flight and give the required info to them.
-</va instructor check-off:1016059999056826479> : Check off a user to end their training.
-**--------Training--------**
-</va training:1016059999056826479> : Start your career in the ClearFly VA!
-**-----After Training-----**
-</va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
-</va cancel:1016059999056826479> : Cancels and removes your last filed flight.
-</va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
-</va report-incident:1016059999056826479> : Something happened on your flight? Run this command and tell us what happened!
-</va flights:1016059999056826479> : Fetches information about all flights a user has done.
-</va leaderboard:1016059999056826479> : Get the leaderboard of who flew the most flights!
-</va liveries:1016059999056826479> : Get all liveries to get your journey started.
-                                            """,
-                                inline=False,
-                            )
-                            await interaction.response.edit_message(embed=embva)
-                        else:
-                            embva.add_field(
-                                name="**ClearFly Virtual Airline**",
-                                value=f"""
-**--------Training--------**
-</va training:1016059999056826479> : Start your career in the ClearFly VA!
-**-----After Training-----**
-</va file:1016059999056826479> : File a flight you are gonna do for the ClearFly VA.
-</va cancel:1016059999056826479> : Cancels and removes your last filed flight.
-</va divert:1016059999056826479> : If you need to divert to another airport you can with this command.
-</va report-incident:1016059999056826479> : Something happened on your flight? Run this command and tell us what happened!
-</va flights:1016059999056826479> : Fetches information about all flights a user has done.
-</va leaderboard:1016059999056826479> : Get the leaderboard of who flew the most flights!
-</va liveries:1016059999056826479> : Get all liveries to get your journey started.
-                                            """,
-                                inline=False,
-                            )
-                            await interaction.response.edit_message(embed=embva)
-                    if select.values[0] == "Leveling":
-                        embva = discord.Embed(title="**Help**", color=cfc)
-                        embva.add_field(
-                            name="**Leveling Commands**",
-                            value=f"""
-</level userlevel:1032273658305069086> : Gets the provided user's level.
-</level leaderboard:1032273658305069086> : See the leaderboard of the whole server.
-                                            """,
-                            inline=False,
-                        )
-                        await interaction.response.edit_message(embed=embva)
-                    if select.values[0] == "Tags":
-                        guild = self.bot.get_guild(965419296937365514)
-                        adminrole = guild.get_role(965422406036488282)
-                        if adminrole in interaction.user.roles:
-                            embed = discord.Embed(title="**Help**", color=cfc)
-                            embed.add_field(
-                                name="**Tag Commands**",
-                                value=f"""
-</tag view:1058747272596299796> : View a tag.
-</tag list:1058747272596299796> : List all the tags.
-</tag add:1058747272596299796> : Add a new tag.
-</tag edit:1058747272596299796> : Edit a tag.
-</tag delete:1058747272596299796> : Deleta a tag.
-                                                """,
-                                inline=False,
-                            )
-                            await interaction.response.edit_message(embed=embed)
-                        else:
-                            embed = discord.Embed(title="**Help**", color=cfc)
-                            embed.add_field(
-                                name="**Tag Commands**",
-                                value=f"""
-</tag view:1058747272596299796> : View a tag.
-</tag list:1058747272596299796> : List all the tags.
-                                                """,
-                                inline=False,
-                            )
-                            await interaction.response.edit_message(embed=embed)
-                    if select.values[0] == "Admin":
-                        guild = self.bot.get_guild(965419296937365514)
-                        adminrole = guild.get_role(965422406036488282)
-                        if adminrole in interaction.user.roles:
-                            embad = discord.Embed(title="**Help**", color=cfc)
-                            embad.add_field(
-                                name="**Admin Commands**",
-                                value=f"""
-</admin spam:1018056894394409021> : Spam the channel to oblivion.
-</admin purge:1018056894394409021> : Delete messages from a channel.
-</admin echo:1018056894394409021> : Send a message as the bot.
-</admin slowmode:1018056894394409021> : Set the slow mode of a channel.
-</admin embed:1018056894394409021> : Send an embed as the bot.
-                                                """,
-                                inline=False,
-                            )
-                            await interaction.response.edit_message(embed=embad)
-                        else:
-                            embed = discord.Embed(
-                                title="Error 403!",
-                                description="You are not an admin, you can't use these commands!",
-                                color=errorc,
-                            )
-                            await interaction.response.edit_message(embed=embed)
+    async def help(self, ctx: discord.ApplicationContext, command: str = None):
+        if command != None:
+            cmds = []
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommand):
+                    cmds.append(str(cmd))
+            if command in cmds:
+                cmd = self.bot.get_application_command(command)
+                if cmd.options == []:
+                    opts = ["`No options`"]
                 else:
-                    embed = discord.Embed(
-                        title="Error 403!",
-                        description="Run the command yourself to use it!",
-                        color=errorc,
-                    )
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
+                    opts = []
+                    for opt in cmd.options:
+                        opts.append(f"`{opt.name}`")
+                if cmd.cooldown == None:
+                    cd = "`No cooldown`"
+                else:
+                    cd = f"`{cmd.cooldown.rate}` run(s) every `{round(cmd.cooldown.per)}s`"
+                embed = discord.Embed(
+                    title=f"{command.title()} info",
+                    description=f"""
+**Name**: {cmd.mention}
+**Description**: {cmd.description}
+**Options**: {", ".join(opts)}
+**Cooldown**: {cd}
+                """,
+                    colour=cfc,
+                )
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(
+                    title="Error 404!",
+                    description=f"I didn't found the command `{command}`.",
+                    colour=errorc,
+                )
+                await ctx.respond(embed=embed)
+        else:
+            groups = []
+            group_names = []
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommandGroup):
+                    group_names.append(cmd.name)
+                    groups.append(cmd)
 
-        embed = discord.Embed(
-            title="Help!",
-            description="Select the command category in the drop down for help.",
-            color=cfc,
-        )
-        await ctx.respond(embed=embed, view=HelpView(bot=self.bot))
+            cmds = {"other": []}
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommand):
+                    if str(cmd).split(" ")[0] in group_names:
+                        cmds.setdefault(str(cmd).split(" ")[0], []).append(cmd)
+                    else:
+                        cmds["other"].append(cmd)
+
+            select_groups = []
+            for group in groups:
+                select_groups.append(
+                    discord.SelectOption(
+                        label=group.name.title(), description=group.description
+                    )
+                )
+            select_groups.append(
+                discord.SelectOption(
+                    label="Other", description="Commands not in a group."
+                )
+            )
+
+            class HelpView(discord.ui.View):
+                def __init__(self, bot):
+                    self.bot = bot
+                    super().__init__(timeout=120, disable_on_timeout=True)
+
+                @discord.ui.select(
+                    placeholder="Select command group...",
+                    min_values=1,
+                    max_values=1,
+                    options=select_groups,
+                )
+                async def select_callback(self, select, interaction):
+                    listed_cmds = []
+                    for cmd in cmds[select.values[0].lower()]:
+                        if cmd.options == []:
+                            opts = ["`No options`"]
+                        else:
+                            opts = []
+                            for opt in cmd.options:
+                                opts.append(f"`{opt.name}`")
+                        listed_cmds.append(
+                            f"{cmd.mention}({', '.join(opts)}) - {cmd.description}"
+                        )
+                    embed = discord.Embed(
+                        title=f"{select.values[0]} Commands",
+                        description="\n".join(listed_cmds),
+                        colour=cfc,
+                    )
+                    await interaction.response.edit_message(embed=embed)
+
+            embed = discord.Embed(
+                title="Help!",
+                description="Select a command group below to view all the available commands inside it.",
+                colour=cfc,
+            )
+            await ctx.respond(embed=embed, view=HelpView(self.bot))
 
 
 def setup(bot):

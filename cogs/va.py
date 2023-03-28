@@ -132,7 +132,7 @@ class VACommands(discord.Cog):
         print("| VA cog loaded sucessfully")
 
     va = discord.SlashCommandGroup(
-        name="va", description="Commands related to the ClearFly Virtual Airline"
+        name="va", description="🛩️ Commands related to the ClearFly Virtual Airline"
     )
     instructor = va.create_subgroup(
         name="instructor", description="Commands for the ClearFly Instructors"

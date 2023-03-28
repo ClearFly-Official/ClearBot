@@ -16,7 +16,7 @@ class AvCommands(discord.Cog):
 
     av = discord.SlashCommandGroup(
         name="aviation",
-        description="Commands related to airports, images/charts and similar.",
+        description="✈️ Commands related to aviation.",
     )
 
     async def get_airports(self, ctx: discord.AutocompleteContext):

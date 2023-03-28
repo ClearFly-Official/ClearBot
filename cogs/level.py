@@ -20,7 +20,7 @@ class LevelingCommands(discord.Cog):
         self.bot = bot
 
     leveling = discord.SlashCommandGroup(
-        name="level", description="Commands related to leveling"
+        name="level", description="🏆 Commands related to the leveling system."
     )
 
     @commands.Cog.listener()

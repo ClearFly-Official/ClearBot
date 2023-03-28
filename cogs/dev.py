@@ -50,7 +50,7 @@ class DevCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    dev = discord.SlashCommandGroup(name="dev", description="Commands for developers.")
+    dev = discord.SlashCommandGroup(name="dev", description="💻 Commands for (bot) developers only.")
     acdev = discord.SlashCommandGroup(
         name="acdev", description="Commands for aircraft developers."
     )
