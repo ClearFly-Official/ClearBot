@@ -51,10 +51,7 @@ class DevCommands(discord.Cog):
         self.bot = bot
 
     dev = discord.SlashCommandGroup(name="dev", description="💻 Commands for (bot) developers only.")
-    acdev = discord.SlashCommandGroup(
-        name="acdev", description="Commands for aircraft developers."
-    )
-    dataref = acdev.create_subgroup(
+    dataref = dev.create_subgroup(
         name="datarefs", description="Commands related to X-Plane datarefs."
     )
 

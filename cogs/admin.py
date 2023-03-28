@@ -481,16 +481,13 @@ URL: `{url}`
             title="ClearFly FAQ",
             description="""
 **Q: When will the Boeing 737-100 be released?**
-A: When it’s finished.
-
-**Q: Is the project dead?**
-A: Nope! We're just not working on it 24/7. To see the latest updates, go to the 737 Updates channel.
+A: We don’t currently have a set release date. Follow our progress in <#965597725519405106>
 
 **Q: Will there be a 3D cabin?**
 A: Yes!
 
 **Q: Will there be a custom FMC?**
-A: Our current plan is to code VOR navigation only.
+A: This is unlikely, but not impossible in the future.
         """,
             color=cfc,
         )
@@ -520,7 +517,11 @@ A: Our current plan is to code VOR navigation only.
             description="Create a custom livery for the ClearFly virtual airline and share it with <@871893179450925148> or <@668874138160594985>. Full credit will be given to you in <#1041057335449227314>.",
             colour=cfc,
         )
+        embimg = discord.Embed(
+            colour=cfc
+        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1090335535291179068/roleBanner.png")
         await ctx.respond("Button roles posted!", ephemeral=True)
+        await ctx.send(embed=embimg)
         await ctx.send(embed=emb1, view=AnnounceRoleView(bot=self.bot))
         await ctx.send(embed=emb2, view=UpdateRoleView(bot=self.bot))
         await ctx.send(embeds=[emb3, emb4])
