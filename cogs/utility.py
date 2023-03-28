@@ -452,7 +452,7 @@ class UtilityCommands(discord.Cog):
             group_names = []
             for cmd in self.bot.walk_application_commands():
                 if isinstance(cmd, discord.commands.SlashCommandGroup):
-                    if cmd == None:
+                    if cmd.parent == None:
                         group_names.append(cmd.name)
                         groups.append(cmd)
 
