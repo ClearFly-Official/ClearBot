@@ -28,7 +28,7 @@ class UtilityCommands(discord.Cog):
 
     @discord.command(
         name="report",
-        description="⛑️ Need help? Use this command to contact the admins!",
+        description="⛑️ Someone is misbehaving? Use this command to contact the admins!",
     )
     @option(
         "subject",
@@ -430,7 +430,7 @@ class UtilityCommands(discord.Cog):
                 else:
                     cd = f"`{cmd.cooldown.rate}` run(s) every `{round(cmd.cooldown.per)}s`"
                 embed = discord.Embed(
-                    title=f"{command.title()} info",
+                    title=f"`/{command}` info",
                     description=f"""
 **Name**: {cmd.mention}
 **Description**: {cmd.description}
@@ -452,8 +452,9 @@ class UtilityCommands(discord.Cog):
             group_names = []
             for cmd in self.bot.walk_application_commands():
                 if isinstance(cmd, discord.commands.SlashCommandGroup):
-                    group_names.append(cmd.name)
-                    groups.append(cmd)
+                    if cmd == None:
+                        group_names.append(cmd.name)
+                        groups.append(cmd)
 
             cmds = {"other": []}
             for cmd in self.bot.walk_application_commands():
@@ -472,7 +473,7 @@ class UtilityCommands(discord.Cog):
                 )
             select_groups.append(
                 discord.SelectOption(
-                    label="Other", description="Commands not in a group."
+                    label="Other", description="❓ Commands not in a group."
                 )
             )
 
