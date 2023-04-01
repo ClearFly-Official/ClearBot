@@ -118,9 +118,9 @@ class UtilityCommands(discord.Cog):
                 "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
             )
 
-    @utility.command(name="the-team", description="🧑‍🤝‍🧑 Shows The ClearFly Team!")
+    @utility.command(name="the-team", description="🧑‍🤝‍🧑 Shows The Lunar  Team!")
     async def team(self, ctx: discord.ApplicationContext):
-        embed = discord.Embed(title="The ClearFly Team:", color=cfc)
+        embed = discord.Embed(title="The Lunar  Team:", color=cfc)
         logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
         embed.add_field(name="WolfAir", value="> Founder & Modeler", inline=False)
         embed.add_field(
@@ -190,7 +190,7 @@ class UtilityCommands(discord.Cog):
 **Activity:** {user.activity}
 **Device:** `{device}`
 
-**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
+**Joined Lunar :** {discord.utils.format_dt(user.joined_at)}
 **Nickname:** {user.nick}
 **Roles:** 
 {roles}
@@ -228,7 +228,7 @@ class UtilityCommands(discord.Cog):
 **Activity:** {user.activity}
 **Device:** `{device}`
 
-**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
+**Joined Lunar:** {discord.utils.format_dt(user.joined_at)}
 **Nickname:** {user.nick}
 **Roles:** 
 {roles}
@@ -238,12 +238,12 @@ class UtilityCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @utility.command(
-        name="github", description="🗄️ Shows Clearfy's GitHub repositories."
+        name="github", description="🗄️ Shows Lunar's GitHub repositories."
     )
     async def github(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(
-            title="ClearFly GitHub:",
-            description="- [ClearFly](https://github.com/ClearFly-Official/)\n- [ClearBot](https://github.com/ClearFly-Official/ClearBot)\n- [ClearFly Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",
+            title="Lunar GitHub:",
+            description="- [Lunar Simulations](https://github.com/Lunar -Official/)\n- [LunarBot](https://github.com/Lunar -Official/ClearBot)\n- [Lunar Branding](https://github.com/Lunar -Official/Lunar -Branding)",
             color=cfc,
         )
         await ctx.respond(embed=embed)

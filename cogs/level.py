@@ -308,7 +308,7 @@ class LevelingCommands(discord.Cog):
             output = [direction + "\n\n" for direction in output]
             nameoutput = [direction + "\n\n" for direction in nameoutput]
             embed = discord.Embed(
-                title="ClearFly Level Leaderboard",
+                title="Lunar Level Leaderboard",
                 description=f"""
 Chat to earn xp!
             """,

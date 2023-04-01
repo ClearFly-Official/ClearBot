@@ -478,7 +478,7 @@ URL: `{url}`
     async def faq(self, ctx: discord.ApplicationContext):
         embed1 = discord.Embed(colour=cfc).set_image(url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true")
         embed2 = discord.Embed(
-            title="ClearFly FAQ",
+            title="Lunar FAQ",
             description="""
 **Q: When will the Boeing 737-100 be released?**
 A: We don’t currently have a set release date. Follow our progress in <#965597725519405106>
@@ -513,8 +513,8 @@ A: This is unlikely, but not impossible in the future.
             colour=cfc,
         )
         emb4 = discord.Embed(
-            title="ClearFly Livery Painter",
-            description="Create a custom livery for the ClearFly virtual airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).",
+            title="Lunar Livery Painter",
+            description="Create a custom livery for the Lunar virtual airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).",
             colour=cfc,
         )
         embimg = discord.Embed(
