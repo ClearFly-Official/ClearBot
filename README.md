@@ -1,6 +1,6 @@
-# LunarBot
+# ClearBot
 
-**A Discord bot for the [Lunar Simulations](https://discord.gg/jjpwtusf6n) server**
+**A Discord bot for the [ClearFly](https://discord.gg/jjpwtusf6n) server**
 
 Uses the **MIT license**
 
