@@ -230,9 +230,9 @@ Started bot up on {now}
                 if (now - int(last)) < 5:
                     return
                 else:
-                    lvlcol.update_one({"id": message.author.id}, {"$set": {
-                        "last_msg": now
-                    }})
+                    lvlcol.update_one(
+                        {"id": message.author.id}, {"$set": {"last_msg": now}}
+                    )
                 if len(message.content) == 0:
                     nowlvlnom = int(belvlnom) + 1
                 if len(message.content) > 0:
@@ -248,32 +248,18 @@ Started bot up on {now}
                 lvl = usrdata.get("level", 0)
                 denom = usrdata.get("denom", 0)
                 lvlcol.update_one(
-                    {"id": message.author.id},
-                        {"$set": {
-                            "nom": nowlvlnom
-                            }
-                        }
+                    {"id": message.author.id}, {"$set": {"nom": nowlvlnom}}
                 )
                 if int(nowlvlnom) >= int(denom):
+                    lvlcol.update_one({"id": message.author.id}, {"$set": {"nom": 0}})
                     lvlcol.update_one(
-                        {"id": message.author.id},
-                        {"$set": {
-                            "nom":0
-                        }}
-                    )
-                    lvlcol.update_one(
-                        {"id": message.author.id},
-                        {"$set": {
-                            "level":lvl+1
-                        }}
+                        {"id": message.author.id}, {"$set": {"level": lvl + 1}}
                     )
                     if int(lvl) == 0:
                         lvl = 1
                     lvlcol.update_one(
                         {"id": message.author.id},
-                        {"$set": {
-                            "denom":int(denom)+(int(lvl)*20)
-                        }}
+                        {"$set": {"denom": int(denom) + (int(lvl) * 20)}},
                     )
                     lvlp = usrdata.get("level", "N/A")
                     await message.channel.send(

@@ -15,6 +15,7 @@ client = pymongo.MongoClient(os.environ["MONGODB_URI"])
 db = client["ClearBotDB"]
 lvlcol = db["leveling"]
 
+
 class LevelingCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -27,9 +28,7 @@ class LevelingCommands(discord.Cog):
     async def on_ready(self):
         print("| Leveling cog loaded sucessfully")
 
-    @leveling.command(
-        name="userlevel", description="🥇 Gets the provided user's level."
-    )
+    @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
     @commands.cooldown(2, 10)
     async def userlevel(
@@ -42,7 +41,7 @@ class LevelingCommands(discord.Cog):
         for usr in lvlcol.find():
             usrs.append(usr.get("id"))
         if user.id in usrs:
-            usrdata = lvlcol.find_one({"id":user.id})
+            usrdata = lvlcol.find_one({"id": user.id})
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open("images/userlevelClear.png")
@@ -161,7 +160,7 @@ class LevelingCommands(discord.Cog):
         for usr in lvlcol.find():
             usrs.append(usr.get("id"))
         if user.id in usrs:
-            usrdata = lvlcol.find_one({"id":user.id})
+            usrdata = lvlcol.find_one({"id": user.id})
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open("images/userlevelClear.png")
@@ -271,73 +270,73 @@ class LevelingCommands(discord.Cog):
     )
     @commands.cooldown(1, 30)
     async def lb(self, ctx: discord.ApplicationContext):
-            await ctx.defer()
-            output = []
-            nameoutput = []
-            img = Image.open(f"images/lbClear.png")
-            for usr in lvlcol.find():
-                lvl = usr.get("level", 0)
-                lvlnom = usr.get("nom", 0)
-                lvldenom = usr.get("denom", 0)
-                user = await self.bot.fetch_user(int(usr.get("id", 0)))
-                line = f"""
+        await ctx.defer()
+        output = []
+        nameoutput = []
+        img = Image.open(f"images/lbClear.png")
+        for usr in lvlcol.find():
+            lvl = usr.get("level", 0)
+            lvlnom = usr.get("nom", 0)
+            lvldenom = usr.get("denom", 0)
+            user = await self.bot.fetch_user(int(usr.get("id", 0)))
+            line = f"""
       {lvlnom+lvldenom*lvl} LVL: {lvl} XP: {lvlnom}/{n.numerize(lvldenom)}\n
         """
-                output.append(line)
-                line2 = f"""
+            output.append(line)
+            line2 = f"""
         {lvlnom+lvldenom*lvl} {user.name}\n
       """
-                nameoutput.append(line2)
+            nameoutput.append(line2)
 
-            def atoi(text):
-                return int(text) if text.isdigit() else text
+        def atoi(text):
+            return int(text) if text.isdigit() else text
 
-            def natural_keys(text):
-                return [atoi(c) for c in re.split("(\d+)", text)]
+        def natural_keys(text):
+            return [atoi(c) for c in re.split("(\d+)", text)]
 
-            output.sort(key=natural_keys, reverse=True)
-            nameoutput.sort(key=natural_keys, reverse=True)
+        output.sort(key=natural_keys, reverse=True)
+        nameoutput.sort(key=natural_keys, reverse=True)
 
-            def delstr(lst):
-                return [f"{' '.join(elem.split()[1:]).rstrip()}" for elem in lst]
+        def delstr(lst):
+            return [f"{' '.join(elem.split()[1:]).rstrip()}" for elem in lst]
 
-            output = delstr(output)
-            nameoutput = delstr(nameoutput)
+        output = delstr(output)
+        nameoutput = delstr(nameoutput)
 
-            nameoutput = [f"{index}       {i}" for index, i in enumerate(nameoutput, 1)]
-            output = [direction + "\n\n" for direction in output]
-            nameoutput = [direction + "\n\n" for direction in nameoutput]
-            embed = discord.Embed(
-                title="ClearFly Level Leaderboard",
-                description=f"""
+        nameoutput = [f"{index}       {i}" for index, i in enumerate(nameoutput, 1)]
+        output = [direction + "\n\n" for direction in output]
+        nameoutput = [direction + "\n\n" for direction in nameoutput]
+        embed = discord.Embed(
+            title="ClearFly Level Leaderboard",
+            description=f"""
 Chat to earn xp!
             """,
-                color=cfc,
+            color=cfc,
+        )
+        font = ImageFont.truetype(
+            "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+            size=43,
+            layout_engine=ImageFont.Layout.BASIC,
+        )
+        with Pilmoji(img) as pilmoji:
+            pilmoji.text(
+                (800, 30),
+                "".join(output[:10]),
+                fill=(255, 255, 255),
+                font=font,
+                emoji_position_offset=(0, 20),
             )
-            font = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
-                size=43,
-                layout_engine=ImageFont.Layout.BASIC,
+            pilmoji.text(
+                (27, 30),
+                "".join(nameoutput[:10]),
+                fill=(255, 255, 255),
+                font=font,
+                emoji_position_offset=(0, 20),
             )
-            with Pilmoji(img) as pilmoji:
-                pilmoji.text(
-                    (800, 30),
-                    "".join(output[:10]),
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 20),
-                )
-                pilmoji.text(
-                    (27, 30),
-                    "".join(nameoutput[:10]),
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 20),
-                )
-            img.save(f"images/lb.png")
-            file = discord.File(f"images/lb.png", filename="lb.png")
-            embed.set_image(url=f"attachment://lb.png")
-            await ctx.respond(embed=embed, file=file)
+        img.save(f"images/lb.png")
+        file = discord.File(f"images/lb.png", filename="lb.png")
+        embed.set_image(url=f"attachment://lb.png")
+        await ctx.respond(embed=embed, file=file)
 
     # |--------------------------------------------------------------|
     # |Command to transfer data stored in local files to the DataBase.|

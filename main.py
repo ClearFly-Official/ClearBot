@@ -11,7 +11,8 @@ bot = discord.Bot(intents=discord.Intents.all())
 load_dotenv()
 bot.start_time = datetime.utcnow()
 bot.rshownsubms = []
-cfc = 0x000052  # <- default color6DB2D9
+
+cfc = 0x6DB2D9  # <- default color
 # cfc = 0xcc8d0e # <- halloween color
 # cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
@@ -29,7 +30,8 @@ async def on_ready():
 
 cogs = os.listdir("cogs")
 cogs = [x.split(".")[0] for x in cogs]
-cogs.remove("__pycache__")
+if "__pycache__" in cogs:
+    cogs.remove("__pycache__")
 
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")

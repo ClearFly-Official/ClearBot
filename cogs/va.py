@@ -207,9 +207,7 @@ class VACommands(discord.Cog):
         await channel2.send(embed=embed)
         await ctx.respond("Done", ephemeral=True)
 
-    @va.command(
-        name="training", description="🏋️ Start your career in the ClearFly VA!"
-    )
+    @va.command(name="training", description="🏋️ Start your career in the ClearFly VA!")
     @option("origin", description="The airport(ICAO) you will fly from.")
     @option("destination", description="The airport(ICAO) you will fly to.")
     async def vatrain(self, ctx, origin, destination):
@@ -619,12 +617,10 @@ Arrival:{destination}
 ```
 Have a nice and safe flight!
                         """,
-                    )
+                )
                 if os.path.exists(f"ClearFly_VA/users/{user.id}"):
                     f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
-                    f.write(
-                        f"\nTraining {phase}({paneltype}) {origin}-{destination}"
-                    )
+                    f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
                     f.close()
                 else:
                     os.mkdir(f"ClearFly_VA/users/{user.id}")
