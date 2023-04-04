@@ -294,7 +294,7 @@ Started bot up on {now}
     async def on_member_join(self, member):
         channel = self.bot.get_channel(965600413376200726)
         emb = discord.Embed(
-            title=f"Welcome to Lunar Simulations!",
+            title=f"Welcome to ClearFly!",
             description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!",
             color=cfc,
         )

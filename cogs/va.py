@@ -105,7 +105,7 @@ class InfoB4training(discord.ui.View):
             role = guild.get_role(1040918463763468369)
             await author.remove_roles(role)
             await interaction.response.send_message(
-                "You are no longer a student in the Lunar VA.", ephemeral=True
+                "You are no longer a student in the ClearFly VA.", ephemeral=True
             )
         else:
             author = interaction.user
@@ -113,7 +113,7 @@ class InfoB4training(discord.ui.View):
             role = guild.get_role(1040918463763468369)
             await author.add_roles(role)
             await interaction.response.send_message(
-                "You are now part of the Lunar VA, get ready for some training!",
+                "You are now part of the ClearFly VA, get ready for some training!",
                 ephemeral=True,
             )
             channel = self.bot.get_channel(1038062843808972850)
@@ -132,10 +132,10 @@ class VACommands(discord.Cog):
         print("| VA cog loaded sucessfully")
 
     va = discord.SlashCommandGroup(
-        name="va", description="🛩️ Commands related to the Lunar Virtual Airline"
+        name="va", description="🛩️ Commands related to the ClearFly Virtual Airline"
     )
     instructor = va.create_subgroup(
-        name="instructor", description="Commands for the Lunar Instructors"
+        name="instructor", description="Commands for the ClearFly Instructors"
     )
 
     async def get_airports_o(self, ctx: discord.AutocompleteContext):
@@ -152,7 +152,7 @@ class VACommands(discord.Cog):
     @commands.has_role(965422406036488282)
     async def vasetup(self, ctx):
         embed = discord.Embed(
-            title="The Lunar VA",
+            title="The ClearFly VA",
             description="""
 
         -Click the button below
@@ -198,7 +198,7 @@ class VACommands(discord.Cog):
         **Setup:**
         **1.** Open the StableApproach settings in the plugins menu.
         **2.** Open the “Virtual Airline” category.
-        **3.** Put the text in the box labeled “Virtual Airline”: “Lunar-Official/StableApproach”.
+        **3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
         **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
         **5.** That’s it! StableApproach will now download our custom aircraft profiles.
         """,
@@ -208,7 +208,7 @@ class VACommands(discord.Cog):
         await ctx.respond("Done", ephemeral=True)
 
     @va.command(
-        name="training", description="🏋️ Start your career in the Lunar VA!"
+        name="training", description="🏋️ Start your career in the ClearFly VA!"
     )
     @option("origin", description="The airport(ICAO) you will fly from.")
     @option("destination", description="The airport(ICAO) you will fly to.")
@@ -248,11 +248,11 @@ class VACommands(discord.Cog):
                         color=cfc,
                     )
                     await interaction.response.send_message(embed=embed)
-                    config.read(f"Lunar_VA/users/{interaction.user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
                     config.set("Student", "typed", "1")
                     config.set("Student", "type", "B732")
                     with open(
-                        f"Lunar_VA/users/{interaction.user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
 
@@ -263,11 +263,11 @@ class VACommands(discord.Cog):
                         color=cfc,
                     )
                     await interaction.response.send_message(embed=embed)
-                    config.read(f"Lunar_VA/users/{interaction.user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
                     config.set("Student", "typed", "1")
                     config.set("Student", "type", "B738")
                     with open(
-                        f"Lunar_VA/users/{interaction.user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
 
@@ -278,11 +278,11 @@ class VACommands(discord.Cog):
                         color=cfc,
                     )
                     await interaction.response.send_message(embed=embed)
-                    config.read(f"Lunar_VA/users/{interaction.user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
                     config.set("Student", "typed", "1")
                     config.set("Student", "type", "B752")
                     with open(
-                        f"Lunar_VA/users/{interaction.user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
 
@@ -293,12 +293,12 @@ class VACommands(discord.Cog):
                         color=cfc,
                     )
                     await interaction.response.send_message(embed=embed)
-                    config.read(f"Lunar_VA/users/{interaction.user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
                     config.set("Student", "typed", "1")
                     config.set("Student", "hasAccess", "0")
                     config.set("Student", "type", "A306")
                     with open(
-                        f"Lunar_VA/users/{interaction.user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
 
@@ -309,11 +309,11 @@ class VACommands(discord.Cog):
                         color=cfc,
                     )
                     await interaction.response.send_message(embed=embed)
-                    config.read(f"Lunar_VA/users/{interaction.user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{interaction.user.id}/student.ini")
                     config.set("Student", "typed", "1")
                     config.set("Student", "type", "A306F")
                     with open(
-                        f"Lunar_VA/users/{interaction.user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{interaction.user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
 
@@ -324,8 +324,8 @@ class VACommands(discord.Cog):
         config = configparser.ConfigParser()
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(1040918463763468369)
-        if os.path.exists(f"Lunar_VA/users/{user.id}/student.ini"):
-            config.read(f"Lunar_VA/users/{user.id}/student.ini")
+        if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+            config.read(f"ClearFly_VA/users/{user.id}/student.ini")
             if config.get("Student", "hasAccess") == "1":
                 if config.get("Student", "typed") == "0":
                     embed = discord.Embed(
@@ -336,9 +336,9 @@ class VACommands(discord.Cog):
                     await ctx.respond(embed=embed, view=TypeView(bot=self.bot))
                 else:
                     if config.get("Student", "ready") == "1":
-                        if os.path.exists(f"Lunar_VA/users/{user.id}/type.txt"):
+                        if os.path.exists(f"ClearFly_VA/users/{user.id}/type.txt"):
                             with open(
-                                f"Lunar_VA/users/{user.id}/type.txt", "r"
+                                f"ClearFly_VA/users/{user.id}/type.txt", "r"
                             ) as f:
                                 lines = len(f.readlines())
                             if lines == 3:
@@ -363,17 +363,17 @@ Aircraft: {actype}
 Have a nice and safe flight!
                                     """,
                         )
-                        if os.path.exists(f"Lunar_VA/users/{user.id}/type.txt"):
-                            f = open(f"Lunar_VA/users/{user.id}/type.txt", "a")
+                        if os.path.exists(f"ClearFly_VA/users/{user.id}/type.txt"):
+                            f = open(f"ClearFly_VA/users/{user.id}/type.txt", "a")
                             f.write(f"\nType Training {actype} {origin}-{destination}")
                             f.close()
                         else:
-                            f = open(f"Lunar_VA/users/{user.id}/type.txt", "a")
+                            f = open(f"ClearFly_VA/users/{user.id}/type.txt", "a")
                             f.write(f"\nType Training {actype} {origin}-{destination}")
                             f.close()
                         config.set("Student", "ready", "0")
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                         await ctx.respond(embed=embed)
@@ -407,9 +407,9 @@ Have a nice and safe flight!
                         )
                         return
                     await ctx.respond("Filing flight.")
-                    if os.path.exists(f"Lunar_VA/users/{user.id}/student.ini"):
-                        config.read(f"Lunar_VA/users/{user.id}/student.ini")
-                        with open(f"Lunar_VA/users/{user.id}/student.txt", "r") as f:
+                    if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+                        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
+                        with open(f"ClearFly_VA/users/{user.id}/student.txt", "r") as f:
                             lines = len(f.readlines())
                         if lines == 5:
                             await ctx.respond(
@@ -425,11 +425,11 @@ Have a nice and safe flight!
                             phase = config.get("Student", "phase")
                             config.set("Student", "ready", "0")
                             with open(
-                                f"Lunar_VA/users/{user.id}/student.ini", "w"
+                                f"ClearFly_VA/users/{user.id}/student.ini", "w"
                             ) as configfile:
                                 config.write(configfile)
                     else:
-                        os.mkdir(f"Lunar_VA/users/{user.id}")
+                        os.mkdir(f"ClearFly_VA/users/{user.id}")
                         config.add_section("Student")
                         config.set("Student", "phase", "1")
                         config.set("Student", "ready", "0")
@@ -438,37 +438,37 @@ Have a nice and safe flight!
                         config.set("Student", "end", "0")
                         phase = "1"
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                     if phase == "1":
                         phasetxt = "Your first flight has been filed, welcome!"
                         phasen = "first"
                         paneltype = "Steam Gauges"
-                        config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                         config.set("Student", "phase", "2")
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                     if phase == "2":
                         phasetxt = "Your second flight has been filed"
                         phasen = "second"
                         paneltype = "Steam Gauges"
-                        config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                         config.set("Student", "phase", "3")
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                     if phase == "3":
                         phasetxt = "Your third flight has been filed"
                         phasen = "third"
                         paneltype = "G1000"
-                        config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                         config.set("Student", "phase", "4")
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                     if phase == "4":
@@ -476,7 +476,7 @@ Have a nice and safe flight!
                         phasen = "fourth"
                         paneltype = "G1000"
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                     embed = discord.Embed(
@@ -494,15 +494,15 @@ Arrival:{destination}
 Have a nice and safe flight!
                                 """,
                     )
-                    if os.path.exists(f"Lunar_VA/users/{user.id}"):
-                        f = open(f"Lunar_VA/users/{user.id}/student.txt", "a")
+                    if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                        f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
                         f.write(
                             f"\nTraining {phase}({paneltype}) {origin}-{destination}"
                         )
                         f.close()
                     else:
-                        os.mkdir(f"Lunar_VA/users/{user.id}")
-                        f = open(f"Lunar_VA/users/{user.id}/student.txt", "a")
+                        os.mkdir(f"ClearFly_VA/users/{user.id}")
+                        f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
                         f.write(
                             f"\nTraining {phase}({paneltype}) {origin}-{destination}"
                         )
@@ -540,8 +540,8 @@ Have a nice and safe flight!
                         "You can only fly in Canada, Hawaii, the U.S, and Europe"
                     )
                     return
-                if os.path.exists(f"Lunar_VA/users/{user.id}/student.ini"):
-                    config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                if os.path.exists(f"ClearFly_VA/users/{user.id}/student.ini"):
+                    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                     if config.get("Student", "ready") == "0":
                         await ctx.respond(
                             "Wait for an instructor to approve your current flight and after you have done that one you can do another one."
@@ -551,11 +551,11 @@ Have a nice and safe flight!
                         phase = config.get("Student", "phase")
                         config.set("Student", "ready", "0")
                         with open(
-                            f"Lunar_VA/users/{user.id}/student.ini", "w"
+                            f"ClearFly_VA/users/{user.id}/student.ini", "w"
                         ) as configfile:
                             config.write(configfile)
                 else:
-                    os.mkdir(f"Lunar_VA/users/{user.id}")
+                    os.mkdir(f"ClearFly_VA/users/{user.id}")
                     config.add_section("Student")
                     config.set("Student", "phase", "1")
                     config.set("Student", "ready", "0")
@@ -564,37 +564,37 @@ Have a nice and safe flight!
                     config.set("Student", "end", "0")
                     phase = "1"
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                 if phase == "1":
                     phasetxt = "Your first flight has been filed, welcome!"
                     phasen = "first"
                     paneltype = "Steam Gauges"
-                    config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                     config.set("Student", "phase", "2")
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                 if phase == "2":
                     phasetxt = "Your second flight has been filed"
                     phasen = "second"
                     paneltype = "Steam Gauges"
-                    config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                     config.set("Student", "phase", "3")
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                 if phase == "3":
                     phasetxt = "Your third flight has been filed"
                     phasen = "third"
                     paneltype = "G1000"
-                    config.read(f"Lunar_VA/users/{user.id}/student.ini")
+                    config.read(f"ClearFly_VA/users/{user.id}/student.ini")
                     config.set("Student", "phase", "4")
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                 if phase == "4":
@@ -602,7 +602,7 @@ Have a nice and safe flight!
                     phasen = "last"
                     paneltype = "G1000"
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                 embed = discord.Embed(
@@ -620,15 +620,15 @@ Arrival:{destination}
 Have a nice and safe flight!
                         """,
                     )
-                if os.path.exists(f"Lunar_VA/users/{user.id}"):
-                    f = open(f"Lunar_VA/users/{user.id}/student.txt", "a")
+                if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                    f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
                     f.write(
                         f"\nTraining {phase}({paneltype}) {origin}-{destination}"
                     )
                     f.close()
                 else:
-                    os.mkdir(f"Lunar_VA/users/{user.id}")
-                    f = open(f"Lunar_VA/users/{user.id}/student.txt", "a")
+                    os.mkdir(f"ClearFly_VA/users/{user.id}")
+                    f = open(f"ClearFly_VA/users/{user.id}/student.txt", "a")
                     f.write(f"\nTraining {phase}({paneltype}) {origin}-{destination}")
                     f.close()
                 await ctx.respond(embed=embed)
@@ -660,14 +660,14 @@ Have a nice and safe flight!
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(1040918528565444618)
         config = configparser.ConfigParser()
-        config.read(f"Lunar_VA/users/{user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
         if config.get("Student", "typed") == "1":
-            with open(f"Lunar_VA/users/{user.id}/type.txt", "a") as f:
+            with open(f"ClearFly_VA/users/{user.id}/type.txt", "a") as f:
                 f.write(
                     f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}"
                 )
             config.set("Student", "ready", "1")
-            with open(f"Lunar_VA/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                 config.write(configfile)
             embed = discord.Embed(
                 title="Flight Approved!",
@@ -686,12 +686,12 @@ Comments : {comments}
             )
             await ctx.respond(embed=embed)
         else:
-            with open(f"Lunar_VA/users/{user.id}/student.txt", "a") as f:
+            with open(f"ClearFly_VA/users/{user.id}/student.txt", "a") as f:
                 f.write(
                     f" - Approved - rte {route.upper()}, crz {crzalt}, cmnts {comments}"
                 )
             config.set("Student", "ready", "1")
-            with open(f"Lunar_VA/users/{user.id}/student.ini", "w") as configfile:
+            with open(f"ClearFly_VA/users/{user.id}/student.ini", "w") as configfile:
                 config.write(configfile)
             embed = discord.Embed(
                 title="Flight Approved!",
@@ -718,13 +718,13 @@ Comments : {comments}
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(1040918528565444618)
         config = configparser.ConfigParser()
-        config.read(f"Lunar_VA/users/{user.id}/student.ini")
+        config.read(f"ClearFly_VA/users/{user.id}/student.ini")
 
         role = guild.get_role(1040918463763468369)
         role2 = guild.get_role(1013933799777783849)
         channel = self.bot.get_channel(1013934267966967848)
         if config.get("Student", "typed") == "0":
-            with open(f"Lunar_VA/users/{user.id}/student.txt", "r") as f:
+            with open(f"ClearFly_VA/users/{user.id}/student.txt", "r") as f:
                 lines = len(f.readlines())
             if lines == 5:
                 if config.get("Student", "hasAccess") == "0":
@@ -732,7 +732,7 @@ Comments : {comments}
                     await user.add_roles(role2)
                     config.set("Student", "hasAccess", "1")
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                     embed = discord.Embed(
@@ -760,7 +760,7 @@ Comments : {comments}
                 )
                 await ctx.respond(embed=embed, ephemeral=True)
         else:
-            with open(f"Lunar_VA/users/{user.id}/type.txt", "r+") as f:
+            with open(f"ClearFly_VA/users/{user.id}/type.txt", "r+") as f:
                 lines = len(f.readlines())
             if lines == 3:
                 if config.get("Student", "end") == "0":
@@ -781,7 +781,7 @@ Comments : {comments}
                     await user.add_roles(role3)
                     config.set("Student", "hasAccess", "1")
                     with open(
-                        f"Lunar_VA/users/{user.id}/student.ini", "w"
+                        f"ClearFly_VA/users/{user.id}/student.ini", "w"
                     ) as configfile:
                         config.write(configfile)
                     embed = discord.Embed(
@@ -810,7 +810,7 @@ Comments : {comments}
                 await ctx.respond(embed=embed, ephemeral=True)
 
     @va.command(
-        name="file", description="📝 File a flight that you will do for the Lunar VA."
+        name="file", description="📝 File a flight that you will do for the ClearFly VA."
     )
     @option(
         "aircraft",
@@ -836,8 +836,8 @@ Comments : {comments}
     ):
         await ctx.defer()
         config = configparser.ConfigParser()
-        if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/student.ini"):
-            config.read(f"Lunar_VA/users/{ctx.author.id}/student.ini")
+        if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+            config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
                 if (origin in airports) and (destination in airports):
                     dest = 1
@@ -1153,15 +1153,15 @@ Comments : {comments}
     Have a nice and safe flight!
                                 """,
                     )
-                    if os.path.exists(f"Lunar_VA/users/{user.id}"):
-                        f = open(f"Lunar_VA/users/{user.id}/data.txt", "a")
+                    if os.path.exists(f"ClearFly_VA/users/{user.id}"):
+                        f = open(f"ClearFly_VA/users/{user.id}/data.txt", "a")
                         f.write(
                             f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}"
                         )
                         f.close()
                     else:
-                        os.mkdir(f"Lunar_VA/users/{user.id}")
-                        f = open(f"Lunar_VA/users/{user.id}/data.txt", "a")
+                        os.mkdir(f"ClearFly_VA/users/{user.id}")
+                        f = open(f"ClearFly_VA/users/{user.id}/data.txt", "a")
                         f.write(
                             f"\nCF{flightnumber}, {aircraft}, {origin}-{destination}"
                         )
@@ -1218,23 +1218,23 @@ Comments : {comments}
         self, ctx: discord.ApplicationContext, flightnumber: str, report: str
     ):
         config = configparser.ConfigParser()
-        if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/student.ini"):
-            config.read(f"Lunar_VA/users/{ctx.author.id}/student.ini")
+        if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+            config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
-                with open(f"Lunar_VA/users/{ctx.author.id}/data.txt", "a") as f:
+                with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "a") as f:
                     f.write(f"/Incident")
                 embed = discord.Embed(title=f"Report submitted!", color=cfc)
                 await ctx.respond(embed=embed)
-                if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/reports.txt"):
+                if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/reports.txt"):
                     with open(
-                        f"Lunar_VA/users/{ctx.author.id}/reports.txt", "a"
+                        f"ClearFly_VA/users/{ctx.author.id}/reports.txt", "a"
                     ) as f:
                         f.write(
                             f"\n # {datetime.now()} | {flightnumber} # \n\n{report}\n"
                         )
                 else:
                     with open(
-                        f"Lunar_VA/users/{ctx.author.id}/reports.txt", "w"
+                        f"ClearFly_VA/users/{ctx.author.id}/reports.txt", "w"
                     ) as f:
                         f.write(f"# {datetime.now()} | {flightnumber} # \n\n{report}\n")
             else:
@@ -1259,8 +1259,8 @@ Comments : {comments}
     @option("divert", description="The airport you will divert/have diverted to.")
     async def divert(self, ctx: discord.ApplicationContext, airport: str):
         config = configparser.ConfigParser()
-        if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/student.ini"):
-            config.read(f"Lunar_VA/users/{ctx.author.id}/student.ini")
+        if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+            config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
                 if not len(airport) == 4:
                     embed = discord.Embed(
@@ -1270,7 +1270,7 @@ Comments : {comments}
                     )
                     await ctx.respond(embed=embed)
                 else:
-                    with open(f"Lunar_VA/users/{ctx.author.id}/data.txt", "a") as f:
+                    with open(f"ClearFly_VA/users/{ctx.author.id}/data.txt", "a") as f:
                         f.write(f"/Divert2({airport})")
                     embed = discord.Embed(
                         title=f"Flight diverted to {airport}!", color=cfc
@@ -1296,12 +1296,12 @@ Comments : {comments}
     )
     async def cancel(self, ctx: discord.ApplicationContext):
         config = configparser.ConfigParser()
-        if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/student.ini"):
-            config.read(f"Lunar_VA/users/{ctx.author.id}/student.ini")
+        if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/student.ini"):
+            config.read(f"ClearFly_VA/users/{ctx.author.id}/student.ini")
             if config.get("Student", "end") == "1":
-                if os.path.exists(f"Lunar_VA/users/{ctx.author.id}/data.txt"):
+                if os.path.exists(f"ClearFly_VA/users/{ctx.author.id}/data.txt"):
                     with open(
-                        f"Lunar_VA/users/{ctx.author.id}/data.txt",
+                        f"ClearFly_VA/users/{ctx.author.id}/data.txt",
                         "r+",
                         encoding="utf-8",
                     ) as f:
@@ -1345,10 +1345,10 @@ Comments : {comments}
         await ctx.defer()
         if user == None:
             user = ctx.author
-        if os.path.exists(f"Lunar_VA/users/{user.id}/data.txt"):
-            with open(f"Lunar_VA/users/{user.id}/data.txt", "r") as f:
+        if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
+            with open(f"ClearFly_VA/users/{user.id}/data.txt", "r") as f:
                 datar = f.read()
-            with open(rf"Lunar_VA/users/{user.id}/data.txt") as f:
+            with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
                 no = len(f.readlines())
                 nof = no - 1
             embed = discord.Embed(
@@ -1361,8 +1361,8 @@ Comments : {comments}
 Number of flights: **{nof}**
             """,
             ).set_thumbnail(url=user.display_avatar.url)
-            if os.path.exists(f"Lunar_VA/users/{user.id}/reports.txt"):
-                with open(f"Lunar_VA/users/{user.id}/reports.txt") as f:
+            if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
+                with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
                     reports = f.read()
                 embed.add_field(
                     name="Incidents:",
@@ -1393,10 +1393,10 @@ Number of flights: **{nof}**
     @discord.user_command(name="User VA Flights")
     async def flights_app(self, ctx, user: discord.Member):
         await ctx.defer()
-        if os.path.exists(f"Lunar_VA/users/{user.id}/data.txt"):
-            with open(f"Lunar_VA/users/{user.id}/data.txt", "r") as f:
+        if os.path.exists(f"ClearFly_VA/users/{user.id}/data.txt"):
+            with open(f"ClearFly_VA/users/{user.id}/data.txt", "r") as f:
                 datar = f.read()
-            with open(rf"Lunar_VA/users/{user.id}/data.txt") as f:
+            with open(rf"ClearFly_VA/users/{user.id}/data.txt") as f:
                 no = len(f.readlines())
                 nof = no - 1
             embed = discord.Embed(
@@ -1409,8 +1409,8 @@ Number of flights: **{nof}**
 Number of flights: **{nof}**
         """,
             )
-            if os.path.exists(f"Lunar_VA/users/{user.id}/reports.txt"):
-                with open(f"Lunar_VA/users/{user.id}/reports.txt") as f:
+            if os.path.exists(f"ClearFly_VA/users/{user.id}/reports.txt"):
+                with open(f"ClearFly_VA/users/{user.id}/reports.txt") as f:
                     reports = f.read()
                 embed.add_field(
                     name="Incidents:",
@@ -1440,7 +1440,7 @@ Number of flights: **{nof}**
         cmndestoutput = []
         index = 0
         cmndest = []
-        for index, filename in enumerate(glob.glob("Lunar_VA/users/*/data.txt")):
+        for index, filename in enumerate(glob.glob("ClearFly_VA/users/*/data.txt")):
             with open(os.path.join(os.getcwd(), filename), "r") as f:
                 lines = f.readlines()
                 cmnac = cmnac + lines
@@ -1478,7 +1478,7 @@ Number of flights: **{nof}**
         cmndestoutput = list(filter(None, cmndestoutput))
         cmndest = most_frequent(cmndestoutput)
         cmnac = f"{most_frequent(cmnac)}".replace(",", "")
-        embed = discord.Embed(title="Lunar VA Statistics", color=cfc)
+        embed = discord.Embed(title="ClearFly VA Statistics", color=cfc)
         embed.add_field(name="Total Flights:", value=f" {output}")
         embed.add_field(name="Most Common Aircraft:", value=f" {cmnac}")
         embed.add_field(name="Most Common Destination:", value=f" {cmndest[:4]}")
@@ -1499,10 +1499,10 @@ Number of flights: **{nof}**
             output = []
             nameoutput = []
             img = Image.open(f"images/lbClear.png")
-            for index, filename in enumerate(glob.glob("Lunar_VA/users/*/data.txt")):
+            for index, filename in enumerate(glob.glob("ClearFly_VA/users/*/data.txt")):
                 with open(os.path.join(os.getcwd(), filename), "r") as f:
                     nof = f"{int(len(f.readlines()))-1}"
-                    filen = filename.replace("Lunar_VA/users/", f"")
+                    filen = filename.replace("ClearFly_VA/users/", f"")
                     usrid = filen.replace("/data.txt", "")
                     user = await self.bot.fetch_user(int(usrid))
                     line = f"{nof} Flights flown: \n"
@@ -1527,7 +1527,7 @@ Number of flights: **{nof}**
             nameoutput = [f"{index}       {i}" for index, i in enumerate(nameoutput, 1)]
             output = [direction + "\n" for direction in output]
             nameoutput = [direction + "\n\n" for direction in nameoutput]
-            embed = discord.Embed(title="Lunar VA Leaderboard", color=cfc)
+            embed = discord.Embed(title="ClearFly VA Leaderboard", color=cfc)
             I1 = ImageDraw.Draw(img)
             font = ImageFont.truetype(
                 "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
@@ -1563,7 +1563,7 @@ Number of flights: **{nof}**
 
     @va.command(
         name="liveries",
-        description="🌄 Looking to fly for the Lunar VA? Here are the liveries to get you started!",
+        description="🌄 Looking to fly for the ClearFly VA? Here are the liveries to get you started!",
     )
     @option("noauth", description="Makes the bot respond or send the output.")
     async def valivs(self, ctx: discord.ApplicationContext, noauth: bool = False):
@@ -1599,7 +1599,7 @@ Number of flights: **{nof}**
             view.add_item(button3)
             view.add_item(button4)
             view.add_item(button5)
-            embed = discord.Embed(title="Lunar VA Official Liveries:", color=cfc)
+            embed = discord.Embed(title="ClearFly VA Official Liveries:", color=cfc)
             await ctx.respond(embed=embed, view=view)
         else:
             button1 = Button(
@@ -1633,7 +1633,7 @@ Number of flights: **{nof}**
             view.add_item(button3)
             view.add_item(button4)
             view.add_item(button5)
-            embed = discord.Embed(title="Lunar VA Official Liveries:", color=cfc)
+            embed = discord.Embed(title="ClearFly VA Official Liveries:", color=cfc)
             await ctx.respond("See below", ephemeral=True)
             await ctx.send(embed=embed, view=view)
 

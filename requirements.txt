@@ -5,7 +5,7 @@ asyncpraw
 aiofiles
 pymongo
 dadjokes
-fitz
+PyMuPDF
 ConfigParser
 numerize
 pilmoji
