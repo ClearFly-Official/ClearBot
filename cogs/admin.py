@@ -67,13 +67,13 @@ class SelfRolesView(discord.ui.View):
         options=[
             discord.SelectOption(
                 label="Announcements",
-                description="Click to receive mentions when we post any announcements.",
+                description="Select to receive mentions when we post any announcements.",
                 value="965689409364197467",
                 emoji="📣",
             ),
             discord.SelectOption(
                 label="Updates",
-                description="Click to receive mentions when we post an update on our 737-100.",
+                description="Select to receive mentions when we post an update on our 737-100.",
                 value="965688527109107712",
                 emoji="⚒️",
             ),
@@ -85,12 +85,12 @@ class SelfRolesView(discord.ui.View):
         if role in interaction.user.roles:
             await interaction.user.remove_roles(role)
             await interaction.response.send_message(
-                "You won't get mentioned for this topic anymore.", ephemeral=True
+                f"You won't get mentioned for {role.mention} anymore.", ephemeral=True
             )
         else:
             await interaction.user.add_roles(role)
             await interaction.response.send_message(
-                "You will now get mentioned for this topic!", ephemeral=True
+                f"You will now get mentioned for {role.mention} this topic!", ephemeral=True
             )
 
 
@@ -481,7 +481,7 @@ A: This is unlikely, but not impossible in the future.
     @commands.has_permissions(administrator=True)
     async def buttonroles(self, ctx: discord.ApplicationContext):
         emb1 = discord.Embed(
-            title="Select your roles below",
+            title="Select your desired roles below",
             color=cfc,
         )
         emb2 = discord.Embed(
