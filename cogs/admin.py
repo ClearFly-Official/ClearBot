@@ -82,15 +82,13 @@ class SelfRolesView(discord.ui.View):
     async def select_callback(self, select, interaction):
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(int(select.values[0]))
-        if role in author.roles:
-            author = interaction.user
-            await author.remove_roles(role)
+        if role in interaction.user.roles:
+            await interaction.user.remove_roles(role)
             await interaction.response.send_message(
                 "You won't get mentioned for this topic anymore.", ephemeral=True
             )
         else:
-            author = interaction.user
-            await author.add_roles(role)
+            await interaction.user.add_roles(role)
             await interaction.response.send_message(
                 "You will now get mentioned for this topic!", ephemeral=True
             )
@@ -104,8 +102,7 @@ class AdminCommands(discord.Cog):
     async def on_ready(self):
         self.bot.add_view(RulesView(bot=self.bot))
         self.bot.add_view(FAQView(bot=self.bot))
-        self.bot.add_view(AnnounceRoleView(bot=self.bot))
-        self.bot.add_view(UpdateRoleView(bot=self.bot))
+        self.bot.add_view(SelfRolesView(bot=self.bot))
         print("| Admin cog loaded sucessfully")
 
     admin = discord.SlashCommandGroup(
