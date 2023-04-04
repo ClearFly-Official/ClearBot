@@ -79,7 +79,7 @@ class SelfRolesView(discord.ui.View):
             ),
         ],
     )
-    async def select_callback(self, interaction, select):
+    async def select_callback(self, select, interaction):
         guild = self.bot.get_guild(965419296937365514)
         role = guild.get_role(int(select.values[0]))
         if role in author.roles:
