@@ -90,7 +90,7 @@ class SelfRolesView(discord.ui.View):
         else:
             await interaction.user.add_roles(role)
             await interaction.response.send_message(
-                f"You will now get mentioned for {role.mention} this topic!", ephemeral=True
+                f"You will now get mentioned for {role.mention}!", ephemeral=True
             )
 
 
@@ -481,15 +481,11 @@ A: This is unlikely, but not impossible in the future.
     @commands.has_permissions(administrator=True)
     async def buttonroles(self, ctx: discord.ApplicationContext):
         emb1 = discord.Embed(
-            title="Select your desired roles below",
-            color=cfc,
-        )
-        emb2 = discord.Embed(
             title="🎨 Livery Painter",
             description="DM <@871893179450925148> or <@668874138160594985> with some examples of your work.",
             colour=cfc,
         )
-        emb3 = discord.Embed(
+        emb2 = discord.Embed(
             title="🎨 ClearFly Livery Painter",
             description="Create a custom livery for the ClearFly Virtual Airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).",
             colour=cfc,
@@ -498,9 +494,8 @@ A: This is unlikely, but not impossible in the future.
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1090335535291179068/roleBanner.png"
         )
         await ctx.respond("Button roles posted!", ephemeral=True)
-        await ctx.send(embed=embimg)
-        await ctx.send(embed=emb1, view=SelfRolesView(bot=self.bot))
-        await ctx.send(embeds=[emb2, emb3])
+        await ctx.send(embed=embimg, view=SelfRolesView(bot=self.bot))
+        await ctx.send(embeds=[emb1, emb2])
 
 
 def setup(bot):
