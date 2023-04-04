@@ -1,3 +1,6 @@
+import re
+import aiofiles
+import aiohttp
 import discord
 import os
 import configparser
@@ -21,6 +24,21 @@ sfcol = rss["SimpleFlying"]
 fsnews = 1066124540318588928  # *CB test 1001401783689678868
 avnews = 1073311685357604956
 
+class DeleteMsgView(discord.ui.View):
+    def __init__(self, bot, auth):
+        self.bot = bot
+        self.auth = auth
+        super().__init__(timeout=240.0, disable_on_timeout=True)
+
+    @discord.ui.button(
+        label="Delete Message",
+        style=discord.ButtonStyle.danger,
+    )
+    async def button_callback(self, button, interaction: discord.Interaction):
+        if interaction.user.id == self.auth.id:
+            await interaction.message.delete()
+        else:
+            await interaction.response.send_message("You did not send the link, so you can't delete the snippet!")
 
 class Listeners(discord.Cog):
     def __init__(self, bot):
@@ -645,6 +663,38 @@ After: **{after.position+1}**
                 pass
         else:
             pass
+    @commands.Cog.listener("on_message")
+    async def github_snippet(self, message):
+        if not message.author.bot:
+            match = re.search(r'https?://github\.com/[\w-]+/[\w-]+/[\w./-]+#L(\d+)-L(\d+)', message.content)
+            if match:
+                random.seed(message.content)
+                snip_id = random.randint(0, 100)
+                url = match.group()
+                start_line = match.group(1)
+                end_line = match.group(2)
+                if (int(end_line) - int(start_line)) > 25:
+                    return
+                raw_url = url.replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
+                async with aiohttp.ClientSession() as cs:
+                    async with cs.get(raw_url) as r:
+                        async with aiofiles.open(f"snip{snip_id}.txt", "wb") as f:
+                            await f.write(await r.content.read())
+                async with aiofiles.open(f"snip{snip_id}.txt", "r") as f:
+                    snip = await f.readlines()
+
+
+                file_name = url.split("/")[len(url.split("/")) - 1].split("#")[0]
+                syntaxh = file_name.split(".")[1]
+                out_snip = ''.join(snip[int(start_line)-1:int(end_line)])
+                await message.reply(f"""
+`{url.split("/")[3]}/{url.split("/")[4]}`: `{file_name}` line **{start_line}**-**{end_line}**
+```{syntaxh}
+{out_snip}
+```
+                """, view=DeleteMsgView(bot=self.bot, auth=message.author))
+                os.remove(f"snip{snip_id}.txt")
+
 
     @commands.Cog.listener()
     async def on_application_command_error(
@@ -691,6 +741,8 @@ After: **{after.position+1}**
             )
             await ctx.respond(embed=embed)
             raise error
+        
+
 
 
 def setup(bot):
