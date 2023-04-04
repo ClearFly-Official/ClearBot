@@ -68,20 +68,20 @@ class SelfRolesView(discord.ui.View):
             discord.SelectOption(
                 label="Announcements",
                 description="Click to receive mentions when we post any announcements.",
-                value=965689409364197467,
+                value="965689409364197467",
                 emoji="📣",
             ),
             discord.SelectOption(
                 label="Updates",
                 description="Click to receive mentions when we post an update on our 737-100.",
-                value=965688527109107712,
+                value="965688527109107712",
                 emoji="⚒️",
             ),
         ],
     )
     async def select_callback(self, interaction, select):
         guild = self.bot.get_guild(965419296937365514)
-        role = guild.get_role(select.values[0])
+        role = guild.get_role(int(select.values[0]))
         if role in author.roles:
             author = interaction.user
             await author.remove_roles(role)
