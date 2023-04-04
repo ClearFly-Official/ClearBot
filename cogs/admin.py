@@ -274,7 +274,7 @@ URL: `{url}`
             class Spam(discord.ui.View):
                 def __init__(self, bot):
                     self.bot = bot
-                    super().__init__(timeout=15.0)
+                    super().__init__(timeout=15.0, disable_on_timeout=True)
 
                 @discord.ui.button(
                     custom_id="okbutton", style=discord.ButtonStyle.green, label="Yes"
@@ -311,7 +311,6 @@ URL: `{url}`
                 async def on_timeout(self):
                     global confirm
                     if confirm == 0:
-                        await ctx.edit(view=None)
                         await ctx.respond(
                             "You waited too long. Rerun the command to start over!",
                             ephemeral=True,
@@ -384,7 +383,7 @@ URL: `{url}`
             class PurgeView(discord.ui.View):
                 def __init__(self, bot):
                     self.bot = bot
-                    super().__init__(timeout=15.0)
+                    super().__init__(timeout=15.0, disable_on_timeout=True)
 
                 @discord.ui.button(
                     custom_id="okbutton", style=discord.ButtonStyle.green, label="Yes"
@@ -421,7 +420,6 @@ URL: `{url}`
                 async def on_timeout(self):
                     global confirm
                     if confirm == 0:
-                        await ctx.edit(view=None)
                         await ctx.respond(
                             "You waited too long. Rerun the command to purge!",
                             ephemeral=True,

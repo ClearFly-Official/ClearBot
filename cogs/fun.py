@@ -218,14 +218,12 @@ class FunCommands(discord.Cog):
 
         class ButtonGame(discord.ui.View):
             def __init__(self):
-                super().__init__(timeout=20)
+                super().__init__(timeout=20, disable_on_timeout=True)
 
             async def on_timeout(self, interaction):
                 interaction.response.edit_message(
                     "You ran out of time! Rerun the command to play again."
                 )
-                for child in self.children:
-                    child.disabled = True
 
             global b, isPressed
             b = 0

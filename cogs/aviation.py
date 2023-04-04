@@ -51,10 +51,7 @@ class AvCommands(discord.Cog):
         class METARViewM(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
-                super().__init__(timeout=60.0)
-                
-            async def on_timeout(self):
-                await ctx.edit(view=self)
+                super().__init__(timeout=60.0, disable_on_timeout=True)
                 
             @discord.ui.button(
                 label="Change to Metric units", style=discord.ButtonStyle.primary
@@ -107,10 +104,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         class METARViewI(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
-                super().__init__(timeout=120.0)
-
-            async def on_timeout(self):
-                await ctx.edit(view=self)
+                super().__init__(timeout=120.0, disable_on_timeout=True)
                 
             @discord.ui.button(
                 label="Change to Imperial units", style=discord.ButtonStyle.primary

@@ -8,7 +8,7 @@ import pymongo
 from inspect import cleandoc
 from discord import option
 from discord.ext import commands
-from main import cfc, errorc
+from main import cfc, errorc, cogs
 from discord.ext.pages import Page, Paginator
 
 client = pymongo.MongoClient(os.environ["MONGODB_URI"])
@@ -50,7 +50,9 @@ class DevCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    dev = discord.SlashCommandGroup(name="dev", description="💻 Commands for (bot) developers only.")
+    dev = discord.SlashCommandGroup(
+        name="dev", description="💻 Commands for (bot) developers only."
+    )
     dataref = dev.create_subgroup(
         name="datarefs", description="Commands related to X-Plane datarefs."
     )
@@ -109,83 +111,26 @@ class DevCommands(discord.Cog):
     @commands.has_role(965422406036488282)
     async def reloadCogs(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        cogs = [
-            "admin",
-            "dev",
-            "fun",
-            "level",
-            "listeners",
-            "utility",
-            "va",
-            "tags",
-            "aviation",
-        ]
+        select_cogs = []
+        for cog in cogs:
+            select_cogs.append(
+                discord.SelectOption(
+                    label=cog.capitalize(),
+                    description=f"Contains {cog} commands.",
+                    value=cog,
+                )
+            )
 
         class CogSelectView(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
-                super().__init__(timeout=20.0)
+                super().__init__(timeout=30.0, disable_on_timeout=True)
 
             @discord.ui.select(
                 placeholder="Cogs",
                 min_values=1,
                 max_values=9,
-                options=[
-                    discord.SelectOption(
-                        label=cogs[0].capitalize(),
-                        emoji="🔒",
-                        value=cogs[0],
-                        description="Contains all admin commands.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[1].capitalize(),
-                        emoji="💻",
-                        value=cogs[1],
-                        description="Contains all commands for aircraft & bot developers.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[2].capitalize(),
-                        emoji="🧩",
-                        value=cogs[2],
-                        description="Contains all commands that are supposed to be fun.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[3].capitalize(),
-                        emoji="🏆",
-                        value=cogs[3],
-                        description="Contains all leveling commands.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[4].capitalize(),
-                        emoji="👂",
-                        value=cogs[4],
-                        description="Contains all listeners, for logs & more.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[5].capitalize(),
-                        emoji="🛠️",
-                        value=cogs[5],
-                        description="Contains all 'useful' commands.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[6].upper(),
-                        emoji="✈️",
-                        value=cogs[6],
-                        description="Contains all VA related commands.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[7].capitalize(),
-                        emoji="🏷️",
-                        value=cogs[7],
-                        description="Contains all tag related commands.",
-                    ),
-                    discord.SelectOption(
-                        label=cogs[8].capitalize(),
-                        emoji="🛫",
-                        value=cogs[8],
-                        description="Contains all aviation commands.",
-                    ),
-                ],
+                options=select_cogs,
             )
             async def select_callback(self, select, interaction):
                 for cog in select.values:
