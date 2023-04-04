@@ -54,63 +54,45 @@ class FAQView(discord.ui.View):
         )
 
 
-class AnnounceRoleView(discord.ui.View):
+class SelfRolesView(discord.ui.View):
     def __init__(self, bot):
         self.bot = bot
         super().__init__(timeout=None)
 
-    @discord.ui.button(
-        custom_id="announcebutton", style=discord.ButtonStyle.secondary, emoji="📣"
+    @discord.ui.select(
+        custom_id="self-roles-view",
+        placeholder="Select the roles you want...",
+        min_values=1,
+        max_values=1,
+        options=[
+            discord.SelectOption(
+                label="Announcements",
+                description="Click to receive mentions when we post any announcements.",
+                value=965689409364197467,
+                emoji="📣",
+            ),
+            discord.SelectOption(
+                label="Updates",
+                description="Click to receive mentions when we post an update on our 737-100.",
+                value=965688527109107712,
+                emoji="⚒️",
+            ),
+        ],
     )
-    async def button_callback(self, button, interaction):
-        author = interaction.user
+    async def select_callback(self, interaction, select):
         guild = self.bot.get_guild(965419296937365514)
-        role = guild.get_role(965689409364197467)
+        role = guild.get_role(select.values[0])
         if role in author.roles:
             author = interaction.user
-            guild = self.bot.get_guild(965419296937365514)
-            role = guild.get_role(965689409364197467)
             await author.remove_roles(role)
             await interaction.response.send_message(
-                "You won't get mentioned anymore for announcements.", ephemeral=True
+                "You won't get mentioned for this topic anymore.", ephemeral=True
             )
         else:
             author = interaction.user
-            guild = self.bot.get_guild(965419296937365514)
-            role = guild.get_role(965689409364197467)
             await author.add_roles(role)
             await interaction.response.send_message(
-                "You will now get mentioned for announcments!", ephemeral=True
-            )
-
-
-class UpdateRoleView(discord.ui.View):
-    def __init__(self, bot):
-        self.bot = bot
-        super().__init__(timeout=None)
-
-    @discord.ui.button(
-        custom_id="updatebutton", style=discord.ButtonStyle.secondary, emoji="🛠"
-    )
-    async def button_callback(self, button, interaction):
-        author = interaction.user
-        guild = self.bot.get_guild(965419296937365514)
-        role = guild.get_role(965688527109107712)
-        if role in author.roles:
-            author = interaction.user
-            guild = self.bot.get_guild(965419296937365514)
-            role = guild.get_role(965688527109107712)
-            await author.remove_roles(role)
-            await interaction.response.send_message(
-                "You won't get mentioned for updates anymore.", ephemeral=True
-            )
-        else:
-            author = interaction.user
-            guild = self.bot.get_guild(965419296937365514)
-            role = guild.get_role(965688527109107712)
-            await author.add_roles(role)
-            await interaction.response.send_message(
-                "You will now get mentioned for updates!", ephemeral=True
+                "You will now get mentioned for this topic!", ephemeral=True
             )
 
 
@@ -126,7 +108,9 @@ class AdminCommands(discord.Cog):
         self.bot.add_view(UpdateRoleView(bot=self.bot))
         print("| Admin cog loaded sucessfully")
 
-    admin = discord.SlashCommandGroup(name="admin", description="🔒 Commands for admins only.")
+    admin = discord.SlashCommandGroup(
+        name="admin", description="🔒 Commands for admins only."
+    )
 
     @admin.command(name="echo", description="💬 Send a message as ClearBot.")
     @option("text", description="The text you want to send as the bot.")
@@ -449,7 +433,9 @@ URL: `{url}`
     @admin.command(name="rules", description="Sends the rules.")
     @commands.has_permissions(administrator=True)
     async def rules(self, ctx: discord.ApplicationContext):
-        embed1 = discord.Embed(color=cfc).set_image(url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true")
+        embed1 = discord.Embed(color=cfc).set_image(
+            url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true"
+        )
         embed2 = discord.Embed(
             color=cfc,
             description="""
@@ -474,7 +460,9 @@ URL: `{url}`
     @admin.command(name="faq", description="Sends the faq.")
     @commands.has_permissions(administrator=True)
     async def faq(self, ctx: discord.ApplicationContext):
-        embed1 = discord.Embed(colour=cfc).set_image(url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true")
+        embed1 = discord.Embed(colour=cfc).set_image(
+            url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true"
+        )
         embed2 = discord.Embed(
             title="ClearFly FAQ",
             description="""
@@ -496,33 +484,26 @@ A: This is unlikely, but not impossible in the future.
     @commands.has_permissions(administrator=True)
     async def buttonroles(self, ctx: discord.ApplicationContext):
         emb1 = discord.Embed(
-            title="Announcement Pings",
-            description="Click on the 📣 to receive pings when we post any announcements.\n*click again to remove.*",
+            title="Select your roles below",
             color=cfc,
         )
         emb2 = discord.Embed(
-            title="Update Pings",
-            description="Click on 🛠️ to receive pings when we post an update on the 737-100.\n*click again to remove.*",
-            color=cfc,
-        )
-        emb3 = discord.Embed(
-            title="Livery Painter",
+            title="🎨 Livery Painter",
             description="DM <@871893179450925148> or <@668874138160594985> with some examples of your work.",
             colour=cfc,
         )
-        emb4 = discord.Embed(
-            title="ClearFly Livery Painter",
+        emb3 = discord.Embed(
+            title="🎨 ClearFly Livery Painter",
             description="Create a custom livery for the ClearFly Virtual Airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).",
             colour=cfc,
         )
-        embimg = discord.Embed(
-            colour=cfc
-        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1090335535291179068/roleBanner.png")
+        embimg = discord.Embed(colour=cfc).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1090335535291179068/roleBanner.png"
+        )
         await ctx.respond("Button roles posted!", ephemeral=True)
         await ctx.send(embed=embimg)
-        await ctx.send(embed=emb1, view=AnnounceRoleView(bot=self.bot))
-        await ctx.send(embed=emb2, view=UpdateRoleView(bot=self.bot))
-        await ctx.send(embeds=[emb3, emb4])
+        await ctx.send(embed=emb1, view=SelfRolesView(bot=self.bot))
+        await ctx.send(embeds=[emb2, emb3])
 
 
 def setup(bot):
