@@ -38,7 +38,7 @@ class DeleteMsgView(discord.ui.View):
         if interaction.user.id == self.auth.id:
             await interaction.message.delete()
         else:
-            await interaction.response.send_message("You did not send the link, so you can't delete the snippet!")
+            await interaction.response.send_message("You did not send the link, so you can't delete the snippet!", ephemeral=True)
 
 class Listeners(discord.Cog):
     def __init__(self, bot):
