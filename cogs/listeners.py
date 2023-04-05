@@ -19,7 +19,6 @@ db = client["ClearBotDB"]
 rss = db["RSS"]
 lvlcol = db["leveling"]
 trescol = rss["Tresholdx"]
-fsacol = rss["FSAddonsXP"]
 sfcol = rss["SimpleFlying"]
 fsnews = 1066124540318588928  # *CB test 1001401783689678868
 avnews = 1073311685357604956
@@ -50,7 +49,6 @@ class Listeners(discord.Cog):
         self.rssfeedtres1.start()
         self.rssfeedtres2.start()
         self.rssfeedtres3.start()
-        self.rssfeedsf1.start()
         self.rssfeedfsa1.start()
         self.resetRShownSubms.start()
         channel = self.bot.get_channel(1001405648828891187)
@@ -169,29 +167,6 @@ Started bot up on {now}
             trescol.update_one(
                 {"_id": "lastIDarticle"}, {"$set": {"lastIDarticle": feed.get("id")}}
             )
-            await channel.send(
-                f"""
-**{feed.get('title')}**
-
-{feed.get('link')}
-                """
-            )
-
-    @tasks.loop(seconds=60)
-    async def rssfeedfsa1(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://fsaddons.online/category/x-plane/rss")
-        feed = dict(blog_feed.entries[0])
-        lastID = fsacol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{"lastID": None}]
-        if ids[0]["lastID"] == feed.get("id"):
-            return
-        else:
-            fsacol.update_one({"_id": "lastID"}, {"$set": {"lastID": feed.get("id")}})
             await channel.send(
                 f"""
 **{feed.get('title')}**
