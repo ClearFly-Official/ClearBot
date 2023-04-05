@@ -304,8 +304,7 @@ Started bot up on {now}
             async def viewRawButtonCallback(self, button, interaction):
                 if message.content == "":
                     message.content = None
-                if message.content == "":
-                    message.content = None
+                message.content = message.content.replace('```', '\`\`\`')
                 await interaction.response.send_message(
                     f"""
 Message Content:
@@ -318,12 +317,14 @@ Message Content:
 
         if message.author.bot == False:
             channel = self.bot.get_channel(1001405648828891187)
-            msgdel = message.clean_content
+            msgcontent = message.clean_content
+            if msgcontent == "":
+                msgcontent = None
             msgatr = message.author.mention
             msgcnl = message.channel.mention
             pfp = message.author.display_avatar.url
             emb = discord.Embed(title="Message Deleted", color=cfc)
-            emb.add_field(name="Content", value=f"{msgdel[:1024]}", inline=False)
+            emb.add_field(name="Content", value=f"{msgcontent[:1024]}", inline=False)
             emb.add_field(name="Author", value=f"{msgatr}", inline=True)
             emb.add_field(name="Channel", value=f"{msgcnl}", inline=True)
             emb.add_field(
@@ -336,8 +337,6 @@ ID: **{message.id}**
             )
             emb.set_thumbnail(url=pfp)
             await channel.send(embed=emb, view=ViewRawMessage(self.bot))
-        else:
-            pass
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -354,6 +353,7 @@ ID: **{message.id}**
                     before.content = None
                 if after.content == "":
                     after.content = None
+                before.content, after.content = before.content.replace('```', '\`\`\`'), after.content.replace('```', '\`\`\`')
                 await interaction.response.send_message(
                     f"""
 Before:

@@ -468,8 +468,7 @@ class FunCommands(discord.Cog):
     async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
         if limit == None:
-            limit = 64
-            limit = 32
+            limit = 24
         if limit > 128:
             embed = discord.Embed(
                 title="Error 422!",
