@@ -704,8 +704,7 @@ After: **{after.category}**
                 description=f"```{error}```",
                 colour=errorc,
             )
-            msg = await ctx.respond(embed=embed)
-            await msg.reply("<@668874138160594985> fix this please")
+            await ctx.respond(embed=embed)
             raise error
         
 

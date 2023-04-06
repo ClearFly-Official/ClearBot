@@ -688,6 +688,8 @@ class UtilityCommands(discord.Cog):
                     reactions.append(reaction.count)
                 out = []
                 for reaction in react_types:
+                    if total_count == 0:
+                        total_count = 1
                     percent = (reaction.count - 1) / total_count * 100
                     out.append(
                         f"{reaction.emoji}: **{reaction.count - 1}**/**{total_count}**(**{percent}**% of the total votes)\n{progress_bar(percent)}\n\n"
