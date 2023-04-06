@@ -242,7 +242,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     paginator = Paginator(pages=pages)
                     await paginator.respond(ctx.interaction)
             else:
-                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
         if chart == 'Minimums':
             async with aiohttp.ClientSession() as cs:
@@ -281,7 +281,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     paginator = Paginator(pages=pages)
                     await paginator.respond(ctx.interaction)
             else:
-                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
         if chart == 'Airport Diagram':
             if airport[:4].upper().startswith(("K", "P", "0")):
@@ -309,7 +309,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     embed.set_image(url="attachment://apd.jpg")
                     await ctx.respond(embed=embed, file=dfile)
             else:
-                embed = discord.Embed(title="Error 422", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
                 await ctx.respond(embed=embed)
 
 

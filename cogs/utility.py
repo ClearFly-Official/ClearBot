@@ -324,7 +324,7 @@ class UtilityCommands(discord.Cog):
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Error 404!",
+                    title="Command not found",
                     description=f"I didn't found the command `{command}`.",
                     colour=errorc,
                 )

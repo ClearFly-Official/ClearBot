@@ -65,7 +65,7 @@ class FunCommands(discord.Cog):
             convtext.append(c)
         if len("".join(convtext)) >= 2000:
             embed = discord.Embed(
-                title="Error 400!",
+                title="Too long output",
                 description="The output of the converted text is more than 2000 characters, as Discord only allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.",
                 color=errorc,
             )
@@ -455,7 +455,7 @@ class FunCommands(discord.Cog):
             embed.set_image(url=f"attachment://{fileName}")
             await ctx.edit(embed=embed)
             embed = discord.Embed(
-                title="Error 408",
+                title="Timeout",
                 description=f"You ran out of time! The answer was: `{oldText}`",
                 colour=errorc,
             )
@@ -471,7 +471,7 @@ class FunCommands(discord.Cog):
             limit = 24
         if limit > 128:
             embed = discord.Embed(
-                title="Error 422!",
+                title="`limit` too large",
                 description="You gave too big of a number for the `limit` option!",
                 colour=errorc,
             )

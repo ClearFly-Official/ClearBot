@@ -126,7 +126,7 @@ class LevelingCommands(discord.Cog):
         else:
             if user.bot == True:
                 embed = discord.Embed(
-                    title="Error 404!",
+                    title="No data found",
                     description="I didn't found any data of leveling, because the provided user is a bot. They don't get to use this amazing leveling system!",
                     color=errorc,
                 )
@@ -134,13 +134,13 @@ class LevelingCommands(discord.Cog):
             else:
                 if user == None:
                     embed = discord.Embed(
-                        title="Error 404!",
+                        title="No data found",
                         description=f"This most probably means that you never sent a message in this server.",
                         color=errorc,
                     )
                 else:
                     embed = discord.Embed(
-                        title="Error 404!",
+                        title="No data found",
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
                         color=errorc,
                     )
@@ -245,7 +245,7 @@ class LevelingCommands(discord.Cog):
         else:
             if user.bot == True:
                 embed = discord.Embed(
-                    title="Error 404!",
+                    title="No data found",
                     description="I didn't found any data of leveling, because the provided user is a bot. They don't get to use this amazing leveling system!",
                     color=errorc,
                 )
@@ -253,13 +253,13 @@ class LevelingCommands(discord.Cog):
             else:
                 if user == None:
                     embed = discord.Embed(
-                        title="Error 404!",
+                        title="No data found",
                         description=f"This most probably means that you never sent a message in this server.",
                         color=errorc,
                     )
                 else:
                     embed = discord.Embed(
-                        title="Error 404!",
+                        title="No data found",
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
                         color=errorc,
                     )

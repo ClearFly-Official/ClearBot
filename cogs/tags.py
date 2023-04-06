@@ -77,7 +77,7 @@ class TagCommands(discord.Cog):
                 )
         else:
             embed = discord.Embed(
-                title="Error 404",
+                title="Tag not found",
                 description=f"""
 Didn't found {tag}. 
             """,
@@ -203,7 +203,7 @@ Didn't found {tag}.
                     await interaction.response.send_message(embed=embed)
                 else:
                     embed = discord.Embed(
-                        title="Error 404",
+                        title="Tag not found",
                         description=f"""
 Didn't found {edit}. 
                         """,
@@ -219,7 +219,7 @@ Didn't found {edit}.
             modal = EditTagModal(title="Edit a tag(this is not your tag!).")
             await ctx.send_modal(modal)
         else:
-            embed = discord.Embed(title="Error 403!", description="You are not authorised to edit this tag!", colour=errorc)
+            embed = discord.Embed(title="Not author", description="You are not authorised to edit this tag!", colour=errorc)
             await ctx.respond(embed=embed)
 
 
@@ -237,7 +237,7 @@ Didn't found {edit}.
             tagcol.delete_one({"name": tag})
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully(it was not yours)", colour=cfc)
         else:
-            embed = discord.Embed(title="Error 403!", description="You are not authorised to delete this tag!", colour=errorc)
+            embed = discord.Embed(title="Not author", description="You are not authorised to delete this tag!", colour=errorc)
             
         await ctx.respond(embed=embed)
 

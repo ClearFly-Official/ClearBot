@@ -668,15 +668,15 @@ After: **{after.category}**
         notHandled = True
         if isinstance(error, commands.CommandOnCooldown):
             embed = discord.Embed(
-                title="Error 429",
-                description="You're rate limited, wait a bit to use this command again!",
+                title="Take a break!",
+                description=error,
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
             notHandled = False
         if isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(
-                title="Error 403",
+                title="Missing required permissions",
                 description="You're not authorised to use this command!",
                 colour=errorc,
             )
@@ -684,7 +684,7 @@ After: **{after.category}**
             notHandled = False
         if isinstance(error, commands.MissingRole):
             embed = discord.Embed(
-                title="Error 403",
+                title="Missing required roles",
                 description="You're not authorised to use this command!",
                 colour=errorc,
             )
@@ -692,8 +692,8 @@ After: **{after.category}**
             notHandled = False
         if isinstance(error, commands.NotOwner):
             embed = discord.Embed(
-                title="Error 403",
-                description="This is an owner only command, and you are not the owner!",
+                title="Owner only command",
+                description="This command is for the owner of the bot only, so not for you!",
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
@@ -704,7 +704,8 @@ After: **{after.category}**
                 description=f"```{error}```",
                 colour=errorc,
             )
-            await ctx.respond(embed=embed)
+            msg = await ctx.respond(embed=embed)
+            await msg.reply("<@668874138160594985> fix this please")
             raise error
         
 
