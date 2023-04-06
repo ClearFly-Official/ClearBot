@@ -1,3 +1,4 @@
+import os
 import discord
 import psutil
 import urllib.parse
@@ -6,11 +7,123 @@ from math import sqrt
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
+import pymongo
 from main import cogs
 from main import cfc, errorc
 
 
 load_dotenv()
+
+client = pymongo.MongoClient(os.environ["MONGODB_URI"])
+db = client["ClearBotDB"]
+pollcol = db["poll"]
+
+
+class PollTypeYesNo(discord.ui.Modal):
+    def __init__(self, bot, *args, **kwargs) -> None:
+        self.bot = bot
+        super().__init__(*args, **kwargs)
+
+        self.add_item(
+            discord.ui.InputText(
+                label="Question",
+                placeholder="Are you interested in planes?",
+                style=discord.InputTextStyle.short,
+            )
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        conf_embed = discord.Embed(title="Successfully created poll", colour=cfc)
+        conf_embed.add_field(name="Question", value=self.children[0].value)
+        conf_embed.add_field(name="Type", value="Yes/No")
+        await interaction.response.send_message(embed=conf_embed, ephemeral=True)
+        embed = discord.Embed(title="Creating poll...", colour=cfc)
+        message = await interaction.channel.send(embed=embed)
+        poll_id = message.id
+        pollcol.insert_one(
+            {
+                "poll_id": poll_id,
+                "author": interaction.user.id,
+                "question": self.children[0].value,
+                "type": "yn",
+            }
+        )
+        embed = discord.Embed(
+            title=self.children[0].value,
+            description="""
+1️⃣ Yes
+
+2️⃣ No
+        """,
+            colour=cfc,
+        )
+        embed.set_author(
+            name="Asked by " + interaction.user.name,
+            icon_url=interaction.user.display_avatar,
+        )
+        embed.set_footer(text=f"Poll ID: {poll_id}")
+        await message.add_reaction("1️⃣")
+        await message.add_reaction("2️⃣")
+        await message.edit(embed=embed)
+
+class PollTypeMChoice(discord.ui.Modal):
+    def __init__(self, bot, choices: int, *args, **kwargs) -> None:
+        self.bot = bot
+        self.choices = choices
+        super().__init__(*args, **kwargs)
+
+        self.add_item(
+            discord.ui.InputText(
+                label="Question",
+                placeholder="Are you interested in planes?",
+                style=discord.InputTextStyle.short,
+            )
+        )
+        for choice in range(choices):
+            self.add_item(
+                discord.ui.InputText(
+                    label=f"Choice {choice + 1}",
+                    placeholder=f"Choice {choice + 1} content",
+                    style=discord.InputTextStyle.short,
+                )
+            )
+
+    async def callback(self, interaction: discord.Interaction):
+        conf_embed = discord.Embed(title="Successfully created poll", colour=cfc)
+        conf_embed.add_field(name="Question", value=self.children[0].value)
+        conf_embed.add_field(name="Type", value=f"{self.choices} choices")
+        await interaction.response.send_message(embed=conf_embed, ephemeral=True)
+        embed = discord.Embed(title="Creating poll...", colour=cfc)
+        message = await interaction.channel.send(embed=embed)
+        poll_id = message.id
+        pollcol.insert_one(
+            {
+                "poll_id": poll_id,
+                "author": interaction.user.id,
+                "question": self.children[0].value,
+                "type": self.choices,
+            }
+        )
+        def int_to_emoji(num):
+            return chr(0x0030 + num) + chr(0x20E3)
+            
+        choices = []
+        for choice in range(self.choices):
+            choices.append(f"{int_to_emoji(choice + 1)} {self.children[choice + 1].value}\n\n")
+            await message.add_reaction(int_to_emoji(choice + 1))
+        embed = discord.Embed(
+            title=self.children[0].value,
+            description=f"""
+{''.join(choices)}
+        """,
+            colour=cfc,
+        )
+        embed.set_author(
+            name="Asked by " + interaction.user.name,
+            icon_url=interaction.user.display_avatar,
+        )
+        embed.set_footer(text=f"Poll ID: {poll_id}")
+        await message.edit(embed=embed)
 
 
 class UtilityCommands(discord.Cog):
@@ -21,6 +134,7 @@ class UtilityCommands(discord.Cog):
         name="utility", description="🛠️ Commands that are supposed to be useful."
     )
     math = utility.create_subgroup(name="math", description="Commands related to math")
+    poll = utility.create_subgroup(name="poll", description="Commands related to polls")
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -117,6 +231,170 @@ class UtilityCommands(discord.Cog):
             await channel.send(
                 "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
             )
+
+    @utility.command(
+        name="stats", description="📈 Show statistics about the bot and server."
+    )
+    @commands.cooldown(1, 5)
+    async def stats(self, ctx: discord.ApplicationContext):
+        loc = 0
+        f = open("main.py", "r")
+        loc += int(len(f.readlines()))
+        for cog in cogs:
+            f = open(f"cogs/{cog}.py")
+            loc += int(len(f.readlines()))
+        cogsList = "\n".join(cogs)
+        delta_uptime = datetime.utcnow() - self.bot.start_time
+        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+        owner = await self.bot.fetch_user(668874138160594985)
+        embed = discord.Embed(
+            title="**Bot Stats**",
+            description=f"""
+**Creator:** {owner.mention}
+
+**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
+**Latency:** {round(self.bot.latency*1000)}ms
+**CPU usage:** {psutil.cpu_percent(interval=0.1)}%
+**RAM usage:** {psutil.virtual_memory()[2]}%
+**Total lines of code:** {loc}
+
+**Cogs loaded:**
+```
+{cogsList}
+```
+        """,
+            color=cfc,
+        )
+        members = 0
+        for guild in self.bot.guilds:
+            members += guild.member_count - 1
+        memberCount = len(set(self.bot.get_all_members()))
+        embed.add_field(
+            name="**Server Stats**",
+            value=f"""
+**Members:** {memberCount}
+                    """,
+            inline=False,
+        )
+        await ctx.respond(embed=embed)
+
+    async def get_commands(self, ctx: discord.AutocompleteContext):
+        cmds = []
+        for cmd in self.bot.walk_application_commands():
+            if isinstance(cmd, discord.commands.SlashCommand):
+                cmds.append(str(cmd))
+        return [cmd for cmd in cmds if ctx.value in cmd]
+
+    @discord.command(name="help", description="❓ Need help? This is the right command!")
+    @option(
+        "command",
+        description="Get information for a specific command by inputting this option.",
+        autocomplete=get_commands,
+    )
+    async def help(self, ctx: discord.ApplicationContext, command: str = None):
+        if command != None:
+            cmds = []
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommand):
+                    cmds.append(str(cmd))
+            if command in cmds:
+                cmd = self.bot.get_application_command(command)
+                if cmd.options == []:
+                    opts = ["`No options`"]
+                else:
+                    opts = []
+                    for opt in cmd.options:
+                        opts.append(f"`{opt.name}`")
+                if cmd.cooldown == None:
+                    cd = "`No cooldown`"
+                else:
+                    cd = f"`{cmd.cooldown.rate}` run(s) every `{round(cmd.cooldown.per)}s`"
+                embed = discord.Embed(
+                    title=f"`/{command}` info",
+                    description=f"""
+**Name**: {cmd.mention}
+**Description**: {cmd.description}
+**Options**: {", ".join(opts)}
+**Cooldown**: {cd}
+                """,
+                    colour=cfc,
+                )
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(
+                    title="Error 404!",
+                    description=f"I didn't found the command `{command}`.",
+                    colour=errorc,
+                )
+                await ctx.respond(embed=embed)
+        else:
+            groups = []
+            group_names = []
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommandGroup):
+                    if cmd.parent is None:
+                        group_names.append(cmd.name)
+                        groups.append(cmd)
+
+            cmds = {"other": []}
+            for cmd in self.bot.walk_application_commands():
+                if isinstance(cmd, discord.commands.SlashCommand):
+                    if str(cmd).split(" ")[0] in group_names:
+                        cmds.setdefault(str(cmd).split(" ")[0], []).append(cmd)
+                    else:
+                        cmds["other"].append(cmd)
+
+            select_groups = []
+            for group in groups:
+                select_groups.append(
+                    discord.SelectOption(
+                        label=group.name.title(), description=group.description
+                    )
+                )
+            select_groups.append(
+                discord.SelectOption(
+                    label="Other", description="❓ Commands not in a group."
+                )
+            )
+
+            class HelpView(discord.ui.View):
+                def __init__(self, bot):
+                    self.bot = bot
+                    super().__init__(timeout=120, disable_on_timeout=True)
+
+                @discord.ui.select(
+                    placeholder="Select command group...",
+                    min_values=1,
+                    max_values=1,
+                    options=select_groups,
+                )
+                async def select_callback(self, select, interaction):
+                    listed_cmds = []
+                    for cmd in cmds[select.values[0].lower()]:
+                        if cmd.options == []:
+                            opts = ["`No options`"]
+                        else:
+                            opts = []
+                            for opt in cmd.options:
+                                opts.append(f"`{opt.name}`")
+                        listed_cmds.append(
+                            f"{cmd.mention}({', '.join(opts)}) - {cmd.description}"
+                        )
+                    embed = discord.Embed(
+                        title=f"{select.values[0]} Commands",
+                        description="\n".join(listed_cmds),
+                        colour=cfc,
+                    )
+                    await interaction.response.edit_message(embed=embed)
+
+            embed = discord.Embed(
+                title="Help!",
+                description="Select a command group below to view all the available commands inside it.",
+                colour=cfc,
+            )
+            await ctx.respond(embed=embed, view=HelpView(self.bot))
 
     @utility.command(name="the-team", description="🧑‍🤝‍🧑 Shows The ClearFly Team!")
     async def team(self, ctx: discord.ApplicationContext):
@@ -352,169 +630,90 @@ class UtilityCommands(discord.Cog):
         )
         await ctx.respond(view=view, embed=embed)
 
-    @utility.command(
-        name="stats", description="📈 Show statistics about the bot and server."
+    @poll.command(name="new", description="📜 Post a new poll.")
+    @discord.option(
+        "poll_type",
+        description="You're desired type of poll.",
+        choices=["Yes/No", "2 choices", "3 choices", "4 choices"],
     )
-    @commands.cooldown(1, 5)
-    async def stats(self, ctx: discord.ApplicationContext):
-        loc = 0
-        f = open("main.py", "r")
-        loc += int(len(f.readlines()))
-        for cog in cogs:
-            f = open(f"cogs/{cog}.py")
-            loc += int(len(f.readlines()))
-        cogsList = "\n".join(cogs)
-        delta_uptime = datetime.utcnow() - self.bot.start_time
-        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-        owner = await self.bot.fetch_user(668874138160594985)
-        embed = discord.Embed(
-            title="**Bot Stats**",
-            description=f"""
-**Creator:** {owner.mention}
+    @commands.cooldown(2, 60)
+    async def new_poll(self, ctx: discord.ApplicationContext, poll_type: str):
+        if poll_type == "Yes/No":
+            await ctx.send_modal(
+                PollTypeYesNo(title=f"Setup your {poll_type} poll", bot=self.bot)
+            )
+        else:
+            await ctx.send_modal(
+                PollTypeMChoice(title=f"Setup your {poll_type} poll", bot=self.bot, choices=int(poll_type[:1]))
+            )
 
-**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
-**Latency:** {round(self.bot.latency*1000)}ms
-**CPU usage:** {psutil.cpu_percent(interval=0.1)}%
-**RAM usage:** {psutil.virtual_memory()[2]}%
-**Total lines of code:** {loc}
+    @poll.command(name="end", description="❌ End a poll and see its results.")
+    @discord.option("poll_id", description="ID of the poll you want to end.")
+    @commands.cooldown(1, 120)
+    async def end_poll(self, ctx: discord.ApplicationContext, poll_id: str):
+        await ctx.defer(ephemeral=True)
 
-**Cogs loaded:**
-```
-{cogsList}
-```
-        """,
-            color=cfc,
-        )
-        members = 0
-        for guild in self.bot.guilds:
-            members += guild.member_count - 1
-        memberCount = len(set(self.bot.get_all_members()))
-        embed.add_field(
-            name="**Server Stats**",
-            value=f"""
-**Members:** {memberCount}
-                    """,
-            inline=False,
-        )
-        await ctx.respond(embed=embed)
+        def progress_bar(percent: int) -> str:
+            bar = "⬛️"*10
+            bar = bar.replace("⬛", "🟦", round(max(min(percent, 100), 0) / 10))
+            return bar
 
-    async def get_commands(self, ctx: discord.AutocompleteContext):
-        cmds = []
-        for cmd in self.bot.walk_application_commands():
-            if isinstance(cmd, discord.commands.SlashCommand):
-                cmds.append(str(cmd))
-        return [cmd for cmd in cmds if ctx.value in cmd]
+        try:
+            poll_id = int(poll_id)
+            poll_msg = await ctx.channel.fetch_message(poll_id)
 
-    @discord.command(name="help", description="❓ Need help? This is the right command!")
-    @option(
-        "command",
-        description="Get information for a specific command by inputting this option.",
-        autocomplete=get_commands,
-    )
-    async def help(self, ctx: discord.ApplicationContext, command: str = None):
-        if command != None:
-            cmds = []
-            for cmd in self.bot.walk_application_commands():
-                if isinstance(cmd, discord.commands.SlashCommand):
-                    cmds.append(str(cmd))
-            if command in cmds:
-                cmd = self.bot.get_application_command(command)
-                if cmd.options == []:
-                    opts = ["`No options`"]
-                else:
-                    opts = []
-                    for opt in cmd.options:
-                        opts.append(f"`{opt.name}`")
-                if cmd.cooldown == None:
-                    cd = "`No cooldown`"
-                else:
-                    cd = f"`{cmd.cooldown.rate}` run(s) every `{round(cmd.cooldown.per)}s`"
+        except discord.NotFound:
+            embed = discord.Embed(
+                title="Not a valid poll id!",
+                description="Please give an actual poll id, where you are the author of. You can find the poll id at the bottom of the poll itself.",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+        else:
+            poll = pollcol.find_one({"poll_id": poll_id})
+            if poll == None:
                 embed = discord.Embed(
-                    title=f"`/{command}` info",
+                    title="It looks like this poll already ended...", colour=cfc
+                )
+                await ctx.respond(embed=embed)
+            elif poll["author"] == ctx.author.id:
+                author = ctx.author
+                react_types = []
+                for reaction in poll_msg.reactions:
+                    react_types.append(reaction)
+                total_count = 0 - len(react_types)
+                reactions = []
+                for reaction in react_types:
+                    total_count = total_count + reaction.count
+                    reactions.append(reaction.count)
+                out = []
+                for reaction in react_types:
+                    percent = (reaction.count - 1) / total_count * 100
+                    out.append(
+                        f"{reaction.emoji}: **{reaction.count - 1}**/**{total_count}**(**{percent}**% of the total votes)\n{progress_bar(percent)}\n\n"
+                    )
+                embed = discord.Embed(
+                    title=f"'{poll['question']}': results",
                     description=f"""
-**Name**: {cmd.mention}
-**Description**: {cmd.description}
-**Options**: {", ".join(opts)}
-**Cooldown**: {cd}
+Total votes: **{total_count}**
+
+{''.join(out)}
                 """,
                     colour=cfc,
+                ).set_author(
+                    icon_url=author.display_avatar, name=f"Poll by {author.name}"
                 )
+                await poll_msg.edit(embed=embed)
+                pollcol.delete_one({"poll_id": poll_id})
+                embed = discord.Embed(title="Successfully closed poll!", colour=cfc)
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Error 404!",
-                    description=f"I didn't found the command `{command}`.",
+                    title="You're not the author of this poll!",
+                    description="Try again with a poll you own.",
                     colour=errorc,
                 )
                 await ctx.respond(embed=embed)
-        else:
-            groups = []
-            group_names = []
-            for cmd in self.bot.walk_application_commands():
-                if isinstance(cmd, discord.commands.SlashCommandGroup):
-                    if cmd.parent is None:
-                        group_names.append(cmd.name)
-                        groups.append(cmd)
-
-            cmds = {"other": []}
-            for cmd in self.bot.walk_application_commands():
-                if isinstance(cmd, discord.commands.SlashCommand):
-                    if str(cmd).split(" ")[0] in group_names:
-                        cmds.setdefault(str(cmd).split(" ")[0], []).append(cmd)
-                    else:
-                        cmds["other"].append(cmd)
-
-            select_groups = []
-            for group in groups:
-                select_groups.append(
-                    discord.SelectOption(
-                        label=group.name.title(), description=group.description
-                    )
-                )
-            select_groups.append(
-                discord.SelectOption(
-                    label="Other", description="❓ Commands not in a group."
-                )
-            )
-
-            class HelpView(discord.ui.View):
-                def __init__(self, bot):
-                    self.bot = bot
-                    super().__init__(timeout=120, disable_on_timeout=True)
-
-                @discord.ui.select(
-                    placeholder="Select command group...",
-                    min_values=1,
-                    max_values=1,
-                    options=select_groups,
-                )
-                async def select_callback(self, select, interaction):
-                    listed_cmds = []
-                    for cmd in cmds[select.values[0].lower()]:
-                        if cmd.options == []:
-                            opts = ["`No options`"]
-                        else:
-                            opts = []
-                            for opt in cmd.options:
-                                opts.append(f"`{opt.name}`")
-                        listed_cmds.append(
-                            f"{cmd.mention}({', '.join(opts)}) - {cmd.description}"
-                        )
-                    embed = discord.Embed(
-                        title=f"{select.values[0]} Commands",
-                        description="\n".join(listed_cmds),
-                        colour=cfc,
-                    )
-                    await interaction.response.edit_message(embed=embed)
-
-            embed = discord.Embed(
-                title="Help!",
-                description="Select a command group below to view all the available commands inside it.",
-                colour=cfc,
-            )
-            await ctx.respond(embed=embed, view=HelpView(self.bot))
 
 
 def setup(bot):
