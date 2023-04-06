@@ -10,7 +10,7 @@ ConfigParser
 numerize
 pilmoji
 wonderwords
-flag
+emoji-country-flag
 Pillow
 feedparser
 psutil
