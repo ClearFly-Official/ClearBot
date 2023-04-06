@@ -436,8 +436,8 @@ After:
                 embed.add_field(
                     name="Slowmode",
                     value=f"""
-Before: **{before.slowmode_delay}**
-After: **{after.slowmode_delay}**
+Before: **{before.slowmode_delay}**s
+After: **{after.slowmode_delay}**s
                 """,
                     inline=False,
                 )
@@ -456,15 +456,6 @@ After: **{after.permissions_synced}**
                 value=f"""
 Before: **{before.category}**
 After: **{after.category}**
-            """,
-                inline=False,
-            )
-        if before.position != after.position:
-            embed.add_field(
-                name="Position",
-                value=f"""
-Before: **{before.position+1}**
-After: **{after.position+1}**
             """,
                 inline=False,
             )
