@@ -307,7 +307,7 @@ Started bot up on {now}
             )
             async def viewRawButtonCallback(self, button, interaction):
                 if message.content == "":
-                    message.content = None
+                    message.content = "None"
                 message.content = message.content.replace("```", "`` `")
                 await interaction.response.send_message(
                     f"""
@@ -323,7 +323,7 @@ Message Content:
             channel = self.bot.get_channel(1001405648828891187)
             msgcontent = message.clean_content
             if msgcontent == "":
-                msgcontent = None
+                msgcontent = "None"
             msgatr = message.author.mention
             msgcnl = message.channel.mention
             embs = []
@@ -381,9 +381,9 @@ ID: **{message.id}**
             )
             async def viewRawButtonCallback(self, button, interaction):
                 if before.content == "":
-                    before.content = None
+                    before.content = "None"
                 if after.content == "":
-                    after.content = None
+                    after.content = "None"
                 before.content, after.content = before.content.replace(
                     "```", "` ` `"
                 ), after.content.replace("```", "`` `")
