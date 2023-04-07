@@ -23,6 +23,7 @@ sfcol = rss["SimpleFlying"]
 fsnews = 1066124540318588928  # *CB test 1001401783689678868
 avnews = 1073311685357604956
 
+
 class DeleteMsgView(discord.ui.View):
     def __init__(self, bot, auth):
         self.bot = bot
@@ -37,7 +38,11 @@ class DeleteMsgView(discord.ui.View):
         if interaction.user.id == self.auth.id:
             await interaction.message.delete()
         else:
-            await interaction.response.send_message("You did not send the link, so you can't delete the snippet!", ephemeral=True)
+            await interaction.response.send_message(
+                "You did not send the link, so you can't delete the snippet!",
+                ephemeral=True,
+            )
+
 
 class Listeners(discord.Cog):
     def __init__(self, bot):
@@ -291,7 +296,7 @@ Started bot up on {now}
         await channel.send(embed=emb)
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message):
+    async def on_message_delete(self, message: discord.Message):
         class ViewRawMessage(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -303,7 +308,7 @@ Started bot up on {now}
             async def viewRawButtonCallback(self, button, interaction):
                 if message.content == "":
                     message.content = None
-                message.content = message.content.replace('```', '\`\`\`')
+                message.content = message.content.replace("```", "`` `")
                 await interaction.response.send_message(
                     f"""
 Message Content:
@@ -321,12 +326,32 @@ Message Content:
                 msgcontent = None
             msgatr = message.author.mention
             msgcnl = message.channel.mention
+            embs = []
+            if message.attachments != []:
+                for attach in message.attachments:
+                    if attach.content_type[:5] == "image":
+                        embs.append(
+                            discord.Embed(
+                                title="Attachment deleted",
+                                url=attach.proxy_url,
+                                colour=cfc,
+                            ).set_image(url=attach.proxy_url)
+                        )
+                    else:
+                        embs.append(
+                            discord.Embed(
+                                title="Attachment deleted",
+                                url=attach.proxy_url,
+                                description="*Attachment is* ***not*** *image*",
+                                colour=cfc,
+                            )
+                        )
             pfp = message.author.display_avatar.url
-            emb = discord.Embed(title="Message Deleted", color=cfc)
-            emb.add_field(name="Content", value=f"{msgcontent[:1024]}", inline=False)
-            emb.add_field(name="Author", value=f"{msgatr}", inline=True)
-            emb.add_field(name="Channel", value=f"{msgcnl}", inline=True)
-            emb.add_field(
+            embed = discord.Embed(title="Message Deleted", color=cfc)
+            embed.add_field(name="Content", value=f"{msgcontent[:1024]}", inline=False)
+            embed.add_field(name="Author", value=f"{msgatr}", inline=True)
+            embed.add_field(name="Channel", value=f"{msgcnl}", inline=True)
+            embed.add_field(
                 name="Other Information",
                 value=f"""
 Pinned: **{message.pinned}**
@@ -334,8 +359,9 @@ Type: **{message.type}**
 ID: **{message.id}**
                 """,
             )
-            emb.set_thumbnail(url=pfp)
-            await channel.send(embed=emb, view=ViewRawMessage(self.bot))
+            embed.set_thumbnail(url=pfp)
+            embs.append(embed)
+            await channel.send(embeds=embs, view=ViewRawMessage(self.bot))
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -352,7 +378,9 @@ ID: **{message.id}**
                     before.content = None
                 if after.content == "":
                     after.content = None
-                before.content, after.content = before.content.replace('```', '\`\`\`'), after.content.replace('```', '\`\`\`')
+                before.content, after.content = before.content.replace(
+                    "```", "` ` `"
+                ), after.content.replace("```", "`` `")
                 await interaction.response.send_message(
                     f"""
 Before:
@@ -400,8 +428,6 @@ ID: **{after.id}**
                 )
                 emb.set_thumbnail(url=pfp)
                 await channel.send(embed=emb, view=ViewRawMessage(self.bot))
-        else:
-            pass
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
@@ -628,10 +654,14 @@ After: **{after.category}**
                 pass
         else:
             pass
+
     @commands.Cog.listener("on_message")
     async def github_snippet(self, message):
         if not message.author.bot:
-            match = re.search(r'https?://github\.com/[\w-]+/[\w-]+/[\w./-]+#L(\d+)-L(\d+)', message.content)
+            match = re.search(
+                r"https?://github\.com/[\w-]+/[\w-]+/[\w./-]+#L(\d+)-L(\d+)",
+                message.content,
+            )
             if match:
                 random.seed(message.content)
                 snip_id = random.randint(0, 100)
@@ -640,7 +670,9 @@ After: **{after.category}**
                 end_line = match.group(2)
                 if (int(end_line) - int(start_line)) > 25:
                     return
-                raw_url = url.replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
+                raw_url = url.replace(
+                    "github.com", "raw.githubusercontent.com"
+                ).replace("/blob", "")
                 async with aiohttp.ClientSession() as cs:
                     async with cs.get(raw_url) as r:
                         async with aiofiles.open(f"snip{snip_id}.txt", "wb") as f:
@@ -648,18 +680,19 @@ After: **{after.category}**
                 async with aiofiles.open(f"snip{snip_id}.txt", "r") as f:
                     snip = await f.readlines()
 
-
                 file_name = url.split("/")[len(url.split("/")) - 1].split("#")[0]
                 syntaxh = file_name.split(".")[1]
-                out_snip = ''.join(snip[int(start_line)-1:int(end_line)])
-                await message.reply(f"""
+                out_snip = "".join(snip[int(start_line) - 1 : int(end_line)])
+                await message.reply(
+                    f"""
 `{url.split("/")[3]}/{url.split("/")[4]}`: `{file_name}` line **{start_line}**-**{end_line}**
 ```{syntaxh}
 {out_snip}
 ```
-                """, view=DeleteMsgView(bot=self.bot, auth=message.author))
+                """,
+                    view=DeleteMsgView(bot=self.bot, auth=message.author),
+                )
                 os.remove(f"snip{snip_id}.txt")
-
 
     @commands.Cog.listener()
     async def on_application_command_error(
@@ -706,8 +739,6 @@ After: **{after.category}**
             )
             await ctx.respond(embed=embed)
             raise error
-        
-
 
 
 def setup(bot):
