@@ -333,17 +333,23 @@ Message Content:
                         embs.append(
                             discord.Embed(
                                 title="Attachment deleted",
-                                url=attach.proxy_url,
+                                url=attach.url,
                                 colour=cfc,
-                            ).set_image(url=attach.proxy_url)
+                            )
+                            .set_image(url=attach.url)
+                            .set_footer(
+                                text="If the image doesn't load, try opening it in your browser by clicking the title."
+                            )
                         )
                     else:
                         embs.append(
                             discord.Embed(
                                 title="Attachment deleted",
-                                url=attach.proxy_url,
+                                url=attach.url,
                                 description="*Attachment is* ***not*** *image*",
                                 colour=cfc,
+                            ).set_footer(
+                                text="If the image doesn't load, try opening it in your browser by clicking the title."
                             )
                         )
             pfp = message.author.display_avatar.url
