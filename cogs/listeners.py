@@ -48,6 +48,7 @@ class Listeners(discord.Cog):
         self.rssfeedtres1.start()
         self.rssfeedtres2.start()
         self.rssfeedtres3.start()
+        self.rssfeedsf1.start()
         self.resetRShownSubms.start()
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.now())
