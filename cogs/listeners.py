@@ -738,51 +738,51 @@ After: **{after.category}**
                 )
                 os.remove(f"snip{snip_id}.txt")
 
-    # @commands.Cog.listener()
-    # async def on_application_command_error(
-    #     self, ctx: discord.ApplicationContext, error: discord.DiscordException
-    # ):
-    #     notHandled = True
-    #     if isinstance(error, commands.CommandOnCooldown):
-    #         embed = discord.Embed(
-    #             title="Take a break!",
-    #             description=error,
-    #             colour=errorc,
-    #         )
-    #         await ctx.respond(embed=embed)
-    #         notHandled = False
-    #     if isinstance(error, commands.MissingPermissions):
-    #         embed = discord.Embed(
-    #             title="Missing required permissions",
-    #             description="You're not authorised to use this command!",
-    #             colour=errorc,
-    #         )
-    #         await ctx.respond(embed=embed)
-    #         notHandled = False
-    #     if isinstance(error, commands.MissingRole):
-    #         embed = discord.Embed(
-    #             title="Missing required roles",
-    #             description="You're not authorised to use this command!",
-    #             colour=errorc,
-    #         )
-    #         await ctx.respond(embed=embed)
-    #         notHandled = False
-    #     if isinstance(error, commands.NotOwner):
-    #         embed = discord.Embed(
-    #             title="Owner only command",
-    #             description="This command is for the owner of the bot only, so not for you!",
-    #             colour=errorc,
-    #         )
-    #         await ctx.respond(embed=embed)
-    #         notHandled = False
-    #     if notHandled == True:
-    #         embed = discord.Embed(
-    #             title="Something went wrong...",
-    #             description=f"```{error}```",
-    #             colour=errorc,
-    #         )
-    #         await ctx.respond(embed=embed)
-    #         raise error
+    @commands.Cog.listener()
+    async def on_application_command_error(
+        self, ctx: discord.ApplicationContext, error: discord.DiscordException
+    ):
+        notHandled = True
+        if isinstance(error, commands.CommandOnCooldown):
+            embed = discord.Embed(
+                title="Take a break!",
+                description=error,
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            notHandled = False
+        if isinstance(error, commands.MissingPermissions):
+            embed = discord.Embed(
+                title="Missing required permissions",
+                description="You're not authorised to use this command!",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            notHandled = False
+        if isinstance(error, commands.MissingRole):
+            embed = discord.Embed(
+                title="Missing required roles",
+                description="You're not authorised to use this command!",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            notHandled = False
+        if isinstance(error, commands.NotOwner):
+            embed = discord.Embed(
+                title="Owner only command",
+                description="This command is for the owner of the bot only, so not for you!",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            notHandled = False
+        if notHandled == True:
+            embed = discord.Embed(
+                title="Something went wrong...",
+                description=f"```{error}```",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            raise error
 
 
 def setup(bot):
