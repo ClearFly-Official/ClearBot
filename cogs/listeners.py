@@ -60,7 +60,7 @@ Started bot up on {now}
             """,
                 color=0x00FF00,
             )
-            # await channel.send(embed=embed)
+            await channel.send(embed=embed)
         else:
             embed = discord.Embed(
                 title="I started up!",
@@ -70,7 +70,7 @@ Started bot up on {now}
             """,
                 color=0x00FF00,
             )
-            # await channel.send(embed=embed)
+            await channel.send(embed=embed)
         print("| listeners cog loaded sucessfully")
 
     @tasks.loop(minutes=10)
