@@ -512,6 +512,161 @@ class FunCommands(discord.Cog):
                 embed.set_image(url=subm.url)
                 await ctx.respond(embed=embed)
 
+    @fun.command(name="create_meme", description="🌄 Create your own meme!")
+    @option("image", description="The image you want to 'memify'.")
+    @option(
+        "resolution",
+        description="The resolution of your meme.",
+        choices=[
+            "1920 x 1080",
+            "1080 x 1920",
+            "1024 x 1024",
+            "1024 x 2048",
+            "2048 x 1024",
+            "512 x 512",
+            "512 x 1024",
+            "1024 x 512",
+        ],
+    )
+    @option("top_text", description="The text at the top of your meme.")
+    @option("bottom_text", description="The text at the bottom of your meme.")
+    @option("text_size", description="The size of text.")
+    async def meme(
+        self,
+        ctx: discord.ApplicationContext,
+        image: discord.Attachment,
+        resolution: str,
+        top_text: str = None,
+        bottom_text: str = None,
+        text_size: int = 100,
+        bars: bool = False,
+    ):
+        await ctx.defer()
+        if top_text == None and bottom_text == None:
+            embed = discord.Embed(title="You didn't provide any text!", description="Try again, and this time give me some text.", colour=errorc)
+            await ctx.respond(embed=embed)
+            return
+        resolution = resolution.split(" ")
+        resolution = (int(resolution[0]), int(resolution[2]))
+        meme_id = f"meme{random.randint(10, 99)}.png"
+        await image.save(meme_id)
+        img = Image.open(meme_id)
+        img = img.resize(resolution)
+        font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
+        font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
+        if top_text != None:
+
+            with Pilmoji(img) as pilmoji:
+                if bars:
+                    draw = ImageDraw.ImageDraw(img)
+                    draw.rectangle(((0, 0), (resolution[0], resolution[1] / 7)), fill=(255, 255, 255))
+                    pilmoji.text(
+                        (resolution[0] / 6, resolution[1] / 40),
+                        textwrap.fill(top_text, 30, max_lines=3),
+                        font=font_bars,
+                        fill=(0, 0, 0),
+                        emoji_position_offset=(0, 20),
+                        align="center",
+                    )
+                else:
+                    pilmoji.text(
+                        (resolution[0] / 6 + 3, resolution[1] / 40 + 3),
+                        textwrap.fill(top_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 - 3, resolution[1] / 40 - 3),
+                        textwrap.fill(top_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 + 3, resolution[1] / 40 - 3),
+                        textwrap.fill(top_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 - 3, resolution[1] / 40 + 3),
+                        textwrap.fill(top_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6, resolution[1] / 40),
+                        textwrap.fill(top_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        align="center",
+                    )
+        if bottom_text != None:
+            with Pilmoji(img) as pilmoji:
+                if bars:
+                    draw = ImageDraw.ImageDraw(img)
+                    draw.rectangle(((0, resolution[1] - resolution[1] / 7), (resolution[0], resolution[1])), fill=(255, 255, 255))
+                    pilmoji.text(
+                        (resolution[0] / 6, resolution[1] - resolution[1] / 7),
+                        textwrap.fill(bottom_text, 30, max_lines=3),
+                        font=font_bars,
+                        fill=(0, 0, 0),
+                        emoji_position_offset=(0, 20),
+                        align="center",
+                    )
+                else:
+                    pilmoji.text(
+                        (resolution[0] / 6 + 3, resolution[1] - resolution[1] / 7 + 3),
+                        textwrap.fill(bottom_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 - 3, resolution[1] - resolution[1] / 7 - 3),
+                        textwrap.fill(bottom_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 + 3, resolution[1] - resolution[1] / 7 - 3),
+                        textwrap.fill(bottom_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6 - 3, resolution[1] - resolution[1] / 7 + 3),
+                        textwrap.fill(bottom_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        fill=(0, 0, 0),
+                        align="center",
+                    )
+                    pilmoji.text(
+                        (resolution[0] / 6, resolution[1] - resolution[1] / 7),
+                        textwrap.fill(bottom_text.upper(), 30, max_lines=3),
+                        font=font,
+                        emoji_position_offset=(0, 20),
+                        align="center",
+                    )
+        img.save(meme_id)
+        file = discord.File(meme_id, filename=meme_id)
+        embed = discord.Embed(title="Here's your meme!", colour=cfc).set_image(url=f"attachment://{meme_id}").set_author(name=f"Made by {ctx.author.name}", icon_url=ctx.author.display_avatar)
+        await ctx.respond(file=file, embed=embed)
+        os.remove(meme_id)
+
 
 def setup(bot):
     bot.add_cog(FunCommands(bot))
