@@ -514,28 +514,13 @@ class FunCommands(discord.Cog):
 
     @fun.command(name="create_meme", description="🌄 Create your own meme!")
     @option("image", description="The image you want to 'memify'.")
-    @option(
-        "resolution",
-        description="The resolution of your meme.",
-        choices=[
-            "1920 x 1080",
-            "1080 x 1920",
-            "1024 x 1024",
-            "1024 x 2048",
-            "2048 x 1024",
-            "512 x 512",
-            "512 x 1024",
-            "1024 x 512",
-        ],
-    )
     @option("top_text", description="The text at the top of your meme.")
     @option("bottom_text", description="The text at the bottom of your meme.")
-    @option("text_size", description="The size of text.")
+    @option("text_size", description="The size of text (default is 100).")
     async def meme(
         self,
         ctx: discord.ApplicationContext,
         image: discord.Attachment,
-        resolution: str,
         top_text: str = None,
         bottom_text: str = None,
         text_size: int = 100,
@@ -546,12 +531,14 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(title="You didn't provide any text!", description="Try again, and this time give me some text.", colour=errorc)
             await ctx.respond(embed=embed)
             return
-        resolution = resolution.split(" ")
-        resolution = (int(resolution[0]), int(resolution[2]))
         meme_id = f"meme{random.randint(10, 99)}.png"
         await image.save(meme_id)
         img = Image.open(meme_id)
-        img = img.resize(resolution)
+        resolution = img.size
+        if (img.size[0] > 2560) or (img.size[1] > 2560):
+            embed = discord.Embed(title="You provided too big of an image!", description="Try again, and this time give me a smaller image.", colour=errorc)
+            await ctx.respond(embed=embed)
+            return
         font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
         font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
         if top_text != None:
