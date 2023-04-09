@@ -306,7 +306,8 @@ class UtilityCommands(discord.Cog):
                 else:
                     opts = []
                     for opt in cmd.options:
-                        opts.append(f"`{opt.name}`")
+                        opts.append(f"`{opt.name}`(required: {opt.required}): {opt.description}")
+                    opts = "\n".join(opts)
                 if cmd.cooldown == None:
                     cd = "`No cooldown`"
                 else:
@@ -316,8 +317,9 @@ class UtilityCommands(discord.Cog):
                     description=f"""
 **Name**: {cmd.mention}
 **Description**: {cmd.description}
-**Options**: {", ".join(opts)}
 **Cooldown**: {cd}
+**Options**: 
+{opts}
                 """,
                     colour=cfc,
                 )
