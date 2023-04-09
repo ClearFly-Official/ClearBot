@@ -1,5 +1,5 @@
 import discord
-import pymongo
+import aiosqlite
 import os
 import time
 from main import cogs
@@ -11,25 +11,24 @@ from discord.ext.pages import Page, Paginator
 
 load_dotenv()
 
-client = pymongo.MongoClient(os.environ["MONGODB_URI"])
-db = client["ClearBotDB"]
-tagcol = db["tags"]
-
 
 class TagCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    tags = discord.SlashCommandGroup(name="tag", description="🏷️ Commands related to the tag system.")
+    tags = discord.SlashCommandGroup(
+        name="tag", description="🏷️ Commands related to the tag system."
+    )
 
     @commands.Cog.listener()
     async def on_ready(self):
         print("| Tags cog loaded sucessfully")
 
     async def get_tags(ctx: discord.AutocompleteContext):
-        tags = []
-        for tag in tagcol.find():
-            tags.append(tag.get("name"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT name FROM tags")
+            rows = await cursor.fetchall()
+            tags = [row[0] for row in rows]
         return [tag for tag in tags if ctx.value in tag]
 
     @tags.command(description="🔎 View a tag.")
@@ -42,37 +41,47 @@ class TagCommands(discord.Cog):
     @option(
         "info",
         description="Toggles if you want to view information about the tag.",
-        required=False
+        required=False,
     )
     @commands.cooldown(2, 10)
-    async def view(self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool):
+    async def view(
+        self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool
+    ):
         tags = []
         await ctx.defer()
-        for tag_ in tagcol.find():
-            tags.append(tag_.get("name"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT name FROM tags")
+            rows = await cursor.fetchall()
+            tags = [row[0] for row in rows]
         if tag in tags:
-            output = tagcol.find_one({"name": tag})
+            async with aiosqlite.connect("main.db") as db:
+                curs = await db.cursor()
+                output = await curs.execute("SELECT * FROM tags WHERE name=?", (tag,))
+                output = await output.fetchone()
             if raw:
                 await ctx.respond(
-                    f"```\n{output.get('value')}\n```",
+                    f"```\n{output[2]}\n```",
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
             elif info:
-                embed = discord.Embed(
-                    title="Tag information",
-                    colour=cfc
-                )
-                tagAuthor = await self.bot.fetch_user(int(output.get("author")))
-                embed.add_field(name="Name", value=output.get("name"), inline=False)
-                embed.add_field(name="Value", value=output.get("value"), inline=False)
+                embed = discord.Embed(title="Tag information", colour=cfc)
+                tagAuthor = await self.bot.fetch_user(int(output[3]))
+                embed.add_field(name="Name", value=output[1], inline=False)
+                embed.add_field(name="Value", value=output[2], inline=False)
                 embed.add_field(name="Author", value=tagAuthor.mention, inline=False)
-                embed.add_field(name="Created At", value=f"<t:{round(int(output.get('created_at')))}:f>(<t:{round(int(output.get('created_at')))}:R>)")
-                embed.add_field(name="Edited At", value=f"<t:{round(int(output.get('edited_at')))}:f>(<t:{round(int(output.get('edited_at')))}:R>)")
+                embed.add_field(
+                    name="Created At",
+                    value=f"<t:{round(int(output[5]))}:f>(<t:{round(int(output[5]))}:R>)",
+                )
+                embed.add_field(
+                    name="Edited At",
+                    value=f"<t:{round(int(output[4]))}:f>(<t:{round(int(output[4]))}:R>)",
+                )
                 embed.set_thumbnail(url=tagAuthor.display_avatar.url)
                 await ctx.respond(embed=embed)
             else:
                 await ctx.respond(
-                    f"{output.get('value')}",
+                    f"{output[2]}",
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
         else:
@@ -85,13 +94,15 @@ Didn't found {tag}.
             )
             await ctx.respond(embed=embed)
 
-    @tags.command(description="📂 List all the tags.")
+    @tags.command(name="list", description="📂 List all the tags.")
     @commands.cooldown(1, 5)
-    async def list(self, ctx: discord.ApplicationContext):
+    async def listtags(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         tags = []
-        for tag_ in tagcol.find():
-            tags.append(tag_.get("name"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT name FROM tags")
+            rows = await cursor.fetchall()
+            tags = [row[0] for row in rows]
         var = 0
         var2 = 1
         for i in tags:
@@ -107,7 +118,7 @@ Didn't found {tag}.
                     discord.Embed(
                         title=f"Tags {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                        colour=cfc
+                        colour=cfc,
                     ).set_footer(text=f"Showing 25/page, total of {len(tags)} tags")
                 ]
             )
@@ -137,24 +148,26 @@ Didn't found {tag}.
                 )
 
             async def callback(self, interaction: discord.Interaction):
-                try:
-                    tagcol.insert_one(
-                        {
-                            "name": self.children[0].value,
-                            "value": self.children[1].value,
-                            "author": ctx.author.id,
-                            "created_at": time.time(),
-                            "edited_at": time.time(),
-                        }
+                new_tag = {
+                    "name": self.children[0].value,
+                    "value": self.children[1].value,
+                    "author": str(ctx.author.id),
+                    "created_at": str(time.time()),
+                    "edited_at": str(time.time()),
+                }
+                async with aiosqlite.connect("main.db") as db:
+                    cur = await db.cursor()
+                    await cur.execute(
+                        "INSERT INTO tags (name, value, author, edited_at, created_at) VALUES (:name, :value, :author, :edited_at, :created_at)",
+                        new_tag,
                     )
-                    embed = discord.Embed(
-                        title=f"Tag created with following data:",
-                        description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}",
-                        colour=cfc,
-                    )
-                    await interaction.response.send_message(embed=embed)
-                except Exception as error:
-                    await interaction.response.send_message(f"```{error}```")
+                    await db.commit()
+                embed = discord.Embed(
+                    title=f"Tag created with following data:",
+                    description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}",
+                    colour=cfc,
+                )
+                await interaction.response.send_message(embed=embed)
 
         modal = AddTagModal(title="Create a new tag.")
         await ctx.send_modal(modal)
@@ -182,19 +195,24 @@ Didn't found {tag}.
 
             async def callback(self, interaction: discord.Interaction):
                 tags = []
-                for tag_ in tagcol.find():
-                    tags.append(tag_.get("name"))
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.execute("SELECT name FROM tags")
+                    rows = await cursor.fetchall()
+                    tags = [row[0] for row in rows]
                 if edit in tags:
-                    tagcol.update_one(
-                        {"name": edit},
-                        {
-                            "$set": {
-                                "name": self.children[0].value,
-                                "value": self.children[1].value,
-                                "edited_at": time.time()
-                            }
-                        },
-                    )
+                    new_tag = {
+                        "name": self.children[0].value,
+                        "value": self.children[1].value,
+                        "edited_at": str(time.time()),
+                        "old_name": edit,
+                    }
+                    async with aiosqlite.connect("main.db") as db:
+                        cursor = await db.cursor()
+                        await cursor.execute(
+                            "UPDATE tags SET name=:name, value=:value, edited_at=:edited_at WHERE name=:old_name",
+                            new_tag,
+                        )
+                        await db.commit()
                     embed = discord.Embed(
                         title=f"Tag edited with following data:",
                         description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}",
@@ -210,35 +228,58 @@ Didn't found {edit}.
                         colour=errorc,
                     )
                     await interaction.response.send_message(embed=embed)
-        editTag = tagcol.find_one({"name": edit})
+
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            edit_tag = await curs.execute("SELECT * FROM tags WHERE name=?", (edit,))
+            edit_tag = await edit_tag.fetchone()
         authroles = [role.id for role in ctx.author.roles]
-        if int(editTag['author']) == ctx.author.id:
+        if int(edit_tag[3]) == ctx.author.id:
             modal = EditTagModal(title="Edit a tag.")
             await ctx.send_modal(modal)
         elif 965422406036488282 in authroles:
             modal = EditTagModal(title="Edit a tag(this is not your tag!).")
             await ctx.send_modal(modal)
         else:
-            embed = discord.Embed(title="Not author", description="You are not authorised to edit this tag!", colour=errorc)
+            embed = discord.Embed(
+                title="Not author",
+                description="You are not authorised to edit this tag!",
+                colour=errorc,
+            )
             await ctx.respond(embed=embed)
-
 
     @tags.command(description="⛔️ Delete a tag.")
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
     @commands.cooldown(1, 120)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
         await ctx.defer()
-        deltag = tagcol.find_one({"name": tag})
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            del_tag = await curs.execute("SELECT * FROM tags WHERE name=?", (tag,))
+            del_tag = await del_tag.fetchone()
         authroles = [role.id for role in ctx.author.roles]
-        if int(deltag['author']) == ctx.author.id:
-            tagcol.delete_one({"name": tag})
+        if int(del_tag[3]) == ctx.author.id:
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute("DELETE FROM tags WHERE name=?", (tag,))
+                await db.commit()
             embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
         elif 965422406036488282 in authroles:
-            tagcol.delete_one({"name": tag})
-            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully(it was not yours)", colour=cfc)
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute("DELETE FROM tags WHERE name=?", (tag,))
+                await db.commit()
+            embed = discord.Embed(
+                title=f"Tag `{tag}` deleted successfully (it was not yours!)",
+                colour=cfc,
+            )
         else:
-            embed = discord.Embed(title="Not author", description="You are not authorised to delete this tag!", colour=errorc)
-            
+            embed = discord.Embed(
+                title="Not author",
+                description="You are not authorised to delete this tag!",
+                colour=errorc,
+            )
+
         await ctx.respond(embed=embed)
 
 

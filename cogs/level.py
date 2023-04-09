@@ -3,17 +3,13 @@ import os
 import configparser
 import glob
 import re
-import pymongo
+import aiosqlite
 from pilmoji import Pilmoji
 from numerize import numerize as n
 from PIL import Image, ImageDraw, ImageFont
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc
-
-client = pymongo.MongoClient(os.environ["MONGODB_URI"])
-db = client["ClearBotDB"]
-lvlcol = db["leveling"]
 
 
 class LevelingCommands(discord.Cog):
@@ -37,11 +33,17 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-        usrs = []
-        for usr in lvlcol.find():
-            usrs.append(usr.get("id"))
-        if user.id in usrs:
-            usrdata = lvlcol.find_one({"id": user.id})
+        async with aiosqlite.connect("main.db") as db:
+            sel = await db.execute("SELECT author_id FROM leveling")
+            rows = await sel.fetchall()
+            usrs = [row[0] for row in rows]
+        if str(user.id) in usrs:
+            async with aiosqlite.connect("main.db") as db:
+                curs = await db.cursor()
+                usrdata = await curs.execute(
+                    "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
+                )
+                usrdata = await usrdata.fetchone()
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open("images/userlevelClear.png")
@@ -50,9 +52,9 @@ class LevelingCommands(discord.Cog):
             avatar = avatarorigin.resize((256, 256))
             avatar.save("images/avatar.png")
             avatar = Image.open("images/avatar.png")
-            lvlnom = usrdata.get("nom", 0)
-            lvl = usrdata.get("level", 0)
-            lvldenom = usrdata.get("denom", 1)
+            lvlnom = usrdata[3]
+            lvl = usrdata[2]
+            lvldenom = usrdata[4]
             h, w = avatar.size
             avmask = Image.new("L", (h, w), 0)
             clear = Image.new("RGBA", (h, w), 1)
@@ -156,11 +158,17 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         if user == None:
             user = ctx.author
-        usrs = []
-        for usr in lvlcol.find():
-            usrs.append(usr.get("id"))
-        if user.id in usrs:
-            usrdata = lvlcol.find_one({"id": user.id})
+        async with aiosqlite.connect("main.db") as db:
+            sel = await db.execute("SELECT author_id FROM leveling")
+            rows = await sel.fetchall()
+            usrs = [row[0] for row in rows]
+        if str(user.id) in usrs:
+            async with aiosqlite.connect("main.db") as db:
+                curs = await db.cursor()
+                usrdata = await curs.execute(
+                    "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
+                )
+                usrdata = await usrdata.fetchone()
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open("images/userlevelClear.png")
@@ -169,9 +177,9 @@ class LevelingCommands(discord.Cog):
             avatar = avatarorigin.resize((256, 256))
             avatar.save("images/avatar.png")
             avatar = Image.open("images/avatar.png")
-            lvlnom = usrdata.get("nom", 0)
-            lvl = usrdata.get("level", 0)
-            lvldenom = usrdata.get("denom", 1)
+            lvlnom = usrdata[3]
+            lvl = usrdata[2]
+            lvldenom = usrdata[4]
             h, w = avatar.size
             avmask = Image.new("L", (h, w), 0)
             clear = Image.new("RGBA", (h, w), 1)
@@ -274,69 +282,72 @@ class LevelingCommands(discord.Cog):
         output = []
         nameoutput = []
         img = Image.open(f"images/lbClear.png")
-        for usr in lvlcol.find():
-            lvl = usr.get("level", 0)
-            lvlnom = usr.get("nom", 0)
-            lvldenom = usr.get("denom", 0)
-            user = await self.bot.fetch_user(int(usr.get("id", 0)))
-            line = f"""
-      {lvlnom+lvldenom*lvl} LVL: {lvl} XP: {lvlnom}/{n.numerize(lvldenom)}\n
+        async with aiosqlite.connect("main.db") as db:
+            sel = await db.execute("SELECT * FROM leveling")
+            fetsel = await sel.fetchall()
+            for usr in fetsel:
+                lvl = usr[2]
+                lvlnom = usr[3]
+                lvldenom = usr[4]
+                user = await self.bot.fetch_user(int(usr[1]))
+                line = f"""
+        {lvlnom+lvldenom*lvl} LVL: {lvl} XP: {lvlnom}/{n.numerize(lvldenom)}\n
+            """
+                output.append(line)
+                line2 = f"""
+            {lvlnom+lvldenom*lvl} {user.name}\n
         """
-            output.append(line)
-            line2 = f"""
-        {lvlnom+lvldenom*lvl} {user.name}\n
-      """
-            nameoutput.append(line2)
+                nameoutput.append(line2)
 
-        def atoi(text):
-            return int(text) if text.isdigit() else text
+            def atoi(text):
+                return int(text) if text.isdigit() else text
 
-        def natural_keys(text):
-            return [atoi(c) for c in re.split("(\d+)", text)]
+            def natural_keys(text):
+                return [atoi(c) for c in re.split("(\d+)", text)]
 
-        output.sort(key=natural_keys, reverse=True)
-        nameoutput.sort(key=natural_keys, reverse=True)
+            output.sort(key=natural_keys, reverse=True)
+            nameoutput.sort(key=natural_keys, reverse=True)
 
-        def delstr(lst):
-            return [f"{' '.join(elem.split()[1:]).rstrip()}" for elem in lst]
+            def delstr(lst):
+                return [f"{' '.join(elem.split()[1:]).rstrip()}" for elem in lst]
 
-        output = delstr(output)
-        nameoutput = delstr(nameoutput)
+            output = delstr(output)
+            nameoutput = delstr(nameoutput)
 
-        nameoutput = [f"{index}       {i}" for index, i in enumerate(nameoutput, 1)]
-        output = [direction + "\n\n" for direction in output]
-        nameoutput = [direction + "\n\n" for direction in nameoutput]
-        embed = discord.Embed(
-            title="ClearFly Level Leaderboard",
-            description=f"""
-Chat to earn xp!
-            """,
-            color=cfc,
-        )
-        font = ImageFont.truetype(
-            "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
-            size=43,
-            layout_engine=ImageFont.Layout.BASIC,
-        )
-        with Pilmoji(img) as pilmoji:
-            pilmoji.text(
-                (800, 30),
-                "".join(output[:10]),
-                fill=(255, 255, 255),
-                font=font,
-                emoji_position_offset=(0, 20),
+            nameoutput = [f"{index}       {i}" for index, i in enumerate(nameoutput, 1)]
+            output = [direction + "\n\n" for direction in output]
+            nameoutput = [direction + "\n\n" for direction in nameoutput]
+            embed = discord.Embed(
+                title="ClearFly Level Leaderboard",
+                description=f"""
+    Chat to earn xp!
+                """,
+                color=cfc,
             )
-            pilmoji.text(
-                (27, 30),
-                "".join(nameoutput[:10]),
-                fill=(255, 255, 255),
-                font=font,
-                emoji_position_offset=(0, 20),
+            font = ImageFont.truetype(
+                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                size=43,
+                layout_engine=ImageFont.Layout.BASIC,
             )
-        img.save(f"images/lb.png")
-        file = discord.File(f"images/lb.png", filename="lb.png")
-        embed.set_image(url=f"attachment://lb.png")
-        await ctx.respond(embed=embed, file=file)
+            with Pilmoji(img) as pilmoji:
+                pilmoji.text(
+                    (800, 30),
+                    "".join(output[:10]),
+                    fill=(255, 255, 255),
+                    font=font,
+                    emoji_position_offset=(0, 20),
+                )
+                pilmoji.text(
+                    (27, 30),
+                    "".join(nameoutput[:10]),
+                    fill=(255, 255, 255),
+                    font=font,
+                    emoji_position_offset=(0, 20),
+                )
+            img.save(f"images/lb.png")
+            file = discord.File(f"images/lb.png", filename="lb.png")
+            embed.set_image(url=f"attachment://lb.png")
+            await ctx.respond(embed=embed, file=file)
 
     # |--------------------------------------------------------------|
     # |Command to transfer data stored in local files to the DataBase.|

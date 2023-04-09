@@ -3,7 +3,6 @@ pyfiglet
 python-dotenv
 asyncpraw
 aiofiles
-pymongo
 dadjokes
 PyMuPDF
 ConfigParser

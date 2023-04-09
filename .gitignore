@@ -6,6 +6,8 @@ development.py
 test.md
 test.py
 .vscode
+main.db
+mongo2sqlite.py
 devcogs
 db_rss_insert.py
 __pycache__

@@ -5,7 +5,7 @@ import discord
 import os
 import configparser
 import random
-import pymongo
+import aiosqlite
 import feedparser
 import time
 from discord.ext import commands, tasks
@@ -14,13 +14,7 @@ from main import cfc, errorc
 
 
 adminids = [668874138160594985, 871893179450925148, 917477940650971227]
-client = pymongo.MongoClient(os.environ["MONGODB_URI"])
-db = client["ClearBotDB"]
-rss = db["RSS"]
-lvlcol = db["leveling"]
-trescol = rss["Tresholdx"]
-sfcol = rss["SimpleFlying"]
-fsnews = 1066124540318588928  # *CB test 1001401783689678868
+fsnews = 1066124540318588928 # *CB test 1001401783689678868
 avnews = 1073311685357604956
 
 
@@ -66,7 +60,7 @@ Started bot up on {now}
             """,
                 color=0x00FF00,
             )
-            await channel.send(embed=embed)
+            # await channel.send(embed=embed)
         else:
             embed = discord.Embed(
                 title="I started up!",
@@ -76,7 +70,7 @@ Started bot up on {now}
             """,
                 color=0x00FF00,
             )
-            await channel.send(embed=embed)
+            # await channel.send(embed=embed)
         print("| listeners cog loaded sucessfully")
 
     @tasks.loop(minutes=10)
@@ -106,21 +100,27 @@ Started bot up on {now}
             status=discord.Status.online,
         )
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=120)
     async def rssfeedtres1(self):
         channel = self.bot.get_channel(fsnews)
         blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
         feed = dict(blog_feed.entries[0])
-        lastID = trescol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{"lastID": None}]
-        if ids[0]["lastID"] == feed.get("id"):
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (1,)
+                )
+            lastID = await lastID.fetchone()
+        if lastID[1] == feed.get("id"):
             return
         else:
-            trescol.update_one({"_id": "lastID"}, {"$set": {"lastID": feed.get("id")}})
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute(
+                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1",
+                    (feed.get("id"),)
+                )
+                await db.commit()
             await channel.send(
                 f"""
 **{feed.get('title')}**
@@ -129,23 +129,27 @@ Started bot up on {now}
                 """
             )
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=120)
     async def rssfeedtres2(self):
         channel = self.bot.get_channel(fsnews)
         blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
         feed = dict(blog_feed.entries[0])
-        lastID = trescol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{"lastIDopinion": None}]
-        if ids[1]["lastIDopinion"] == feed.get("id"):
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (2,)
+                )
+            lastID = await lastID.fetchone()
+        if lastID[1] == feed.get("id"):
             return
         else:
-            trescol.update_one(
-                {"_id": "lastIDopinion"}, {"$set": {"lastIDopinion": feed.get("id")}}
-            )
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute(
+                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2",
+                    (feed.get("id"),)
+                )
+                await db.commit()
             await channel.send(
                 f"""
 **{feed.get('title')}**
@@ -154,23 +158,27 @@ Started bot up on {now}
                 """
             )
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=120)
     async def rssfeedtres3(self):
         channel = self.bot.get_channel(fsnews)
         blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
         feed = dict(blog_feed.entries[0])
-        lastID = trescol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{"lastIDarticle": None}]
-        if ids[2]["lastIDarticle"] == feed.get("id"):
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (3,)
+                )
+            lastID = await lastID.fetchone()
+        if lastID[1] == feed.get("id"):
             return
         else:
-            trescol.update_one(
-                {"_id": "lastIDarticle"}, {"$set": {"lastIDarticle": feed.get("id")}}
-            )
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute(
+                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3",
+                    (feed.get("id"),)
+                )
+                await db.commit()
             await channel.send(
                 f"""
 **{feed.get('title')}**
@@ -179,21 +187,27 @@ Started bot up on {now}
                 """
             )
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=120)
     async def rssfeedsf1(self):
         channel = self.bot.get_channel(avnews)
         blog_feed = feedparser.parse("https://simpleflying.com/feed")
         feed = dict(blog_feed.entries[0])
-        lastID = sfcol.find()
-        ids = []
-        for id in lastID:
-            ids.append(id)
-        if ids == []:
-            ids = [{"lastID": None}]
-        if ids[0]["lastID"] == feed.get("id"):
+        async with aiosqlite.connect("main.db") as db:
+            curs = await db.cursor()
+            lastID = await curs.execute(
+                    "SELECT * FROM RSS_SimpleFlying WHERE id=?", (1,)
+                )
+            lastID = await lastID.fetchone()
+        if lastID[1] == feed.get("id"):
             return
         else:
-            sfcol.update_one({"_id": "lastID"}, {"$set": {"lastID": feed.get("id")}})
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute(
+                    "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1",
+                    (feed.get("id"),)
+                )
+                await db.commit()
             await channel.send(
                 f"""
 **{feed.get('title').replace('&quot;', '"')}**
@@ -216,20 +230,30 @@ Started bot up on {now}
         if message.author.bot:
             return
         else:
-            usrs = []
-            for usr in lvlcol.find():
-                usrs.append(usr.get("id"))
-            if message.author.id in usrs:
-                usrdata = lvlcol.find_one({"id": message.author.id})
-                belvlnom = usrdata.get("nom", 0)
-                last = usrdata.get("last_msg", 0)
+            async with aiosqlite.connect("main.db") as db:
+                sel = await db.execute("SELECT author_id FROM leveling")
+                rows = await sel.fetchall()
+                usrs = [row[0] for row in rows]
+            if str(message.author.id) in usrs:
+                async with aiosqlite.connect("main.db") as db:
+                    curs = await db.cursor()
+                    usrdata = await curs.execute(
+                        "SELECT * FROM leveling WHERE author_id=?", (str(message.author.id),)
+                    )
+                    usrdata = await usrdata.fetchone()
+                belvlnom = usrdata[3]
+                last = usrdata[5]
                 now = round(time.time())
                 if (now - int(last)) < 5:
                     return
                 else:
-                    lvlcol.update_one(
-                        {"id": message.author.id}, {"$set": {"last_msg": now}}
-                    )
+                    async with aiosqlite.connect("main.db") as db:
+                        cursor = await db.cursor()
+                        await cursor.execute(
+                            "UPDATE leveling SET last_msg=? WHERE author_id=?",
+                            (now,str(message.author.id)),
+                        )
+                        await db.commit()
                 if len(message.content) == 0:
                     nowlvlnom = int(belvlnom) + 1
                 if len(message.content) > 0:
@@ -242,36 +266,50 @@ Started bot up on {now}
                     nowlvlnom = int(belvlnom) + 7
                 if len(message.content) > 75:
                     nowlvlnom = int(belvlnom) + 10
-                lvl = usrdata.get("level", 0)
-                denom = usrdata.get("denom", 0)
-                lvlcol.update_one(
-                    {"id": message.author.id}, {"$set": {"nom": nowlvlnom}}
-                )
-                if int(nowlvlnom) >= int(denom):
-                    lvlcol.update_one({"id": message.author.id}, {"$set": {"nom": 0}})
-                    lvlcol.update_one(
-                        {"id": message.author.id}, {"$set": {"level": lvl + 1}}
+                lvl = usrdata[2]
+                denom = usrdata[4]
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute(
+                        "UPDATE leveling SET nom=? WHERE author_id=?",
+                        (nowlvlnom,str(message.author.id)),
                     )
+                    await db.commit()
+                if int(nowlvlnom) >= int(denom):
+                    async with aiosqlite.connect("main.db") as db:
+                        cursor = await db.cursor()
+                        await cursor.execute(
+                            "UPDATE leveling SET nom=0, lvl=?, denom=? WHERE author_id=?",
+                            (lvl+1, int(denom) + (int(lvl) * 20), str(message.author.id)),
+                        )
+                        await db.commit()
                     if int(lvl) == 0:
                         lvl = 1
-                    lvlcol.update_one(
-                        {"id": message.author.id},
-                        {"$set": {"denom": int(denom) + (int(lvl) * 20)}},
-                    )
-                    lvlp = usrdata.get("level", "N/A")
+                    async with aiosqlite.connect("main.db") as db:
+                        curs = await db.cursor()
+                        usrdata = await curs.execute(
+                            "SELECT * FROM leveling WHERE author_id=?", (str(message.author.id),)
+                        )
+                        usrdata = await usrdata.fetchone()
+                    lvlp = usrdata[2]
                     await message.channel.send(
                         f"{message.author.mention} :partying_face: You reached level {lvlp}!"
                     )
             else:
-                lvlcol.insert_one(
-                    {
-                        "id": message.author.id,
+                new_user = {
+                        "author_id": str(message.author.id),
                         "level": lvl,
                         "nom": 1,
                         "denom": 25,
                         "last_msg": round(time.time()),
                     }
-                )
+                async with aiosqlite.connect("main.db") as db:
+                    cur = await db.cursor()
+                    await cur.execute(
+                        "INSERT INTO leveling (author_id, level, nom, denom, last_msg) VALUES (:author_id, :level, :nom, :denom, :last_msg)",
+                        new_user,
+                    )
+                    await db.commit()
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -700,51 +738,51 @@ After: **{after.category}**
                 )
                 os.remove(f"snip{snip_id}.txt")
 
-    @commands.Cog.listener()
-    async def on_application_command_error(
-        self, ctx: discord.ApplicationContext, error: discord.DiscordException
-    ):
-        notHandled = True
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(
-                title="Take a break!",
-                description=error,
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            notHandled = False
-        if isinstance(error, commands.MissingPermissions):
-            embed = discord.Embed(
-                title="Missing required permissions",
-                description="You're not authorised to use this command!",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            notHandled = False
-        if isinstance(error, commands.MissingRole):
-            embed = discord.Embed(
-                title="Missing required roles",
-                description="You're not authorised to use this command!",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            notHandled = False
-        if isinstance(error, commands.NotOwner):
-            embed = discord.Embed(
-                title="Owner only command",
-                description="This command is for the owner of the bot only, so not for you!",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            notHandled = False
-        if notHandled == True:
-            embed = discord.Embed(
-                title="Something went wrong...",
-                description=f"```{error}```",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            raise error
+    # @commands.Cog.listener()
+    # async def on_application_command_error(
+    #     self, ctx: discord.ApplicationContext, error: discord.DiscordException
+    # ):
+    #     notHandled = True
+    #     if isinstance(error, commands.CommandOnCooldown):
+    #         embed = discord.Embed(
+    #             title="Take a break!",
+    #             description=error,
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #         notHandled = False
+    #     if isinstance(error, commands.MissingPermissions):
+    #         embed = discord.Embed(
+    #             title="Missing required permissions",
+    #             description="You're not authorised to use this command!",
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #         notHandled = False
+    #     if isinstance(error, commands.MissingRole):
+    #         embed = discord.Embed(
+    #             title="Missing required roles",
+    #             description="You're not authorised to use this command!",
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #         notHandled = False
+    #     if isinstance(error, commands.NotOwner):
+    #         embed = discord.Embed(
+    #             title="Owner only command",
+    #             description="This command is for the owner of the bot only, so not for you!",
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #         notHandled = False
+    #     if notHandled == True:
+    #         embed = discord.Embed(
+    #             title="Something went wrong...",
+    #             description=f"```{error}```",
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #         raise error
 
 
 def setup(bot):

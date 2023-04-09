@@ -7,16 +7,12 @@ from math import sqrt
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
-import pymongo
+import aiosqlite
 from main import cogs
 from main import cfc, errorc
 
 
 load_dotenv()
-
-client = pymongo.MongoClient(os.environ["MONGODB_URI"])
-db = client["ClearBotDB"]
-pollcol = db["poll"]
 
 
 class PollTypeYesNo(discord.ui.Modal):
@@ -40,14 +36,20 @@ class PollTypeYesNo(discord.ui.Modal):
         embed = discord.Embed(title="Creating poll...", colour=cfc)
         message = await interaction.channel.send(embed=embed)
         poll_id = message.id
-        pollcol.insert_one(
-            {
-                "poll_id": poll_id,
-                "author": interaction.user.id,
-                "question": self.children[0].value,
-                "type": "yn",
-            }
-        )
+
+        new_poll = {
+            "poll_id": str(poll_id),
+            "author": str(interaction.user.id),
+            "question": self.children[0].value,
+            "type": "yn",
+        }
+        async with aiosqlite.connect("main.db") as db:
+            cur = await db.cursor()
+            await cur.execute(
+                "INSERT INTO poll (poll_id, author, question, type) VALUES (:poll_id, :author, :question, :type)",
+                new_poll,
+            )
+            await db.commit()
         embed = discord.Embed(
             title=self.children[0].value,
             description="""
@@ -65,6 +67,7 @@ class PollTypeYesNo(discord.ui.Modal):
         await message.add_reaction("1️⃣")
         await message.add_reaction("2️⃣")
         await message.edit(embed=embed)
+
 
 class PollTypeMChoice(discord.ui.Modal):
     def __init__(self, bot, choices: int, *args, **kwargs) -> None:
@@ -96,20 +99,28 @@ class PollTypeMChoice(discord.ui.Modal):
         embed = discord.Embed(title="Creating poll...", colour=cfc)
         message = await interaction.channel.send(embed=embed)
         poll_id = message.id
-        pollcol.insert_one(
-            {
-                "poll_id": poll_id,
-                "author": interaction.user.id,
-                "question": self.children[0].value,
-                "type": self.choices,
-            }
-        )
+        new_poll = {
+            "poll_id": str(poll_id),
+            "author": str(interaction.user.id),
+            "question": self.children[0].value,
+            "type": str(self.choices),
+        }
+        async with aiosqlite.connect("main.db") as db:
+            cur = await db.cursor()
+            await cur.execute(
+                "INSERT INTO poll (poll_id, author, question, type) VALUES (:poll_id, :author, :question, :type)",
+                new_poll,
+            )
+            await db.commit()
+
         def int_to_emoji(num):
             return chr(0x0030 + num) + chr(0x20E3)
-            
+
         choices = []
         for choice in range(self.choices):
-            choices.append(f"{int_to_emoji(choice + 1)} {self.children[choice + 1].value}\n\n")
+            choices.append(
+                f"{int_to_emoji(choice + 1)} {self.children[choice + 1].value}\n\n"
+            )
             await message.add_reaction(int_to_emoji(choice + 1))
         embed = discord.Embed(
             title=self.children[0].value,
@@ -306,7 +317,9 @@ class UtilityCommands(discord.Cog):
                 else:
                     opts = []
                     for opt in cmd.options:
-                        opts.append(f"`{opt.name}`(required: {opt.required}): {opt.description}")
+                        opts.append(
+                            f"`{opt.name}`(required: {opt.required}): {opt.description}"
+                        )
                     opts = "\n".join(opts)
                 if cmd.cooldown == None:
                     cd = "`No cooldown`"
@@ -646,7 +659,11 @@ class UtilityCommands(discord.Cog):
             )
         else:
             await ctx.send_modal(
-                PollTypeMChoice(title=f"Setup your {poll_type} poll", bot=self.bot, choices=int(poll_type[:1]))
+                PollTypeMChoice(
+                    title=f"Setup your {poll_type} poll",
+                    bot=self.bot,
+                    choices=int(poll_type[:1]),
+                )
             )
 
     @poll.command(name="end", description="❌ End a poll and see its results.")
@@ -656,7 +673,7 @@ class UtilityCommands(discord.Cog):
         await ctx.defer(ephemeral=True)
 
         def progress_bar(percent: int) -> str:
-            bar = "⬛️"*10
+            bar = "⬛️" * 10
             bar = bar.replace("⬛", "🟦", round(max(min(percent, 100), 0) / 10))
             return bar
 
@@ -672,13 +689,18 @@ class UtilityCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
         else:
-            poll = pollcol.find_one({"poll_id": poll_id})
+            async with aiosqlite.connect("main.db") as db:
+                curs = await db.cursor()
+                poll = await curs.execute(
+                    "SELECT * FROM poll WHERE poll_id=?", (poll_id,)
+                )
+                poll = await poll.fetchone()
             if poll == None:
                 embed = discord.Embed(
                     title="It looks like this poll already ended...", colour=cfc
                 )
                 await ctx.respond(embed=embed)
-            elif poll["author"] == ctx.author.id:
+            elif poll[2] == str(ctx.author.id):
                 author = ctx.author
                 react_types = []
                 for reaction in poll_msg.reactions:
@@ -699,7 +721,7 @@ class UtilityCommands(discord.Cog):
                         f"{reaction.emoji}: **{reaction.count - 1}**/**{total_count}**(**{percent}**% of the total votes)\n{progress_bar(percent)}\n\n"
                     )
                 embed = discord.Embed(
-                    title=f"'{poll['question']}': results",
+                    title=f"'{poll[3]}': results",
                     description=f"""
 Total votes: **{total_count}**
 
@@ -710,7 +732,10 @@ Total votes: **{total_count}**
                     icon_url=author.display_avatar, name=f"Poll by {author.name}"
                 )
                 await poll_msg.edit(embed=embed)
-                pollcol.delete_one({"poll_id": poll_id})
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute("DELETE FROM poll WHERE poll_id=?", (poll_id,))
+                    await db.commit()
                 embed = discord.Embed(title="Successfully closed poll!", colour=cfc)
                 await ctx.respond(embed=embed)
             else:

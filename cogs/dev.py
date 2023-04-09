@@ -4,16 +4,12 @@ import discord
 import json
 import os
 import sys
-import pymongo
+import aiosqlite
 from inspect import cleandoc
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc, cogs
 from discord.ext.pages import Page, Paginator
-
-client = pymongo.MongoClient(os.environ["MONGODB_URI"])
-db = client["ClearBotDB"]
-drefcol = db["datarefs"]
 
 
 async def getattrs(ctx):
@@ -177,9 +173,10 @@ Reloaded cogs:
         await ctx.respond(embed=embed)
 
     async def get_datarefs(self, ctx: discord.AutocompleteContext):
-        datarefList1 = []
-        for dref in drefcol.find():
-            datarefList1.append(dref.get("path"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT path FROM datarefs")
+            rows = await cursor.fetchall()
+            datarefList1 = [row[0] for row in rows]
         with open("dev/aircraft/defaultDatarefsCommands.json") as f:
             datarefLoad = json.load(f)
             datarefList2 = list(datarefLoad["datarefs"].keys())
@@ -190,8 +187,10 @@ Reloaded cogs:
     async def get_custom_datarefs(self, ctx: discord.AutocompleteContext):
         global customDatarefList
         customDatarefList = []
-        for dref in drefcol.find():
-            customDatarefList.append(dref.get("path"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT path FROM datarefs")
+            rows = await cursor.fetchall()
+            customDatarefList = [row[0] for row in rows]
         return [dataref for dataref in customDatarefList if ctx.value in dataref]
 
     async def get_types(self, ctx: discord.AutocompleteContext):
@@ -271,7 +270,7 @@ Reloaded cogs:
             "int[8]",
             "int[9]",
         ]
-        return [type for type in types if ctx.value in type]
+        return [type_ for type_ in types if ctx.value in type_]
 
     async def get_units(self, ctx: discord.AutocompleteContext):
         units = [
@@ -438,9 +437,10 @@ Reloaded cogs:
     @commands.has_role(965422406036488282)
     async def dreflist(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        drefs = []
-        for dref in drefcol.find():
-            drefs.append(dref.get("path"))
+        async with aiosqlite.connect("main.db") as db:
+            cursor = await db.execute("SELECT path FROM datarefs")
+            rows = await cursor.fetchall()
+            drefs = [row[0] for row in rows]
         var = 0
         var2 = 1
         for i in drefs:
@@ -480,7 +480,11 @@ Reloaded cogs:
         await ctx.defer()
         if dataref in datarefList:
             if dataref.startswith("ClearFly"):
-                dref = drefcol.find_one({"path": dataref})
+                async with aiosqlite.connect("main.db") as db:
+                    dref = await db.execute(
+                        "SELECT * FROM datarefs WHERE path = ?", (dataref,)
+                    )
+                    dref = await dref.fetchone()
                 embed = discord.Embed(
                     title=f"Found this information for the provided dataref:",
                     colour=cfc,
@@ -488,12 +492,12 @@ Reloaded cogs:
                 embed.add_field(
                     name="Dataref Information:",
                     value=f"""
-Path : `{dref.get('path', 'N/A')}`
-Type : **{dref.get('type', 'N/A')}**
-Unit : **{dref.get('unit', 'N/A')}**
+Path : `{dref[0]}`
+Type : **{dref[1]}**
+Unit : **{dref[2]}**
 Description :
 
-> {dref.get('description', 'N/A')}
+> {dref[3]}
                     """,
                 )
                 await ctx.respond(embed=embed)
@@ -550,17 +554,22 @@ Description :
         unit: str,
         description: str,
     ):
-        if path.startswith("ClearFly/731"):
+        if path.startswith("ClearFly"):
             await ctx.defer()
-            drefcol.insert_one(
-                {
-                    "_id": path,
+
+            async with aiosqlite.connect("main.db") as db:
+                newdref = {
                     "path": path,
                     "type": dataref_type,
                     "unit": unit,
                     "description": description,
                 }
-            )
+                cur = await db.cursor()
+                await cur.execute(
+                    "INSERT INTO datarefs (path, type, unit, description) VALUES (:path, :type, :unit, :description)",
+                    newdref,
+                )
+                await db.commit()
             embed = discord.Embed(
                 title=f"Added new dataref `{path}` to dataref list successfully.",
                 color=cfc,
@@ -572,7 +581,7 @@ Description :
         else:
             embed = discord.Embed(
                 title="Wrong path format",
-                description="All custom dataref paths should start with `ClearFly/731`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`",
+                description="All custom dataref paths should start with `ClearFly`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`",
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
@@ -615,21 +624,27 @@ Description :
     ):
         if dataref in customDatarefList:
             await ctx.defer()
-            oldDref = drefcol.find_one({"path": dataref})
+            async with aiosqlite.connect("main.db") as db:
+                oldDref = await db.execute(
+                    "SELECT * FROM datarefs WHERE path = ?", (dataref,)
+                )
+                oldDref = await oldDref.fetchone()
             if path == None:
-                path = oldDref.get("path", "N/A: Please report this to Matt3o0.")
-            drefcol.update_one(
-                {"path": dataref},
-                {
-                    "$set": {
-                        "_id": path,
-                        "path": path,
-                        "type": dataref_type,
-                        "unit": unit,
-                        "description": description,
-                    }
-                },
-            )
+                path = oldDref[1]
+            newDref = {
+                "path": path,
+                "type": dataref_type,
+                "unit": unit,
+                "description": description,
+                "old_path": dataref,
+            }
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute(
+                    "UPDATE datarefs SET path=:path, type=:type, unit=:unit, description=:description WHERE path=:old_path",
+                    newDref,
+                )
+                await db.commit()
             embed = discord.Embed(
                 title=f"Edited dataref `{dataref}` successfully.", colour=cfc
             )
@@ -654,7 +669,10 @@ Description :
     async def drefdel(self, ctx: discord.ApplicationContext, dataref):
         await ctx.defer()
         if dataref in customDatarefList:
-            drefcol.delete_one({"path": dataref})
+            async with aiosqlite.connect("main.db") as db:
+                cursor = await db.cursor()
+                await cursor.execute("DELETE FROM datarefs WHERE path=?", (dataref,))
+                await db.commit()
             embed = discord.Embed(
                 title=f"Dataref `{dataref}` successfully deleted.", colour=cfc
             )
