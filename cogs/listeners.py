@@ -1,4 +1,5 @@
 import re
+import shutil
 import aiofiles
 import aiohttp
 import discord
@@ -49,6 +50,7 @@ class Listeners(discord.Cog):
         self.rssfeedtres2.start()
         self.rssfeedtres3.start()
         self.rssfeedsf1.start()
+        self.db_backup.start()
         self.resetRShownSubms.start()
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.now())
@@ -216,6 +218,13 @@ Started bot up on {now}
 {feed.get('link')}
                 """
             )
+
+    @tasks.loop(hours=48)
+    async def db_backup(self):
+        delta_uptime = datetime.utcnow() - self.bot.start_time
+        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+        days, hours = divmod(hours, 24)
+        shutil.copy2("main.db", f"backup{str(days)[:1]}.db")
 
     @tasks.loop(hours=36.0)
     async def resetRShownSubms(self):
