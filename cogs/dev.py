@@ -492,12 +492,12 @@ Reloaded cogs:
                 embed.add_field(
                     name="Dataref Information:",
                     value=f"""
-Path : `{dref[0]}`
-Type : **{dref[1]}**
-Unit : **{dref[2]}**
+Path : `{dref[1]}`
+Type : **{dref[2]}**
+Unit : **{dref[3]}**
 Description :
 
-> {dref[3]}
+> {dref[4]}
                     """,
                 )
                 await ctx.respond(embed=embed)

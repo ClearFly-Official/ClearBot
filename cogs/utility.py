@@ -265,7 +265,7 @@ class UtilityCommands(discord.Cog):
             description=f"""
 **Creator:** {owner.mention}
 
-**Uptime:** {days}d {hours}h {minutes}m {seconds}s, running on [Diva Hosting](https://divahosting.net/)'s servers.
+**Uptime:** {days}d {hours}h {minutes}m {seconds}s.
 **Latency:** {round(self.bot.latency*1000)}ms
 **CPU usage:** {psutil.cpu_percent(interval=0.1)}%
 **RAM usage:** {psutil.virtual_memory()[2]}%
