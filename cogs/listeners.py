@@ -289,7 +289,7 @@ Started bot up on {now}
                     async with aiosqlite.connect("main.db") as db:
                         cursor = await db.cursor()
                         await cursor.execute(
-                            "UPDATE leveling SET nom=0, lvl=?, denom=? WHERE author_id=?",
+                            "UPDATE leveling SET nom=0, level=?, denom=? WHERE author_id=?",
                             (lvl+1, int(denom) + (int(lvl) * 20), str(message.author.id)),
                         )
                         await db.commit()
