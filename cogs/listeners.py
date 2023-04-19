@@ -323,7 +323,7 @@ Started bot up on {now}
     @tasks.loop(hour=1)
     async def join_stats_loop(self):
         if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 18):
-            async with aiosqlite.connect("test.db") as db:
+            async with aiosqlite.connect("main.db") as db:
                 await db.execute("UPDATE stats SET last = now, now = 0 WHERE name = 'join'")
                 await db.commit()
                 cur = await db.execute("SELECT * FROM stats WHERE name='join'")
