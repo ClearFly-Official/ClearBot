@@ -2,7 +2,7 @@ import discord
 import aiohttp
 import os, json, fitz
 import aiofiles
-from datetime import datetime
+import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
 from discord.ext import commands
@@ -60,7 +60,7 @@ class AvCommands(discord.Cog):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                        datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -113,7 +113,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                        datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -157,7 +157,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
             obstime = discord.utils.format_dt(
-                datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
             )
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(

@@ -2,7 +2,7 @@ import discord
 from discord import option
 from discord.ext import commands
 from main import cfc, errorc
-from datetime import datetime
+import datetime
 
 
 class RulesView(discord.ui.View):
@@ -199,7 +199,7 @@ URL: `{url}`
             inline=False,
         )
         if timestamp == True:
-            timestamp = datetime.now()
+            timestamp = datetime.datetime.now()
         else:
             timestamp = None
         emb = discord.Embed(
