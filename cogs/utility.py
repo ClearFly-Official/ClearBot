@@ -146,6 +146,9 @@ class UtilityCommands(discord.Cog):
     )
     math = utility.create_subgroup(name="math", description="Commands related to math")
     poll = utility.create_subgroup(name="poll", description="Commands related to polls")
+    stats = utility.create_subgroup(
+        name="stats", description="Commands related to statistics"
+    )
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -242,54 +245,6 @@ class UtilityCommands(discord.Cog):
             await channel.send(
                 "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
             )
-
-    @utility.command(
-        name="stats", description="📈 Show statistics about the bot and server."
-    )
-    @commands.cooldown(1, 5)
-    async def stats(self, ctx: discord.ApplicationContext):
-        loc = 0
-        f = open("main.py", "r")
-        loc += int(len(f.readlines()))
-        for cog in cogs:
-            f = open(f"cogs/{cog}.py")
-            loc += int(len(f.readlines()))
-        cogsList = "\n".join(cogs)
-        delta_uptime = datetime.utcnow() - self.bot.start_time
-        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-        owner = await self.bot.fetch_user(668874138160594985)
-        embed = discord.Embed(
-            title="**Bot Stats**",
-            description=f"""
-**Creator:** {owner.mention}
-
-**Uptime:** {days}d {hours}h {minutes}m {seconds}s.
-**Latency:** {round(self.bot.latency*1000)}ms
-**CPU usage:** {psutil.cpu_percent(interval=0.1)}%
-**RAM usage:** {psutil.virtual_memory()[2]}%
-**Total lines of code:** {loc}
-
-**Cogs loaded:**
-```
-{cogsList}
-```
-        """,
-            color=cfc,
-        )
-        members = 0
-        for guild in self.bot.guilds:
-            members += guild.member_count - 1
-        memberCount = len(set(self.bot.get_all_members()))
-        embed.add_field(
-            name="**Server Stats**",
-            value=f"""
-**Members:** {memberCount}
-                    """,
-            inline=False,
-        )
-        await ctx.respond(embed=embed)
 
     async def get_commands(self, ctx: discord.AutocompleteContext):
         cmds = []
@@ -745,6 +700,184 @@ Total votes: **{total_count}**
                     colour=errorc,
                 )
                 await ctx.respond(embed=embed)
+
+    @discord.command(description="⏰ Convert a time to ")
+    @discord.option(
+        name="style",
+        choices=[
+            "Short Time (14:20)",
+            "Long Time (14:20:24)",
+            "Short Date (15/4/2023)",
+            "Long Date (15 April 2023)",
+            "Short Date Time (15 April 2023 14:20)",
+            "Long Date Time (Thursday, 15 April 2023 14:20)",
+            "Relative Time (4 days ago)",
+        ],
+    )
+    @discord.option(name="second", description="Seconds.")
+    @discord.option(name="minute", description="Minutes.")
+    @discord.option(name="hour", description="Hours.")
+    @discord.option(name="day", description="Days.")
+    @discord.option(name="month", description="Months.")
+    @discord.option(name="year", description="Years.")
+    @discord.option(
+        name="time_zone", description="The time zone to use (e.g. UTC, CET, EST)."
+    )
+    async def time2timestamp(
+        self,
+        ctx: discord.ApplicationContext,
+        style: str = "Relative Time (4 days ago)",
+        second: int = None,
+        minute: int = None,
+        hour: int = None,
+        day: int = None,
+        month: int = None,
+        year: int = None,
+        time_zone: str = "UTC",
+    ):
+        o_style = style
+        match style:
+            case "Short Time (14:20)":
+                style = "t"
+            case "Long Time (14:20:24)":
+                style = "T"
+            case "Short Date (15/4/2023)":
+                style = "d"
+            case "Long Date (15 April 2023)":
+                style = "D"
+            case "Short Date Time (15 April 2023 14:20)":
+                style = "f"
+            case "Long Date Time (Thursday, 15 April 2023 14:20)":
+                style = "F"
+            case "Relative Time (4 days ago)":
+                style = "R"
+            case _:
+                style = "R"
+        if second is None:
+            second = datetime.datetime.now().second
+        if minute is None:
+            minute = datetime.datetime.now().minute
+        if hour is None:
+            hour = datetime.datetime.now().hour
+        if day is None:
+            day = datetime.datetime.now().day
+        if month is None:
+            month = datetime.datetime.now().month
+        if year is None:
+            year = datetime.datetime.now().year
+        time_2_conv = datetime.datetime(
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            second=second,
+            tzinfo=zoneinfo.ZoneInfo(time_zone),
+        )
+        conv_time = discord.utils.format_dt(time_2_conv, style=style)
+        embed = discord.Embed(
+            title="Here's your converted time!",
+            colour=cfc,
+        )
+        embed.add_field(name="Display", value=conv_time)
+        embed.add_field(name="Raw", value=f"`{conv_time}`")
+        embed.add_field(
+            name="Parameters",
+            value=f"""
+Style: **{o_style}**
+Year: **{year}**
+Month: **{month}**
+Day: **{day}**
+Hour: **{hour}**
+Minute: **{minute}**
+Second: **{second}**
+Time Zone: **{time_zone.upper()}**
+        """,
+            inline=False,
+        )
+        await ctx.respond(embed=embed)
+
+    @stats.command(name="server", description="🛜 Show the server statistics.")
+    async def server_stats(self, ctx: discord.ApplicationContext):
+        join_stats = None
+        async with aiosqlite.connect("main.db") as db:
+            cur = await db.execute("SELECT * FROM stats WHERE name='join'")
+            join_stats = await cur.fetchone()
+
+        if int(join_stats[2]) == 0:
+            join_pphrase = ""
+        else:
+            join_perc = abs(
+                round(
+                    ((int(join_stats[3]) - int(join_stats[2])) / int(join_stats[2]))
+                    * 100,
+                    2,
+                )
+            )
+            if int(join_stats[2]) < int(join_stats[3]):
+                join_pphrase = f"There was a {join_perc}% increase in joins!"
+            else:
+                join_pphrase = f"There was a {join_perc}% decrease in joins..."
+
+        guild = ctx.guild
+
+        embed = discord.Embed(title="Server Stats", colour=cfc).set_thumbnail(
+            url=guild.icon.url
+        )
+        embed.add_field(
+            name="General",
+            value=f"""
+Owner: {guild.owner.mention}
+Created At: {discord.utils.format_dt(guild.created_at)}
+Channel count: {len(guild.channels)}
+        """,
+        )
+        embed.add_field(
+            name="Members",
+            value=f"""
+Member Count: **{guild.member_count}**
+Joins this week: **{join_stats[3]}**
+Joins last week: **{join_stats[2]}**
+{join_pphrase}
+        """,
+        )
+        embed.add_field(name="Features", value="\n".join(guild.features), inline=False)
+        await ctx.respond(embed=embed)
+
+    @stats.command(name="bot", description="📈 Show statistics about the bot.")
+    @commands.cooldown(1, 5)
+    async def stats(self, ctx: discord.ApplicationContext):
+        loc = 0
+        f = open("main.py", "r")
+        loc += int(len(f.readlines()))
+        for cog in cogs:
+            f = open(f"cogs/{cog}.py")
+            loc += int(len(f.readlines()))
+        cogsList = "\n".join(cogs)
+        delta_uptime = datetime.utcnow() - self.bot.start_time
+        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+        owner = await self.bot.fetch_user(668874138160594985)
+        embed = discord.Embed(
+            title="**Bot Stats**",
+            description=f"""
+**Creator:** {owner.mention}
+
+**Uptime:** {days}d {hours}h {minutes}m {seconds}s.
+**Latency:** {round(self.bot.latency*1000)}ms
+**CPU usage:** {psutil.cpu_percent(interval=0.1)}%
+**RAM usage:** {psutil.virtual_memory()[2]}%
+**Total lines of code:** {loc}
+
+**Cogs loaded:**
+```
+{cogsList}
+```
+        """,
+            color=cfc,
+        )
+        await ctx.respond(embed=embed)
 
 
 def setup(bot):
