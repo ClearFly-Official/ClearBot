@@ -10,8 +10,8 @@ import random
 import aiosqlite
 import feedparser
 import time
+import datetime
 from discord.ext import commands, tasks
-from datetime import datetime
 from main import cfc, errorc
 
 
@@ -55,7 +55,7 @@ class Listeners(discord.Cog):
         self.resetRShownSubms.start()
         self.join_stats_loop.start()
         channel = self.bot.get_channel(1001405648828891187)
-        now = discord.utils.format_dt(datetime.now())
+        now = discord.utils.format_dt(datetime.datetime.now())
         if os.path.exists(".onpc"):
             embed = discord.Embed(
                 title="I started up!",
@@ -213,7 +213,7 @@ Started bot up on {now}
 
     @tasks.loop(hours=48)
     async def db_backup(self):
-        delta_uptime = datetime.utcnow() - self.bot.start_time
+        delta_uptime = datetime.datetime.utcnow() - self.bot.start_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         days, hours = divmod(hours, 24)
         shutil.copy2("main.db", f"backup{str(days)[:1]}.db")
@@ -324,6 +324,7 @@ Started bot up on {now}
     async def join_stats_loop(self):
         if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 18):
             async with aiosqlite.connect("main.db") as db:
+                await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER")
                 await db.execute("UPDATE stats SET last = now, now = 0 WHERE name = 'join'")
                 await db.commit()
                 cur = await db.execute("SELECT * FROM stats WHERE name='join'")
@@ -843,7 +844,7 @@ After: **{after.category}**
                 title="Hey there!",
                 colour=cfc,
                 description=f"""
-{self.ctx.author.mention} experienced some issues with me, please fix them as soon as possible! Error is provided below, more info can be found in the terminal.
+{ctx.author.mention} experienced some issues with me, please fix them as soon as possible! Error is provided below, more info can be found in the terminal.
 ```py
 {error}
 ```

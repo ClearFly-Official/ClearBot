@@ -716,40 +716,10 @@ Channel: {message.channel.mention}
             allowed_mentions=discord.AllowedMentions.none(),
         )
 
-    def get_code_attrs(obj_str):
-        try:
-            module, _, obj = obj_str.rpartition(".")
-            if not module:
-                # No module specified, assume built-in module
-                module = obj_str
-                obj = None
-            elif not obj:
-                # Module specified, but no object
-                return dir(__import__(module))
-            else:
-                # Module and object specified
-                module = __import__(module, fromlist=[obj])
-                obj = getattr(module, obj)
-            if inspect.ismodule(obj):
-                return dir(obj)
-            else:
-                return [
-                    attr
-                    for attr in dir(obj)
-                    if not inspect.isroutine(getattr(obj, attr))
-                ]
-        except (ImportError, AttributeError):
-            return ["No attributes found, check your spelling and try again!"]
-
-    async def code_autocomplete(self, ctx: discord.AutocompleteContext):
-        attrs = self.get_code_attrs(ctx.value)
-        return [attr for attr in attrs if ctx.value in attr]
-
     @dev.command(name="eval", description="💻 Execute some code.")
     @option(
         "code",
         description="The code you want to execute.",
-        autocomplete=code_autocomplete,
     )
     @commands.is_owner()
     async def evalcmd(self, ctx: discord.ApplicationContext, code: str):
