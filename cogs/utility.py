@@ -701,7 +701,7 @@ Total votes: **{total_count}**
                 )
                 await ctx.respond(embed=embed)
 
-    @discord.command(description="⏰ Convert a time to ")
+    @utility.command(description="⏰ Convert time to timestamp.")
     @discord.option(
         name="style",
         choices=[
@@ -723,7 +723,7 @@ Total votes: **{total_count}**
     @discord.option(
         name="time_zone", description="The time zone to use (e.g. UTC, CET, EST)."
     )
-    async def time2timestamp(
+    async def time2stamp(
         self,
         ctx: discord.ApplicationContext,
         style: str = "Relative Time (4 days ago)",
