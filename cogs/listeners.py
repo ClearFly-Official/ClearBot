@@ -245,6 +245,7 @@ Started bot up on {now}
                 rows = await sel.fetchall()
                 usrs = [row[0] for row in rows]
             if str(message.author.id) in usrs:
+                usrdata = None
                 async with aiosqlite.connect("main.db") as db:
                     curs = await db.cursor()
                     usrdata = await curs.execute(
