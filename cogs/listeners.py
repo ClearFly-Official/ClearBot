@@ -186,7 +186,7 @@ Started bot up on {now}
     @tasks.loop(seconds=120, reconnect=False)
     async def rssfeedsf1(self):
         channel = self.bot.get_channel(avnews)
-        blog_feed = feedparser.parse("https://simpleflying.com/feed")
+        blog_feed = feedparser.parse("https://simpleflying.com/feed/")
         feed = dict(blog_feed.entries[0])
         async with aiosqlite.connect("main.db") as db:
             curs = await db.cursor()
