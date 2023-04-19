@@ -850,7 +850,7 @@ After: **{after.category}**
 ```
             """,
             )
-            bot_author.send(embed=alert_emb)
+            await bot_author.send(embed=alert_emb)
             embed = discord.Embed(
                 title="Something went wrong...",
                 description=f"""
