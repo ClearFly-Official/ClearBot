@@ -357,12 +357,6 @@ Joins last week: **{join_stats[2]}**
         await channel.send(embed=emb)
         guild_count = str(member.guild.member_count)
         guild_c_suffix = "th"
-        if guild_count.endswith("1"):
-            guild_c_suffix = "st"
-        if guild_count.endswith("2"):
-            guild_c_suffix = "nd"
-        if guild_count.endswith("3"):
-            guild_c_suffix = "rd"
         if (guild_count == "12") or \
             (guild_count == "13") or \
             (guild_count == "14") or \
@@ -372,8 +366,15 @@ Joins last week: **{join_stats[2]}**
             (guild_count == "18") or \
             (guild_count == "19"):
             guild_c_suffix = "th"
+        elif guild_count.endswith("1"):
+            guild_c_suffix = "st"
+        elif guild_count.endswith("2"):
+            guild_c_suffix = "nd"
+        elif guild_count.endswith("3"):
+            guild_c_suffix = "rd"
         else:
             guild_c_suffix = "th"
+
         
             
 
