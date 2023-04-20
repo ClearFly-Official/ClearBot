@@ -61,7 +61,7 @@ class SelfRolesView(discord.ui.View):
 
     @discord.ui.select(
         custom_id="self-roles-view",
-        placeholder="Select the roles you want...",
+        placeholder="Select Roles",
         min_values=1,
         max_values=1,
         options=[
