@@ -766,6 +766,16 @@ Total votes: **{total_count}**
             month = datetime.datetime.now().month
         if year is None:
             year = datetime.datetime.now().year
+        try:
+            time_zone = zoneinfo.ZoneInfo(time_zone)
+        except Exception:
+            embed = discord.Embed(
+                title="Incorrect Timezone",
+                description="You gave me a non-existent time zone, at least by IANA standards. Please input correct time zones(e.g. UTC)",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            return
         time_2_conv = datetime.datetime(
             year=year,
             month=month,
@@ -773,7 +783,7 @@ Total votes: **{total_count}**
             hour=hour,
             minute=minute,
             second=second,
-            tzinfo=zoneinfo.ZoneInfo(time_zone),
+            tzinfo=time_zone,
         )
         conv_time = discord.utils.format_dt(time_2_conv, style=style)
         embed = discord.Embed(
@@ -828,9 +838,10 @@ Time Zone: **{time_zone.upper()}**
         embed.add_field(
             name="General",
             value=f"""
-Owner: {guild.owner.mention}
-Created At: {discord.utils.format_dt(guild.created_at)}
-Channel count: {len(guild.channels)}
+Owner: {guild.owner.mention}({guild.owner.name}#{guild.owner.discriminator})
+Created At: {discord.utils.format_dt(guild.created_at)}({discord.utils.format_dt(guild.created_at, style="R")})
+Channel Count: **{len(guild.channels)}**
+Role Count: **{len(guild.roles)}**
         """,
         )
         embed.add_field(
@@ -842,7 +853,7 @@ Joins last week: **{join_stats[2]}**
 {join_pphrase}
         """,
         )
-        embed.add_field(name="Features", value="\n".join(guild.features), inline=False)
+        embed.add_field(name="Features", value="\n".join(["• "+(f.title().replace("_", " ")) for f in guild.features]), inline=False)
         await ctx.respond(embed=embed)
 
     @stats.command(name="bot", description="📈 Show statistics about the bot.")

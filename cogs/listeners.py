@@ -355,9 +355,31 @@ Joins last week: **{join_stats[2]}**
             color=cfc,
         )
         await channel.send(embed=emb)
+        guild_count = str(member.guild.member_count)
+        guild_c_suffix = "th"
+        if guild_count.endswith("1"):
+            guild_c_suffix = "st"
+        if guild_count.endswith("2"):
+            guild_c_suffix = "nd"
+        if guild_count.endswith("3"):
+            guild_c_suffix = "rd"
+        if (guild_count == "12") or \
+            (guild_count == "13") or \
+            (guild_count == "14") or \
+            (guild_count == "15") or \
+            (guild_count == "16") or \
+            (guild_count == "17") or \
+            (guild_count == "18") or \
+            (guild_count == "19"):
+            guild_c_suffix = "th"
+        else:
+            guild_c_suffix = "th"
+        
+            
+
         emb = discord.Embed(
             title=f"**{member.name}** joined",
-            description=f"{member.mention} is the **{member.guild.member_count}**th member!",
+            description=f"{member.mention} is the **{guild_count}**{guild_c_suffix} member!",
             color=cfc,
         ).set_thumbnail(url=member.display_avatar.url)
         async with aiosqlite.connect("main.db") as db:
@@ -810,14 +832,6 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Incorrect Values",
                 description="You gave some values that are incorrect/invalid to me, try again with correct ones!",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            notHandled = False
-        if isinstance(error, zoneinfo.ZoneInfoNotFoundError):
-            embed = discord.Embed(
-                title="Incorrect Timezone",
-                description="You gave me a non-existent time zone, at least by IANA standards. Please input correct time zones(e.g. UTC)",
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
