@@ -221,7 +221,7 @@ Started bot up on {now}
                     """
                 )
         except Exception:
-            print("An error occured...")
+            pass
 
     @tasks.loop(hours=48)
     async def db_backup(self):
@@ -366,7 +366,7 @@ Joins last week: **{join_stats[2]}**
             description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!",
             color=cfc,
         )
-        await channel.send(embed=emb)
+        await channel.send(member.mention,embed=emb)
         guild_count = str(member.guild.member_count)
         guild_c_suffix = "th"
         if (guild_count == "12") or \
