@@ -107,109 +107,121 @@ Started bot up on {now}
 
     @tasks.loop(seconds=120, reconnect=False)
     async def rssfeedtres1(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
-        feed = dict(blog_feed.entries[0])
-        async with aiosqlite.connect("main.db") as db:
-            curs = await db.cursor()
-            lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (1,))
-            lastID = await lastID.fetchone()
-        if lastID[1] == feed.get("id"):
-            return
-        else:
+        try:
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
+            feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
-                cursor = await db.cursor()
-                await cursor.execute(
-                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1", (feed.get("id"),)
-                )
-                await db.commit()
-            await channel.send(
-                f"""
-**{feed.get('title')}**
+                curs = await db.cursor()
+                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (1,))
+                lastID = await lastID.fetchone()
+            if lastID[1] == feed.get("id"):
+                return
+            else:
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute(
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1", (feed.get("id"),)
+                    )
+                    await db.commit()
+                await channel.send(
+                    f"""
+    **{feed.get('title')}**
 
-{feed.get('link')}
-                """
-            )
+    {feed.get('link')}
+                    """
+                )
+        except Exception:
+            print("An error occured...")
 
     @tasks.loop(seconds=120, reconnect=False)
     async def rssfeedtres2(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
-        feed = dict(blog_feed.entries[0])
-        async with aiosqlite.connect("main.db") as db:
-            curs = await db.cursor()
-            lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (2,))
-            lastID = await lastID.fetchone()
-        if lastID[1] == feed.get("id"):
-            return
-        else:
+        try:
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
+            feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
-                cursor = await db.cursor()
-                await cursor.execute(
-                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2", (feed.get("id"),)
-                )
-                await db.commit()
-            await channel.send(
-                f"""
-**{feed.get('title')}**
+                curs = await db.cursor()
+                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (2,))
+                lastID = await lastID.fetchone()
+            if lastID[1] == feed.get("id"):
+                return
+            else:
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute(
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2", (feed.get("id"),)
+                    )
+                    await db.commit()
+                await channel.send(
+                    f"""
+    **{feed.get('title')}**
 
-{feed.get('link')}
-                """
-            )
+    {feed.get('link')}
+                    """
+                )
+        except Exception:
+            print("An error occured...")
 
     @tasks.loop(seconds=120, reconnect=False)
     async def rssfeedtres3(self):
-        channel = self.bot.get_channel(fsnews)
-        blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
-        feed = dict(blog_feed.entries[0])
-        async with aiosqlite.connect("main.db") as db:
-            curs = await db.cursor()
-            lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (3,))
-            lastID = await lastID.fetchone()
-        if lastID[1] == feed.get("id"):
-            return
-        else:
+        try:
+            channel = self.bot.get_channel(fsnews)
+            blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
+            feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
-                cursor = await db.cursor()
-                await cursor.execute(
-                    "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3", (feed.get("id"),)
-                )
-                await db.commit()
-            await channel.send(
-                f"""
-**{feed.get('title')}**
+                curs = await db.cursor()
+                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (3,))
+                lastID = await lastID.fetchone()
+            if lastID[1] == feed.get("id"):
+                return
+            else:
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute(
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3", (feed.get("id"),)
+                    )
+                    await db.commit()
+                await channel.send(
+                    f"""
+    **{feed.get('title')}**
 
-{feed.get('link')}
-                """
-            )
+    {feed.get('link')}
+                    """
+                )
+        except Exception:
+            print("An error occured...")
 
     @tasks.loop(seconds=120, reconnect=False)
     async def rssfeedsf1(self):
-        channel = self.bot.get_channel(avnews)
-        blog_feed = feedparser.parse("https://simpleflying.com/feed/")
-        feed = dict(blog_feed.entries[0])
-        async with aiosqlite.connect("main.db") as db:
-            curs = await db.cursor()
-            lastID = await curs.execute(
-                "SELECT * FROM RSS_SimpleFlying WHERE id=?", (1,)
-            )
-            lastID = await lastID.fetchone()
-        if lastID[1] == feed.get("id"):
-            return
-        else:
+        try:
+            channel = self.bot.get_channel(avnews)
+            blog_feed = feedparser.parse("https://simpleflying.com/feed/")
+            feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
-                cursor = await db.cursor()
-                await cursor.execute(
-                    "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1", (feed.get("id"),)
+                curs = await db.cursor()
+                lastID = await curs.execute(
+                    "SELECT * FROM RSS_SimpleFlying WHERE id=?", (1,)
                 )
-                await db.commit()
-            await channel.send(
-                f"""
-**{feed.get('title').replace('&quot;', '"')}**
+                lastID = await lastID.fetchone()
+            if lastID[1] == feed.get("id"):
+                return
+            else:
+                async with aiosqlite.connect("main.db") as db:
+                    cursor = await db.cursor()
+                    await cursor.execute(
+                        "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1", (feed.get("id"),)
+                    )
+                    await db.commit()
+                await channel.send(
+                    f"""
+    **{feed.get('title').replace('&quot;', '"')}**
 
-{feed.get('link')}
-                """
-            )
+    {feed.get('link')}
+                    """
+                )
+        except Exception:
+            print("An error occured...")
 
     @tasks.loop(hours=48)
     async def db_backup(self):

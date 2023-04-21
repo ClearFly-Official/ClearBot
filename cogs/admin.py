@@ -472,7 +472,10 @@ A: This is unlikely, but not impossible in the future.
         )
         emb2 = discord.Embed(
             title="🎨 ClearFly Unofficial Painter",
-            description="Create a custom livery for the ClearFly Virtual Airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).\n If your livery is deemed high enough quality by the ClearFly team, you'll gain the <@&1055909461488844931> role, and you're livery will be added to the list of official ClearFly VA liveries.",
+            description="""
+Create a custom livery for the ClearFly Virtual Airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).
+If your livery is deemed high enough quality by the ClearFly team, you'll likely gain the <@&1055909461488844931> role. Your livery will be added to the list of official ClearFly VA liveries too.
+            """,
             colour=cfc,
         )
         embimg = discord.Embed(colour=cfc).set_image(
