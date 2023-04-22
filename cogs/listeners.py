@@ -319,7 +319,7 @@ Started bot up on {now}
             else:
                 new_user = {
                     "author_id": str(message.author.id),
-                    "level": lvl,
+                    "level": 0,
                     "nom": 1,
                     "denom": 25,
                     "last_msg": round(time.time()),
