@@ -105,7 +105,7 @@ Started bot up on {now}
             status=discord.Status.online,
         )
 
-    @tasks.loop(seconds=120, reconnect=False)
+    @tasks.loop(minutes=10)
     async def rssfeedtres1(self):
         try:
             channel = self.bot.get_channel(fsnews)
@@ -132,9 +132,9 @@ Started bot up on {now}
                     """
                 )
         except Exception:
-            print("An error occured...")
+            pass
 
-    @tasks.loop(seconds=120, reconnect=False)
+    @tasks.loop(minutes=10)
     async def rssfeedtres2(self):
         try:
             channel = self.bot.get_channel(fsnews)
@@ -161,9 +161,9 @@ Started bot up on {now}
                     """
                 )
         except Exception:
-            print("An error occured...")
+            pass
 
-    @tasks.loop(seconds=120, reconnect=False)
+    @tasks.loop(minutes=10, reconnect=False)
     async def rssfeedtres3(self):
         try:
             channel = self.bot.get_channel(fsnews)
@@ -190,9 +190,9 @@ Started bot up on {now}
                     """
                 )
         except Exception:
-            print("An error occured...")
+            pass
 
-    @tasks.loop(seconds=120, reconnect=False)
+    @tasks.loop(minutes=7, reconnect=False)
     async def rssfeedsf1(self):
         try:
             channel = self.bot.get_channel(avnews)
