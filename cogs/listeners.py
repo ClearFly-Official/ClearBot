@@ -367,9 +367,9 @@ Started bot up on {now}
                 await db.execute(
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
                 )
-                await db.commit()
                 cur = await db.execute("SELECT * FROM stats WHERE name='join'")
                 join_stats = await cur.fetchone()
+                await db.commit()
             if int(join_stats[2]) == 0:
                 join_pphrase = ""
             else:
@@ -381,11 +381,12 @@ Started bot up on {now}
                     )
                 )
                 if int(join_stats[2]) < int(join_stats[3]):
-                    join_pphrase = f"There was a {join_perc}% increase in joins!"
+                    join_pphrase = f"There was a **{join_perc}**% increase in joins!"
                 else:
-                    join_pphrase = f"There was a {join_perc}% decrease in joins..."
+                    join_pphrase = f"There was a **{join_perc}**% decrease in joins..."
             embed = discord.Embed(
                 title="Weekly ClearFly Join Report",
+                colour=cfc,
                 description=f"""
 Joins this week: **{join_stats[3]}**
 Joins last week: **{join_stats[2]}**
