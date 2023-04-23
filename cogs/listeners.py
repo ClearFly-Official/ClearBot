@@ -135,8 +135,11 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except http.client.RemoteDisconnected:
-            raise
+        except Exception as e:
+            if isinstance(e, RemoteDisconnected):
+                pass
+            else:
+                raise
 
     @tasks.loop(minutes=10)
     async def rssfeedtres2(self):
@@ -167,8 +170,11 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except http.client.RemoteDisconnected:
-            raise
+        except Exception as e:
+            if isinstance(e, RemoteDisconnected):
+                pass
+            else:
+                raise
 
     @tasks.loop(minutes=10, reconnect=False)
     async def rssfeedtres3(self):
@@ -199,8 +205,11 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except RemoteDisconnected:
-            raise
+        except Exception as e:
+            if isinstance(e, RemoteDisconnected):
+                pass
+            else:
+                raise
 
     @tasks.loop(minutes=7, reconnect=False)
     async def rssfeedsf1(self):
@@ -231,8 +240,11 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except RemoteDisconnected:
-            raise
+        except Exception as e:
+            if isinstance(e, RemoteDisconnected):
+                pass
+            else:
+                raise
 
     @tasks.loop(hours=48)
     async def db_backup(self):
@@ -350,7 +362,7 @@ Started bot up on {now}
         ):
             async with aiosqlite.connect("main.db") as db:
                 await db.execute(
-                    "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER"
+                    "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER)"
                 )
                 await db.execute(
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
