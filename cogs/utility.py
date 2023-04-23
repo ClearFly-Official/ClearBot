@@ -4,7 +4,7 @@ import psutil
 import urllib.parse
 import datetime
 import zoneinfo
-from math import sqrt
+import math
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -552,19 +552,24 @@ class UtilityCommands(discord.Cog):
         if type == "Square root":
             embed = discord.Embed(
                 title=f"The square root of {input} is",
-                description=f"**{sqrt(input)}**",
+                description=f"**{math.sqrt(input)}**",
                 color=cfc,
             )
             await ctx.respond(embed=embed)
         if type == "Power" and exponent == None:
             await ctx.respond("You need to give a exponent...")
         if type == "Power":
-            embed = discord.Embed(
-                title=f"{input} to the power of {exponent} is",
-                description=f"**{input**exponent}**",
-                color=cfc,
-            )
-            await ctx.respond(embed=embed)
+            result = input**exponent
+            if int(math.log10(result))+1 < 4299:
+                embed = discord.Embed(
+                    title=f"{input} to the power of {exponent} is",
+                    description=f"**{result}**",
+                    color=cfc,
+                )
+                await ctx.respond(embed=embed)
+            else:
+                embed = discord.Embed(title="Number too large!", colour=errorc)
+                await ctx.respond(embed=embed)
 
     @utility.command(description="🔎 Search the web!")
     @option("query", description="The content you want to search for.")
@@ -756,16 +761,46 @@ Total votes: **{total_count}**
                 style = "R"
         if second is None:
             second = datetime.datetime.now().second
+        if not second <= 59 >= 0:
+            embed = discord.Embed(title="Invalid seconds input", description="Seconds parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            await ctx.respond(embed=embed)
+            return
         if minute is None:
             minute = datetime.datetime.now().minute
+        if not second <= 59 >= 0:
+            embed = discord.Embed(title="Invalid second input", description="Second parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            await ctx.respond(embed=embed)
+            return
         if hour is None:
             hour = datetime.datetime.now().hour
+        if not hour <= 59 >= 0:
+            embed = discord.Embed(title="Invalid hour input", description="Hour parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            await ctx.respond(embed=embed)
+            return
         if day is None:
             day = datetime.datetime.now().day
+        if month == 2:
+            if not day <= 28 > 0:
+                embed = discord.Embed(title="Invalid day input", description="Day parameter must be greater than 0 and smaller than 29 if in February", colour=cfc)
+                await ctx.respond(embed=embed)
+                return
+        else:
+            if not day <= 31 > 0:
+                embed = discord.Embed(title="Invalid day input", description="Day parameter must be greater than 0 and smaller or equal to 31", colour=cfc)
+                await ctx.respond(embed=embed)
+                return
         if month is None:
             month = datetime.datetime.now().month
+        if not month <= 12 > 0:
+            embed = discord.Embed(title="Invalid month input", description="Month parameter must be greater than 0 and smaller or equal to 12", colour=cfc)
+            await ctx.respond(embed=embed)
+            return
         if year is None:
             year = datetime.datetime.now().year
+        if not year <= 9999 >= 0:
+            embed = discord.Embed(title="Invalid year input", description="Year parameter must be greater or equal to 0 and smaller than 10000", colour=cfc)
+            await ctx.respond(embed=embed)
+            return
         try:
             time_zone = zoneinfo.ZoneInfo(time_zone)
         except Exception:

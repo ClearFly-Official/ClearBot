@@ -861,6 +861,7 @@ Average flights per user: **{round(avg_flights_per_user)}**
             name="Flights",
             inline=False,
             value=f"""
+Number of flights: **{total_flights}**
 Number of diversions: **{diversions}**
 Number of incidents: **{incident_flights}**
 Success rate: **{100-round((incident_flights/total_flights)*100, 1)}%** *a 'successful' flight is a flight without a diversion or incident.*
