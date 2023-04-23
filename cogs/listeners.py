@@ -10,6 +10,7 @@ import random
 import aiosqlite
 import feedparser
 import time
+import http.client
 import datetime
 from discord.ext import commands, tasks
 from main import cfc, errorc
@@ -131,7 +132,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except __import__("http").client.RemoteDisconnected:
+        except http.client.RemoteDisconnected:
             raise
 
     @tasks.loop(minutes=10)
@@ -160,7 +161,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except __import__("http").client.RemoteDisconnected:
+        except http.client.RemoteDisconnected:
             raise
 
     @tasks.loop(minutes=10, reconnect=False)
@@ -189,7 +190,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except __import__("http").client.RemoteDisconnected:
+        except http.client.RemoteDisconnected:
             raise
 
     @tasks.loop(minutes=7, reconnect=False)
@@ -220,7 +221,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except __import__("http").client.RemoteDisconnected:
+        except http:
             raise
 
     @tasks.loop(hours=48)
@@ -334,7 +335,9 @@ Started bot up on {now}
 
     @tasks.loop(hours=1)
     async def join_stats_loop(self):
+        print("something")
         if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 21):
+            print("something2")
             async with aiosqlite.connect("main.db") as db:
                 await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER")
                 await db.execute("UPDATE stats SET last = now, now = 0 WHERE name = 'join'")
