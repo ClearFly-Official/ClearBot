@@ -10,8 +10,8 @@ import random
 import aiosqlite
 import feedparser
 import time
-import http.client
 import datetime
+from http.client import RemoteDisconnected
 from discord.ext import commands, tasks
 from main import cfc, errorc
 
@@ -114,7 +114,9 @@ Started bot up on {now}
             feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (1,))
+                lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (1,)
+                )
                 lastID = await lastID.fetchone()
             if lastID[1] == feed.get("id"):
                 return
@@ -122,7 +124,8 @@ Started bot up on {now}
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1", (feed.get("id"),)
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1",
+                        (feed.get("id"),),
                     )
                     await db.commit()
                 await channel.send(
@@ -143,7 +146,9 @@ Started bot up on {now}
             feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (2,))
+                lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (2,)
+                )
                 lastID = await lastID.fetchone()
             if lastID[1] == feed.get("id"):
                 return
@@ -151,7 +156,8 @@ Started bot up on {now}
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2", (feed.get("id"),)
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2",
+                        (feed.get("id"),),
                     )
                     await db.commit()
                 await channel.send(
@@ -172,7 +178,9 @@ Started bot up on {now}
             feed = dict(blog_feed.entries[0])
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute("SELECT * FROM RSS_Tresholdx WHERE id=?", (3,))
+                lastID = await curs.execute(
+                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (3,)
+                )
                 lastID = await lastID.fetchone()
             if lastID[1] == feed.get("id"):
                 return
@@ -180,7 +188,8 @@ Started bot up on {now}
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3", (feed.get("id"),)
+                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3",
+                        (feed.get("id"),),
                     )
                     await db.commit()
                 await channel.send(
@@ -190,7 +199,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except http.client.RemoteDisconnected:
+        except RemoteDisconnected:
             raise
 
     @tasks.loop(minutes=7, reconnect=False)
@@ -211,7 +220,8 @@ Started bot up on {now}
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1", (feed.get("id"),)
+                        "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1",
+                        (feed.get("id"),),
                     )
                     await db.commit()
                 await channel.send(
@@ -221,7 +231,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except http.client.RemoteDisconnected:
+        except RemoteDisconnected:
             raise
 
     @tasks.loop(hours=48)
@@ -335,28 +345,41 @@ Started bot up on {now}
 
     @tasks.loop(hours=1)
     async def join_stats_loop(self):
-        print("something")
-        if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 19):
-            print("something2")
+        if (datetime.datetime.now().weekday() == 6) and (
+            datetime.datetime.now().hour() == 19
+        ):
             async with aiosqlite.connect("main.db") as db:
-                await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER")
-                await db.execute("UPDATE stats SET last = now, now = 0 WHERE name = 'join'")
+                await db.execute(
+                    "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER"
+                )
+                await db.execute(
+                    "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
+                )
                 await db.commit()
                 cur = await db.execute("SELECT * FROM stats WHERE name='join'")
                 join_stats = await cur.fetchone()
             if int(join_stats[2]) == 0:
                 join_pphrase = ""
             else:
-                join_perc = abs(round(((int(join_stats[3]) - int(join_stats[2]))/int(join_stats[2]))*100, 2))
+                join_perc = abs(
+                    round(
+                        ((int(join_stats[3]) - int(join_stats[2])) / int(join_stats[2]))
+                        * 100,
+                        2,
+                    )
+                )
                 if int(join_stats[2]) < int(join_stats[3]):
                     join_pphrase = f"There was a {join_perc}% increase in joins!"
                 else:
                     join_pphrase = f"There was a {join_perc}% decrease in joins..."
-            embed = discord.Embed(title="Weekly ClearFly Join Report", description=f"""
+            embed = discord.Embed(
+                title="Weekly ClearFly Join Report",
+                description=f"""
 Joins this week: **{join_stats[3]}**
 Joins last week: **{join_stats[2]}**
 {join_pphrase}
-            """)
+            """,
+            )
             logchannel = self.bot.get_channel(1001405648828891187)
             await logchannel.send(embed=embed)
 
@@ -369,17 +392,19 @@ Joins last week: **{join_stats[2]}**
             description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!",
             color=cfc,
         )
-        await channel.send(member.mention,embed=emb)
+        await channel.send(member.mention, embed=emb)
         guild_count = str(member.guild.member_count)
         guild_c_suffix = "th"
-        if (guild_count == "12") or \
-            (guild_count == "13") or \
-            (guild_count == "14") or \
-            (guild_count == "15") or \
-            (guild_count == "16") or \
-            (guild_count == "17") or \
-            (guild_count == "18") or \
-            (guild_count == "19"):
+        if (
+            (guild_count == "12")
+            or (guild_count == "13")
+            or (guild_count == "14")
+            or (guild_count == "15")
+            or (guild_count == "16")
+            or (guild_count == "17")
+            or (guild_count == "18")
+            or (guild_count == "19")
+        ):
             guild_c_suffix = "th"
         elif guild_count.endswith("1"):
             guild_c_suffix = "st"
@@ -390,17 +415,19 @@ Joins last week: **{join_stats[2]}**
         else:
             guild_c_suffix = "th"
 
-        
-            
-
         emb = discord.Embed(
             title=f"**{member.name}** joined",
             description=f"{member.mention} is the **{guild_count}**{guild_c_suffix} member!",
             color=cfc,
         ).set_thumbnail(url=member.display_avatar.url)
         async with aiosqlite.connect("main.db") as db:
-            await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER)")
-            await db.execute("INSERT OR IGNORE INTO stats (name, last, now) VALUES (?, ?, ?)", ("join", 0, 0))
+            await db.execute(
+                "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER)"
+            )
+            await db.execute(
+                "INSERT OR IGNORE INTO stats (name, last, now) VALUES (?, ?, ?)",
+                ("join", 0, 0),
+            )
             await db.execute("UPDATE stats SET now = now + 1 WHERE name = 'join'")
             await db.commit()
 

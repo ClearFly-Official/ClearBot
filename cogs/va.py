@@ -40,7 +40,7 @@ async def is_banned(user: discord.User | discord.Member):
         )
         is_ban = await cur.fetchone()
 
-    if (is_ban == ()) or(is_ban is None):
+    if (is_ban == ()) or (is_ban is None):
         return False
     elif is_ban[0] == 1:
         return True
@@ -901,7 +901,10 @@ You can choose any aircraft that has a ClearFly livery, available in <#104105733
 Happy flying!
             """,
         )
-        embed2 = discord.Embed(title="Recommended add-ons: StableApproach", colour=cfc, description="""
+        embed2 = discord.Embed(
+            title="Recommended add-ons: StableApproach",
+            colour=cfc,
+            description="""
 **__Download:__**
 https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/ 
 **__Setup:__**
@@ -910,7 +913,8 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
 **3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
 **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
 **5.** That’s it! StableApproach will now download our custom aircraft profiles.
-        """)
+        """,
+        )
         embm = discord.Embed(
             title="ClearFly VA Official Liveries",
             colour=cfc,
@@ -920,12 +924,16 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             title="Boeing 737-800 by Zibo",
             colour=cfc,
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
-        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png")
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png"
+        )
         emb2 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
             url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
-        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png")
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
+        )
         embs = [embm, emb1, emb2]
         liv_channel = self.bot.get_channel(1041057335449227314)
         overv_channel = self.bot.get_channel(overv_id)
@@ -1074,12 +1082,16 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             title="Boeing 737-800 by Zibo",
             colour=cfc,
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
-        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png")
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png"
+        )
         emb2 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
             url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
-        ).set_image(url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png")
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
+        )
         embs = [embm, emb1, emb2]
         await ctx.respond(embeds=embs)
 

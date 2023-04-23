@@ -564,7 +564,7 @@ class UtilityCommands(discord.Cog):
                 await ctx.respond(embed=embed)
                 return
             result = input**exponent
-            if int(math.log10(result))+1 < 4299:
+            if int(math.log10(result)) + 1 < 4299:
                 embed = discord.Embed(
                     title=f"{input} to the power of {exponent} is",
                     description=f"**{result}**",
@@ -766,43 +766,71 @@ Total votes: **{total_count}**
         if second is None:
             second = datetime.datetime.now().second
         if not second <= 59 >= 0:
-            embed = discord.Embed(title="Invalid seconds input", description="Seconds parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            embed = discord.Embed(
+                title="Invalid seconds input",
+                description="Seconds parameter must be greater or equal to 0 and smaller than 60",
+                colour=cfc,
+            )
             await ctx.respond(embed=embed)
             return
         if minute is None:
             minute = datetime.datetime.now().minute
         if not second <= 59 >= 0:
-            embed = discord.Embed(title="Invalid second input", description="Second parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            embed = discord.Embed(
+                title="Invalid second input",
+                description="Second parameter must be greater or equal to 0 and smaller than 60",
+                colour=cfc,
+            )
             await ctx.respond(embed=embed)
             return
         if hour is None:
             hour = datetime.datetime.now().hour
         if not hour <= 59 >= 0:
-            embed = discord.Embed(title="Invalid hour input", description="Hour parameter must be greater or equal to 0 and smaller than 60", colour=cfc)
+            embed = discord.Embed(
+                title="Invalid hour input",
+                description="Hour parameter must be greater or equal to 0 and smaller than 60",
+                colour=cfc,
+            )
             await ctx.respond(embed=embed)
             return
         if day is None:
             day = datetime.datetime.now().day
         if month == 2:
             if not day <= 28 > 0:
-                embed = discord.Embed(title="Invalid day input", description="Day parameter must be greater than 0 and smaller than 29 if in February", colour=cfc)
+                embed = discord.Embed(
+                    title="Invalid day input",
+                    description="Day parameter must be greater than 0 and smaller than 29 if in February",
+                    colour=cfc,
+                )
                 await ctx.respond(embed=embed)
                 return
         else:
             if not day <= 31 > 0:
-                embed = discord.Embed(title="Invalid day input", description="Day parameter must be greater than 0 and smaller or equal to 31", colour=cfc)
+                embed = discord.Embed(
+                    title="Invalid day input",
+                    description="Day parameter must be greater than 0 and smaller or equal to 31",
+                    colour=cfc,
+                )
                 await ctx.respond(embed=embed)
                 return
         if month is None:
             month = datetime.datetime.now().month
         if not month <= 12 > 0:
-            embed = discord.Embed(title="Invalid month input", description="Month parameter must be greater than 0 and smaller or equal to 12", colour=cfc)
+            embed = discord.Embed(
+                title="Invalid month input",
+                description="Month parameter must be greater than 0 and smaller or equal to 12",
+                colour=cfc,
+            )
             await ctx.respond(embed=embed)
             return
         if year is None:
             year = datetime.datetime.now().year
         if not year <= 9999 >= 0:
-            embed = discord.Embed(title="Invalid year input", description="Year parameter must be greater or equal to 0 and smaller than 10000", colour=cfc)
+            embed = discord.Embed(
+                title="Invalid year input",
+                description="Year parameter must be greater or equal to 0 and smaller than 10000",
+                colour=cfc,
+            )
             await ctx.respond(embed=embed)
             return
         try:
@@ -892,7 +920,13 @@ Joins last week: **{join_stats[2]}**
 {join_pphrase}
         """,
         )
-        embed.add_field(name="Features", value="\n".join(["• "+(f.title().replace("_", " ")) for f in guild.features]), inline=False)
+        embed.add_field(
+            name="Features",
+            value="\n".join(
+                ["• " + (f.title().replace("_", " ")) for f in guild.features]
+            ),
+            inline=False,
+        )
         await ctx.respond(embed=embed)
 
     @stats.command(name="bot", description="📈 Show statistics about the bot.")
