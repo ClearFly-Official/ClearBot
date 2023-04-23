@@ -334,7 +334,7 @@ Started bot up on {now}
 
     @tasks.loop(hours=1)
     async def join_stats_loop(self):
-        if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 18):
+        if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 21):
             async with aiosqlite.connect("main.db") as db:
                 await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER")
                 await db.execute("UPDATE stats SET last = now, now = 0 WHERE name = 'join'")
