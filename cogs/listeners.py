@@ -221,7 +221,7 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except http:
+        except http.client.RemoteDisconnected:
             raise
 
     @tasks.loop(hours=48)
@@ -336,7 +336,7 @@ Started bot up on {now}
     @tasks.loop(hours=1)
     async def join_stats_loop(self):
         print("something")
-        if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 21):
+        if (datetime.datetime.now().weekday == 6) and (datetime.datetime.now().hour == 19):
             print("something2")
             async with aiosqlite.connect("main.db") as db:
                 await db.execute("CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER")
