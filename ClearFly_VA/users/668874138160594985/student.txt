@@ -1,5 +1,0 @@
-
-Training 1(Steam Gauges) EBGG-EBAW - Approved - rte EBGG/03 AFI NIK FS11 EBAW/11, crz 090, cmnts None
-Training 2(Steam Gauges) EBAW-EBOS - Approved - rte EBAW/29 NIK BUB45 EBOS/26, crz 040, cmnts None
-Training 3(G1000) EBOS-EBZU - Approved - rte EBOS/08 CN26 EBZU/35, crz 010, cmnts G1000!!!!
-Training 4(G1000) EBZU-EBGG - Approved - rte EBZU/17 KERKY EBGG, crz 060, cmnts last one and then type rating!

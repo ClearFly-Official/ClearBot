@@ -1,5 +1,0 @@
-
-Training 1(Steam Gauges) KOFP-KDAA - Approved - rte KOFP/16 DEGAY SABBI IRONS KDAA/32, crz 050, cmnts Enjoy
-Training 2(Steam Gauges) KDAA-KRMN - Approved - rte KDAA KNYG KRMN, crz 2,500, cmnts None
-Training 3(G1000) KRMN-KDAA - Approved - rte KRMN KNYG KDAA, crz 25, cmnts None
-Training 4(G1000) KDAA-KOFP - Approved - rte KDAA KNYG KOFP, crz 30, cmnts None

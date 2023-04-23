@@ -320,7 +320,7 @@ class FunCommands(discord.Cog):
         img.paste(avatar, qavmask)
         img.paste(qclear, mask=qclear)
         font = ImageFont.truetype(
-            "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+            "fonts/Inter-Regular.ttf",
             size=100,
             layout_engine=ImageFont.Layout.BASIC,
         )
@@ -392,7 +392,7 @@ class FunCommands(discord.Cog):
 
         with Image.new("RGBA", (2048, 512)) as image:
             font = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf", 144
+                "fonts/Inter-Regular.ttf", 144
             )
             with Pilmoji(image) as pilmoji:
                 pilmoji.text(

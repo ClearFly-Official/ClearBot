@@ -1,3 +1,0 @@
-
-Type Training B738 KMDW-KSTL - Approved - rte KMDW BACEN BLOKR RBS AARCH2 KSTL, crz 300, cmnts CI 20, departure runway 31C and arrival runway 30R. Use simbrief with these details and you’ll get everything else if you need it.
-Type Training B738 KSTL-KORD - Approved - rte NATCA5 SPI  PNT V227 PLANO, crz 300, cmnts Enjoy your flight

@@ -62,12 +62,12 @@ class LevelingCommands(discord.Cog):
             draw.ellipse((0, 0, 256, 256), fill=255)
             masked = Image.composite(avatar, clear, mask=avmask)
             font = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                "fonts/Inter-Regular.ttf",
                 size=100,
                 layout_engine=ImageFont.Layout.BASIC,
             )
             fontbig = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                "fonts/Inter-Regular.ttf",
                 size=150,
                 layout_engine=ImageFont.Layout.BASIC,
             )
@@ -187,12 +187,12 @@ class LevelingCommands(discord.Cog):
             draw.ellipse((0, 0, 256, 256), fill=255)
             masked = Image.composite(avatar, clear, mask=avmask)
             font = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                "fonts/Inter-Regular.ttf",
                 size=100,
                 layout_engine=ImageFont.Layout.BASIC,
             )
             fontbig = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                "fonts/Inter-Regular.ttf",
                 size=150,
                 layout_engine=ImageFont.Layout.BASIC,
             )
@@ -325,7 +325,7 @@ class LevelingCommands(discord.Cog):
                 color=cfc,
             )
             font = ImageFont.truetype(
-                "fonts/HelveticaNeue/OpenType-TT/HelveticaNeue.ttf",
+                "fonts/Inter-Regular.ttf",
                 size=43,
                 layout_engine=ImageFont.Layout.BASIC,
             )

@@ -4,4 +4,4 @@
 
 Uses the **MIT license**
 
-Coded in [Python](https://python.org) using [pycord](https://pycord.dev/)
+Coded in [Python](https://python.org) using the [Pycord](https://pycord.dev/) Discord bot framework.

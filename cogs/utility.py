@@ -802,7 +802,7 @@ Day: **{day}**
 Hour: **{hour}**
 Minute: **{minute}**
 Second: **{second}**
-Time Zone: **{time_zone.upper()}**
+Time Zone: **{str(time_zone).upper()}**
         """,
             inline=False,
         )

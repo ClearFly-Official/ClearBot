@@ -131,8 +131,8 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except Exception:
-            pass
+        except __import__("http").client.RemoteDisconnected:
+            raise
 
     @tasks.loop(minutes=10)
     async def rssfeedtres2(self):
@@ -160,8 +160,8 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except Exception:
-            pass
+        except __import__("http").client.RemoteDisconnected:
+            raise
 
     @tasks.loop(minutes=10, reconnect=False)
     async def rssfeedtres3(self):
@@ -189,8 +189,8 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except Exception:
-            pass
+        except __import__("http").client.RemoteDisconnected:
+            raise
 
     @tasks.loop(minutes=7, reconnect=False)
     async def rssfeedsf1(self):
@@ -220,8 +220,8 @@ Started bot up on {now}
     {feed.get('link')}
                     """
                 )
-        except Exception:
-            pass
+        except __import__("http").client.RemoteDisconnected:
+            raise
 
     @tasks.loop(hours=48)
     async def db_backup(self):
@@ -861,6 +861,13 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Owner only command",
                 description="This command is for the owner of the bot only, so not for you!",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            notHandled = False
+        if isinstance(error, commands.errors.NoPrivateMessage):
+            embed = discord.Embed(
+                title="This command cannot be used in DMs",
                 colour=errorc,
             )
             await ctx.respond(embed=embed)

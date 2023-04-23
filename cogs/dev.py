@@ -52,6 +52,9 @@ class DevCommands(discord.Cog):
     dataref = dev.create_subgroup(
         name="datarefs", description="Commands related to X-Plane datarefs."
     )
+    database = dev.create_subgroup(
+        name="database", description="Commands for managing the database(s)"
+    )
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -749,6 +752,36 @@ Channel: {message.channel.mention}
             colour=cfc,
         )
         await ctx.respond(embed=embed)
+
+    @database.command(description="🔦 Execute an SQL Query.")
+    @discord.option(name="database", description="Database to execute query on", choices=["main.db", "va.db"])
+    @discord.option(name="query", description="Query to execute.")
+    @commands.is_owner()
+    async def query(self, ctx: discord.ApplicationContext, database: str, query: str):
+        try:
+            async with aiosqlite.connect(database) as db:
+                await db.execute(query)
+                await db.commit()
+            await ctx.respond("Success!", ephemeral=True)
+        except Exception as e:
+            await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
+
+    @database.command(name="list", description="🧾 List a table of a database.")
+    @discord.option(name="database", description="Database to list a table of.", choices=["main.db", "va.db"])
+    @discord.option(name="table", description="Database to list a table of.")
+    @commands.is_owner()
+    async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
+        out = None
+        try:
+            async with aiosqlite.connect(database) as db:
+                cur = await db.execute(f"SELECT * FROM {table}")
+                out = await cur.fetchall()
+            await ctx.respond(out, ephemeral=True)
+        except Exception as e:
+            await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
+
+
+
 
 
 def setup(bot):
