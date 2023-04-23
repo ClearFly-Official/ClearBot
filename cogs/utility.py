@@ -559,6 +559,10 @@ class UtilityCommands(discord.Cog):
         if type == "Power" and exponent == None:
             await ctx.respond("You need to give a exponent...")
         if type == "Power":
+            if exponent > 2000:
+                embed = discord.Embed(title="Exponent too large!", colour=errorc)
+                await ctx.respond(embed=embed)
+                return
             result = input**exponent
             if int(math.log10(result))+1 < 4299:
                 embed = discord.Embed(
