@@ -346,7 +346,7 @@ Started bot up on {now}
     @tasks.loop(hours=1)
     async def join_stats_loop(self):
         if (datetime.datetime.now().weekday() == 6) and (
-            datetime.datetime.now().hour() == 19
+            datetime.datetime.now().hour == 19
         ):
             async with aiosqlite.connect("main.db") as db:
                 await db.execute(
