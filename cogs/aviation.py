@@ -24,7 +24,9 @@ class AvCommands(discord.Cog):
             return [
                 "Start typing the name of an airport for results to appear(e.g. KJFK)"
             ]
-        return [airport for airport in airports if airport.startswith(ctx.value.upper())]
+        return [
+            airport for airport in airports if airport.startswith(ctx.value.upper())
+        ]
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -52,7 +54,7 @@ class AvCommands(discord.Cog):
             def __init__(self, bot):
                 self.bot = bot
                 super().__init__(timeout=60.0, disable_on_timeout=True)
-                
+
             @discord.ui.button(
                 label="Change to Metric units", style=discord.ButtonStyle.primary
             )
@@ -60,7 +62,10 @@ class AvCommands(discord.Cog):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                        datetime.datetime.strptime(
+                            time + "+00:00", "%Y-%m-%dT%H:%M:%S%z"
+                        ),
+                        "R",
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -105,7 +110,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             def __init__(self, bot):
                 self.bot = bot
                 super().__init__(timeout=120.0, disable_on_timeout=True)
-                
+
             @discord.ui.button(
                 label="Change to Imperial units", style=discord.ButtonStyle.primary
             )
@@ -113,7 +118,10 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(
-                        datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                        datetime.datetime.strptime(
+                            time + "+00:00", "%Y-%m-%dT%H:%M:%S%z"
+                        ),
+                        "R",
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
                         '"', ""
@@ -157,7 +165,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
             obstime = discord.utils.format_dt(
-                datetime.datetime.strptime(time+"+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
+                datetime.datetime.strptime(time + "+00:00", "%Y-%m-%dT%H:%M:%S%z"), "R"
             )
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(
@@ -198,33 +206,46 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             await ctx.respond(embed=embed)
 
     @av.command(name="charts", description="🗺️ Fetches charts of the provided airport.")
-    @commands.cooldown(
-    1, 20, commands.BucketType.user
+    @commands.cooldown(1, 20, commands.BucketType.user)
+    @discord.option(
+        "airport",
+        description="The airport you want charts from.",
+        autocomplete=get_airports,
     )
-    @discord.option("airport", description="The airport you want charts from.", autocomplete=get_airports)
-    @discord.option("chart", description="The chart type you want.",choices=['Airport Diagram', 'Approaches', 'Minimums'])
+    @discord.option(
+        "chart",
+        description="The chart type you want.",
+        choices=["Airport Diagram", "Approaches", "Minimums"],
+    )
     async def chart(self, ctx, airport, chart):
         await ctx.defer()
-        if chart == 'Approaches':
+        if chart == "Approaches":
             async with aiohttp.ClientSession() as cs:
-                async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6") as r:
+                async with cs.get(
+                    f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=6"
+                ) as r:
                     load = await r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
-                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    embed = discord.Embed(
+                        title="Error 404",
+                        description=f"Didn't found a diagram for {airport[:4].upper()}.",
+                        colour=errorc,
+                    )
                     await ctx.respond(embed=embed)
                 else:
-                    url = load[airport[:4].upper()][0]['pdf_path']
+                    url = load[airport[:4].upper()][0]["pdf_path"]
                     async with aiohttp.ClientSession() as cs:
                         async with cs.get(url) as r:
-                                i = 0
-                                pages = [
-                                ]
+                            i = 0
+                            pages = []
                     for chart in load[airport[:4].upper()]:
-                        url = load[airport[:4].upper()][i]['pdf_path']
+                        url = load[airport[:4].upper()][i]["pdf_path"]
                         async with aiohttp.ClientSession() as cs:
                             async with cs.get(url) as r:
-                                async with aiofiles.open(f"images/charts/chart{i}.pdf", "wb") as f:
+                                async with aiofiles.open(
+                                    f"images/charts/chart{i}.pdf", "wb"
+                                ) as f:
                                     await f.write(await r.content.read())
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
                         for page in doc:
@@ -233,37 +254,59 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             i += 1
                     i = 0
                     for chart in load[airport[:4].upper()]:
-                        dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        dfile = discord.File(
+                            f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg"
+                        )
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
+                            Page(
+                                embeds=[
+                                    discord.Embed(
+                                        title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",
+                                        description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})",
+                                        colour=cfc,
+                                    )
+                                ],
+                                files=[dfile],
+                            )
                         )
                         pages[i].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
                     paginator = Paginator(pages=pages)
                     await paginator.respond(ctx.interaction)
             else:
-                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(
+                    title="Invalid airport code",
+                    description="Only US airports are allowed as input.",
+                    colour=errorc,
+                )
                 await ctx.respond(embed=embed)
-        if chart == 'Minimums':
+        if chart == "Minimums":
             async with aiohttp.ClientSession() as cs:
-                async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3") as r:
+                async with cs.get(
+                    f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=3"
+                ) as r:
                     load = await r.json()
             if airport[:4].upper().startswith(("K", "P", "0")):
                 if load[airport[:4].upper()] == []:
-                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    embed = discord.Embed(
+                        title="Error 404",
+                        description=f"Didn't found a diagram for {airport[:4].upper()}.",
+                        colour=errorc,
+                    )
                     await ctx.respond(embed=embed)
                 else:
-                    url = load[airport[:4].upper()][0]['pdf_path']
+                    url = load[airport[:4].upper()][0]["pdf_path"]
                     async with aiohttp.ClientSession() as cs:
                         async with cs.get(url) as r:
-                                i = 0
-                                pages = [
-                                ]
+                            i = 0
+                            pages = []
                     for chart in load[airport[:4].upper()]:
-                        url = load[airport[:4].upper()][i]['pdf_path']
+                        url = load[airport[:4].upper()][i]["pdf_path"]
                         async with aiohttp.ClientSession() as cs:
                             async with cs.get(url) as r:
-                                async with aiofiles.open(f"images/charts/chart{i}.pdf", "wb") as f:
+                                async with aiofiles.open(
+                                    f"images/charts/chart{i}.pdf", "wb"
+                                ) as f:
                                     await f.write(await r.content.read())
                         doc = fitz.open(f"images/charts/chart{i}.pdf")
                         for page in doc:
@@ -272,31 +315,54 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                             i += 1
                     i = 0
                     for chart in load[airport[:4].upper()]:
-                        dfile = discord.File(f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg")
+                        dfile = discord.File(
+                            f"images/charts/chart{i}.jpg", filename=f"chart{i}.jpg"
+                        )
                         pages.append(
-                            Page(embeds=[discord.Embed(title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})", colour=cfc)], files=[dfile])
+                            Page(
+                                embeds=[
+                                    discord.Embed(
+                                        title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",
+                                        description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})",
+                                        colour=cfc,
+                                    )
+                                ],
+                                files=[dfile],
+                            )
                         )
                         pages[i].embeds[0].set_image(url=f"attachment://chart{i}.jpg")
                         i += 1
                     paginator = Paginator(pages=pages)
                     await paginator.respond(ctx.interaction)
             else:
-                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(
+                    title="Invalid airport code",
+                    description="Only US airports are allowed as input.",
+                    colour=errorc,
+                )
                 await ctx.respond(embed=embed)
-        if chart == 'Airport Diagram':
+        if chart == "Airport Diagram":
             if airport[:4].upper().startswith(("K", "P", "0")):
                 async with aiohttp.ClientSession() as cs:
-                    async with cs.get(f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2") as r:
+                    async with cs.get(
+                        f"https://api.aviationapi.com/v1/charts?apt={airport[:4].upper()}&group=2"
+                    ) as r:
                         load = await r.json()
 
                 if load[airport[:4].upper()] == []:
-                    embed = discord.Embed(title="Error 404", description=f"Didn't found a diagram for {airport[:4].upper()}.", colour=errorc)
+                    embed = discord.Embed(
+                        title="Error 404",
+                        description=f"Didn't found a diagram for {airport[:4].upper()}.",
+                        colour=errorc,
+                    )
                     await ctx.respond(embed=embed)
                 else:
-                    url = load[airport[:4].upper()][0]['pdf_path']
+                    url = load[airport[:4].upper()][0]["pdf_path"]
                     async with aiohttp.ClientSession() as cs:
                         async with cs.get(url) as r:
-                            async with aiofiles.open(f"images/charts/apd.pdf", "wb") as f:
+                            async with aiofiles.open(
+                                f"images/charts/apd.pdf", "wb"
+                            ) as f:
                                 await f.write(await r.content.read())
                     doc = fitz.open("images/charts/apd.pdf")  # open document
                     i = 0
@@ -304,12 +370,18 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         pix = page.get_pixmap(dpi=150)  # render page to an image
                         pix.save(f"images/charts/apd{i}.jpg")
                         i += 1
-                    embed = discord.Embed(title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc)
+                    embed = discord.Embed(
+                        title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc
+                    )
                     dfile = discord.File("images/charts/apd0.jpg", filename="apd.jpg")
                     embed.set_image(url="attachment://apd.jpg")
                     await ctx.respond(embed=embed, file=dfile)
             else:
-                embed = discord.Embed(title="Invalid airport code", description="Only US airports are allowed as input.", colour=errorc)
+                embed = discord.Embed(
+                    title="Invalid airport code",
+                    description="Only US airports are allowed as input.",
+                    colour=errorc,
+                )
                 await ctx.respond(embed=embed)
 
 

@@ -25,7 +25,10 @@ class FunCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    fun = discord.SlashCommandGroup(name="fun", description="🧩 Commands that are supposed to be fun (highly subjective).")
+    fun = discord.SlashCommandGroup(
+        name="fun",
+        description="🧩 Commands that are supposed to be fun (highly subjective).",
+    )
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -391,9 +394,7 @@ class FunCommands(discord.Cog):
         newText = str(textwrap.fill(newText, 28, max_lines=2))
 
         with Image.new("RGBA", (2048, 512)) as image:
-            font = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf", 144
-            )
+            font = ImageFont.truetype("fonts/Inter-Regular.ttf", 144)
             with Pilmoji(image) as pilmoji:
                 pilmoji.text(
                     (10, 10),
@@ -463,7 +464,11 @@ class FunCommands(discord.Cog):
         os.remove(fileName)
 
     @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
-    @option("limit", description="How back far in time the bot should look for memes(in posts).", required=False)
+    @option(
+        "limit",
+        description="How back far in time the bot should look for memes(in posts).",
+        required=False,
+    )
     @commands.cooldown(1, 15)
     async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
         await ctx.defer()
@@ -528,7 +533,11 @@ class FunCommands(discord.Cog):
     ):
         await ctx.defer()
         if top_text == None and bottom_text == None:
-            embed = discord.Embed(title="You didn't provide any text!", description="Try again, and this time give me some text.", colour=errorc)
+            embed = discord.Embed(
+                title="You didn't provide any text!",
+                description="Try again, and this time give me some text.",
+                colour=errorc,
+            )
             await ctx.respond(embed=embed)
             return
         meme_id = f"meme{random.randint(10, 99)}.png"
@@ -536,19 +545,28 @@ class FunCommands(discord.Cog):
         img = Image.open(meme_id)
         resolution = img.size
         if (img.size[0] > 2560) or (img.size[1] > 2560):
-            embed = discord.Embed(title="You provided too big of an image!", description="Try again, and this time give me a smaller image.", colour=errorc)
+            embed = discord.Embed(
+                title="You provided too big of an image!",
+                description="Try again, and this time give me a smaller image.",
+                colour=errorc,
+            )
             await ctx.respond(embed=embed)
             return
         font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
         font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
         if top_text != None:
-
             with Pilmoji(img) as pilmoji:
                 if bars:
                     draw = ImageDraw.ImageDraw(img)
-                    draw.rectangle(((0, 0), (resolution[0], resolution[1] / 7)), fill=(255, 255, 255))
+                    draw.rectangle(
+                        ((0, 0), (resolution[0], resolution[1] / 7)),
+                        fill=(255, 255, 255),
+                    )
                     pilmoji.text(
-                        (resolution[0] / 2 - (font_bars.getsize(top_text)[0]/2), resolution[1] / 40),
+                        (
+                            resolution[0] / 2 - (font_bars.getsize(top_text)[0] / 2),
+                            resolution[1] / 40,
+                        ),
                         textwrap.fill(top_text, 30, max_lines=3),
                         font=font_bars,
                         fill=(0, 0, 0),
@@ -557,7 +575,10 @@ class FunCommands(discord.Cog):
                     )
                 else:
                     pilmoji.text(
-                        (resolution[0] / 2 + 3 - (font.getsize(top_text)[0]/2), resolution[1] / 40 + 3),
+                        (
+                            resolution[0] / 2 + 3 - (font.getsize(top_text)[0] / 2),
+                            resolution[1] / 40 + 3,
+                        ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -565,7 +586,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 - 3 - (font.getsize(top_text)[0]/2), resolution[1] / 40 - 3),
+                        (
+                            resolution[0] / 2 - 3 - (font.getsize(top_text)[0] / 2),
+                            resolution[1] / 40 - 3,
+                        ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -573,7 +597,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 + 3 - (font.getsize(top_text)[0]/2), resolution[1] / 40 - 3),
+                        (
+                            resolution[0] / 2 + 3 - (font.getsize(top_text)[0] / 2),
+                            resolution[1] / 40 - 3,
+                        ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -581,7 +608,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 - 3 - (font.getsize(top_text)[0]/2), resolution[1] / 40 + 3),
+                        (
+                            resolution[0] / 2 - 3 - (font.getsize(top_text)[0] / 2),
+                            resolution[1] / 40 + 3,
+                        ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -589,7 +619,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 - (font.getsize(top_text)[0]/2), resolution[1] / 40),
+                        (
+                            resolution[0] / 2 - (font.getsize(top_text)[0] / 2),
+                            resolution[1] / 40,
+                        ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -599,9 +632,18 @@ class FunCommands(discord.Cog):
             with Pilmoji(img) as pilmoji:
                 if bars:
                     draw = ImageDraw.ImageDraw(img)
-                    draw.rectangle(((0, resolution[1] - resolution[1] / 7), (resolution[0], resolution[1])), fill=(255, 255, 255))
+                    draw.rectangle(
+                        (
+                            (0, resolution[1] - resolution[1] / 7),
+                            (resolution[0], resolution[1]),
+                        ),
+                        fill=(255, 255, 255),
+                    )
                     pilmoji.text(
-                        (resolution[0] / 2 - (font_bars.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7),
+                        (
+                            resolution[0] / 2 - (font_bars.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7,
+                        ),
                         textwrap.fill(bottom_text, 30, max_lines=3),
                         font=font_bars,
                         fill=(0, 0, 0),
@@ -610,7 +652,10 @@ class FunCommands(discord.Cog):
                     )
                 else:
                     pilmoji.text(
-                        (resolution[0] / 2 + 3 - (font.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7 + 3),
+                        (
+                            resolution[0] / 2 + 3 - (font.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7 + 3,
+                        ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -618,7 +663,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 - 3 - (font.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7 - 3),
+                        (
+                            resolution[0] / 2 - 3 - (font.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7 - 3,
+                        ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -626,7 +674,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 + 3 - (font.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7 - 3),
+                        (
+                            resolution[0] / 2 + 3 - (font.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7 - 3,
+                        ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -634,7 +685,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2 - 3 - (font.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7 + 3),
+                        (
+                            resolution[0] / 2 - 3 - (font.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7 + 3,
+                        ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -642,7 +696,10 @@ class FunCommands(discord.Cog):
                         align="center",
                     )
                     pilmoji.text(
-                        (resolution[0] / 2  - (font.getsize(bottom_text)[0]/2), resolution[1] - resolution[1] / 7),
+                        (
+                            resolution[0] / 2 - (font.getsize(bottom_text)[0] / 2),
+                            resolution[1] - resolution[1] / 7,
+                        ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
@@ -650,7 +707,13 @@ class FunCommands(discord.Cog):
                     )
         img.save(meme_id)
         file = discord.File(meme_id, filename=meme_id)
-        embed = discord.Embed(title="Here's your meme!", colour=cfc).set_image(url=f"attachment://{meme_id}").set_author(name=f"Made by {ctx.author.name}", icon_url=ctx.author.display_avatar)
+        embed = (
+            discord.Embed(title="Here's your meme!", colour=cfc)
+            .set_image(url=f"attachment://{meme_id}")
+            .set_author(
+                name=f"Made by {ctx.author.name}", icon_url=ctx.author.display_avatar
+            )
+        )
         await ctx.respond(file=file, embed=embed)
         os.remove(meme_id)
 

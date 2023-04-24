@@ -754,7 +754,11 @@ Channel: {message.channel.mention}
         await ctx.respond(embed=embed)
 
     @database.command(description="🔦 Execute an SQL Query.")
-    @discord.option(name="database", description="Database to execute query on", choices=["main.db", "va.db"])
+    @discord.option(
+        name="database",
+        description="Database to execute query on",
+        choices=["main.db", "va.db"],
+    )
     @discord.option(name="query", description="Query to execute.")
     @commands.is_owner()
     async def query(self, ctx: discord.ApplicationContext, database: str, query: str):
@@ -767,7 +771,11 @@ Channel: {message.channel.mention}
             await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
 
     @database.command(name="list", description="🧾 List a table of a database.")
-    @discord.option(name="database", description="Database to list a table of.", choices=["main.db", "va.db"])
+    @discord.option(
+        name="database",
+        description="Database to list a table of.",
+        choices=["main.db", "va.db"],
+    )
     @discord.option(name="table", description="Database to list a table of.")
     @commands.is_owner()
     async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
@@ -779,9 +787,6 @@ Channel: {message.channel.mention}
             await ctx.respond(out, ephemeral=True)
         except Exception as e:
             await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
-
-
-
 
 
 def setup(bot):
