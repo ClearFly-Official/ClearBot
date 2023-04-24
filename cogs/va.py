@@ -716,6 +716,10 @@ Destination: **{flight_id2[0][5]}**
                 "SELECT * FROM reports WHERE user_id=?", (str(user.id),)
             )
             reports = await cur.fetchall()
+            if reports == []:
+                embed = discord.Embed(title="No reports found", colour=errorc)
+                await ctx.respond(embed=embed)
+                return
             reports.reverse()
 
         pages = [
