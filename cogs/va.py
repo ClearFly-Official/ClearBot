@@ -973,16 +973,23 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             colour=cfc,
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
         ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png"
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
         )
         emb2 = discord.Embed(
+            title="Cessna Citation X by Laminar Research",
+            colour=cfc,
+            url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
+        )
+        emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
             url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
-        embs = [embm, emb1, emb2]
+        embs = [embm, emb1, emb2, emb3]
         liv_channel = self.bot.get_channel(1041057335449227314)
         overv_channel = self.bot.get_channel(overv_id)
         await ctx.respond("All ready to go!", ephemeral=True)
@@ -1131,16 +1138,23 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             colour=cfc,
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
         ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739508397854831/b738_icon11.png"
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
         )
         emb2 = discord.Embed(
+            title="Cessna Citation X by Laminar Research",
+            colour=cfc,
+            url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
+        )
+        emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
             url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
-        embs = [embm, emb1, emb2]
+        embs = [embm, emb1, emb2, emb3]
         await ctx.respond(embeds=embs)
 
 
