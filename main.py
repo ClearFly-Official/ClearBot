@@ -16,6 +16,7 @@ cfc = 0x6DB2D9  # <- default color
 # cfc = 0xcc8d0e # <- halloween color
 # cfc = 0x00771d # <- christmas color
 errorc = 0xFF0000
+warningc = 0xFFAA00
 
 
 @bot.listen()
