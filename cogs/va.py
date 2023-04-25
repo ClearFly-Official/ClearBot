@@ -1103,7 +1103,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         embed = discord.Embed(title="Successfully banned user!", colour=cfc)
         await ctx.respond(embed=embed)
 
-    @vadmin.command(name="unban", description="🔨 Ban a user from the VA.")
+    @vadmin.command(name="unban", description="🔨 Unban a user from the VA.")
     @discord.option(name="user", description="The user to unban.")
     @commands.has_role(965422406036488282)
     async def va_uunban(self, ctx: discord.ApplicationContext, user: discord.Member):
