@@ -268,7 +268,7 @@ The ClearFly Team
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=warningc,
                         description=f"""
 Hey {user.name}! 
@@ -285,7 +285,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=warningc,
                         description=f"""
 Hey {user.name}! 
@@ -301,7 +301,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be removed <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=warningc,
                         description=f"""
 Hey {user.name}! 
@@ -319,7 +319,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Ano
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
-                        title="Your last filed flight has been removed.",
+                        title="Your last filed flight has been cancelled.",
                         colour=warningc,
                         description=f"""
 Hi there {user.name},
