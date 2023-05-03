@@ -364,37 +364,37 @@ Started bot up on {now}
                 await db.execute(
                     "CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, name TEXT, last INTEGER, now INTEGER)"
                 )
+                cur = await db.execute("SELECT * FROM stats WHERE name='join'")
+                join_stats = await cur.fetchone()
+                if int(join_stats[2]) == 0:
+                    join_pphrase = ""
+                else:
+                    join_perc = abs(
+                        round(
+                            ((int(join_stats[3]) - int(join_stats[2])) / int(join_stats[2]))
+                            * 100,
+                            2,
+                        )
+                    )
+                    if int(join_stats[2]) < int(join_stats[3]):
+                        join_pphrase = f"There was a **{join_perc}**% increase in joins!"
+                    else:
+                        join_pphrase = f"There was a **{join_perc}**% decrease in joins..."
+                embed = discord.Embed(
+                    title="Weekly ClearFly Join Report",
+                    colour=cfc,
+                    description=f"""
+    Joins this week: **{join_stats[3]}**
+    Joins last week: **{join_stats[2]}**
+    {join_pphrase}
+                """,
+                )
+                logchannel = self.bot.get_channel(1001405648828891187)
+                await logchannel.send(embed=embed)
                 await db.execute(
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
                 )
-                cur = await db.execute("SELECT * FROM stats WHERE name='join'")
-                join_stats = await cur.fetchone()
                 await db.commit()
-            if int(join_stats[2]) == 0:
-                join_pphrase = ""
-            else:
-                join_perc = abs(
-                    round(
-                        ((int(join_stats[3]) - int(join_stats[2])) / int(join_stats[2]))
-                        * 100,
-                        2,
-                    )
-                )
-                if int(join_stats[2]) < int(join_stats[3]):
-                    join_pphrase = f"There was a **{join_perc}**% increase in joins!"
-                else:
-                    join_pphrase = f"There was a **{join_perc}**% decrease in joins..."
-            embed = discord.Embed(
-                title="Weekly ClearFly Join Report",
-                colour=cfc,
-                description=f"""
-Joins this week: **{join_stats[3]}**
-Joins last week: **{join_stats[2]}**
-{join_pphrase}
-            """,
-            )
-            logchannel = self.bot.get_channel(1001405648828891187)
-            await logchannel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
