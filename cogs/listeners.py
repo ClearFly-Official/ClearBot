@@ -261,8 +261,8 @@ Started bot up on {now}
     @tasks.loop(minutes=1)
     async def uptime_ping(self):
         async with aiohttp.ClientSession as cs:
-            async with aiohttp.get("https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO") as r:
-                r_txt = r.text# useless var lol
+            async with cs.get("https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO") as r:
+                r_txt = r.text # useless variable moment
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
