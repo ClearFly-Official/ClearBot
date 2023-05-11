@@ -53,6 +53,7 @@ class Listeners(discord.Cog):
         self.rssfeedtres3.start()
         self.rssfeedsf1.start()
         self.db_backup.start()
+        self.uptime_ping.start()
         self.resetRShownSubms.start()
         self.join_stats_loop.start()
         channel = self.bot.get_channel(1001405648828891187)
@@ -256,6 +257,12 @@ Started bot up on {now}
     @tasks.loop(hours=36.0)
     async def resetRShownSubms(self):
         self.bot.rshownsubms = []
+
+    @tasks.loop(minutes=1)
+    async def uptime_ping(self):
+        async with aiohttp.ClientSession as cs:
+            async with aiohttp.get("https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO") as r:
+                r_txt = r.text# useless var lol
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
