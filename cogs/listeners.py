@@ -260,7 +260,7 @@ Started bot up on {now}
 
     @tasks.loop(minutes=1)
     async def uptime_ping(self):
-        async with aiohttp.ClientSession as cs:
+        async with aiohttp.ClientSession() as cs:
             async with cs.get("https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO") as r:
                 r_txt = await r.text # useless variable moment
 
