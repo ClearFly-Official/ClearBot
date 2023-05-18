@@ -1,4 +1,6 @@
+import json
 import os
+import aiofiles
 import discord
 import psutil
 import urllib.parse
@@ -367,15 +369,14 @@ class UtilityCommands(discord.Cog):
             )
             await ctx.respond(embed=embed, view=HelpView(self.bot))
 
-    @utility.command(name="the-team", description="🧑‍🤝‍🧑 Shows The ClearFly Team!")
+    @utility.command(name="the-team", description="👏 Shows The ClearFly Team!")
     async def team(self, ctx: discord.ApplicationContext):
-        embed = discord.Embed(title="The ClearFly Team:", color=cfc)
-        logo = "https://cdn.discordapp.com/attachments/966077223260004402/1057364736607531128/image0.jpg"
-        embed.add_field(name="WolfAir", value="> Founder & Modeler", inline=False)
-        embed.add_field(
-            name="Matt3o0", value="> Bot and SASL developer & Admin", inline=False
-        )
-        embed.add_field(name="DJ", value="> Admin & Advisor", inline=False)
+        with open("dev/team.json", "r") as f:
+            data = json.load(f)
+        embed = discord.Embed(title="The ClearFly Team", color=cfc)
+        logo = data["icon"]
+        for member in data["members"]:
+            embed.add_field(name=member, value=f"> {data['members'][member]['role']}", inline=False)
         embed.set_thumbnail(url=logo)
         await ctx.respond(embed=embed)
 
