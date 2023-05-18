@@ -72,7 +72,7 @@ class DevCommands(discord.Cog):
         return doc_part, path
 
     @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
-    @commands.has_role(965422406036488282)
+    @commands.is_owner()
     @option(
         "doc_part",
         autocomplete=getattrs,
@@ -437,7 +437,7 @@ Reloaded cogs:
         return [unit for unit in units if ctx.value in unit]
 
     @dataref.command(name="list", description="📂 List all the custom datarefs.")
-    @commands.has_role(965422406036488282)
+    @commands.has_role(1108346057957593130)
     async def dreflist(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         async with aiosqlite.connect("main.db") as db:
@@ -478,7 +478,7 @@ Reloaded cogs:
         description="The dataref you want information about.",
         autocomplete=get_datarefs,
     )
-    @commands.has_role(965422406036488282)
+    @commands.has_role(1108346057957593130)
     async def drefsearch(self, ctx: discord.ApplicationContext, dataref: str):
         await ctx.defer()
         if dataref in datarefList:
@@ -548,7 +548,7 @@ Description :
         "unit", description="The unit type of the new dataref.", autocomplete=get_units
     )
     @option("description", description="The description of the new dataref.")
-    @commands.has_role(965422406036488282)
+    @commands.has_role(1108346057957593130)
     async def drefadd(
         self,
         ctx: discord.ApplicationContext,
@@ -615,7 +615,7 @@ Description :
         description="The path that the edited dataref will have(defaults to old one).",
         required=False,
     )
-    @commands.has_role(965422406036488282)
+    @commands.has_role(1108346057957593130)
     async def drefedit(
         self,
         ctx: discord.ApplicationContext,
@@ -669,6 +669,7 @@ Description :
         description="The dataref you want to delete.",
         autocomplete=get_custom_datarefs,
     )
+    @commands.has_role(1108346057957593130)
     async def drefdel(self, ctx: discord.ApplicationContext, dataref):
         await ctx.defer()
         if dataref in customDatarefList:
