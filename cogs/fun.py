@@ -501,7 +501,7 @@ class FunCommands(discord.Cog):
                 subm = random.choice(subms)
                 self.bot.rshownsubms.append(subm.id)
                 embed = discord.Embed(
-                    title=subm.title,
+                    title=subm.title[:256],
                     url="https://reddit.com" + subm.permalink,
                     description=f"<t:{round(int(subm.created_utc))}:R>",
                     colour=cfc,
@@ -564,7 +564,8 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - (round(font_bars.getsize(top_text)[0] / 2)),
+                            round(resolution[0] / 2)
+                            - (round(font_bars.getsize(top_text)[0] / 2)),
                             round(resolution[1] / 40),
                         ),
                         textwrap.fill(top_text, 30, max_lines=3),
@@ -576,7 +577,9 @@ class FunCommands(discord.Cog):
                 else:
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) + 3 - round(font.getsize(top_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            + 3
+                            - round(font.getsize(top_text)[0] / 2),
                             round(resolution[1] / 40) + 3,
                         ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
@@ -587,7 +590,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - 3 - round(font.getsize(top_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - 3
+                            - round(font.getsize(top_text)[0] / 2),
                             round(resolution[1] / 40) - 3,
                         ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
@@ -598,7 +603,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) + 3 - round(font.getsize(top_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            + 3
+                            - round(font.getsize(top_text)[0] / 2),
                             round(resolution[1] / 40) - 3,
                         ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
@@ -609,7 +616,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - 3 - round(font.getsize(top_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - 3
+                            - round(font.getsize(top_text)[0] / 2),
                             round(resolution[1] / 40) + 3,
                         ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
@@ -620,7 +629,8 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - round(font.getsize(top_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - round(font.getsize(top_text)[0] / 2),
                             round(resolution[1] / 40),
                         ),
                         textwrap.fill(top_text.upper(), 30, max_lines=3),
@@ -641,7 +651,8 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - round(font_bars.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - round(font_bars.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7),
                         ),
                         textwrap.fill(bottom_text, 30, max_lines=3),
@@ -653,7 +664,9 @@ class FunCommands(discord.Cog):
                 else:
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) + 3 - round(font.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            + 3
+                            - round(font.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7) + 3,
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
@@ -664,7 +677,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - 3 - round(font.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - 3
+                            - round(font.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7) - 3,
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
@@ -675,7 +690,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) + 3 - round(font.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            + 3
+                            - round(font.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7) - 3,
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
@@ -686,7 +703,9 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - 3 - round(font.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - 3
+                            - round(font.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7) + 3,
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
@@ -697,7 +716,8 @@ class FunCommands(discord.Cog):
                     )
                     pilmoji.text(
                         (
-                            round(resolution[0] / 2) - round(font.getsize(bottom_text)[0] / 2),
+                            round(resolution[0] / 2)
+                            - round(font.getsize(bottom_text)[0] / 2),
                             round(resolution[1] - resolution[1] / 7),
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
