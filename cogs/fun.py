@@ -540,7 +540,8 @@ class FunCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
             return
-        meme_id = f"meme{random.randint(10, 99)}.png"
+        meme_id_n = random.randint(10, 99)
+        meme_id = f"meme{meme_id_n}.png"
         await image.save(meme_id)
         img = Image.open(meme_id)
         resolution = img.size
