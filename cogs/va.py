@@ -802,7 +802,7 @@ Destination: **{flight_id2[0][5]}**
     @commands.cooldown(1, 30)
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if await is_banned(ctx.author):
+        if __name__ == "__main__":
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
@@ -838,8 +838,11 @@ Destination: **{flight_id2[0][5]}**
                 font=font,
                 emoji_position_offset=(0, 20),
             )
-
-        img.save("images/lb.png")
+        w, h = img.size
+        if len(values) < 10:
+            img.crop((0, 0, w, h - 95 * (10 - len(values)))).save("images/lb.png")
+        else:
+            img.save("images/lb.png")
         file = discord.File("images/lb.png", filename="lb.png")
         embed = discord.Embed(
             title="ClearFly VA Leaderboard",
