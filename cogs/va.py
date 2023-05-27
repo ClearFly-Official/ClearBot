@@ -802,7 +802,7 @@ Destination: **{flight_id2[0][5]}**
     @commands.cooldown(1, 30)
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if __name__ == "__main__":
+        if await is_banned(ctx.author):
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
