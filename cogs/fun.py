@@ -545,7 +545,7 @@ class FunCommands(discord.Cog):
         await image.save(meme_id)
         img = Image.open(meme_id)
         resolution = img.size
-        if (img.size[0] > 2560) or (img.size[1] > 2560):
+        if (img.size[0] > 4096) or (img.size[1] > 4096):
             embed = discord.Embed(
                 title="You provided too big of an image!",
                 description="Try again, and this time give me a smaller image.",
