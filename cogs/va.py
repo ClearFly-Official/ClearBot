@@ -1,10 +1,14 @@
 import datetime
+import json
 import textwrap
 import aiohttp
 import discord
 import aiosqlite
 import os
 import random
+import plotly.graph_objects as go
+from io import BytesIO
+import plotly.io as pio
 import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
@@ -795,6 +799,103 @@ Destination: **{flight_id2[0][5]}**
         ]
         paginator = Paginator(pages)
         await paginator.respond(ctx.interaction)
+
+    @user.command(name="map", description="🌍 View a user's flights in map style.")
+    @commands.has_role(1013933799777783849)
+    @discord.option(name="user", description="The user you want to see the flights of.")
+    @discord.option(name="auto_zoom", description="Zoom automatically to fit the flights.")
+    @commands.cooldown(1, 10)
+    async def va_flight_map(self, ctx: discord.ApplicationContext, user: discord.Member = None, auto_zoom: bool = True):
+        if await is_banned(ctx.author):
+            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            await ctx.respond(embed=embed)
+            return
+        if user is None:
+            user = ctx.author
+
+        user_id = str(user.id)
+
+        async with aiosqlite.connect("va.db") as db:
+            cursor = await db.execute(
+                "SELECT * FROM flights WHERE user_id=?", (str(user.id),)
+            )
+            amount = len(await cursor.fetchall())
+            cursor = await db.execute("SELECT origin, destination FROM flights WHERE user_id=?", (user_id,))
+            waypoints_data = await cursor.fetchall()
+
+        with open('airports.json', 'r') as file:
+            airports_data = json.load(file)
+
+        waypoints = []
+
+        for origin, destination in waypoints_data:
+            origin_data = airports_data.get(origin)
+            dest_data = airports_data.get(destination)
+
+            if origin_data and dest_data:
+                origin_coords = (origin_data['lat'], origin_data['lon'])
+                dest_coords = (dest_data['lat'], dest_data['lon'])
+                waypoints.append((origin_coords, dest_coords))
+
+        fig = go.Figure()
+
+        for waypoint in waypoints:
+            fig.add_trace(
+                go.Scattergeo(
+                    lat=[wayp[0] for wayp in waypoint],
+                    lon=[wayp[1] for wayp in waypoint],
+                    mode='lines',
+                    line=dict(color='#6db2d9', width=2),
+                )
+            )
+        if auto_zoom:
+            fig.update_geos(
+                projection_type='natural earth',
+                showland=True, landcolor='#093961',
+                showocean=True, oceancolor='#142533',
+                showcountries=True,
+                showlakes=True, lakecolor='#142533',
+                showframe=False,
+                fitbounds='locations',
+            )
+        else:
+            fig.update_geos(
+                projection_type='equirectangular',
+                showland=True, landcolor='#093961',
+                showocean=True, oceancolor='#142533',
+                showcountries=True,
+                showlakes=True, lakecolor='#142533',
+                showframe=False,
+            )
+        fig.update_layout(showlegend=False)
+        image_bytes = fig.to_image(format='png')
+        image = Image.open(BytesIO(image_bytes))
+
+        grayscale_image = image.convert('L')
+
+        left, upper, right, lower = image.size[0], image.size[1], 0, 0
+        pixels = grayscale_image.load()
+
+        for x in range(image.size[0]):
+            for y in range(image.size[1]):
+                if pixels[x, y] < 255:
+                    left = min(left, x)
+                    upper = min(upper, y)
+                    right = max(right, x)
+                    lower = max(lower, y)
+
+        cropped_image = image.crop((left, upper + 1, right, lower))
+
+        output_filename = 'map.png'
+        cropped_image.save(output_filename)
+
+        with open(output_filename, 'rb') as file:
+            map_file = discord.File(file)
+            embed = discord.Embed(title=f"{user.name}'s flight map", description=f"{user.mention} has completed **{amount}** flight(s)!",colour=cfc).set_image(url=f"attachment://{output_filename}")
+            if auto_zoom:
+                embed.set_footer(text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled.")
+            await ctx.respond(embed=embed, file=map_file)
+        os.remove(output_filename)
 
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"

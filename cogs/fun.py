@@ -574,6 +574,7 @@ class FunCommands(discord.Cog):
                     draw.rectangle(
                         ((0, 0), (resolution[0], round(resolution[1] / 6))),
                         fill=(255, 255, 255),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -585,6 +586,7 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
+                        align='center',
                     )
                 else:
                     pilmoji.text(
@@ -598,6 +600,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -610,6 +613,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -622,6 +626,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -634,6 +639,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -644,6 +650,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        align='center',
                     )
         if bottom_text != None:
             with Pilmoji(img) as pilmoji:
@@ -655,6 +662,7 @@ class FunCommands(discord.Cog):
                             (resolution[0], resolution[1]),
                         ),
                         fill=(255, 255, 255),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -666,6 +674,7 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
+                        align='center',
                     )
                 else:
                     pilmoji.text(
@@ -679,6 +688,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -691,6 +701,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -703,6 +714,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -715,6 +727,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
+                        align='center',
                     )
                     pilmoji.text(
                         (
@@ -725,6 +738,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        align='center',
                     )
         img.save(meme_id)
         file = discord.File(meme_id, filename=meme_id)
