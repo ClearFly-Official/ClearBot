@@ -521,7 +521,7 @@ class FunCommands(discord.Cog):
     @option("image", description="The image you want to 'memify'.")
     @option("top_text", description="The text at the top of your meme.")
     @option("bottom_text", description="The text at the bottom of your meme.")
-    @option("text_size", description="The size of text (default is 100).")
+    @option("text_size", description="The size of text.")
     async def meme(
         self,
         ctx: discord.ApplicationContext,
