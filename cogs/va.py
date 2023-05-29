@@ -857,6 +857,7 @@ Destination: **{flight_id2[0][5]}**
                 showcountries=True,
                 showlakes=True, lakecolor='#142533',
                 showframe=False,
+                coastlinecolor="#2681b4",
                 fitbounds='locations',
             )
         else:
@@ -867,6 +868,7 @@ Destination: **{flight_id2[0][5]}**
                 showcountries=True,
                 showlakes=True, lakecolor='#142533',
                 showframe=False,
+                coastlinecolor="#2681b4",
             )
         fig.update_layout(showlegend=False)
         image_bytes = fig.to_image(format='png')
