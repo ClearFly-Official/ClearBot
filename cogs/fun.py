@@ -598,6 +598,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -611,6 +612,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -624,6 +626,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -637,6 +640,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -685,6 +689,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -698,6 +703,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -711,6 +717,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
@@ -724,6 +731,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
+                        emoji_scale_factor=0.01,
                         fill=(0, 0, 0),
                         align="center",
                     )
