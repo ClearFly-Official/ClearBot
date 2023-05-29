@@ -566,7 +566,7 @@ class FunCommands(discord.Cog):
             text_size = round(resolution[0] * 0.08)
         font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
         font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
-        border_offset = round(text_size / 24)
+        border_offset = round(text_size / 25)
         if top_text != None:
             with Pilmoji(img) as pilmoji:
                 if bars:
