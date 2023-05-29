@@ -560,6 +560,7 @@ class FunCommands(discord.Cog):
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
+            os.remove(meme_id)
             return
         if text_size is None:
             text_size = round(resolution[0] * 0.08)
