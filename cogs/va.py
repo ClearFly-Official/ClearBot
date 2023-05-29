@@ -806,6 +806,7 @@ Destination: **{flight_id2[0][5]}**
     @discord.option(name="auto_zoom", description="Zoom automatically to fit the flights.")
     @commands.cooldown(1, 10)
     async def va_flight_map(self, ctx: discord.ApplicationContext, user: discord.Member = None, auto_zoom: bool = True):
+        await ctx.defer()
         if await is_banned(ctx.author):
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
