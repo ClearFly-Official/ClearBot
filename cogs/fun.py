@@ -585,71 +585,65 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
-                        align="center",
                     )
                 else:
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             + border_offset
-                            - round(font.getsize(top_text)[0] / 2),
+                            - round(font.getsize(top_text.upper())[0] / 2),
                             round(resolution[1] / 40) + border_offset,
                         ),
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             - border_offset
-                            - round(font.getsize(top_text)[0] / 2),
+                            - round(font.getsize(top_text.upper())[0] / 2),
                             round(resolution[1] / 40) - border_offset,
                         ),
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             + border_offset
-                            - round(font.getsize(top_text)[0] / 2),
+                            - round(font.getsize(top_text.upper())[0] / 2),
                             round(resolution[1] / 40) - border_offset,
                         ),
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             - border_offset
-                            - round(font.getsize(top_text)[0] / 2),
+                            - round(font.getsize(top_text.upper())[0] / 2),
                             round(resolution[1] / 40) + border_offset,
                         ),
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
-                            - round(font.getsize(top_text)[0] / 2),
+                            - round(font.getsize(top_text.upper())[0] / 2),
                             round(resolution[1] / 40),
                         ),
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
-                        align="center",
                     )
         if bottom_text != None:
             with Pilmoji(img) as pilmoji:
@@ -672,71 +666,65 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
-                        align="center",
                     )
                 else:
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             + border_offset
-                            - round(font.getsize(bottom_text)[0] / 2),
+                            - round(font.getsize(bottom_text.upper())[0] / 2),
                             round(resolution[1] - resolution[1] / 5) + border_offset,
                         ),
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             - border_offset
-                            - round(font.getsize(bottom_text)[0] / 2),
+                            - round(font.getsize(bottom_text.upper())[0] / 2),
                             round(resolution[1] - resolution[1] / 5) - border_offset,
                         ),
                         textwrap.fill(bottom_text.upper(), 30, max_lines=3),
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             + border_offset
-                            - round(font.getsize(bottom_text)[0] / 2),
+                            - round(font.getsize(bottom_text.upper())[0] / 2),
                             round(resolution[1] - resolution[1] / 5) - border_offset,
                         ),
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             - border_offset
-                            - round(font.getsize(bottom_text)[0] / 2),
+                            - round(font.getsize(bottom_text.upper())[0] / 2),
                             round(resolution[1] - resolution[1] / 5) + border_offset,
                         ),
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
-                            - round(font.getsize(bottom_text)[0] / 2),
+                            - round(font.getsize(bottom_text.upper())[0] / 2),
                             round(resolution[1] - resolution[1] / 5),
                         ),
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
-                        align="center",
                     )
         img.save(meme_id)
         file = discord.File(meme_id, filename=meme_id)
