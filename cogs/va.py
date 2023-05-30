@@ -80,6 +80,7 @@ async def generate_flight_number(
 
     return flight_number
 
+
 async def get_aircraft_from_type(
     aircraft_type: str = "All", output_type: str = "list"
 ) -> list[str] | list[tuple]:
@@ -892,24 +893,48 @@ Destination: **{flight_id2[0][5]}**
                     line=dict(color="#6db2d9", width=2),
                 )
             )
+
+            for coords in waypoint:
+                fig.add_trace(
+                    go.Scattergeo(
+                        lat=[coords[0]],
+                        lon=[coords[1]],
+                        mode="markers",
+                        marker=dict(
+                            symbol="circle",
+                            color="#ffffff",
+                            size=5,
+                            line=dict(color="#6db2d9", width=1),
+                        ),
+                    )
+                )
+
         if auto_zoom:
             fig.update_geos(
-                projection_type='natural earth',
-                showland=True, landcolor='#093961',
-                showocean=True, oceancolor='#142533',
-                showcountries=True, countrycolor="#2681b4",
-                showlakes=True, lakecolor='#142533',
+                projection_type="natural earth",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
                 showframe=False,
                 coastlinecolor="#2681b4",
-                fitbounds='locations',
+                fitbounds="locations",
             )
         else:
             fig.update_geos(
-                projection_type='equirectangular',
-                showland=True, landcolor='#093961',
-                showocean=True, oceancolor='#142533',
-                showcountries=True, countrycolor="#2681b4",
-                showlakes=True, lakecolor='#142533',
+                projection_type="equirectangular",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
                 showframe=False,
                 coastlinecolor="#2681b4",
             )
