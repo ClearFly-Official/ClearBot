@@ -803,9 +803,16 @@ Destination: **{flight_id2[0][5]}**
     @user.command(name="map", description="🌍 View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
     @discord.option(name="user", description="The user you want to see the flights of.")
-    @discord.option(name="auto_zoom", description="Zoom automatically to fit the flights.")
+    @discord.option(
+        name="auto_zoom", description="Zoom automatically to fit the flights."
+    )
     @commands.cooldown(1, 10)
-    async def va_flight_map(self, ctx: discord.ApplicationContext, user: discord.Member = None, auto_zoom: bool = True):
+    async def va_flight_map(
+        self,
+        ctx: discord.ApplicationContext,
+        user: discord.Member = None,
+        auto_zoom: bool = True,
+    ):
         await ctx.defer()
         if await is_banned(ctx.author):
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
@@ -821,10 +828,12 @@ Destination: **{flight_id2[0][5]}**
                 "SELECT * FROM flights WHERE user_id=?", (str(user.id),)
             )
             amount = len(await cursor.fetchall())
-            cursor = await db.execute("SELECT origin, destination FROM flights WHERE user_id=?", (user_id,))
+            cursor = await db.execute(
+                "SELECT origin, destination FROM flights WHERE user_id=?", (user_id,)
+            )
             waypoints_data = await cursor.fetchall()
 
-        with open('airports.json', 'r') as file:
+        with open("airports.json", "r") as file:
             airports_data = json.load(file)
 
         waypoints = []
@@ -834,8 +843,8 @@ Destination: **{flight_id2[0][5]}**
             dest_data = airports_data.get(destination)
 
             if origin_data and dest_data:
-                origin_coords = (origin_data['lat'], origin_data['lon'])
-                dest_coords = (dest_data['lat'], dest_data['lon'])
+                origin_coords = (origin_data["lat"], origin_data["lon"])
+                dest_coords = (dest_data["lat"], dest_data["lon"])
                 waypoints.append((origin_coords, dest_coords))
 
         fig = go.Figure()
@@ -845,36 +854,44 @@ Destination: **{flight_id2[0][5]}**
                 go.Scattergeo(
                     lat=[wayp[0] for wayp in waypoint],
                     lon=[wayp[1] for wayp in waypoint],
-                    mode='lines',
-                    line=dict(color='#6db2d9', width=2),
+                    mode="lines",
+                    line=dict(color="#6db2d9", width=2),
                 )
             )
         if auto_zoom:
             fig.update_geos(
-                projection_type='natural earth',
-                showland=True, landcolor='#093961',
-                showocean=True, oceancolor='#142533',
-                showcountries=True, countrycolor="#2681b4",
-                showlakes=True, lakecolor='#142533',
+                projection_type="natural earth",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
                 showframe=False,
                 coastlinecolor="#2681b4",
-                fitbounds='locations',
+                fitbounds="locations",
             )
         else:
             fig.update_geos(
-                projection_type='equirectangular',
-                showland=True, landcolor='#093961',
-                showocean=True, oceancolor='#142533',
-                showcountries=True, countrycolor="#2681b4",
-                showlakes=True, lakecolor='#142533',
+                projection_type="equirectangular",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
                 showframe=False,
                 coastlinecolor="#2681b4",
             )
         fig.update_layout(showlegend=False)
-        image_bytes = fig.to_image(format='png')
+        image_bytes = fig.to_image(format="png")
         image = Image.open(BytesIO(image_bytes))
 
-        grayscale_image = image.convert('L')
+        grayscale_image = image.convert("L")
 
         left, upper, right, lower = image.size[0], image.size[1], 0, 0
         pixels = grayscale_image.load()
@@ -889,14 +906,20 @@ Destination: **{flight_id2[0][5]}**
 
         cropped_image = image.crop((left, upper + 1, right, lower))
 
-        output_filename = 'map.png'
+        output_filename = "map.png"
         cropped_image.save(output_filename)
 
-        with open(output_filename, 'rb') as file:
+        with open(output_filename, "rb") as file:
             map_file = discord.File(file)
-            embed = discord.Embed(title=f"{user.name}'s flight map", description=f"{user.mention} has completed **{amount}** flight(s)!",colour=cfc).set_image(url=f"attachment://{output_filename}")
+            embed = discord.Embed(
+                title=f"{user.name}'s flight map",
+                description=f"{user.mention} has completed **{amount}** flight(s)!",
+                colour=cfc,
+            ).set_image(url=f"attachment://{output_filename}")
             if auto_zoom:
-                embed.set_footer(text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled.")
+                embed.set_footer(
+                    text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
+                )
             await ctx.respond(embed=embed, file=map_file)
         os.remove(output_filename)
 
@@ -1108,11 +1131,28 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     )
     @discord.option(name="icao", description="The ICAO code of the new aircraft.")
     @discord.option(
+        name="aircraft_type",
+        description="The type of aircraft.",
+        choices=[
+            "Airliner",
+            "GA",
+            "Military",
+            "Cargo",
+            "Helicopter",
+            "Ultra-light",
+            "Glider",
+        ],
+    )
+    @discord.option(
         name="is_official", description="If the aircraft has an official livery."
     )
     @commands.has_role(965422406036488282)
     async def add_ac(
-        self, ctx: discord.ApplicationContext, icao: str, is_official: bool
+        self,
+        ctx: discord.ApplicationContext,
+        icao: str,
+        aircraft_type: str,
+        is_official: bool,
     ):
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
@@ -1128,13 +1168,14 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                 await ctx.respond(embed=embed)
                 return
             await db.execute(
-                "INSERT INTO aircraft (icao, is_official) VALUES (?, ?)",
-                (icao.upper(), is_official),
+                "INSERT INTO aircraft (icao, is_official, type) VALUES (?, ?, ?)",
+                (icao.upper(), is_official, aircraft_type),
             )
             await db.commit()
             embed = (
                 discord.Embed(title="Successfully added new aircraft", colour=cfc)
                 .add_field(name="ICAO", value=icao.upper())
+                .add_field(name="Type", value=aircraft_type)
                 .add_field(name="Is Official?", value=is_official)
             )
             await ctx.respond(embed=embed)
@@ -1182,8 +1223,8 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             aircraft = await cur.fetchall()
 
         aircraft = [
-            f"{aircraft[0]}: **{aircraft[1]}**, official: **{aircraft[2]}**"
-            for aircraft in aircraft
+            f"{i}: **{aircraft[1]}**, type: **{aircraft[3]}**, official: **{aircraft[2]}**"
+            for i, aircraft in enumerate(aircraft, 1)
         ]
         embed = discord.Embed(
             title="List of VA fleet", description="\n".join(aircraft), colour=cfc
