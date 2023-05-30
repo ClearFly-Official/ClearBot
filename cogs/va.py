@@ -80,6 +80,28 @@ async def generate_flight_number(
 
     return flight_number
 
+async def get_aircraft_from_type(
+    aircraft_type: str = "All", output_type: str = "list"
+) -> list[str] | list[tuple]:
+    aircraft_types = ["Airliner", "GA", "All"]
+    if aircraft_type not in aircraft_types:
+        aircraft_type = "All"
+    async with aiosqlite.connect("va.db") as db:
+        if aircraft_type != "All":
+            cur = await db.execute(
+                "SELECT * FROM aircraft WHERE type=?",
+                (aircraft_type,),
+            )
+            aircraft = await cur.fetchall()
+        else:
+            cur = await db.execute("SELECT * FROM aircraft")
+            aircraft = await cur.fetchall()
+    if output_type == "list":
+        aircraft = [ac[1] for ac in aircraft]
+    elif output_type == "IN_SQL":
+        aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
+    return aircraft
+
 
 class VAStartView(discord.ui.View):
     def __init__(self, bot: discord.Bot):
@@ -804,6 +826,11 @@ Destination: **{flight_id2[0][5]}**
     @commands.has_role(1013933799777783849)
     @discord.option(name="user", description="The user you want to see the flights of.")
     @discord.option(
+        name="version",
+        description="The map version you want to use.",
+        choices=["General Aviation", "Airliner", "All"],
+    )
+    @discord.option(
         name="auto_zoom", description="Zoom automatically to fit the flights."
     )
     @commands.cooldown(1, 10)
@@ -811,6 +838,7 @@ Destination: **{flight_id2[0][5]}**
         self,
         ctx: discord.ApplicationContext,
         user: discord.Member = None,
+        version: str = "All",
         auto_zoom: bool = True,
     ):
         await ctx.defer()
@@ -821,16 +849,22 @@ Destination: **{flight_id2[0][5]}**
         if user is None:
             user = ctx.author
 
-        user_id = str(user.id)
-
         async with aiosqlite.connect("va.db") as db:
-            cursor = await db.execute(
-                "SELECT * FROM flights WHERE user_id=?", (str(user.id),)
-            )
-            amount = len(await cursor.fetchall())
-            cursor = await db.execute(
-                "SELECT origin, destination FROM flights WHERE user_id=?", (user_id,)
-            )
+            if version == "General Aviation":
+                cursor = await db.execute(
+                    f"SELECT origin, destination FROM flights WHERE user_id=? AND aircraft IN {await get_aircraft_from_type('GA', 'IN_SQL')}",
+                    (str(user.id),),
+                )
+            elif version == "Airliner":
+                cursor = await db.execute(
+                    f"SELECT origin, destination FROM flights WHERE user_id=? AND aircraft IN {await get_aircraft_from_type('Airliner', 'IN_SQL')}",
+                    (str(user.id),),
+                )
+            else:
+                cursor = await db.execute(
+                    "SELECT origin, destination FROM flights WHERE user_id=?",
+                    (str(user.id),),
+                )
             waypoints_data = await cursor.fetchall()
 
         with open("airports.json", "r") as file:
@@ -866,11 +900,9 @@ Destination: **{flight_id2[0][5]}**
                 showocean=True,
                 oceancolor="#142533",
                 showcountries=True,
-                countrycolor="#2681b4",
                 showlakes=True,
                 lakecolor="#142533",
                 showframe=False,
-                coastlinecolor="#2681b4",
                 fitbounds="locations",
             )
         else:
@@ -881,11 +913,9 @@ Destination: **{flight_id2[0][5]}**
                 showocean=True,
                 oceancolor="#142533",
                 showcountries=True,
-                countrycolor="#2681b4",
                 showlakes=True,
                 lakecolor="#142533",
                 showframe=False,
-                coastlinecolor="#2681b4",
             )
         fig.update_layout(showlegend=False)
         image_bytes = fig.to_image(format="png")
@@ -909,11 +939,18 @@ Destination: **{flight_id2[0][5]}**
         output_filename = "map.png"
         cropped_image.save(output_filename)
 
+        if version == "Airliner":
+            flight_type = "airliner"
+        elif version == "General Aviation":
+            flight_type = "GA"
+        else:
+            flight_type = ""
+
         with open(output_filename, "rb") as file:
             map_file = discord.File(file)
             embed = discord.Embed(
                 title=f"{user.name}'s flight map",
-                description=f"{user.mention} has completed **{amount}** flight(s)!",
+                description=f"{user.mention} has completed **{len(waypoints_data)}** {flight_type} flight(s)!",
                 colour=cfc,
             ).set_image(url=f"attachment://{output_filename}")
             if auto_zoom:
