@@ -103,6 +103,12 @@ async def get_aircraft_from_type(
         aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
     return aircraft
 
+def get_flights_from_user(user: discord.Member) -> list[tuple]:
+    db = sqlite3.connect("va.db")
+    cur = db.execute("SELECT * FROM flights WHERE user_id=?", (str(user.id),))
+    flights = cur.fetchall()
+    return flights
+
 
 class VAStartView(discord.ui.View):
     def __init__(self, bot: discord.Bot):
@@ -991,6 +997,214 @@ Destination: **{flight_id2[0][5]}**
                 )
             await ctx.respond(embed=embed, file=map_file)
         os.remove(output_filename)
+
+    @user.command(name="flight", description="🗺️ View a user's flights in map style.")
+    @commands.has_role(1013933799777783849)
+    @discord.option(name="user", description="The user you want to see the flight of.")
+    @discord.option(
+        name="auto_zoom", description="Zoom automatically to fit the flight."
+    )
+    @commands.cooldown(1, 10)
+    async def va_flight(
+        self,
+        ctx: discord.ApplicationContext,
+        user: discord.Member = None,
+        auto_zoom: bool = True,
+    ):
+        await ctx.defer()
+        if await is_banned(ctx.author):
+            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            await ctx.respond(embed=embed)
+            return
+        if user is None:
+            user = ctx.author
+
+        class VAFlightSelectView(discord.ui.View):
+            def __init__(self, bot):
+                self.bot = bot
+                super().__init__(timeout=120.0)
+
+            async def on_timeout(self):
+                for child in self.children:
+                    child.disabled = True
+                await ctx.edit(view=self)
+
+            flights = [
+                discord.SelectOption(
+                    label=flight[2],
+                    value=str(flight[0]),
+                    description=f"{flight[4]}-{flight[5]}, {flight[3]}",
+                )
+                for flight in get_flights_from_user(user)
+            ]
+
+            @discord.ui.select(
+                placeholder="CF12345",
+                max_values=1,
+                options=flights,
+            )
+            async def select_callback(
+                self, select: discord.SelectMenu, interaction: discord.Interaction
+            ):
+                if interaction.user.id != ctx.author.id:
+                    await interaction.response.send_message(
+                        "Run the command yourself to use it!", ephemeral=True
+                    )
+                    return
+                async with aiosqlite.connect("va.db") as db:
+                    cursor = await db.execute(
+                        "SELECT * FROM flights WHERE id=?",
+                        (int(select.values[0]),),
+                    )
+                    flight_data = await cursor.fetchone()
+
+                with open("airports.json", "r") as file:
+                    airports_data = json.load(file)
+
+                waypoints = []
+                fig = go.Figure()
+
+                origin_data = airports_data.get(flight_data[4])
+                dest_data = airports_data.get(flight_data[5])
+
+                if origin_data and dest_data:
+                    origin_coords = (origin_data["lat"], origin_data["lon"])
+                    dest_coords = (dest_data["lat"], dest_data["lon"])
+                    waypoints.append((origin_coords, dest_coords))
+
+                for waypoint in waypoints:
+                    fig.add_trace(
+                        go.Scattergeo(
+                            lat=[wayp[0] for wayp in waypoint],
+                            lon=[wayp[1] for wayp in waypoint],
+                            mode="lines",
+                            line=dict(color="#6db2d9", width=2),
+                        )
+                    )
+
+                    for i, coords in enumerate(waypoint, 4):
+                        fig.add_trace(
+                            go.Scattergeo(
+                                lat=[coords[0]],
+                                lon=[coords[1]],
+                                mode="markers",
+                                marker=dict(
+                                    symbol="circle",
+                                    color="#ffffff",
+                                    size=5,
+                                    line=dict(color="#6db2d9", width=5),
+                                ),
+                            )
+                        )
+                        fig.add_trace(
+                            go.Scattergeo(
+                                lat=[coords[0]],
+                                lon=[coords[1]],
+                                mode="text",
+                                text=flight_data[i],
+                                textfont=dict(
+                                    color="#ffffff",
+                                    size=32 if auto_zoom else 12,
+                                ),
+                                textposition=["top center"],
+                                line=dict(color="#6db2d9", width=5),
+                            )
+                        )
+
+                if auto_zoom:
+                    fig.update_geos(
+                        resolution=50,
+                        projection_type="natural earth",
+                        showland=True,
+                        landcolor="#093961",
+                        showocean=True,
+                        oceancolor="#142533",
+                        showrivers=True,
+                        rivercolor="#142533",
+                        showcountries=True,
+                        countrycolor="#2681b4",
+                        showlakes=True,
+                        lakecolor="#142533",
+                        showframe=False,
+                        coastlinecolor="#2681b4",
+                        fitbounds="locations",
+                    )
+                else:
+                    fig.update_geos(
+                        resolution=50,
+                        projection_type="equirectangular",
+                        showland=True,
+                        landcolor="#093961",
+                        showocean=True,
+                        oceancolor="#142533",
+                        showrivers=True,
+                        rivercolor="#142533",
+                        showcountries=True,
+                        countrycolor="#2681b4",
+                        showlakes=True,
+                        lakecolor="#142533",
+                        showframe=False,
+                        coastlinecolor="#2681b4",
+                    )
+                fig.update_layout(showlegend=False)
+
+                if auto_zoom:
+                    image_bytes = fig.to_image(format="png", width=2048, height=2048)
+                else:
+                    image_bytes = fig.to_image(format="png", width=2048, height=2048)
+
+                image = Image.open(BytesIO(image_bytes))
+
+                grayscale_image = image.convert("L")
+
+                left, upper, right, lower = image.size[0], image.size[1], 0, 0
+                pixels = grayscale_image.load()
+
+                for x in range(image.size[0]):
+                    for y in range(image.size[1]):
+                        if pixels[x, y] < 255:
+                            left = min(left, x)
+                            upper = min(upper, y)
+                            right = max(right, x)
+                            lower = max(lower, y)
+
+                cropped_image = image.crop((left, upper + 1, right, lower))
+
+                output_filename = f"flight_{user.id}_{select.values[0]}.png"
+                cropped_image.save(output_filename)
+
+                with open(output_filename, "rb") as file:
+                    map_file = discord.File(file)
+                    embed = (
+                        discord.Embed(
+                            title=f"Flight {flight_data[2]}",
+                            description=f"""
+Flight number: **{flight_data[2]}**
+Aircraft: **{flight_data[3]}**
+Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
+Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
+Filed at: <t:{flight_data[6]}:F>
+Notes:
+{flight_data[8]} 
+{flight_data[9]}
+                        """,
+                            colour=cfc,
+                        )
+                        .set_image(url=f"attachment://{output_filename}")
+                        .set_author(
+                            name=f"Flown by {user.name}",
+                            icon_url=user.display_avatar.url,
+                        )
+                    )
+                    if auto_zoom:
+                        embed.set_footer(
+                            text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
+                        )
+                    await interaction.response.edit_message(embed=embed, file=map_file)
+                os.remove(output_filename)
+
+        embed = discord.Embed(title=f"Select one of {user.name}'s flights!", colour=cfc)
+        await ctx.respond(embed=embed, view=VAFlightSelectView(bot=self.bot))
 
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
