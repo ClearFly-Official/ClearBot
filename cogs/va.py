@@ -1,5 +1,6 @@
 import datetime
 import json
+import sqlite3
 import textwrap
 import aiohttp
 import discord
