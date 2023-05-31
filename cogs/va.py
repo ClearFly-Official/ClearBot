@@ -941,9 +941,9 @@ Destination: **{flight_id2[0][5]}**
         fig.update_layout(showlegend=False)
 
         if auto_zoom:
-            image_bytes = fig.to_image(format="png", width=1024, height=1024)
+            image_bytes = fig.to_image(format="png", width=2048, height=2048)
         else:
-            image_bytes = fig.to_image(format="png", width=1536, height=1536)
+            image_bytes = fig.to_image(format="png", width=3072, height=3072)
 
         image = Image.open(BytesIO(image_bytes))
 
