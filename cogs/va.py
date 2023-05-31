@@ -1047,6 +1047,7 @@ Destination: **{flight_id2[0][5]}**
             async def select_callback(
                 self, select: discord.SelectMenu, interaction: discord.Interaction
             ):
+                await interaction.response.defer()
                 if interaction.user.id != ctx.author.id:
                     await interaction.response.send_message(
                         "Run the command yourself to use it!", ephemeral=True
