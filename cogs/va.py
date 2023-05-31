@@ -939,7 +939,12 @@ Destination: **{flight_id2[0][5]}**
                 coastlinecolor="#2681b4",
             )
         fig.update_layout(showlegend=False)
-        image_bytes = fig.to_image(format="png")
+
+        if auto_zoom:
+            image_bytes = fig.to_image(format="png", width=1024, height=1024)
+        else:
+            image_bytes = fig.to_image(format="png", width=1536, height=1536)
+
         image = Image.open(BytesIO(image_bytes))
 
         grayscale_image = image.convert("L")
