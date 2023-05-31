@@ -911,11 +911,14 @@ Destination: **{flight_id2[0][5]}**
 
         if auto_zoom:
             fig.update_geos(
+                resolution=50,
                 projection_type="natural earth",
                 showland=True,
                 landcolor="#093961",
                 showocean=True,
                 oceancolor="#142533",
+                showrivers=True,
+                rivercolor="#142533",
                 showcountries=True,
                 countrycolor="#2681b4",
                 showlakes=True,
@@ -926,11 +929,14 @@ Destination: **{flight_id2[0][5]}**
             )
         else:
             fig.update_geos(
+                resolution=50,
                 projection_type="equirectangular",
                 showland=True,
                 landcolor="#093961",
                 showocean=True,
                 oceancolor="#142533",
+                showrivers=True,
+                rivercolor="#142533",
                 showcountries=True,
                 countrycolor="#2681b4",
                 showlakes=True,
@@ -943,7 +949,7 @@ Destination: **{flight_id2[0][5]}**
         if auto_zoom:
             image_bytes = fig.to_image(format="png", width=2048, height=2048)
         else:
-            image_bytes = fig.to_image(format="png", width=3072, height=3072)
+            image_bytes = fig.to_image(format="png", width=2048, height=2048)
 
         image = Image.open(BytesIO(image_bytes))
 
