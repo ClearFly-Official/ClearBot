@@ -1049,7 +1049,7 @@ Destination: **{flight_id2[0][5]}**
             ):
                 await interaction.response.defer()
                 if interaction.user.id != ctx.author.id:
-                    await interaction.response.send_message(
+                    await ctx.respond(
                         "Run the command yourself to use it!", ephemeral=True
                     )
                     return
@@ -1202,7 +1202,7 @@ Notes:
                         embed.set_footer(
                             text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
                         )
-                    await interaction.response.edit_message(embed=embed, file=map_file)
+                    await ctx.edit(embed=embed, file=map_file)
                 os.remove(output_filename)
 
         embed = discord.Embed(title=f"Select one of {user.name}'s flights!", colour=cfc)
