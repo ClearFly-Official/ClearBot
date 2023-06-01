@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import sqlite3
 import textwrap
 import aiohttp
@@ -53,6 +54,20 @@ async def is_banned(user: discord.User | discord.Member):
         return False
 
 
+async def has_flights(user: discord.User | discord.Member):
+    async with aiosqlite.connect("va.db") as db:
+        cur = await db.execute(
+            "SELECT id FROM flights WHERE user_id=?", (str(user.id),)
+        )
+        flights = await cur.fetchall()
+
+    print(flights)
+    if (flights == []) or (flights is None):
+        return False
+    else:
+        return True
+
+
 async def generate_flight_number(
     aircraft_icao, origin_icao, destination_icao, prefix="CF"
 ):
@@ -104,11 +119,46 @@ async def get_aircraft_from_type(
         aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
     return aircraft
 
+
 def get_flights_from_user(user: discord.Member) -> list[tuple]:
     db = sqlite3.connect("va.db")
     cur = db.execute("SELECT * FROM flights WHERE user_id=?", (str(user.id),))
     flights = cur.fetchall()
     return flights
+
+
+def calculate_distance(
+    loc1: tuple[float, float], loc2: tuple[float, float], unit: str = "NM"
+) -> float:
+    lat1 = math.radians(loc1[0])
+    lon1 = math.radians(loc1[1])
+    lat2 = math.radians(loc2[0])
+    lon2 = math.radians(loc2[1])
+
+    radius_values = {
+        "NM": 3634.4492440605,
+        "KM": 6371.0,
+        "MI": 3958.7558657441,
+        "FT": 20902230.97,
+        "YD": 6974076.11549,
+    }
+
+    radius = radius_values.get(unit.upper())
+    if radius is None:
+        raise ValueError("Invalid unit")
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    # Haversine formula
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+    )
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = radius * c
+
+    return distance
 
 
 class VAStartView(discord.ui.View):
@@ -792,22 +842,30 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
+
         if user is None:
             user = ctx.author
+
+        if not await has_flights(user):
+            embed = discord.Embed(
+                title="No flights found",
+                description="This user has no flights filed.",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            return
+
+        with open("airports.json", "r") as file:
+            airports_data = json.load(file)
+
         flights = []
         async with aiosqlite.connect("va.db") as db:
             cursor = await db.execute(
                 "SELECT * FROM flights WHERE user_id=?", (str(user.id),)
             )
             rows = await cursor.fetchall()
-            if rows == []:
-                embed = discord.Embed(
-                    title="No flights found for this user!", colour=errorc
-                )
-                await ctx.respond(embed=embed)
-                return
             flights = [
-                f"**{i}**: **{row[2]}**, **{row[3]}**, **{row[4]}** -> **{row[5]}**{row[8]}, *filed <t:{row[6]}:f>*{row[9]}"
+                f"**{i}**: **{row[2]}**, **{row[3]}**, **{row[4]}** -> **{row[5]}**{row[8]} (**{round(calculate_distance((airports_data.get(row[4])['lat'], airports_data.get(row[4])['lon']),(airports_data.get(row[5])['lat'], airports_data.get(row[5])['lon'])))}**nm), *filed <t:{row[6]}:f>*{row[9]}"
                 for i, row in enumerate(rows, 1)
             ]
 
@@ -854,8 +912,18 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
+
         if user is None:
             user = ctx.author
+
+        if not await has_flights(user):
+            embed = discord.Embed(
+                title="No flights found",
+                description="This user has no flights filed.",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            return
 
         async with aiosqlite.connect("va.db") as db:
             if version == "General Aviation":
@@ -1017,8 +1085,18 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
+
         if user is None:
             user = ctx.author
+
+        if not await has_flights(user):
+            embed = discord.Embed(
+                title="No flights found",
+                description="This user has no flights filed.",
+                colour=errorc,
+            )
+            await ctx.respond(embed=embed)
+            return
 
         class VAFlightSelectView(discord.ui.View):
             def __init__(self, bot):
@@ -1185,7 +1263,8 @@ Flight number: **{flight_data[2]}**
 Aircraft: **{flight_data[3]}**
 Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
 Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
-Filed at: <t:{flight_data[6]}:F>
+Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
+Filed at: **<t:{flight_data[6]}:F>**
 Notes:
 {flight_data[8]} 
 {flight_data[9]}
@@ -1308,7 +1387,61 @@ Notes:
             )
             diversions = (await cur.fetchone())[0]
 
+            cur = await db.execute("SELECT origin, destination FROM flights")
+            origins_dests = await cur.fetchall()
+
         avg_flights_per_user = total_flights / total_users if total_users else 0
+
+        with open("airports.json", "r") as file:
+            airports_data = json.load(file)
+
+        total_distance_nm = 0
+        total_distance_km = 0
+        total_distance_mi = 0
+        for flight in origins_dests:
+            total_distance_nm += calculate_distance(
+                (
+                    airports_data.get(flight[0])["lat"],
+                    airports_data.get(flight[0])["lon"],
+                ),
+                (
+                    airports_data.get(flight[1])["lat"],
+                    airports_data.get(flight[1])["lon"],
+                ),
+            )
+            total_distance_km += calculate_distance(
+                (
+                    airports_data.get(flight[0])["lat"],
+                    airports_data.get(flight[0])["lon"],
+                ),
+                (
+                    airports_data.get(flight[1])["lat"],
+                    airports_data.get(flight[1])["lon"],
+                ),
+                unit="KM",
+            )
+            total_distance_mi += calculate_distance(
+                (
+                    airports_data.get(flight[0])["lat"],
+                    airports_data.get(flight[0])["lon"],
+                ),
+                (
+                    airports_data.get(flight[1])["lat"],
+                    airports_data.get(flight[1])["lon"],
+                ),
+                unit="MI",
+            )
+
+        if total_distance_km > 0:
+            distance_compare_phrase = f"{round((total_distance_km/12742)*100 ,1)}% of the diameter of the Earth"
+        if total_distance_km > 13000:
+            distance_compare_phrase = f"{round((total_distance_km/17964)*100 ,1)}% of the A350's maximum range"
+        if total_distance_km > 18000:
+            distance_compare_phrase = (
+                f"{round((total_distance_km/40075)*100 ,1)}% of the equator's length"
+            )
+        if total_distance_km > 384400:
+            distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
 
         embed = discord.Embed(title="ClearFly VA Statistics", colour=cfc)
         embed.add_field(
@@ -1317,6 +1450,7 @@ Notes:
             value=f"""
 Number of users: **{total_users}**
 Average flights per user: **{round(avg_flights_per_user)}**
+Total distance flown by users: **{round(total_distance_nm, 1)}**nm, **{round(total_distance_km, 1)}**km, **{round(total_distance_mi, 1)}**mi *that's {distance_compare_phrase}!*
 *Check who has filed the most flights with the </va leaderboard:1016059999056826479> commmand!*
         """,
         )
