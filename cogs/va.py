@@ -1562,6 +1562,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             "Glider",
         ],
     )
+    @discord.option(name="crz_speed", description="Aircraft cruise speed in TAS.")
     @discord.option(
         name="is_official", description="If the aircraft has an official livery."
     )
@@ -1571,6 +1572,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         ctx: discord.ApplicationContext,
         icao: str,
         aircraft_type: str,
+        crz_speed: int,
         is_official: bool,
     ):
         async with aiosqlite.connect("va.db") as db:
@@ -1587,14 +1589,15 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                 await ctx.respond(embed=embed)
                 return
             await db.execute(
-                "INSERT INTO aircraft (icao, is_official, type) VALUES (?, ?, ?)",
-                (icao.upper(), is_official, aircraft_type),
+                "INSERT INTO aircraft (icao, is_official, type, crz_speed) VALUES (?, ?, ?, ?)",
+                (icao.upper(), is_official, aircraft_type, crz_speed),
             )
             await db.commit()
             embed = (
                 discord.Embed(title="Successfully added new aircraft", colour=cfc)
                 .add_field(name="ICAO", value=icao.upper())
                 .add_field(name="Type", value=aircraft_type)
+                .add_field(name="CRZ speed", value=f"{crz_speed}kts (TAS)")
                 .add_field(name="Is Official?", value=is_official)
             )
             await ctx.respond(embed=embed)
