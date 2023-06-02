@@ -1137,6 +1137,11 @@ Destination: **{flight_id2[0][5]}**
                         (int(select.values[0]),),
                     )
                     flight_data = await cursor.fetchone()
+                    cursor = await db.execute(
+                        "SELECT crz_speed, type FROM aircraft WHERE icao=?",
+                        (flight_data[3],),
+                    )
+                    aircraft_data = await cursor.fetchone()
 
                 with open("airports.json", "r") as file:
                     airports_data = json.load(file)
@@ -1250,9 +1255,19 @@ Destination: **{flight_id2[0][5]}**
 
                 cropped_image = image.crop((left, upper + 1, right, lower))
 
+                if aircraft_data[1] == "GA":
+                    flight_time_buffer = 0.3
+                elif aircraft_data[1] == "Airliner":
+                    flight_time_buffer = 0.4
+                else:
+                    flight_time_buffer = 0.3
+
                 output_filename = f"flight_{user.id}_{select.values[0]}.png"
                 cropped_image.save(output_filename)
-
+                if (flight_data[8] == "") or (flight_data[9] == ""):
+                    notes = "*No Notes*"
+                else:
+                    notes = flight_data[8] + "\n" + flight_data[9]
                 with open(output_filename, "rb") as file:
                     map_file = discord.File(file)
                     embed = (
@@ -1264,10 +1279,10 @@ Aircraft: **{flight_data[3]}**
 Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
 Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
 Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
+Estimated flight time: **{round(calculate_distance(origin_coords, dest_coords)/aircraft_data[0], 1)+flight_time_buffer}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
 Filed at: **<t:{flight_data[6]}:F>**
 Notes:
-{flight_data[8]} 
-{flight_data[9]}
+{notes}
                         """,
                             colour=cfc,
                         )
