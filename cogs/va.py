@@ -75,7 +75,7 @@ async def generate_flight_number(
         cur = await db.execute("SELECT icao FROM aircraft")
         aircraft = await cur.fetchall()
         aircraft = [aircraft[0] for aircraft in aircraft]
-    abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
     org_num = 0
     for l in list(origin_icao):

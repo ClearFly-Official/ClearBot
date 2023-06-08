@@ -13,5 +13,5 @@ emoji-country-flag
 Pillow
 feedparser
 psutil
-plotpy
+plotly
 kaleido
