@@ -346,9 +346,7 @@ The ClearFly Team
             flights = await cur.fetchall()
 
             for flight in flights:
-                if ((round(time.time()) - flight[6]) > 3_600) and (
-                    (round(time.time()) - flight[6]) < 4_200
-                ):
+                if ((round(time.time()) - flight[6]) > 3_600) and ((round(time.time()) - flight[6]) < 4_200):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -361,11 +359,11 @@ We have noticed that you have not completed your last flight yet. Please remembe
 Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. 
 
 **THIS IS YOUR __LAST__ REMINDER**
-                            """,
+                                """,
                     )
-                if ((round(time.time()) - flight[6]) > 21_600) and (
-                    (round(time.time()) - flight[6]) < 22_200
-                ):
+                    await fbo.send(user.mention, embed=embed)
+
+                if ((round(time.time()) - flight[6]) > 21_600) and ((round(time.time()) - flight[6]) < 22_200):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -376,12 +374,11 @@ Hey {user.name}!
 
 We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
 Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You will be reminded one last time before it's too late <t:{flight[6]+82_800}:R>
-                            """,
+                                """,
                     )
                     await fbo.send(user.mention, embed=embed)
-                if ((round(time.time()) - flight[6]) > 43_200) and (
-                    (round(time.time()) - flight[6]) < 43_800
-                ):
+
+                if ((round(time.time()) - flight[6]) > 43_200) and ((round(time.time()) - flight[6]) < 43_800):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -392,14 +389,13 @@ Hey {user.name}!
 
 We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
 Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Another reminder will be sent <t:{flight[6]+64_800}:R> if you haven't completed it yet.
-                            """,
+                                """,
                     )
                     await fbo.send(user.mention, embed=embed)
+
                 if (round(time.time()) - flight[6]) > 86_400:
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
-                    await db.execute(
-                        "DELETE FROM reports WHERE flight_id=?", (flight[0],)
-                    )
+                    await db.execute("DELETE FROM reports WHERE flight_id=?", (flight[0],))
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -410,11 +406,12 @@ Hi there {user.name},
 
 Around <t:{flight[6]}:R> you filed a flight, but never marked it as completed. To prevent people filing a flight, but never actually completing it, we automatically cancel it after 24 hours. 
 This sadly happened to your last flight. Please remember to mark your flight as completed next time!
-                            """,
+                                """,
                     )
                     await fbo.send(user.mention, embed=embed)
 
             await db.commit()
+
 
     @flight.command(name="file", description="🗳️ File a flight for the ClearFly VA.")
     @discord.option(
