@@ -11,6 +11,7 @@ from discord.ext import commands
 from main import cfc, errorc, cogs
 from discord.ext.pages import Page, Paginator
 
+admin_role_id = 965422406036488282
 
 async def getattrs(ctx):
     input = ctx.options["doc_part"]
@@ -72,7 +73,7 @@ class DevCommands(discord.Cog):
         return doc_part, path
 
     @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
-    @commands.is_owner()
+    @commands.has_role(admin_role_id)
     @option(
         "doc_part",
         autocomplete=getattrs,
@@ -152,7 +153,7 @@ Reloaded cogs:
         await ctx.respond(embed=embed, view=CogSelectView(bot=self.bot))
 
     @dev.command(name="restart", description="🔁 Restarst the bot.")
-    @commands.is_owner()
+    @commands.has_role(admin_role_id)
     async def restart(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(title="Restarting bot...", color=cfc)
         await ctx.respond(embed=embed)
@@ -162,7 +163,7 @@ Reloaded cogs:
         name="update",
         description="⬇️ Pull the latest version of the bot from the GitHub repo.",
     )
-    @commands.is_owner()
+    @commands.has_role(admin_role_id)
     async def gitupdate(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         embed = discord.Embed(
@@ -689,7 +690,7 @@ Description :
         await ctx.respond(embed=embed)
 
     @discord.message_command(name="Message Info")
-    @commands.has_role(965422406036488282)
+    @commands.has_role(admin_role_id)
     async def msginfo(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.respond(
             f"""
@@ -778,7 +779,7 @@ Channel: {message.channel.mention}
         choices=["main.db", "va.db"],
     )
     @discord.option(name="table", description="Database to list a table of.")
-    @commands.is_owner()
+    @commands.has_role(admin_role_id)
     async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
         out = None
         try:
