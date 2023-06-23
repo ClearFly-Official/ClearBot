@@ -261,7 +261,9 @@ Started bot up on {now}
     @tasks.loop(minutes=1)
     async def uptime_ping(self):
         async with aiohttp.ClientSession() as cs:
-            async with cs.get("https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO") as r:
+            async with cs.get(
+                "https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO"
+            ) as r:
                 pass
 
     @commands.Cog.listener("on_message")
@@ -378,15 +380,22 @@ Started bot up on {now}
                 else:
                     join_perc = abs(
                         round(
-                            ((int(join_stats[3]) - int(join_stats[2])) / int(join_stats[2]))
+                            (
+                                (int(join_stats[3]) - int(join_stats[2]))
+                                / int(join_stats[2])
+                            )
                             * 100,
                             2,
                         )
                     )
                     if int(join_stats[2]) < int(join_stats[3]):
-                        join_pphrase = f"There was a **{join_perc}**% increase in joins!"
+                        join_pphrase = (
+                            f"There was a **{join_perc}**% increase in joins!"
+                        )
                     else:
-                        join_pphrase = f"There was a **{join_perc}**% decrease in joins..."
+                        join_pphrase = (
+                            f"There was a **{join_perc}**% decrease in joins..."
+                        )
                 embed = discord.Embed(
                     title="Weekly ClearFly Join Report",
                     colour=cfc,
@@ -922,7 +931,11 @@ After: **{after.category}**
             )
             await ctx.respond(embed=embed)
             notHandled = False
-        if notHandled == True:
+        if ctx.command.name == "dev eval":
+            notHandled = False
+        if ctx.command.name.startswith("dev database"):
+            notHandled = False
+        if notHandled:
             bot_author = self.bot.get_user(668874138160594985)
             alert_emb = discord.Embed(
                 title="Hey there!",
