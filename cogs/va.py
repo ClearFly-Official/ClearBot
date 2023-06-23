@@ -346,7 +346,7 @@ The ClearFly Team
             flights = await cur.fetchall()
 
             for flight in flights:
-                if ((round(time.time()) - flight[6]) > 3_600) and ((round(time.time()) - flight[6]) < 4_200):
+                if (round(time.time() - flight[6]) >= 82_800) and (round(time.time() - flight[6]) <= 83_200):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -363,7 +363,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                     )
                     await fbo.send(user.mention, embed=embed)
 
-                if ((round(time.time()) - flight[6]) > 21_600) and ((round(time.time()) - flight[6]) < 22_200):
+                if (round(time.time() - flight[6]) >= 64_800) and (round(time.time() - flight[6]) <= 65_200):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -378,7 +378,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You
                     )
                     await fbo.send(user.mention, embed=embed)
 
-                if ((round(time.time()) - flight[6]) > 43_200) and ((round(time.time()) - flight[6]) < 43_800):
+                if (round(time.time() - flight[6]) >= 43_200) and (round(time.time() - flight[6]) <= 43_800):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
