@@ -61,7 +61,6 @@ async def has_flights(user: discord.User | discord.Member):
         )
         flights = await cur.fetchall()
 
-    print(flights)
     if (flights == []) or (flights is None):
         return False
     else:
