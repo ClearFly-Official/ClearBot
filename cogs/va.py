@@ -976,8 +976,7 @@ Destination: **{flight_id2[0][5]}**
                             color="#ffffff",
                             size=5,
                             line=dict(color="#6db2d9", width=1),
-                        ),
-                        locationmode=""
+                        )
                     )
                 )
 
