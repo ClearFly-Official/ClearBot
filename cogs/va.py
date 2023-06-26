@@ -961,7 +961,7 @@ Destination: **{flight_id2[0][5]}**
                     lat=[wayp[0] for wayp in waypoint],
                     lon=[wayp[1] for wayp in waypoint],
                     mode="lines",
-                    line=dict(color="#6db2d9", width=2),
+                    line=dict(color="#6db2d9", width=2, wrap=True),
                 )
             )
 
@@ -977,6 +977,7 @@ Destination: **{flight_id2[0][5]}**
                             size=5,
                             line=dict(color="#6db2d9", width=1),
                         ),
+                        locationmode=""
                     )
                 )
 
