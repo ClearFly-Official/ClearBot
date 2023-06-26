@@ -18,7 +18,6 @@ from main import cfc, errorc
 
 adminids = [668874138160594985, 871893179450925148, 917477940650971227]
 fsnews = 1066124540318588928  # *CB test 1001401783689678868
-avnews = 1073311685357604956
 
 
 class DeleteMsgView(discord.ui.View):
@@ -202,41 +201,6 @@ Started bot up on {now}
                 await channel.send(
                     f"""
     **{feed.get('title')}**
-
-    {feed.get('link')}
-                    """
-                )
-        except Exception as e:
-            if isinstance(e, RemoteDisconnected):
-                pass
-            else:
-                raise
-
-    @tasks.loop(minutes=7, reconnect=False)
-    async def rssfeedsf1(self):
-        try:
-            channel = self.bot.get_channel(avnews)
-            blog_feed = feedparser.parse("https://simpleflying.com/feed/")
-            feed = dict(blog_feed.entries[0])
-            async with aiosqlite.connect("main.db") as db:
-                curs = await db.cursor()
-                lastID = await curs.execute(
-                    "SELECT * FROM RSS_SimpleFlying WHERE id=?", (1,)
-                )
-                lastID = await lastID.fetchone()
-            if lastID[1] == feed.get("id"):
-                return
-            else:
-                async with aiosqlite.connect("main.db") as db:
-                    cursor = await db.cursor()
-                    await cursor.execute(
-                        "UPDATE RSS_SimpleFlying SET lastID=? WHERE id=1",
-                        (feed.get("id"),),
-                    )
-                    await db.commit()
-                await channel.send(
-                    f"""
-    **{feed.get('title').replace('&quot;', '"')}**
 
     {feed.get('link')}
                     """
