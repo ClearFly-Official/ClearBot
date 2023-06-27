@@ -1070,7 +1070,9 @@ Destination: **{flight_id2[0][5]}**
             await ctx.respond(embed=embed, file=map_file)
         os.remove(output_filename)
 
-    @user.command(name="flight", description="🗺️ View a user's flights in map style.")
+    @user.command(
+        name="flight", description="🗺️ View a user's flights in map style."
+    )
     @commands.has_role(1013933799777783849)
     @discord.option(name="user", description="The user you want to see the flight of.")
     @discord.option(
@@ -1105,8 +1107,7 @@ Destination: **{flight_id2[0][5]}**
         flights = [[]]
         flight_list_number = 0
         for flight in get_flights_from_user(user):
-            if flight_count < 25:
-                flight_count += 1
+            if flight_count < 10:
                 flights[flight_list_number].append(
                     discord.SelectOption(
                         label=flight[2],
@@ -1114,10 +1115,20 @@ Destination: **{flight_id2[0][5]}**
                         description=f"{flight[4]}-{flight[5]}, {flight[3]}",
                     )
                 )
+                flight_count += 1
             else:
                 flight_count = 0
                 flight_list_number += 1
-                flights.append([])
+                flights.append(
+                    [
+                        discord.SelectOption(
+                            label=flight[2],
+                            value=str(flight[0]),
+                            description=f"{flight[4]}-{flight[5]}, {flight[3]}",
+                        )
+                    ]
+                )
+                flight_count += 1
 
         flight_list_number = 0
 
@@ -1344,9 +1355,23 @@ Notes:
                     else:
                         if (self.flight_list_number == 0) and (child.label == "<"):
                             child.disabled = True
+                        elif child.label.endswith(str(len(self.flights))):
+                            child.label = (
+                                f"{self.flight_list_number+1}/{len(self.flights)}"
+                            )
                         else:
                             child.disabled = False
                 await interaction.response.edit_message(view=self)
+
+            @discord.ui.button(
+                label=f"{flight_list_number+1}/{len(flights)}",
+                style=discord.ButtonStyle.secondary,
+                disabled=True,
+            )
+            async def page_button(
+                self, button: discord.Button, interaction: discord.Interaction
+            ):
+                pass
 
             @discord.ui.button(
                 label=">", style=discord.ButtonStyle.primary, disabled=is_disabled()
@@ -1365,6 +1390,10 @@ Notes:
                             child.label == ">"
                         ):
                             child.disabled = True
+                        elif child.label.endswith(str(len(self.flights))):
+                            child.label = (
+                                f"{self.flight_list_number+1}/{len(self.flights)}"
+                            )
                         else:
                             child.disabled = False
 
@@ -1377,6 +1406,7 @@ Notes:
                 bot=self.bot, flights=flights, flight_list_number=flight_list_number
             ),
         )
+
 
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
