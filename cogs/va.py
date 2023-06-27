@@ -345,7 +345,9 @@ The ClearFly Team
             flights = await cur.fetchall()
 
             for flight in flights:
-                if (round(time.time() - flight[6]) >= 82_800) and (round(time.time() - flight[6]) <= 83_400):
+                if (round(time.time() - flight[6]) >= 82_800) and (
+                    round(time.time() - flight[6]) <= 83_400
+                ):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -362,7 +364,9 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                     )
                     await fbo.send(user.mention, embed=embed)
 
-                if (round(time.time() - flight[6]) >= 64_800) and (round(time.time() - flight[6]) <= 65_400):
+                if (round(time.time() - flight[6]) >= 64_800) and (
+                    round(time.time() - flight[6]) <= 65_400
+                ):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -377,7 +381,9 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You
                     )
                     await fbo.send(user.mention, embed=embed)
 
-                if (round(time.time() - flight[6]) >= 43_200) and (round(time.time() - flight[6]) <= 43_800):
+                if (round(time.time() - flight[6]) >= 43_200) and (
+                    round(time.time() - flight[6]) <= 43_800
+                ):
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -394,7 +400,9 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Ano
 
                 if (round(time.time()) - flight[6]) > 86_400:
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
-                    await db.execute("DELETE FROM reports WHERE flight_id=?", (flight[0],))
+                    await db.execute(
+                        "DELETE FROM reports WHERE flight_id=?", (flight[0],)
+                    )
                     user = self.bot.get_user(int(flight[1]))
                     fbo = self.bot.get_channel(fbo_id)
                     embed = discord.Embed(
@@ -410,7 +418,6 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     await fbo.send(user.mention, embed=embed)
 
             await db.commit()
-
 
     @flight.command(name="file", description="🗳️ File a flight for the ClearFly VA.")
     @discord.option(
@@ -976,7 +983,7 @@ Destination: **{flight_id2[0][5]}**
                             color="#ffffff",
                             size=5,
                             line=dict(color="#6db2d9", width=1),
-                        )
+                        ),
                     )
                 )
 
@@ -1094,8 +1101,44 @@ Destination: **{flight_id2[0][5]}**
             await ctx.respond(embed=embed)
             return
 
+        flight_count = 0
+        flights = [[]]
+        flight_list_number = 0
+        for flight in get_flights_from_user(user):
+            if flight_count < 25:
+                flight_count += 1
+                flights[flight_list_number].append(
+                    discord.SelectOption(
+                        label=flight[2],
+                        value=str(flight[0]),
+                        description=f"{flight[4]}-{flight[5]}, {flight[3]}",
+                    )
+                )
+            else:
+                flight_count = 0
+                flight_list_number += 1
+                flights.append([])
+
+        flight_list_number = 0
+
+        def get_flights():
+            return flights[flight_list_number]
+
+        def is_disabled():
+            if len(flights) > 1:
+                return False
+            else:
+                return True
+
         class VAFlightSelectView(discord.ui.View):
-            def __init__(self, bot):
+            def __init__(
+                self,
+                bot: discord.Bot,
+                flights: list[list[str]],
+                flight_list_number: int,
+            ):
+                self.flights = flights
+                self.flight_list_number = flight_list_number
                 self.bot = bot
                 super().__init__(timeout=120.0)
 
@@ -1104,19 +1147,10 @@ Destination: **{flight_id2[0][5]}**
                     child.disabled = True
                 await ctx.edit(view=self)
 
-            flights = [
-                discord.SelectOption(
-                    label=flight[2],
-                    value=str(flight[0]),
-                    description=f"{flight[4]}-{flight[5]}, {flight[3]}",
-                )
-                for flight in get_flights_from_user(user)
-            ]
-
             @discord.ui.select(
                 placeholder="CF12345",
                 max_values=1,
-                options=flights,
+                options=get_flights(),
             )
             async def select_callback(
                 self, select: discord.SelectMenu, interaction: discord.Interaction
@@ -1295,8 +1329,54 @@ Notes:
                     await ctx.edit(embed=embed, file=map_file)
                 os.remove(output_filename)
 
+            @discord.ui.button(
+                label="<", style=discord.ButtonStyle.danger, disabled=True
+            )
+            async def back_button_callback(
+                self, button: discord.Button, interaction: discord.Interaction
+            ):
+                self.flight_list_number -= 1
+                if self.flight_list_number < 0:
+                    return
+                for child in self.children:
+                    if str(child.type) == "ComponentType.string_select":
+                        child.options = self.flights[self.flight_list_number]
+                    else:
+                        if (self.flight_list_number == 0) and (child.label == "<"):
+                            child.disabled = True
+                        else:
+                            child.disabled = False
+                await interaction.response.edit_message(view=self)
+
+            @discord.ui.button(
+                label=">", style=discord.ButtonStyle.primary, disabled=is_disabled()
+            )
+            async def next_button_callback(
+                self, button: discord.Button, interaction: discord.Interaction
+            ):
+                self.flight_list_number += 1
+                if self.flight_list_number > len(self.flights) - 1:
+                    return
+                for child in self.children:
+                    if str(child.type) == "ComponentType.string_select":
+                        child.options = self.flights[self.flight_list_number]
+                    else:
+                        if (self.flight_list_number == (len(self.flights) - 1)) and (
+                            child.label == ">"
+                        ):
+                            child.disabled = True
+                        else:
+                            child.disabled = False
+
+                await interaction.response.edit_message(view=self)
+
         embed = discord.Embed(title=f"Select one of {user.name}'s flights!", colour=cfc)
-        await ctx.respond(embed=embed, view=VAFlightSelectView(bot=self.bot))
+        await ctx.respond(
+            embed=embed,
+            view=VAFlightSelectView(
+                bot=self.bot, flights=flights, flight_list_number=flight_list_number
+            ),
+        )
 
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
