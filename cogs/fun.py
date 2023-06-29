@@ -463,59 +463,59 @@ class FunCommands(discord.Cog):
             await ctx.respond(embed=embed)
         os.remove(fileName)
 
-    @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
-    @option(
-        "limit",
-        description="How back far in time the bot should look for memes(in posts).",
-        required=False,
-    )
-    @commands.cooldown(1, 15)
-    async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
-        await ctx.defer()
-        if limit == None:
-            limit = 24
-        if limit > 128:
-            embed = discord.Embed(
-                title="`limit` too large",
-                description="You gave too big of a number for the `limit` option!",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-        else:
-            subms = []
-            subreddit = await reddit.subreddit("aviationmemes")
-            async for subm in subreddit.new(limit=limit):
-                if subm.id in self.bot.rshownsubms:
-                    continue
-                if subm.url.endswith((".jpg", ".png", ".gif")):
-                    subms.append(subm)
-            if subms == []:
-                embed = discord.Embed(
-                    title="Error 404!",
-                    description="I did not find any valid posts, try again later.",
-                    colour=errorc,
-                )
-                await ctx.respond(embed=embed)
-            else:
-                random.seed(time.time())
-                subm = random.choice(subms)
-                self.bot.rshownsubms.append(subm.id)
-                embed = discord.Embed(
-                    title=subm.title[:256],
-                    url="https://reddit.com" + subm.permalink,
-                    description=f"<t:{round(int(subm.created_utc))}:R>",
-                    colour=cfc,
-                )
-                embed.set_author(
-                    name=f"r/aviatonmemes | by {subm.author}",
-                    url="https://reddit.com" + subm.permalink,
-                    icon_url="https://styles.redditmedia.com/t5_2wzek/styles/communityIcon_jj75v4o3fok81.jpg?width=256&format=pjpg&v=enabled&s=0eb5711d62d7818f07b590a84dce0e3a36b44fac",
-                )
-                embed.set_footer(
-                    text=f"Votes: {subm.score} | Ratio: {subm.upvote_ratio} | Comments: {subm.num_comments} | OC: {subm.is_original_content}"
-                )
-                embed.set_image(url=subm.url)
-                await ctx.respond(embed=embed)
+    # @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
+    # @option(
+    #     "limit",
+    #     description="How back far in time the bot should look for memes(in posts).",
+    #     required=False,
+    # )
+    # @commands.cooldown(1, 15)
+    # async def avmeme(self, ctx: discord.ApplicationContext, limit: int):
+    #     await ctx.defer()
+    #     if limit == None:
+    #         limit = 24
+    #     if limit > 128:
+    #         embed = discord.Embed(
+    #             title="`limit` too large",
+    #             description="You gave too big of a number for the `limit` option!",
+    #             colour=errorc,
+    #         )
+    #         await ctx.respond(embed=embed)
+    #     else:
+    #         subms = []
+    #         subreddit = await reddit.subreddit("aviationmemes")
+    #         async for subm in subreddit.new(limit=limit):
+    #             if subm.id in self.bot.rshownsubms:
+    #                 continue
+    #             if subm.url.endswith((".jpg", ".png", ".gif")):
+    #                 subms.append(subm)
+    #         if subms == []:
+    #             embed = discord.Embed(
+    #                 title="Error 404!",
+    #                 description="I did not find any valid posts, try again later.",
+    #                 colour=errorc,
+    #             )
+    #             await ctx.respond(embed=embed)
+    #         else:
+    #             random.seed(time.time())
+    #             subm = random.choice(subms)
+    #             self.bot.rshownsubms.append(subm.id)
+    #             embed = discord.Embed(
+    #                 title=subm.title[:256],
+    #                 url="https://reddit.com" + subm.permalink,
+    #                 description=f"<t:{round(int(subm.created_utc))}:R>",
+    #                 colour=cfc,
+    #             )
+    #             embed.set_author(
+    #                 name=f"r/aviatonmemes | by {subm.author}",
+    #                 url="https://reddit.com" + subm.permalink,
+    #                 icon_url="https://styles.redditmedia.com/t5_2wzek/styles/communityIcon_jj75v4o3fok81.jpg?width=256&format=pjpg&v=enabled&s=0eb5711d62d7818f07b590a84dce0e3a36b44fac",
+    #             )
+    #             embed.set_footer(
+    #                 text=f"Votes: {subm.score} | Ratio: {subm.upvote_ratio} | Comments: {subm.num_comments} | OC: {subm.is_original_content}"
+    #             )
+    #             embed.set_image(url=subm.url)
+    #             await ctx.respond(embed=embed)
 
     @fun.command(name="create_meme", description="🌄 Create your own meme!")
     @option("image", description="The image you want to 'memify'.")
