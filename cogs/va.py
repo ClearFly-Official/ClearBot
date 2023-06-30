@@ -574,19 +574,21 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             time_str = (
                 f"{datetime.datetime.utcnow().hour}:{minute} UTC | {'/'.join(date)}"
             )
-            flight_time = datetime.timedelta(
-                hours=calculate_time(
-                    (
-                        airport_data.get(origin[:4].upper()).get("lat", 0),
-                        airport_data.get(origin[:4].upper()).get("lon", 0),
-                    ),
-                    (
-                        airport_data.get(destination[:4].upper()).get("lat", 0),
-                        airport_data.get(destination[:4].upper()).get("lon", 0),
-                    ),
-                    aircraft_data[4],
-                ).split(":")
-            )
+            flight_time = str(
+                datetime.timedelta(
+                    hours=calculate_time(
+                        (
+                            airport_data.get(origin[:4].upper()).get("lat", 0),
+                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                        ),
+                        (
+                            airport_data.get(destination[:4].upper()).get("lat", 0),
+                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                        ),
+                        aircraft_data[4],
+                    )
+                )
+            ).split(":")
 
             flight_time = f"{flight_time[0]}:{flight_time[1]}"
 
@@ -1370,13 +1372,17 @@ Destination: **{flight_id2[0][5]}**
                     notes = "*No Notes*"
                 else:
                     notes = flight_data[8] + "\n" + flight_data[9]
-                
-                flight_time = datetime.timedelta(
-                    hours=calculate_time(origin_coords, dest_coords, aircraft_data[0])
-                    ).split(":")
+
+                flight_time = str(
+                    datetime.timedelta(
+                        hours=calculate_time(
+                            origin_coords, dest_coords, aircraft_data[0]
+                        )
+                    )
+                ).split(":")
 
                 flight_time = f"{flight_time[0]}:{flight_time[1]}"
-                
+
                 with open(output_filename, "rb") as file:
                     map_file = discord.File(file)
                     embed = (
