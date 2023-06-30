@@ -559,14 +559,14 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         with Pilmoji(img) as pilmoji:
             colour = (255, 255, 255)
             x_padding = 40
-            date = str(datetime.datetime.now().date()).split("-")
+            date = str(datetime.datetime.utcnow().date()).split("-")
             minute = (
-                f"{datetime.datetime.now().minute}"
-                if datetime.datetime.now().minute > 9
-                else f"{datetime.datetime.now().minute}0"
+                f"{datetime.datetime.utcnow().minute}"
+                if datetime.datetime.utcnow().minute > 9
+                else f"{datetime.datetime.utcnow().minute}0"
             )
             date.reverse()
-            time_str = f"{datetime.datetime.now().hour}:{minute} UTC | {'/'.join(date)}"
+            time_str = f"{datetime.datetime.utcnow().hour}:{minute} UTC | {'/'.join(date)}"
             pilmoji.text(
                 (img.size[0] - (font.getsize(time_str)[0] + x_padding), 43),
                 time_str,
