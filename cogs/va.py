@@ -175,8 +175,13 @@ def calculate_distance(
     return distance
 
 
-def calculate_time(origin_coords, dest_coords, speed):
-    return (calculate_distance(origin_coords, dest_coords) / speed)
+def calculate_time(
+    origin_coords: tuple[float, float],
+    dest_coords: tuple[float, float],
+    speed: float | int,
+) -> float:
+    return calculate_distance(origin_coords, dest_coords) / speed
+
 
 class VAStartView(discord.ui.View):
     def __init__(self, bot: discord.Bot):
@@ -460,7 +465,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             await ctx.respond(embed=embed)
             return
-        
+
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
             ac_list = await cur.fetchall()
@@ -474,7 +479,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             await ctx.respond(embed=embed)
             return
-        
+
         if (origin[:4].upper()) not in airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
@@ -566,7 +571,25 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 else f"{datetime.datetime.utcnow().minute}0"
             )
             date.reverse()
-            time_str = f"{datetime.datetime.utcnow().hour}:{minute} UTC | {'/'.join(date)}"
+            time_str = (
+                f"{datetime.datetime.utcnow().hour}:{minute} UTC | {'/'.join(date)}"
+            )
+            flight_time = datetime.timedelta(
+                hours=calculate_time(
+                    (
+                        airport_data.get(origin[:4].upper()).get("lat", 0),
+                        airport_data.get(origin[:4].upper()).get("lon", 0),
+                    ),
+                    (
+                        airport_data.get(destination[:4].upper()).get("lat", 0),
+                        airport_data.get(destination[:4].upper()).get("lon", 0),
+                    ),
+                    aircraft_data[4],
+                ).split(":")
+            )
+
+            flight_time = f"{flight_time[0]}:{flight_time[1]}"
+
             pilmoji.text(
                 (img.size[0] - (font.getsize(time_str)[0] + x_padding), 43),
                 time_str,
@@ -611,35 +634,25 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             pilmoji.text(
                 (170, 357),
-                str(
-                    round(calculate_time(
-                        (
-                            airport_data.get(origin[:4].upper()).get("lat", 0),
-                            airport_data.get(origin[:4].upper()).get("lon", 0),
-                        ),
-                        (
-                            airport_data.get(destination[:4].upper()).get("lat", 0),
-                            airport_data.get(destination[:4].upper()).get("lon", 0),
-                        ),
-                        aircraft_data[4]
-                    ), 1)
-                ) + "h",
+                flight_time,
                 font=font,
                 fill=colour,
             )
             pilmoji.text(
                 (720, 357),
                 str(
-                    round(calculate_distance(
-                        (
-                            airport_data.get(origin[:4].upper()).get("lat", 0),
-                            airport_data.get(origin[:4].upper()).get("lon", 0),
-                        ),
-                        (
-                            airport_data.get(destination[:4].upper()).get("lat", 0),
-                            airport_data.get(destination[:4].upper()).get("lon", 0),
-                        ),
-                    ))
+                    round(
+                        calculate_distance(
+                            (
+                                airport_data.get(origin[:4].upper()).get("lat", 0),
+                                airport_data.get(origin[:4].upper()).get("lon", 0),
+                            ),
+                            (
+                                airport_data.get(destination[:4].upper()).get("lat", 0),
+                                airport_data.get(destination[:4].upper()).get("lon", 0),
+                            ),
+                        )
+                    )
                 )
                 + " NM",
                 font=font,
@@ -1357,6 +1370,13 @@ Destination: **{flight_id2[0][5]}**
                     notes = "*No Notes*"
                 else:
                     notes = flight_data[8] + "\n" + flight_data[9]
+                
+                flight_time = datetime.timedelta(
+                    hours=calculate_time(origin_coords, dest_coords, aircraft_data[0])
+                    ).split(":")
+
+                flight_time = f"{flight_time[0]}:{flight_time[1]}"
+                
                 with open(output_filename, "rb") as file:
                     map_file = discord.File(file)
                     embed = (
