@@ -651,7 +651,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 font=metar_font,
                 fill=colour,
             )
-            
+
         img.save(f"images/{card_id}")
         file = discord.File(f"images/{card_id}", filename=card_id)
         embed.set_image(url=f"attachment://{card_id}")
@@ -1368,7 +1368,7 @@ Aircraft: **{flight_data[3]}**
 Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
 Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
 Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
-Estimated flight time: **{calculate_time(origin_coords, dest_coords, aircraft_data[0])}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
+Estimated flight time: **{round(calculate_time(origin_coords, dest_coords, aircraft_data[0]))}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
 Filed at: **<t:{flight_data[6]}:F>**
 Notes:
 {notes}
