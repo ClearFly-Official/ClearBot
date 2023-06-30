@@ -54,6 +54,21 @@ async def is_banned(user: discord.User | discord.Member):
         return False
 
 
+async def get_airports(ctx: discord.AutocompleteContext):
+    if ctx.value == "":
+        return ["Start typing the name of an airport for results to appear(e.g. KJFK)"]
+    return [airport for airport in airports if airport.startswith(ctx.value.upper())]
+
+
+async def get_aircraft(ctx: discord.AutocompleteContext):
+    async with aiosqlite.connect("va.db") as db:
+        cur = await db.execute("SELECT icao FROM aircraft")
+        aircraft = await cur.fetchall()
+        aircraft = [aircraft[0] for aircraft in aircraft]
+
+    return [craft for craft in aircraft if craft.startswith(ctx.value.upper())]
+
+
 async def has_flights(user: discord.User | discord.Member):
     async with aiosqlite.connect("va.db") as db:
         cur = await db.execute(
@@ -159,6 +174,9 @@ def calculate_distance(
 
     return distance
 
+
+def calculate_time(origin_coords, dest_coords, speed):
+    return (calculate_distance(origin_coords, dest_coords) / speed)
 
 class VAStartView(discord.ui.View):
     def __init__(self, bot: discord.Bot):
@@ -280,23 +298,6 @@ class VACommands(discord.Cog):
     user = va.create_subgroup(
         name="user", description="⚙️ All commands to view public user data in the VA."
     )
-
-    async def get_airports(self, ctx: discord.AutocompleteContext):
-        if ctx.value == "":
-            return [
-                "Start typing the name of an airport for results to appear(e.g. KJFK)"
-            ]
-        return [
-            airport for airport in airports if airport.startswith(ctx.value.upper())
-        ]
-
-    async def get_aircraft(self, ctx: discord.AutocompleteContext):
-        async with aiosqlite.connect("va.db") as db:
-            cur = await db.execute("SELECT icao FROM aircraft")
-            aircraft = await cur.fetchall()
-            aircraft = [aircraft[0] for aircraft in aircraft]
-
-        return [craft for craft in aircraft if craft.startswith(ctx.value.upper())]
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -459,6 +460,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             await ctx.respond(embed=embed)
             return
+        
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
             ac_list = await cur.fetchall()
@@ -472,6 +474,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             await ctx.respond(embed=embed)
             return
+        
         if (origin[:4].upper()) not in airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
@@ -536,65 +539,119 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     return
         card_id = "flight_card" + str(random.randint(0, 9)) + ".png"
         img = Image.open("images/va_flightcard_blank.png")
-        font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=60)
-        small_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=50)
-        hdr_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=39)
+        font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=48)
+        route_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=128)
+        metar_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=36)
+
         data = ""
         if resp["results"] == 0:
             data = "No METAR data found."
         else:
             data = str(resp["data"][0])
+
+        async with aiosqlite.connect("va.db") as db:
+            cur = await db.execute("SELECT * FROM aircraft WHERE icao=?", (aircraft,))
+            aircraft_data = await cur.fetchone()
+
+        with open("airports.json", "r") as f:
+            airport_data = json.load(f)
+
         with Pilmoji(img) as pilmoji:
-            colour = (109, 178, 217)
+            colour = (255, 255, 255)
+            x_padding = 40
             date = str(datetime.datetime.now().date()).split("-")
+            minute = (
+                f"{datetime.datetime.now().minute}"
+                if datetime.datetime.now().minute > 9
+                else f"{datetime.datetime.now().minute}0"
+            )
             date.reverse()
-            filed_at_str = (
-                f"{datetime.datetime.now().hour}:{datetime.datetime.now().minute} UTC"
-            )
+            time_str = f"{datetime.datetime.now().hour}:{minute} UTC | {'/'.join(date)}"
             pilmoji.text(
-                (1228 - small_font.getsize(filed_at_str)[0], 112),
-                filed_at_str,
-                font=small_font,
+                (img.size[0] - (font.getsize(time_str)[0] + x_padding), 43),
+                time_str,
+                font=font,
                 fill=colour,
             )
             pilmoji.text(
-                (1228 - small_font.getsize("/".join(date))[0], 161),
-                "/".join(date),
-                font=small_font,
+                (x_padding, 43),
+                flight_num,
+                font=font,
                 fill=colour,
             )
-            pilmoji.text((127, 350), origin[:4].upper(), font=font, fill=colour)
             pilmoji.text(
-                (1228 - font.getsize(destination[:4].upper())[0], 350),
+                (x_padding + 10, 145), origin[:4].upper(), font=route_font, fill=colour
+            )
+            pilmoji.text(
+                (
+                    (
+                        img.size[0]
+                        - (
+                            route_font.getsize(destination[:4].upper())[0]
+                            + (x_padding + 10)
+                        )
+                    ),
+                    145,
+                ),
                 destination[:4].upper(),
+                font=route_font,
+                fill=colour,
+            )
+            pilmoji.text(
+                (170, 415),
+                textwrap.fill(ctx.author.name, 10, max_lines=1),
                 font=font,
                 fill=colour,
             )
             pilmoji.text(
-                (127, 620),
-                textwrap.fill(ctx.author.name, 10, max_lines=2),
-                font=font,
-                fill=colour,
-            )
-            pilmoji.text((525, 620), flight_num, font=font, fill=colour)
-            pilmoji.text(
-                (1228 - font.getsize(aircraft)[0], 620),
+                (720, 415),
                 aircraft,
                 font=font,
                 fill=colour,
             )
             pilmoji.text(
-                (127, 776),
-                origin[:4].upper() + " METAR",
-                font=hdr_font,
-                fill=(255, 255, 255),
-            )
-            pilmoji.text(
-                (127, 830),
-                textwrap.fill(data, 35, max_lines=3),
+                (170, 357),
+                str(
+                    round(calculate_time(
+                        (
+                            airport_data.get(origin[:4].upper()).get("lat", 0),
+                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                        ),
+                        (
+                            airport_data.get(destination[:4].upper()).get("lat", 0),
+                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                        ),
+                        aircraft_data[4]
+                    ), 1)
+                ) + "h",
                 font=font,
                 fill=colour,
             )
+            pilmoji.text(
+                (720, 357),
+                str(
+                    round(calculate_distance(
+                        (
+                            airport_data.get(origin[:4].upper()).get("lat", 0),
+                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                        ),
+                        (
+                            airport_data.get(destination[:4].upper()).get("lat", 0),
+                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                        ),
+                    ))
+                )
+                + " NM",
+                font=font,
+                fill=colour,
+            )
+            pilmoji.text(
+                (x_padding + 5, 525 + x_padding / 2),
+                textwrap.fill(data, 46, max_lines=3),
+                font=metar_font,
+                fill=colour,
+            )
+            
         img.save(f"images/{card_id}")
         file = discord.File(f"images/{card_id}", filename=card_id)
         embed.set_image(url=f"attachment://{card_id}")
@@ -1070,9 +1127,7 @@ Destination: **{flight_id2[0][5]}**
             await ctx.respond(embed=embed, file=map_file)
         os.remove(output_filename)
 
-    @user.command(
-        name="flight", description="🗺️ View a user's flights in map style."
-    )
+    @user.command(name="flight", description="🗺️ View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
     @discord.option(name="user", description="The user you want to see the flight of.")
     @discord.option(
@@ -1296,13 +1351,6 @@ Destination: **{flight_id2[0][5]}**
 
                 cropped_image = image.crop((left, upper + 1, right, lower))
 
-                if aircraft_data[1] == "GA":
-                    flight_time_buffer = 0.3
-                elif aircraft_data[1] == "Airliner":
-                    flight_time_buffer = 0.4
-                else:
-                    flight_time_buffer = 0.3
-
                 output_filename = f"flight_{user.id}_{select.values[0]}.png"
                 cropped_image.save(output_filename)
                 if (flight_data[8] == "") or (flight_data[9] == ""):
@@ -1320,7 +1368,7 @@ Aircraft: **{flight_data[3]}**
 Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
 Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
 Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
-Estimated flight time: **{round(calculate_distance(origin_coords, dest_coords)/aircraft_data[0], 1)+flight_time_buffer}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
+Estimated flight time: **{calculate_time(origin_coords, dest_coords, aircraft_data[0])}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
 Filed at: **<t:{flight_data[6]}:F>**
 Notes:
 {notes}
@@ -1406,7 +1454,6 @@ Notes:
                 bot=self.bot, flights=flights, flight_list_number=flight_list_number
             ),
         )
-
 
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
