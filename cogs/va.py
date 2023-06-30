@@ -1368,7 +1368,7 @@ Aircraft: **{flight_data[3]}**
 Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
 Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
 Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
-Estimated flight time: **{round(calculate_time(origin_coords, dest_coords, aircraft_data[0]))}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
+Estimated flight time: **{round(calculate_time(origin_coords, dest_coords, aircraft_data[0]), 1)}**h (with CRZ speed(TAS) {aircraft_data[0]}kts)
 Filed at: **<t:{flight_data[6]}:F>**
 Notes:
 {notes}
