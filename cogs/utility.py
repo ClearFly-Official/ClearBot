@@ -765,7 +765,7 @@ Total votes: **{total_count}**
             case _:
                 style = "R"
         if second is None:
-            second = datetime.datetime.now().second
+            second = datetime.datetime.utcnow().second
         if not second <= 59 >= 0:
             embed = discord.Embed(
                 title="Invalid seconds input",
@@ -775,7 +775,7 @@ Total votes: **{total_count}**
             await ctx.respond(embed=embed)
             return
         if minute is None:
-            minute = datetime.datetime.now().minute
+            minute = datetime.datetime.utcnow().minute
         if not second <= 59 >= 0:
             embed = discord.Embed(
                 title="Invalid second input",
@@ -785,7 +785,7 @@ Total votes: **{total_count}**
             await ctx.respond(embed=embed)
             return
         if hour is None:
-            hour = datetime.datetime.now().hour
+            hour = datetime.datetime.utcnow().hour
         if not hour <= 59 >= 0:
             embed = discord.Embed(
                 title="Invalid hour input",
@@ -795,7 +795,7 @@ Total votes: **{total_count}**
             await ctx.respond(embed=embed)
             return
         if day is None:
-            day = datetime.datetime.now().day
+            day = datetime.datetime.utcnow().day
         if month == 2:
             if not day <= 28 > 0:
                 embed = discord.Embed(
@@ -815,7 +815,7 @@ Total votes: **{total_count}**
                 await ctx.respond(embed=embed)
                 return
         if month is None:
-            month = datetime.datetime.now().month
+            month = datetime.datetime.utcnow().month
         if not month <= 12 > 0:
             embed = discord.Embed(
                 title="Invalid month input",
@@ -825,7 +825,7 @@ Total votes: **{total_count}**
             await ctx.respond(embed=embed)
             return
         if year is None:
-            year = datetime.datetime.now().year
+            year = datetime.datetime.utcnow().year
         if not year <= 9999 >= 0:
             embed = discord.Embed(
                 title="Invalid year input",
