@@ -171,13 +171,13 @@ Reloaded cogs:
     async def ip4ssh(self, ctx: discord.ApplicationContext):
         await ctx.defer(ephemeral=True)
         embed = discord.Embed(
-            title=f"{self.bot.emoji_info} Current IP Address",
+            title=f"Current IP Address",
             description=(
                 f"**1:** {os.popen('hostname -I').readline().split(' ')[0]}\n"
                 f"**2:** {os.popen('hostname -I').readline().split(' ')[1]}\n"
                 f"**Full**\n```sh\n{''.join(os.popen('hostname -I').readlines())}```"
             ),
-            colour=await self.bot.embn(ctx.author),
+            colour=cfc,
         ).set_footer(text="WARN: IP addresses are dynamic!")
         await ctx.respond(embed=embed)
 

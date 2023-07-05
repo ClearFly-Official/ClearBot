@@ -953,7 +953,7 @@ Joins last week: **{join_stats[2]}**
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
         embed = discord.Embed(
-            title=f"{self.bot.emoji_info} **Bot Stats**",
+            title="**Bot Stats**",
             description=f"""
 **Uptime:** {days}d {hours}h {minutes}m {seconds}s.
 **Latency:** {round(self.bot.latency*1000)}ms
@@ -967,7 +967,7 @@ Joins last week: **{join_stats[2]}**
 {cogs_list}
 ```
         """,
-            color=await self.bot.embn(ctx.author),
+            color=cfc,
         )
         await ctx.respond(embed=embed)
 

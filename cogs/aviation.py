@@ -405,7 +405,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 metar_json = await r.json()
         async with aiohttp.ClientSession() as cs:
             async with cs.get(f"https://airportdb.io/api/v1/airport/{airport[:4].upper()}?apiToken={os.getenv('ADB_TOKEN')}") as resp:
-                if resp.status_code == 200:
+                if resp.status == 200:
                     json_resp = await resp.json()
 
                     runways = []
@@ -418,7 +418,10 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         )
                     runways = list(dict.fromkeys(runways))
 
-                    wind = json.dumps(metar_json['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))
+                    if metar_json["results"] == 1:
+                        wind = json.dumps(metar_json['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))
+                    else: 
+                        wind = "N/A"
                     if wind == "N/A":
                         embed = discord.Embed(
                             title="No wind data found",
@@ -429,15 +432,16 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         return
                     ac_runways = []
                     for i in range(len(runways)):
-                        ac_runways.append(calculate_active_runways(runways, (wind - 1) + ((i * 10) * wind)))
+                        ac_runways.append(calculate_active_runways(runways, (int(wind) - 1) + ((i * 10) * int(wind))))
 
                     ac_runways = list(dict.fromkeys(ac_runways))
-                    ac_runways = [f"**{i}**: {rwy}" for i, rwy in enumerate(ac_runways)]
+                    ac_runways = [f"**{i}**: {rwy}" for i, rwy in enumerate(ac_runways, 1)]
                     embed = discord.Embed(
                         title=f"Active runways at {airport[:4].upper()}",
                         description="\n".join(ac_runways),
                         colour=cfc
                     ).set_footer(text="These are predictions, and not official data.")
+                    await ctx.respond(embed=embed)
                 else:
                     embed = discord.Embed(title="Airport not found", colour=errorc)
                     await ctx.respond(embed=embed)
