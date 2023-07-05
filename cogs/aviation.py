@@ -1,3 +1,4 @@
+import re
 import discord
 import aiohttp
 import os, json, fitz
@@ -8,6 +9,12 @@ from discord.ext.pages import Page, Paginator
 from discord.ext import commands
 from airports import airports
 from main import cfc, errorc
+
+def calculate_active_runways(runway_numbers: list[int], wind_degree: int) -> list[int]:
+    adjusted_degrees = [(x - wind_degree) % 360 for x in runway_numbers]
+    closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
+    closest_runways = [runway_numbers[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree]
+    return closest_runways[0]
 
 
 class AvCommands(discord.Cog):
@@ -384,6 +391,56 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 )
                 await ctx.respond(embed=embed)
 
+    @av.command(name="active_runways", description="🎬 Make an assumption of the active runways of an airport.")
+    @discord.option(name="airport", description="The airport you want to know the active runways of", autocomplete=get_airports())
+    async def active_runways(self, ctx: discord.ApplicationContext, airport: str):
+        await ctx.defer()
+        hdr = {"X-API-Key": os.getenv("CWX_KEY")}
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(
+                f"https://api.checkwx.com/metar/{airport[:4].upper()}/decoded",
+                headers=hdr,
+            ) as r:
+                r.raise_for_status()
+                metar_json = await r.json()
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(f"https://airportdb.io/api/v1/airport/{airport[:4].upper()}?apiToken={os.getenv('ADB_TOKEN')}") as resp:
+                if resp.status_code == 200:
+                    json_resp = await resp.json()
+
+                    runways = []
+                    for i, runway in enumerate(json_resp["runways"]):
+                        runways.append(
+                            int(re.sub('\D', '', json_resp["runways"][i]["le_ident"]))
+                        )
+                        runways.append(
+                            int(re.sub('\D', '', json_resp["runways"][i]["he_ident"]))
+                        )
+                    runways = list(dict.fromkeys(runways))
+
+                    wind = json.dumps(metar_json['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))
+                    if wind == "N/A":
+                        embed = discord.Embed(
+                            title="No wind data found",
+                            description="Wind data is required to make a prediction on active runways at the given airport.",
+                            colour=errorc
+                        )
+                        await ctx.respond(embed=embed)
+                        return
+                    ac_runways = []
+                    for i in range(len(runways)):
+                        ac_runways.append(calculate_active_runways(runways, (wind - 1) + ((i * 10) * wind)))
+
+                    ac_runways = list(dict.fromkeys(ac_runways))
+                    ac_runways = [f"**{i}**: {rwy}" for i, rwy in enumerate(ac_runways)]
+                    embed = discord.Embed(
+                        title=f"Active runways at {airport[:4].upper()}",
+                        description="\n".join(ac_runways),
+                        colour=cfc
+                    ).set_footer(text="These are predictions, and not official data.")
+                else:
+                    embed = discord.Embed(title="Airport not found", colour=errorc)
+                    await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(AvCommands(bot=bot))
