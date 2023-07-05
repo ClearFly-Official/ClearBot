@@ -392,7 +392,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 await ctx.respond(embed=embed)
 
     @av.command(name="active_runways", description="🎬 Make an assumption of the active runways of an airport.")
-    @discord.option(name="airport", description="The airport you want to know the active runways of", autocomplete=get_airports())
+    @discord.option(name="airport", description="The airport you want to know the active runways of", autocomplete=get_airports)
     async def active_runways(self, ctx: discord.ApplicationContext, airport: str):
         await ctx.defer()
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}

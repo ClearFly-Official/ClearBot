@@ -30,9 +30,7 @@ async def on_ready():
 
 
 cogs = os.listdir("cogs")
-cogs = [x.split(".")[0] for x in cogs]
-if "__pycache__" in cogs:
-    cogs.remove("__pycache__")
+cogs = [x.split(".")[0] for x in cogs if x.endswith(".py")]
 
 for cog in cogs:
     bot.load_extension(f"cogs.{cog}")
