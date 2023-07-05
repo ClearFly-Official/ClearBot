@@ -155,9 +155,31 @@ Reloaded cogs:
     @dev.command(name="restart", description="🔁 Restarst the bot.")
     @commands.has_role(admin_role_id)
     async def restart(self, ctx: discord.ApplicationContext):
-        embed = discord.Embed(title="Restarting bot...", color=cfc)
-        await ctx.respond(embed=embed)
+        os.system("clear")
+        embed = discord.Embed(
+            title=f"Restarting {self.bot.user.display_name}...", colour=await self.bot.embn(ctx.author)
+        )
+        await ctx.respond(embed=embed, ephemeral=True)
         os.execv(sys.executable, ["python"] + sys.argv)
+
+    @dev.command(
+        name="ip4ssh",
+        description="💻 Get the IP address of the current server for SSH purposes.",
+    )
+    @commands.is_owner()
+    @commands.cooldown(1, 3)
+    async def ip4ssh(self, ctx: discord.ApplicationContext):
+        await ctx.defer(ephemeral=True)
+        embed = discord.Embed(
+            title=f"{self.bot.emoji_info} Current IP Address",
+            description=(
+                f"**1:** {os.popen('hostname -I').readline().split(' ')[0]}\n"
+                f"**2:** {os.popen('hostname -I').readline().split(' ')[1]}\n"
+                f"**Full**\n```sh\n{''.join(os.popen('hostname -I').readlines())}```"
+            ),
+            colour=await self.bot.embn(ctx.author),
+        ).set_footer(text="WARN: IP addresses are dynamic!")
+        await ctx.respond(embed=embed)
 
     @dev.command(
         name="update",

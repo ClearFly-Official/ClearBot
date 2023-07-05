@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 import aiofiles
 import discord
 import psutil
@@ -932,36 +933,41 @@ Joins last week: **{join_stats[2]}**
 
     @stats.command(name="bot", description="📈 Show statistics about the bot.")
     @commands.cooldown(1, 5)
+    @commands.cooldown(1, 5)
     async def stats(self, ctx: discord.ApplicationContext):
+        await ctx.defer()
         loc = 0
         f = open("main.py", "r")
         loc += int(len(f.readlines()))
         for cog in cogs:
             f = open(f"cogs/{cog}.py")
             loc += int(len(f.readlines()))
-        cogsList = "\n".join(cogs)
+        if platform.system().lower() == "linux":
+            temp = os.popen("vcgencmd measure_temp").readline()
+            temp = temp.replace("temp=", "")
+        else:
+            temp = "N/A"
+        cogs_list = "\n".join(cogs)
         delta_uptime = datetime.datetime.utcnow() - self.bot.start_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
-        owner = await self.bot.fetch_user(668874138160594985)
         embed = discord.Embed(
-            title="**Bot Stats**",
+            title=f"{self.bot.emoji_info} **Bot Stats**",
             description=f"""
-**Creator:** {owner.mention}
-
 **Uptime:** {days}d {hours}h {minutes}m {seconds}s.
 **Latency:** {round(self.bot.latency*1000)}ms
-**CPU usage:** {psutil.cpu_percent(interval=0.1)}%
-**RAM usage:** {psutil.virtual_memory()[2]}%
+**CPU usage:** {psutil.cpu_percent()}%
+**CPU temp:** {temp}
+**RAM usage:** {psutil.virtual_memory()[2]}% (total {round(psutil.virtual_memory()[0]/1000000)}MB)
 **Total lines of code:** {loc}
 
 **Cogs loaded:**
 ```
-{cogsList}
+{cogs_list}
 ```
         """,
-            color=cfc,
+            color=await self.bot.embn(ctx.author),
         )
         await ctx.respond(embed=embed)
 
