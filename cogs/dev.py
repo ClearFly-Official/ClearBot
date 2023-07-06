@@ -108,7 +108,8 @@ class DevCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @dev.command(name="reload_cogs", description="🔄 Reload the Cogs you want.")
-    @commands.has_role(965422406036488282)
+    @commands.has_role(admin_role_id)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def reloadCogs(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         select_cogs = []
@@ -167,7 +168,7 @@ Reloaded cogs:
         description="💻 Get the IP address of the current server for SSH purposes.",
     )
     @commands.is_owner()
-    @commands.cooldown(1, 3)
+    @commands.cooldown(1, 10)
     async def ip4ssh(self, ctx: discord.ApplicationContext):
         await ctx.defer(ephemeral=True)
         embed = discord.Embed(
@@ -186,6 +187,7 @@ Reloaded cogs:
         description="⬇️ Pull the latest version of the bot from the GitHub repo.",
     )
     @commands.has_role(admin_role_id)
+    @commands.cooldown(1, 340, commands.BucketType.user)
     async def gitupdate(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         embed = discord.Embed(
@@ -461,6 +463,7 @@ Reloaded cogs:
 
     @dataref.command(name="list", description="📂 List all the custom datarefs.")
     @commands.has_role(1108346057957593130)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def dreflist(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         async with aiosqlite.connect("main.db") as db:
@@ -502,6 +505,7 @@ Reloaded cogs:
         autocomplete=get_datarefs,
     )
     @commands.has_role(1108346057957593130)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def drefsearch(self, ctx: discord.ApplicationContext, dataref: str):
         await ctx.defer()
         if dataref in datarefList:
@@ -572,6 +576,7 @@ Description :
     )
     @option("description", description="The description of the new dataref.")
     @commands.has_role(1108346057957593130)
+    @commands.cooldown(2, 30, commands.BucketType.user)
     async def drefadd(
         self,
         ctx: discord.ApplicationContext,
@@ -639,6 +644,7 @@ Description :
         required=False,
     )
     @commands.has_role(1108346057957593130)
+    @commands.cooldown(2, 60, commands.BucketType.user)
     async def drefedit(
         self,
         ctx: discord.ApplicationContext,
@@ -693,6 +699,7 @@ Description :
         autocomplete=get_custom_datarefs,
     )
     @commands.has_role(1108346057957593130)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def drefdel(self, ctx: discord.ApplicationContext, dataref):
         await ctx.defer()
         if dataref in customDatarefList:
@@ -765,6 +772,7 @@ Channel: {message.channel.mention}
     @dev.command(name="run_cmd", description="🖲️ Run a terminal command.")
     @option("command", description="The command you want to run.")
     @commands.is_owner()
+    @commands.cooldown(2, 20, commands.BucketType.user)
     async def run_cmd(self, ctx: discord.ApplicationContext, command: str):
         await ctx.defer()
         embed = discord.Embed(
@@ -785,6 +793,7 @@ Channel: {message.channel.mention}
     )
     @discord.option(name="query", description="Query to execute.")
     @commands.is_owner()
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def query(self, ctx: discord.ApplicationContext, database: str, query: str):
         try:
             async with aiosqlite.connect(database) as db:
@@ -800,6 +809,7 @@ Channel: {message.channel.mention}
         description="Database to list a table of.",
         choices=["main.db", "va.db"],
     )
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @discord.option(name="table", description="Database to list a table of.")
     @commands.has_role(admin_role_id)
     async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):

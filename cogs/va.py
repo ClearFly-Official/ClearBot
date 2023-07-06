@@ -23,9 +23,6 @@ overv_id = 1099712642916044881  # 1040927466975404054
 fbo_id = 1013934267966967848
 
 
-# get_types:
-#     full
-#     id
 async def get_users(get_type="full"):
     out = []
     async with aiosqlite.connect("va.db") as db:
@@ -442,7 +439,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         autocomplete=get_airports,
     )
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 60)
+    @commands.cooldown(1, 600, commands.BucketType.user)
     async def va_file(
         self,
         ctx: discord.ApplicationContext,
@@ -696,7 +693,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     @flight.command(
         name="complete", description="✅ Mark your last flight as completed."
     )
-    @commands.cooldown(1, 60)
+    @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
     async def va_complete(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -745,7 +742,7 @@ Destination: **{flight_id2[0][5]}**
         await ctx.respond(embed=embed)
 
     @flight.command(name="cancel", description="❌ Cancel your last flight.")
-    @commands.cooldown(1, 60)
+    @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
     async def va_cancel(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -791,6 +788,7 @@ Destination: **{flight_id2[0][5]}**
         description="The airport you're diverting too.",
         autocomplete=get_airports,
     )
+    @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
     async def va_divert(self, ctx: discord.ApplicationContext, airport):
         await ctx.defer()
@@ -834,6 +832,7 @@ Destination: **{flight_id2[0][5]}**
         description="📝 Report an incident that happend on your last flight.",
     )
     @commands.has_role(1013933799777783849)
+    @commands.cooldown(1, 300, commands.BucketType.user)
     async def va_report(self, ctx: discord.ApplicationContext):
         if await is_banned(ctx.author):
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
@@ -864,7 +863,7 @@ Destination: **{flight_id2[0][5]}**
     @user.command(name="view_report", description="📄 View a users reports.")
     @discord.option(name="user", description="The user you want to see the flights of.")
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 5)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def va_view_report(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -908,7 +907,7 @@ Destination: **{flight_id2[0][5]}**
     @user.command(name="flights", description="🛬 View a users flights.")
     @discord.option(name="user", description="The user you want to see the flights of.")
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 5)
+    @commands.cooldown(1, 20, commands.BucketType.user)
     async def va_flights(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -974,7 +973,7 @@ Destination: **{flight_id2[0][5]}**
     @discord.option(
         name="auto_zoom", description="Zoom automatically to fit the flights."
     )
-    @commands.cooldown(1, 10)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def va_flight_map(
         self,
         ctx: discord.ApplicationContext,
@@ -1148,7 +1147,7 @@ Destination: **{flight_id2[0][5]}**
     @discord.option(
         name="auto_zoom", description="Zoom automatically to fit the flight."
     )
-    @commands.cooldown(1, 10)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def va_flight(
         self,
         ctx: discord.ApplicationContext,
@@ -1484,7 +1483,7 @@ Notes:
     @va.command(
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
     )
-    @commands.cooldown(1, 30)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
@@ -1538,7 +1537,7 @@ Notes:
         os.remove("images/lb.png")
 
     @va.command(name="stats", description="📊 See the statistics of the ClearFly VA!")
-    @commands.cooldown(1, 15)
+    @commands.cooldown(1, 15, commands.BucketType.user)
     async def va_stats(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
@@ -1760,6 +1759,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @discord.option(
         name="is_official", description="If the aircraft has an official livery."
     )
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.has_role(965422406036488282)
     async def add_ac(
         self,
@@ -1804,7 +1804,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         description="The ICAO code of the aircraft.",
         autocomplete=get_aircraft,
     )
-    @commands.cooldown(1, 10)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.has_role(965422406036488282)
     async def remove_ac(self, ctx: discord.ApplicationContext, icao: str):
         async with aiosqlite.connect("va.db") as db:
@@ -1831,7 +1831,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @vadmin.command(
         name="list_aircraft", description="🛩️ List the aircrafts of the VA fleet."
     )
-    @commands.cooldown(1, 10)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.has_role(965422406036488282)
     async def list_ac(self, ctx: discord.ApplicationContext):
         async with aiosqlite.connect("va.db") as db:
@@ -1849,6 +1849,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
 
     @vadmin.command(name="ban", description="🔨 Ban a user from the VA.")
     @discord.option(name="user", description="The user to ban.")
+    @commands.cooldown(2, 30, commands.BucketType.user)
     @commands.has_role(965422406036488282)
     async def va_ban(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
@@ -1869,6 +1870,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
 
     @vadmin.command(name="unban", description="🔨 Unban a user from the VA.")
     @discord.option(name="user", description="The user to unban.")
+    @commands.cooldown(2, 30, commands.BucketType.user)
     @commands.has_role(965422406036488282)
     async def va_uunban(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
@@ -1891,6 +1893,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         name="liveries",
         description="🌄 Looking to fly for the ClearFly VA? Here are the liveries to get you started!",
     )
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def va_livs(self, ctx: discord.ApplicationContext):
         embm = discord.Embed(
             title="ClearFly VA Official Liveries",

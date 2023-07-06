@@ -112,6 +112,7 @@ class AdminCommands(discord.Cog):
     @admin.command(name="echo", description="💬 Send a message as ClearBot.")
     @option("text", description="The text you want to send as the bot.")
     @commands.has_permissions(manage_messages=True)
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def echo(self, ctx: discord.ApplicationContext, text: str):
         await ctx.respond("posted your message!", ephemeral=True)
         await ctx.channel.send(text)
@@ -166,6 +167,7 @@ class AdminCommands(discord.Cog):
         required=False,
     )
     @commands.has_permissions(manage_messages=True)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def embed(
         self,
         ctx: discord.ApplicationContext,
@@ -245,6 +247,7 @@ URL: `{url}`
     @option("amount", description="Amount of messages to spam.")
     @option("text", description="What you want to spam.")
     @commands.has_permissions(manage_channels=True)
+    @commands.cooldown(1, 120, commands.BucketType.user)
     async def spam(self, ctx: discord.ApplicationContext, amount: int, text: str):
         channel = self.bot.get_channel(1001405648828891187)
         user = ctx.author
@@ -324,6 +327,7 @@ URL: `{url}`
         "channel", description="The channel to apply the slowmode to.", required=False
     )
     @commands.has_permissions(manage_channels=True)
+    @commands.cooldown(2, 10, commands.BucketType.user)
     async def sm(
         self,
         ctx: discord.ApplicationContext,
@@ -344,6 +348,7 @@ URL: `{url}`
     @admin.command(description="🗑️ Delete large amounts of messages from a channel.")
     @option("amount", description="The number of messages you want to delete.")
     @commands.has_permissions(manage_channels=True)
+    @commands.cooldown(3, 30, commands.BucketType.user)
     async def purge(self, ctx: discord.ApplicationContext, amount: int):
         global confirm
         confirm = 0
@@ -414,6 +419,7 @@ URL: `{url}`
 
     @admin.command(name="rules", description="Sends the rules.")
     @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 180)
     async def rules(self, ctx: discord.ApplicationContext):
         embed1 = discord.Embed(color=cfc).set_image(
             url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true"
@@ -441,6 +447,7 @@ URL: `{url}`
 
     @admin.command(name="faq", description="Sends the faq.")
     @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 180)
     async def faq(self, ctx: discord.ApplicationContext):
         embed1 = discord.Embed(colour=cfc).set_image(
             url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true"
@@ -464,6 +471,7 @@ A: This is unlikely, but not impossible in the future.
 
     @admin.command(name="buttonroles", description="Sends the button roles.")
     @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 180)
     async def buttonroles(self, ctx: discord.ApplicationContext):
         emb1 = discord.Embed(
             title="🎨 Livery Painter",

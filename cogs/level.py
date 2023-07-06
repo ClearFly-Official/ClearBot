@@ -26,7 +26,7 @@ class LevelingCommands(discord.Cog):
 
     @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
-    @commands.cooldown(2, 10)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def userlevel(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -151,7 +151,7 @@ class LevelingCommands(discord.Cog):
     @discord.user_command(
         name="User Level", description="🥇 Gets the provided user's level."
     )
-    @commands.cooldown(1, 5)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def userlevel_app(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -276,7 +276,7 @@ class LevelingCommands(discord.Cog):
     @leveling.command(
         name="leaderboard", description="📊 See the leaderboard of the whole server."
     )
-    @commands.cooldown(1, 30)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         output = []
@@ -349,33 +349,6 @@ class LevelingCommands(discord.Cog):
             embed.set_image(url=f"attachment://lb.png")
             await ctx.respond(embed=embed, file=file)
 
-    # |--------------------------------------------------------------|
-    # |Command to transfer data stored in local files to the DataBase.|
-    # |--------------------------------------------------------------|
-    #
-    # @leveling.command(description="Transfer data from local files to DB")
-    # async def transfer2db(self, ctx):
-    #     await ctx.defer()
-    #     config = configparser.ConfigParser()
-    #     for index, filename in enumerate(glob.glob("Leveling/users/*/*")):
-    #         with open(os.path.join(os.getcwd(), filename), "r") as f:
-    #             config.read(f"{filename}")
-    #             usrid = filename.replace("Leveling/users/", "").replace(
-    #                     "/data.ini", ""
-    #                 )
-    #             lvl = int(config.get("Level", "lvl"))
-    #             lvlprog = int(config.get("Level", "lvlprog"))
-    #             topprog = int(config.get("Level", "topprog"))
-    #             lvlcol.insert_one(
-    #                 {
-    #                     "id":int(usrid),
-    #                     "level":lvl,
-    #                     "nom":lvlprog,
-    #                     "denom":topprog,
-    #                     "last_msg":0
-    #                 }
-    #                 )
-    #     await ctx.respond("Success!")
 
 
 def setup(bot):

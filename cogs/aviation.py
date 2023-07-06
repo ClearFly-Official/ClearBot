@@ -40,7 +40,7 @@ class AvCommands(discord.Cog):
         print("| Aviation cog loaded sucessfully")
 
     @av.command(name="metar", description="⛅️ Get the metar data of an airport.")
-    @commands.cooldown(1, 10)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @option(
         "airport",
         description="The airport you want the metar data of.",
