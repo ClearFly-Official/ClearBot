@@ -158,7 +158,7 @@ Reloaded cogs:
     async def restart(self, ctx: discord.ApplicationContext):
         os.system("clear")
         embed = discord.Embed(
-            title=f"Restarting {self.bot.user.display_name}...", colour=await self.bot.embn(ctx.author)
+            title=f"Restarting {self.bot.user.display_name}...", colour=cfc
         )
         await ctx.respond(embed=embed, ephemeral=True)
         os.execv(sys.executable, ["python"] + sys.argv)
