@@ -438,13 +438,13 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     if metar_json["results"] == 1:
                         wind = json.dumps(
                             metar_json["data"][0]
-                            .get("wind", {"degrees": "N/A"})
+                            .get("wind", {"degrees": -1})
                             .get("degrees")
                         )
                     else:
                         wind = "N/A"
                     
-                    if wind == "N/A":
+                    if (wind == "N/A") or (wind == -1):
                         embed = discord.Embed(
                             title="No wind data found",
                             description="Wind data is required to make a prediction on active runways at the given airport.",
