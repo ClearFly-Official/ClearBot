@@ -344,7 +344,8 @@ class UtilityCommands(discord.Cog):
                     max_values=1,
                     options=select_groups,
                 )
-                async def select_callback(self, select, interaction):
+                async def select_callback(self, select: discord.SelectMenu, interaction: discord.Interaction):
+                    await interaction.response.defer()
                     listed_cmds = []
                     for cmd in cmds[select.values[0].lower()]:
                         if cmd.options == []:
@@ -361,7 +362,7 @@ class UtilityCommands(discord.Cog):
                         description="\n".join(listed_cmds),
                         colour=cfc,
                     )
-                    await interaction.response.edit_message(embed=embed)
+                    await interaction.edit_original_message(embed=embed)
 
             embed = discord.Embed(
                 title="Help!",
