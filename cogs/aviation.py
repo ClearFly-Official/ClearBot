@@ -12,13 +12,18 @@ from airports import airports
 from main import cfc, errorc
 
 
-def calculate_active_runways(runway_numbers: list[int], wind_degree: int) -> list[int]:
-    adjusted_degrees = [(x - wind_degree) % 360 for x in runway_numbers]
-    closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
-    closest_runways = [
-        runway_numbers[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree
-    ]
-    return closest_runways[0]
+def return_numbers(string: str) -> int:
+    return int(re.sub(r'\D', '', string))
+
+def calculate_active_runways(runways: list[tuple[str, str]], wind_degree: int) -> list[str]:
+    active_runways = []
+    for runway in runways:
+        adjusted_degrees = [(return_numbers(x) - wind_degree) % 360 for x in runway]
+        closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
+        closest_runways = [runway[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree]
+        active_runways.append(closest_runways[0])
+
+    return active_runways
 
 
 class AvCommands(discord.Cog):
@@ -416,12 +421,11 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     runways = []
                     for i, runway in enumerate(json_resp["runways"]):
                         runways.append(
-                            int(re.sub(r"\D", "", json_resp["runways"][i]["le_ident"]))
+                            (
+                                json_resp["runways"][i]["le_ident"],
+                                json_resp["runways"][i]["he_ident"]
+                            )
                         )
-                        runways.append(
-                            int(re.sub(r"\D", "", json_resp["runways"][i]["he_ident"]))
-                        )
-                    runways = list(dict.fromkeys(runways))
 
                     if metar_json["results"] == 1:
                         wind = json.dumps(
@@ -439,15 +443,8 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         )
                         await ctx.respond(embed=embed)
                         return
-                    ac_runways = []
-                    for i in range(len(runways)):
-                        ac_runways.append(
-                            calculate_active_runways(
-                                runways, (int(wind) - 1) + ((i * 10) * int(wind))
-                            )
-                        )
+                    ac_runways = calculate_active_runways(runways, int(wind))
 
-                    ac_runways = list(dict.fromkeys(ac_runways))
                     ac_runways = [
                         f"**{i}**: {rwy}" for i, rwy in enumerate(ac_runways, 1)
                     ]
