@@ -590,7 +590,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             flight_time = f"{flight_time[0]}:{flight_time[1]}"
 
             pilmoji.text(
-                (img.size[0] - (font.getsize(time_str)[0] + x_padding), 43),
+                (img.size[0] - (font.getlength(time_str) + x_padding), 43),
                 time_str,
                 font=font,
                 fill=colour,
@@ -609,7 +609,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     (
                         img.size[0]
                         - (
-                            route_font.getsize(destination[:4].upper())[0]
+                            route_font.getlength(destination[:4].upper())
                             + (x_padding + 10)
                         )
                     ),

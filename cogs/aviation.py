@@ -16,12 +16,20 @@ def return_numbers(string: str) -> int:
     return int(re.sub(r'\D', '', string))
 
 def calculate_active_runways(runways: list[tuple[str, str]], wind_degree: int) -> list[str]:
+    total_list = []
+    for runway in runways:
+        total_list.append(runway[0])
+        total_list.append(runway[1])
     active_runways = []
     for runway in runways:
         adjusted_degrees = [(return_numbers(x) - wind_degree) % 360 for x in runway]
         closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
         closest_runways = [runway[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree]
         active_runways.append(closest_runways[0])
+    
+    for active_runway in active_runways:
+        if active_runway not in total_list:
+            active_runways.remove(active_runway)
 
     return active_runways
 
@@ -435,6 +443,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         )
                     else:
                         wind = "N/A"
+                    
                     if wind == "N/A":
                         embed = discord.Embed(
                             title="No wind data found",
