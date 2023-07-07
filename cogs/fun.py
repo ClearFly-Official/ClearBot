@@ -37,7 +37,8 @@ class FunCommands(discord.Cog):
         print("| Fun cog loaded sucessfully")
 
     @fun.command(
-        name="bigtext", description="📚 Convert text into text emoji characters (might not work on mobile)."
+        name="bigtext",
+        description="📚 Convert text into text emoji characters (might not work on mobile).",
     )
     @option("text", description="The text you want to convert.")
     async def bigtxtconv(self, ctx: discord.ApplicationContext, text: str):
@@ -344,8 +345,9 @@ class FunCommands(discord.Cog):
         with io.BytesIO() as output:
             img.save(output, format="PNG")
             output.seek(0)
-            await ctx.respond(file=discord.File(output, filename=f"qoute{message.id}.png"))
-
+            await ctx.respond(
+                file=discord.File(output, filename=f"qoute{message.id}.png")
+            )
 
     @fun.command(
         name="flag-game",
@@ -409,7 +411,10 @@ class FunCommands(discord.Cog):
                     font,
                     emoji_position_offset=(0, 20),
                 )
-            image.save(fileName)
+            with io.BytesIO() as output:
+                image.save(output, format="PNG")
+                output.seek(0)
+                await ctx.respond(file=discord.File(output, filename=fileName))
 
         file = discord.File(fileName, filename=fileName)
         embed = discord.Embed(
@@ -468,7 +473,6 @@ class FunCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
         os.remove(fileName)
-
 
     ####################################################################################
     #              **Disabled due to Reddit API changes. (fucky u/spez!)**             #
@@ -562,8 +566,8 @@ class FunCommands(discord.Cog):
             return
         meme_id_n = random.randint(10, 99)
         meme_id = f"meme{meme_id_n}.png"
-        await image.save(meme_id)
-        img = Image.open(meme_id)
+        img_data = await image.read()
+        img = Image.open(io.BytesIO(img_data))
         resolution = img.size
         if (img.size[0] > 4096) or (img.size[1] > 4096):
             embed = discord.Embed(
@@ -586,7 +590,7 @@ class FunCommands(discord.Cog):
                     draw.rectangle(
                         ((0, 0), (resolution[0], round(resolution[1] / 6))),
                         fill=(255, 255, 255),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -598,7 +602,7 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
-                        align='center',
+                        align="center",
                     )
                 else:
                     pilmoji.text(
@@ -612,7 +616,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -625,7 +629,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -638,7 +642,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -651,7 +655,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -662,7 +666,7 @@ class FunCommands(discord.Cog):
                         textwrap.fill(top_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
-                        align='center',
+                        align="center",
                     )
         if bottom_text != None:
             with Pilmoji(img) as pilmoji:
@@ -674,7 +678,7 @@ class FunCommands(discord.Cog):
                             (resolution[0], resolution[1]),
                         ),
                         fill=(255, 255, 255),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -686,7 +690,7 @@ class FunCommands(discord.Cog):
                         font=font_bars,
                         fill=(0, 0, 0),
                         emoji_position_offset=(0, 20),
-                        align='center',
+                        align="center",
                     )
                 else:
                     pilmoji.text(
@@ -700,7 +704,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -713,7 +717,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -726,7 +730,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(0 - border_offset, 20 + border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -739,7 +743,7 @@ class FunCommands(discord.Cog):
                         font=font,
                         emoji_position_offset=(border_offset, 20 - border_offset),
                         fill=(0, 0, 0),
-                        align='center',
+                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -750,10 +754,12 @@ class FunCommands(discord.Cog):
                         textwrap.fill(bottom_text.upper(), 25, max_lines=2),
                         font=font,
                         emoji_position_offset=(0, 20),
-                        align='center',
+                        align="center",
                     )
-        img.save(meme_id)
-        file = discord.File(meme_id, filename=meme_id)
+        with io.BytesIO() as output:
+            img.save(output, format="PNG")
+            output.seek(0)
+            file = discord.File(output, filename=meme_id)
         embed = (
             discord.Embed(title="Here's your meme!", colour=cfc)
             .set_image(url=f"attachment://{meme_id}")
@@ -762,7 +768,6 @@ class FunCommands(discord.Cog):
             )
         )
         await ctx.respond(file=file, embed=embed)
-        os.remove(meme_id)
 
 
 def setup(bot):
