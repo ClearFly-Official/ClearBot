@@ -316,7 +316,8 @@ class FunCommands(discord.Cog):
     @commands.cooldown(1, 20, commands.BucketType.user)
     async def quote(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.defer()
-        avatarorigin = Image.open(await message.author.display_avatar.read())
+        data = await message.author.display_avatar.read()
+        avatarorigin = Image.open(io.BytesIO(data))
         avatar = avatarorigin.resize((1024, 1024))
         qclear = Image.open("images/quoteClear.png")
         qavmask = Image.open("images/quoteAVMask.png")
@@ -340,8 +341,10 @@ class FunCommands(discord.Cog):
                 emoji_position_offset=(0, 20),
             )
 
-        f = discord.File(img.tobytes(), filename="image.png")
-        await ctx.respond(file=f)
+        with io.BytesIO() as output:
+            img.save(output, format="PNG")
+            output.seek(0)
+            await ctx.respond(file=discord.File(output, filename=f"qoute{message.id}.png"))
 
 
     @fun.command(
