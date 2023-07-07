@@ -1,3 +1,4 @@
+import platform
 import re
 import shutil
 import aiofiles
@@ -51,17 +52,17 @@ class Listeners(discord.Cog):
         self.rssfeedtres2.start()
         self.rssfeedtres3.start()
         self.db_backup.start()
-        self.uptime_ping.start()
         self.resetRShownSubms.start()
         self.join_stats_loop.start()
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.datetime.now())
-        if os.path.exists(".onpc"):
+        if os.popen("hostname -s").readline() == "raspberrypi":
             embed = discord.Embed(
                 title="I started up!",
                 description=f"""
 Started bot up on {now}
-*Data save available*
+
+*Host is Raspberry Pi*
             """,
                 color=0x00FF00,
             )
@@ -71,7 +72,8 @@ Started bot up on {now}
                 title="I started up!",
                 description=f"""
 Started bot up on {now}
-*Data save unavailable*
+
+*Host is on {platform.system()}*
             """,
                 color=0x00FF00,
             )
@@ -220,14 +222,6 @@ Started bot up on {now}
     @tasks.loop(hours=36.0)
     async def resetRShownSubms(self):
         self.bot.rshownsubms = []
-
-    @tasks.loop(minutes=1)
-    async def uptime_ping(self):
-        async with aiohttp.ClientSession() as cs:
-            async with cs.get(
-                "https://monitor.lightbulb.host/uptime/IGBGKXSGVRTO"
-            ) as r:
-                pass
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
