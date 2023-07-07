@@ -1,4 +1,5 @@
 import datetime
+import io
 import json
 import math
 import sqlite3
@@ -664,8 +665,10 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 fill=colour,
             )
 
-        img.save(f"images/{card_id}")
-        file = discord.File(f"images/{card_id}", filename=card_id)
+        with io.BytesIO() as output:
+            img.save(output, format="PNG")
+            output.seek(0)
+            file = discord.File(output, filename=card_id)
         embed.set_image(url=f"attachment://{card_id}")
 
         flight = {
@@ -688,7 +691,6 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             await db.commit()
 
         await ctx.respond(embed=embed, file=file)
-        os.remove(f"images/{card_id}")
 
     @flight.command(
         name="complete", description="✅ Mark your last flight as completed."
@@ -1117,8 +1119,6 @@ Destination: **{flight_id2[0][5]}**
 
         cropped_image = image.crop((left, upper + 1, right, lower))
 
-        output_filename = "map.png"
-        cropped_image.save(output_filename)
 
         if version == "Airliner":
             flight_type = "airliner"
@@ -1127,8 +1127,11 @@ Destination: **{flight_id2[0][5]}**
         else:
             flight_type = ""
 
-        with open(output_filename, "rb") as file:
-            map_file = discord.File(file)
+        with io.BytesIO() as output:
+            output_filename = "map.png"
+            cropped_image.save(output, format="PNG")
+            output.seek(0)
+            map_file = discord.File(output, filename=output_filename)
             embed = discord.Embed(
                 title=f"{user.name}'s flight map",
                 description=f"{user.mention} has completed **{len(waypoints_data)}** {flight_type} flight(s)!",
@@ -1139,7 +1142,6 @@ Destination: **{flight_id2[0][5]}**
                     text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
                 )
             await ctx.respond(embed=embed, file=map_file)
-        os.remove(output_filename)
 
     @user.command(name="flight", description="🗺️ View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
@@ -1365,8 +1367,6 @@ Destination: **{flight_id2[0][5]}**
 
                 cropped_image = image.crop((left, upper + 1, right, lower))
 
-                output_filename = f"flight_{user.id}_{select.values[0]}.png"
-                cropped_image.save(output_filename)
                 if (flight_data[8] == "") or (flight_data[9] == ""):
                     notes = "*No Notes*"
                 else:
@@ -1382,8 +1382,11 @@ Destination: **{flight_id2[0][5]}**
 
                 flight_time = f"{flight_time[0]}:{flight_time[1]}"
 
-                with open(output_filename, "rb") as file:
-                    map_file = discord.File(file)
+                with io.BytesIO() as output:
+                    output_filename = f"flight_{user.id}_{select.values[0]}.png"
+                    cropped_image.save(output, format="PNG")
+                    output.seek(0)
+                    map_file = discord.File(output, filename=output_filename)
                     embed = (
                         discord.Embed(
                             title=f"Flight {flight_data[2]}",
@@ -1411,7 +1414,6 @@ Notes:
                             text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
                         )
                     await ctx.edit(embed=embed, file=map_file)
-                os.remove(output_filename)
 
             @discord.ui.button(
                 label="<", style=discord.ButtonStyle.danger, disabled=True
@@ -1523,18 +1525,19 @@ Notes:
                 emoji_position_offset=(0, 20),
             )
         w, h = img.size
-        if len(values) < 10:
-            img.crop((0, 0, w, h - 95 * (10 - len(values)))).save("images/lb.png")
-        else:
-            img.save("images/lb.png")
-        file = discord.File("images/lb.png", filename="lb.png")
+        with io.BytesIO() as output:
+            if len(values) < 10:
+                img.crop((0, 0, w, h - 95 * (10 - len(values)))).save(output, format="PNG")
+            else:
+                img.save(output, format="PNG")
+            output.seek(0)
+            file = discord.File(output, filename="lb.png")
         embed = discord.Embed(
             title="ClearFly VA Leaderboard",
             description="See more information with </va stats:1016059999056826479>!",
             colour=cfc,
         ).set_image(url="attachment://lb.png")
         await ctx.respond(embed=embed, file=file)
-        os.remove("images/lb.png")
 
     @va.command(name="stats", description="📊 See the statistics of the ClearFly VA!")
     @commands.cooldown(1, 15, commands.BucketType.user)
