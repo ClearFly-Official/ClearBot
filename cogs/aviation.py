@@ -435,11 +435,11 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             button = discord.ui.Button(label="Open airport site", url=site_link)
             view.add_item(button)
         else:
-            button = discord.ui.Button(label="Open airport site", url=site_link, disabled=True)
+            button = discord.ui.Button(label="Open airport site", url="https://matt3o0.is-a.dev", disabled=True)
             view.add_item(button)
 
         if site_link != "":
-            button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link)
+            button = discord.ui.Button(label="Open Wikipedia page", url="https://matt3o0.is-a.dev")
             view.add_item(button)
         else:
             button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link, disabled=True)
