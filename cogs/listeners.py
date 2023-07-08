@@ -56,7 +56,7 @@ class Listeners(discord.Cog):
         self.join_stats_loop.start()
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.datetime.now())
-        if os.popen("hostname -s").readline() == "raspberrypi":
+        if os.popen("hostname -s").readline() == "raspberrypi\n":
             embed = discord.Embed(
                 title="I started up!",
                 description=f"""

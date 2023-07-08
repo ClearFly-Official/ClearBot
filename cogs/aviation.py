@@ -13,9 +13,12 @@ from main import cfc, errorc
 
 
 def return_numbers(string: str) -> int:
-    return int(re.sub(r'\D', '', string))
+    return int(re.sub(r"\D", "", string))
 
-def calculate_active_runways(runways: list[tuple[str, str]], wind_degree: int) -> list[str]:
+
+def calculate_active_runways(
+    runways: list[tuple[str, str]], wind_degree: int
+) -> list[str]:
     total_list = []
     for runway in runways:
         total_list.append(runway[0])
@@ -24,9 +27,11 @@ def calculate_active_runways(runways: list[tuple[str, str]], wind_degree: int) -
     for runway in runways:
         adjusted_degrees = [(return_numbers(x) - wind_degree) % 360 for x in runway]
         closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
-        closest_runways = [runway[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree]
+        closest_runways = [
+            runway[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree
+        ]
         active_runways.append(closest_runways[0])
-    
+
     for active_runway in active_runways:
         if active_runway not in total_list:
             active_runways.remove(active_runway)
@@ -39,8 +44,10 @@ class AvCommands(discord.Cog):
         self.bot = bot
 
     av = discord.SlashCommandGroup(
-        name="aviation",
-        description="✈️ Commands related to aviation.",
+        name="aviation", description="✈️ Commands related to aviation."
+    )
+    airport = av.create_subgroup(
+        name="airport", description="🛬 Commands related to airports."
     )
 
     async def get_airports(self, ctx: discord.AutocompleteContext):
@@ -56,7 +63,7 @@ class AvCommands(discord.Cog):
     async def on_ready(self):
         print("| Aviation cog loaded sucessfully")
 
-    @av.command(name="metar", description="⛅️ Get the metar data of an airport.")
+    @airport.command(name="metar", description="⛅️ Get the metar data of an airport.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     @option(
         "airport",
@@ -229,7 +236,9 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             )
             await ctx.respond(embed=embed)
 
-    @av.command(name="charts", description="🗺️ Fetches charts of the provided airport.")
+    @airport.command(
+        name="charts", description="🗺️ Fetches charts of the provided airport."
+    )
     @commands.cooldown(1, 20, commands.BucketType.user)
     @discord.option(
         "airport",
@@ -400,7 +409,80 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                 )
                 await ctx.respond(embed=embed)
 
-    @av.command(
+    @airport.command(name="info", description="ℹ️ Fetch info about an airport.")
+    @discord.option(
+        name="airport",
+        description="The airport you want to know information about.",
+        autocomplete=get_airports,
+    )
+    async def airport_info(self, ctx: discord.ApplicationContext, airport: str):
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(
+                f"https://airportdb.io/api/v1/airport/{airport[:4].upper()}?apiToken={os.getenv('ADB_TOKEN')}"
+            ) as resp:
+                if resp.status == 200:
+                    json_resp = await resp.json()
+                else:
+                    embed = discord.Embed(
+                        title="No airport information found.",
+                        colour=errorc,
+                    )
+                    await ctx.respond(embed=embed)
+        site_link = json_resp.get("home_link")
+        wiki_link = json_resp.get("wikipedia_link")
+        view = discord.ui.View()
+        if site_link != "":
+            button = discord.ui.Button(label="Open airport site", url=site_link)
+            view.add_item(button)
+        else:
+            button = discord.ui.Button(label="Open airport site", url=site_link, disabled=True)
+            view.add_item(button)
+
+        if site_link != "":
+            button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link)
+            view.add_item(button)
+        else:
+            button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link, disabled=True)
+            view.add_item(button)
+
+        iata = "N/A" if json_resp.get("iata_code") == "" else json_resp.get("iata_code")
+        
+
+        if json_resp.get("continent", "N/A") == "NA":
+            continent = "North America"
+        elif json_resp.get("continent", "N/A") == "EU":
+            continent = "Europe"
+        elif json_resp.get("continent", "N/A") == "AS":
+            continent = "Asia"
+        elif json_resp.get("continent", "N/A") == "OC":
+            continent = "Oceania"
+        elif json_resp.get("continent", "N/A") == "SA":
+            continent = "South America"
+        elif json_resp.get("continent", "N/A") == "AN":
+            continent = "Antartica"
+        elif json_resp.get("continent", "N/A") == "AF":
+            continent = "Africa"
+        else:
+            continent = json_resp.get("continent", "N/A")
+
+        embed = discord.Embed(
+            title=f"Information about '{airport}'",
+            description=f"""
+        ICAO: **{json_resp.get('icao_code', 'N/A')}**
+        IATA: **{iata}**
+        Type: **{json_resp.get('type', 'N/A').replace('_', ' ').title()}**
+        Name: **{json_resp.get('name', 'N/A')}**
+        Elevation: **{json_resp.get('elevation_ft', 'N/A')}**ft
+        Continent: **{continent}**
+        Country Code: **{json_resp.get('iso_country', 'N/A')}**
+        Region Code: **{json_resp.get('iso_region', 'N/A')}**
+        Municipality: **{json_resp.get('municipality', 'N/A')}**
+        """,
+            colour=cfc
+        )
+        await ctx.respond(embed=embed, view=view)
+
+    @airport.command(
         name="active_runways",
         description="🎬 Make an assumption of the active runways of an airport.",
     )
@@ -431,7 +513,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         runways.append(
                             (
                                 json_resp["runways"][i]["le_ident"],
-                                json_resp["runways"][i]["he_ident"]
+                                json_resp["runways"][i]["he_ident"],
                             )
                         )
 
@@ -443,7 +525,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         )
                     else:
                         wind = "N/A"
-                    
+
                     if (wind == "N/A") or (wind == -1):
                         embed = discord.Embed(
                             title="No wind data found",
