@@ -172,16 +172,16 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                     embed.add_field(
                         name="Translated Metar Data:",
                         value=f"""
-Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
-Barometer : **Hg {json.dumps(resp['data'][0]['barometer']['hg'])}**
-Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
-Temperature : **{json.dumps(resp['data'][0]['temperature'].get('fahrenheit', 'N/A')).replace('"', "")}F°**
-Dewpoint : **{json.dumps(resp['data'][0]['dewpoint'].get('fahrenheit', 'N/A'))}F°**
-Elevation : **{json.dumps(resp['data'][0]['elevation']['feet']).replace('"', "")} Feet**
-Flight Category :**{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
-Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
-Visibility : **{json.dumps(resp['data'][0]['visibility']['miles']).replace('"', "")} Miles**
-Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
+Airport: **{json.dumps(resp['data'][0]['station'].get('name', 'N/A')).replace('"', "")}**(**{json.dumps(resp['data'][0].get('icao', 'N/A')).replace('"', "")}**)
+Barometer: **Hg {json.dumps(resp['data'][0]['barometer'].get('hg', 'N/A'))}**
+Clouds: **{json.dumps(resp['data'][0]['clouds'][0].get('text', 'N/A')).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0].get('code', 'N/A')).replace('"', "")}**)
+Temperature: **{json.dumps(resp['data'][0]['temperature'].get('fahrenheit', 'N/A')).replace('"', "")}F°**
+Dewpoint: **{json.dumps(resp['data'][0]['dewpoint'].get('fahrenheit', 'N/A'))}F°**
+Elevation: **{json.dumps(resp['data'][0]['elevation'].get('feet', 'N/A')).replace('"', "")} Feet**
+Flight Category: **{json.dumps(resp['data'][0].get('flight_category', 'N/A')).replace('"', "")}**
+Humidity: **{json.dumps(resp['data'][0]['humidity'].get('percent', 'N/A'))}%**
+Visibility: **{json.dumps(resp['data'][0]['visibility'].get('miles', 'N/A')).replace('"', "")} Miles**
+Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees', 'N/A'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
             """,
                         inline=False,
                     )
@@ -214,16 +214,16 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
             embed.add_field(
                 name="Translated Metar Data:",
                 value=f"""
-Airport : **{json.dumps(resp['data'][0]['station']['name']).replace('"', "")}**(**{json.dumps(resp['data'][0]['icao']).replace('"', "")}**)
-Barometer : **hPa {json.dumps(resp['data'][0]['barometer']['hpa'])}**
-Clouds : **{json.dumps(resp['data'][0]['clouds'][0]['text']).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0]['code']).replace('"', "")}**)
-Temperature : **{json.dumps(resp['data'][0]['temperature'].get('celsius', 'N/A'))}C°**
-Dewpoint : **{json.dumps(resp['data'][0]['dewpoint'].get('celsius', 'N/A'))}C°**
-Elevation : **{json.dumps(resp['data'][0]['elevation']['meters']).replace('"', "")} Meters**
-Flight Category : **{json.dumps(resp['data'][0]['flight_category']).replace('"', "")}**
-Humidity : **{json.dumps(resp['data'][0]['humidity']['percent'])}%**
-Visibility : **{json.dumps(resp['data'][0]['visibility']['meters']).replace('"', "")} Meters**
-Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
+Airport: **{json.dumps(resp['data'][0]['station'].get('name', 'N/A')).replace('"', "")}**(**{json.dumps(resp['data'][0].get('icao', 'N/A')).replace('"', "")}**)
+Barometer: **hPa {json.dumps(resp['data'][0]['barometer'].get('hpa', 'N/A'))}**
+Clouds: **{json.dumps(resp['data'][0]['clouds'][0].get('text', 'N/A')).replace('"', "")}**(**{json.dumps(resp['data'][0]['clouds'][0].get('code', 'N/A')).replace('"', "")}**)
+Temperature: **{json.dumps(resp['data'][0]['temperature'].get('celsius', 'N/A'))}C°**
+Dewpoint: **{json.dumps(resp['data'][0]['dewpoint'].get('celsius', 'N/A'))}C°**
+Elevation: **{json.dumps(resp['data'][0]['elevation'].get('meters', 'N/A')).replace('"', "")} Meters**
+Flight Category: **{json.dumps(resp['data'][0].get('flight_category', 'N/A')).replace('"', "")}**
+Humidity: **{json.dumps(resp['data'][0]['humidity'].get('percent', 'N/A'))}%**
+Visibility: **{json.dumps(resp['data'][0]['visibility'].get('meters', 'N/A')).replace('"', "")} Meters**
+Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees', 'N/A'))}° at {json.dumps(resp['data'][0].get('wind', {'speed_kts': 'N/A'}).get('speed_kts', 'N/A'))} Knots**
             """,
                 inline=False,
             )
@@ -428,6 +428,7 @@ Winds : **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degree
                         colour=errorc,
                     )
                     await ctx.respond(embed=embed)
+                    return
         site_link = json_resp.get("home_link")
         wiki_link = json_resp.get("wikipedia_link")
         view = discord.ui.View()
