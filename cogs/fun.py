@@ -414,9 +414,8 @@ class FunCommands(discord.Cog):
             with io.BytesIO() as output:
                 image.save(output, format="PNG")
                 output.seek(0)
-                await ctx.respond(file=discord.File(output, filename=fileName))
+                file=discord.File(output, filename=fileName)
 
-        file = discord.File(fileName, filename=fileName)
         embed = discord.Embed(
             title="Guess the sentence!",
             description=f"Hurry up, game ends <t:{round(time.time())+120}:R>!\n\nDifficulty: **{difficulty}**\n*Reply ping with your answer!*",
@@ -472,7 +471,6 @@ class FunCommands(discord.Cog):
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
-        os.remove(fileName)
 
     ####################################################################################
     #              **Disabled due to Reddit API changes. (fucky u/spez!)**             #
