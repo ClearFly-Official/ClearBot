@@ -469,15 +469,15 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
         embed = discord.Embed(
             title=f"Information about '{airport}'",
             description=f"""
-        ICAO: **{json_resp.get('icao_code', 'N/A')}**
-        IATA: **{iata}**
-        Type: **{json_resp.get('type', 'N/A').replace('_', ' ').title()}**
-        Name: **{json_resp.get('name', 'N/A')}**
-        Elevation: **{json_resp.get('elevation_ft', 'N/A')}**ft
-        Continent: **{continent}**
-        Country Code: **{json_resp.get('iso_country', 'N/A')}**
-        Region Code: **{json_resp.get('iso_region', 'N/A')}**
-        Municipality: **{json_resp.get('municipality', 'N/A')}**
+ICAO: **{json_resp.get('icao_code', 'N/A')}**
+IATA: **{iata}**
+Type: **{json_resp.get('type', 'N/A').replace('_', ' ').title()}**
+Name: **{json_resp.get('name', 'N/A')}**
+Elevation: **{json_resp.get('elevation_ft', 'N/A')}**ft
+Continent: **{continent}**
+Country Code: **{json_resp.get('iso_country', 'N/A')}**
+Region Code: **{json_resp.get('iso_region', 'N/A')}**
+Municipality: **{json_resp.get('municipality', 'N/A')}**
         """,
             colour=cfc
         )
