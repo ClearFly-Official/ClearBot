@@ -1119,7 +1119,6 @@ Destination: **{flight_id2[0][5]}**
 
         cropped_image = image.crop((left, upper + 1, right, lower))
 
-
         if version == "Airliner":
             flight_type = "airliner"
         elif version == "General Aviation":
@@ -1527,7 +1526,9 @@ Notes:
         w, h = img.size
         with io.BytesIO() as output:
             if len(values) < 10:
-                img.crop((0, 0, w, h - 95 * (10 - len(values)))).save(output, format="PNG")
+                img.crop((0, 0, w, h - 95 * (10 - len(values)))).save(
+                    output, format="PNG"
+                )
             else:
                 img.save(output, format="PNG")
             output.seek(0)
@@ -1730,11 +1731,18 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
-            url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
+            url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
-        embs = [embm, emb1, emb2, emb3]
+        emb4 = discord.Embed(
+            title="Cessna 172SP (G1000) by Laminar Research",
+            colour=cfc,
+            url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
+        )
+        embs = [embm, emb1, emb2, emb3, emb4]
         liv_channel = self.bot.get_channel(1041057335449227314)
         overv_channel = self.bot.get_channel(overv_id)
         await ctx.respond("All ready to go!", ephemeral=True)
@@ -1920,11 +1928,18 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
             colour=cfc,
-            url="https://drive.google.com/file/d/1Fh0B1MKJWW4aSo0uOe4AF2pj4orKfOSI/view?usp=sharing",
+            url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
-        embs = [embm, emb1, emb2, emb3]
+        emb4 = discord.Embed(
+            title="Cessna 172SP (G1000) by Laminar Research",
+            colour=cfc,
+            url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
+        )
+        embs = [embm, emb1, emb2, emb3, emb4]
         await ctx.respond(embeds=embs)
 
 
