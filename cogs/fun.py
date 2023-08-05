@@ -394,7 +394,7 @@ class FunCommands(discord.Cog):
             for ccode in ccodes:
                 convText = convText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
             if convText == text:
-                flagGen(text)
+                flagGen(text, difficulty)
             else:
                 return convText
 

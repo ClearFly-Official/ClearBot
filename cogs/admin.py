@@ -54,46 +54,6 @@ class FAQView(discord.ui.View):
         )
 
 
-class SelfRolesView(discord.ui.View):
-    def __init__(self, bot):
-        self.bot = bot
-        super().__init__(timeout=None)
-
-    @discord.ui.select(
-        custom_id="self-roles-view",
-        placeholder="Select Roles",
-        min_values=1,
-        max_values=1,
-        options=[
-            discord.SelectOption(
-                label="Announcements",
-                description="Select to receive mentions when we post any announcements.",
-                value="965689409364197467",
-                emoji="📣",
-            ),
-            discord.SelectOption(
-                label="Updates",
-                description="Select to receive mentions when we post an update on our 737-100.",
-                value="965688527109107712",
-                emoji="⚒️",
-            ),
-        ],
-    )
-    async def select_callback(self, select, interaction):
-        guild = self.bot.get_guild(965419296937365514)
-        role = guild.get_role(int(select.values[0]))
-        if role in interaction.user.roles:
-            await interaction.user.remove_roles(role)
-            await interaction.response.send_message(
-                f"You won't get mentioned for {role.mention} anymore.", ephemeral=True
-            )
-        else:
-            await interaction.user.add_roles(role)
-            await interaction.response.send_message(
-                f"You will now get mentioned for {role.mention}!", ephemeral=True
-            )
-
-
 class AdminCommands(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -442,8 +402,12 @@ URL: `{url}`
 **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
         """,
         )
+        embed3 = discord.Embed(title="Links", description="""
+- [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
+- [Discord](https://discord.gg/jjpwtusf6n)
+                               """, colour=cfc)
         await ctx.respond("Rules posted!", ephemeral=True)
-        await ctx.send(embeds=[embed1, embed2], view=RulesView(bot=self.bot))
+        await ctx.send(embeds=[embed1, embed2, embed3], view=RulesView(bot=self.bot))
 
     @admin.command(name="faq", description="Sends the faq.")
     @commands.has_permissions(administrator=True)
@@ -468,31 +432,6 @@ A: This is unlikely, but not impossible in the future.
         )
         await ctx.respond("FAQ posted!", ephemeral=True)
         await ctx.send(embeds=[embed1, embed2], view=FAQView(bot=self.bot))
-
-    @admin.command(name="buttonroles", description="Sends the button roles.")
-    @commands.has_permissions(administrator=True)
-    @commands.cooldown(1, 180)
-    async def buttonroles(self, ctx: discord.ApplicationContext):
-        emb1 = discord.Embed(
-            title="🎨 Livery Painter",
-            description="DM <@871893179450925148> or <@668874138160594985> with some examples of your work.",
-            colour=cfc,
-        )
-        emb2 = discord.Embed(
-            title="🎨 ClearFly Unofficial Painter",
-            description="""
-Create a custom livery for the ClearFly Virtual Airline and share it in <#1087399445966110881>(effort must be shown to qualify for the role).
-If your livery is deemed high enough quality by the ClearFly team, you'll likely gain the <@&1055909461488844931> role. Your livery will be added to the list of official ClearFly VA liveries too.
-            """,
-            colour=cfc,
-        )
-        embimg = discord.Embed(colour=cfc).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1090335535291179068/roleBanner.png"
-        )
-        await ctx.respond("Button roles posted!", ephemeral=True)
-        await ctx.send(embed=embimg, view=SelfRolesView(bot=self.bot))
-        await ctx.send(embeds=[emb1, emb2])
-
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))

@@ -2,6 +2,7 @@
 # -Made by Matt3o0-#
 ###################
 
+import gc
 import discord  # Py-cord
 import os
 from dotenv import load_dotenv
@@ -21,6 +22,7 @@ warningc = 0xFFAA00
 
 @bot.listen()
 async def on_ready():
+    gc.collect()
     print(
         f"""
 |-----------------------------
