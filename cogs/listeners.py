@@ -138,9 +138,9 @@ Started bot up on {now}
                     await db.commit()
                 await channel.send(
                     f"""
-    **{feed.get('title')}**
+# {feed.get('title')}
 
-    {feed.get('link')}
+{feed.get('link')}
                     """
                 )
         except Exception as e:
@@ -176,9 +176,9 @@ Started bot up on {now}
                     await db.commit()
                 await channel.send(
                     f"""
-    **{feed.get('title')}**
+# {feed.get('title')}
 
-    {feed.get('link')}
+{feed.get('link')}
                     """
                 )
         except Exception as e:
@@ -214,9 +214,9 @@ Started bot up on {now}
                     await db.commit()
                 await channel.send(
                     f"""
-    **{feed.get('title')}**
+# {feed.get('title')}
 
-    {feed.get('link')}
+{feed.get('link')}
                     """
                 )
         except Exception as e:

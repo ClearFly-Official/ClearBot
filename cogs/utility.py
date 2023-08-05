@@ -2,6 +2,7 @@ import json
 import os
 import platform
 import aiofiles
+import pytz
 import discord
 import psutil
 import urllib.parse
@@ -345,7 +346,9 @@ class UtilityCommands(discord.Cog):
                     max_values=1,
                     options=select_groups,
                 )
-                async def select_callback(self, select: discord.SelectMenu, interaction: discord.Interaction):
+                async def select_callback(
+                    self, select: discord.SelectMenu, interaction: discord.Interaction
+                ):
                     await interaction.response.defer()
                     listed_cmds = []
                     for cmd in cmds[select.values[0].lower()]:
@@ -380,7 +383,9 @@ class UtilityCommands(discord.Cog):
         embed = discord.Embed(title="The ClearFly Team", color=cfc)
         logo = data["icon"]
         for member in data["members"]:
-            embed.add_field(name=member, value=f"> {data['members'][member]['role']}", inline=False)
+            embed.add_field(
+                name=member, value=f"> {data['members'][member]['role']}", inline=False
+            )
         embed.set_thumbnail(url=logo)
         await ctx.respond(embed=embed)
 
@@ -725,93 +730,130 @@ Total votes: **{total_count}**
     @discord.option(
         name="style",
         choices=[
-            "Short Time (14:20)",
-            "Long Time (14:20:24)",
-            "Short Date (15/4/2023)",
-            "Long Date (15 April 2023)",
-            "Short Date Time (15 April 2023 14:20)",
-            "Long Date Time (Thursday, 15 April 2023 14:20)",
-            "Relative Time (4 days ago)",
+            f"Short Time (e.g. 14:10)",
+            f"Long Time (e.g. 14:10:36)",
+            f"Short Date (e.g. 23/7/2023)",
+            f"Long Date (e.g. 23 July 2023)",
+            f"Short Date Time (e.g. 23 July 2023 14:10)",
+            f"Long Date Time (e.g. Sunday, 23 July 2023 14:10)",
+            f"Relative Time (e.g. in 8 hours)",
         ],
+        description="The style to use for the timestamp",
     )
-    @discord.option(name="second", description="Seconds.")
-    @discord.option(name="minute", description="Minutes.")
-    @discord.option(name="hour", description="Hours.")
-    @discord.option(name="day", description="Days.")
-    @discord.option(name="month", description="Months.")
-    @discord.option(name="year", description="Years.")
     @discord.option(
-        name="time_zone", description="The time zone to use (e.g. UTC, CET, EST)."
+        name="timezone",
+        description="The timezone to use (e.g. UTC, CET, EST).",
+        # Pylance doesn't seem to find the basic_autocomplete function, but it does in discord.utils.utils, which doesn't even exist.
+        # If you find a fix for this, please make a PR on the repository.
+        autocomplete=discord.utils.basic_autocomplete(timezones),  # type: ignore
     )
+    @discord.option(name="year", description="Years.")
+    @discord.option(name="month", description="Months.")
+    @discord.option(name="day", description="Days.")
+    @discord.option(name="hour", description="Hours.")
+    @discord.option(name="minute", description="Minutes.")
+    @discord.option(name="second", description="Seconds.")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def time2stamp(
         self,
         ctx: discord.ApplicationContext,
-        style: str = "Relative Time (4 days ago)",
-        second: int = None,
-        minute: int = None,
-        hour: int = None,
-        day: int = None,
-        month: int = None,
-        year: int = None,
-        time_zone: str = "UTC",
+        style: str,
+        timezone: str,
+        year: int = 0,
+        month: str = "Default",
+        day: int = 0,
+        hour: int = 0,
+        minute: int = 0,
+        second: int = 0,
     ):
+        try:
+            time_zone = pytz.timezone(timezone)
+        except pytz.UnknownTimeZoneError:
+            embed = discord.Embed(
+                title="Incorrect Timezone",
+                description="You gave me a non-existent time zone. Please input correct time zones(e.g. UTC, CET, EST, etc.)",
+                colour=0xFF0000,
+            )
+            await ctx.respond(embed=embed)
+            return
         o_style = style
-        match style:
-            case "Short Time (14:20)":
+        match style.split("(")[0].strip():
+            case "Short Time":
                 style = "t"
-            case "Long Time (14:20:24)":
+            case "Long Time":
                 style = "T"
-            case "Short Date (15/4/2023)":
+            case "Short Date":
                 style = "d"
-            case "Long Date (15 April 2023)":
+            case "Long Date":
                 style = "D"
-            case "Short Date Time (15 April 2023 14:20)":
+            case "Short Date Time":
                 style = "f"
-            case "Long Date Time (Thursday, 15 April 2023 14:20)":
+            case "Long Date Time":
                 style = "F"
-            case "Relative Time (4 days ago)":
+            case "Relative Time":
                 style = "R"
             case _:
                 style = "R"
-        if second is None:
-            second = datetime.datetime.utcnow().second
+
+        match month.capitalize():
+            case "January":
+                conv_month = 1
+            case "February":
+                conv_month = 2
+            case "March":
+                conv_month = 3
+            case "April":
+                conv_month = 4
+            case "May":
+                conv_month = 5
+            case "June":
+                conv_month = 6
+            case "July":
+                conv_month = 7
+            case "August":
+                conv_month = 8
+            case "September":
+                conv_month = 9
+            case "October":
+                conv_month = 10
+            case "November":
+                conv_month = 11
+            case "December":
+                conv_month = 12
+            case _:
+                conv_month = datetime.datetime.utcnow().month
+
+        now = datetime.datetime.now(tz=time_zone)
+        if second == 0:
+            second = now.second
         if not second <= 59 >= 0:
             embed = discord.Embed(
                 title="Invalid seconds input",
                 description="Seconds parameter must be greater or equal to 0 and smaller than 60",
-                colour=cfc,
+                colour=0xFF0000,
             )
             await ctx.respond(embed=embed)
             return
-        if minute is None:
-            minute = datetime.datetime.utcnow().minute
-        if not second <= 59 >= 0:
-            embed = discord.Embed(
-                title="Invalid second input",
-                description="Second parameter must be greater or equal to 0 and smaller than 60",
-                colour=cfc,
-            )
-            await ctx.respond(embed=embed)
-            return
-        if hour is None:
-            hour = datetime.datetime.utcnow().hour
+        if minute == 0:
+            minute = now.minute
+        if hour == 0:
+            hour = now.hour
         if not hour <= 59 >= 0:
             embed = discord.Embed(
                 title="Invalid hour input",
                 description="Hour parameter must be greater or equal to 0 and smaller than 60",
-                colour=cfc,
+                colour=0xFF0000,
             )
             await ctx.respond(embed=embed)
             return
-        if day is None:
-            day = datetime.datetime.utcnow().day
-        if month == 2:
+        if day == 0:
+            day = now.day
+        if conv_month == 2:
             if not day <= 28 > 0:
                 embed = discord.Embed(
                     title="Invalid day input",
                     description="Day parameter must be greater than 0 and smaller than 29 if in February",
-                    colour=cfc,
+                    colour=0xFF0000,
                 )
                 await ctx.respond(embed=embed)
                 return
@@ -820,67 +862,60 @@ Total votes: **{total_count}**
                 embed = discord.Embed(
                     title="Invalid day input",
                     description="Day parameter must be greater than 0 and smaller or equal to 31",
-                    colour=cfc,
+                    colour=0xFF0000,
                 )
                 await ctx.respond(embed=embed)
                 return
-        if month is None:
-            month = datetime.datetime.utcnow().month
-        if not month <= 12 > 0:
+        if conv_month == 0:
+            conv_month = now.month
+        if not conv_month <= 12 > 0:
             embed = discord.Embed(
                 title="Invalid month input",
-                description="Month parameter must be greater than 0 and smaller or equal to 12",
-                colour=cfc,
+                colour=0xFF0000,
             )
             await ctx.respond(embed=embed)
             return
-        if year is None:
-            year = datetime.datetime.utcnow().year
+        if year == 0:
+            year = now.year
         if not year <= 9999 >= 0:
             embed = discord.Embed(
                 title="Invalid year input",
                 description="Year parameter must be greater or equal to 0 and smaller than 10000",
-                colour=cfc,
+                colour=self.bot.color,
             )
             await ctx.respond(embed=embed)
             return
-        try:
-            time_zone = zoneinfo.ZoneInfo(time_zone)
-        except Exception:
-            embed = discord.Embed(
-                title="Incorrect Timezone",
-                description="You gave me a non-existent time zone, at least by IANA standards. Please input correct time zones(e.g. UTC)",
-                colour=errorc,
-            )
-            await ctx.respond(embed=embed)
-            return
-        time_2_conv = datetime.datetime(
+
+        naive_datetime = datetime.datetime(
             year=year,
-            month=month,
+            month=conv_month,
             day=day,
             hour=hour,
             minute=minute,
             second=second,
-            tzinfo=time_zone,
         )
-        conv_time = discord.utils.format_dt(time_2_conv, style=style)
+        time_2_conv = time_zone.localize(naive_datetime)
+
+        # Pylance doesn't seem to find the format_dt function, but it does in discord.utils.utils, which doesn't even exist.
+        # If you find a fix for this, please make a PR on the repository.
+        conv_time = discord.utils.format_dt(time_2_conv, style=style)  # type: ignore
         embed = discord.Embed(
             title="Here's your converted time!",
-            colour=cfc,
+            colour=self.bot.color,
         )
         embed.add_field(name="Display", value=conv_time)
         embed.add_field(name="Raw", value=f"`{conv_time}`")
         embed.add_field(
             name="Parameters",
             value=f"""
-Style: **{o_style}**
+Style: **{o_style.split('(')[0]}**
+Timezone: **{str(timezone)}**
 Year: **{year}**
-Month: **{month}**
+Month: **{conv_month}**
 Day: **{day}**
 Hour: **{hour}**
 Minute: **{minute}**
 Second: **{second}**
-Time Zone: **{str(time_zone).upper()}**
         """,
             inline=False,
         )
