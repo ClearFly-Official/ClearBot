@@ -47,13 +47,17 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.presence.start()
-        self.rssfeedtres1.start()
-        self.rssfeedtres2.start()
-        self.rssfeedtres3.start()
-        self.db_backup.start()
-        self.resetRShownSubms.start()
-        self.join_stats_loop.start()
+        if not self.presence.is_running():
+            self.presence.start()
+        if not self.rssfeedtres1.is_running():
+            self.rssfeedtres1.start()
+        if not self.rssfeedtres2.is_running():
+            self.rssfeedtres2.start()
+        if not self.rssfeedtres3.is_running():
+            self.rssfeedtres3.start()
+        if not self.join_stats_loop.is_running():
+            self.join_stats_loop.start()
+
         channel = self.bot.get_channel(1001405648828891187)
         now = discord.utils.format_dt(datetime.datetime.now())
         if os.popen("hostname -s").readline() == "raspberrypi\n":
@@ -112,7 +116,10 @@ Started bot up on {now}
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
-            feed = dict(blog_feed.entries[0])
+            try:
+                feed = dict(blog_feed.entries[0])
+            except:
+                return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
@@ -147,7 +154,10 @@ Started bot up on {now}
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
-            feed = dict(blog_feed.entries[0])
+            try:
+                feed = dict(blog_feed.entries[0])
+            except:
+                return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
@@ -182,7 +192,10 @@ Started bot up on {now}
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
-            feed = dict(blog_feed.entries[0])
+            try:
+                feed = dict(blog_feed.entries[0])
+            except:
+                return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
@@ -211,17 +224,6 @@ Started bot up on {now}
                 pass
             else:
                 raise
-
-    @tasks.loop(hours=48)
-    async def db_backup(self):
-        delta_uptime = datetime.datetime.utcnow() - self.bot.start_time
-        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
-        days, hours = divmod(hours, 24)
-        shutil.copy2("main.db", f"backup{str(days)[:1]}.db")
-
-    @tasks.loop(hours=36.0)
-    async def resetRShownSubms(self):
-        self.bot.rshownsubms = []
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
