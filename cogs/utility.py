@@ -880,7 +880,7 @@ Total votes: **{total_count}**
             embed = discord.Embed(
                 title="Invalid year input",
                 description="Year parameter must be greater or equal to 0 and smaller than 10000",
-                colour=self.bot.color,
+                colour=cfc,
             )
             await ctx.respond(embed=embed)
             return
@@ -900,7 +900,7 @@ Total votes: **{total_count}**
         conv_time = discord.utils.format_dt(time_2_conv, style=style)  # type: ignore
         embed = discord.Embed(
             title="Here's your converted time!",
-            colour=self.bot.color,
+            colour=cfc,
         )
         embed.add_field(name="Display", value=conv_time)
         embed.add_field(name="Raw", value=f"`{conv_time}`")

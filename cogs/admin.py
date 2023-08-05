@@ -376,10 +376,10 @@ URL: `{url}`
             embed.set_thumbnail(url=ctx.author.display_avatar.url)
             await channel.send(embed=embed)
 
-    @admin.command(name="rules", description="Sends the rules.")
+    @admin.command(name="rules-n-faq", description="❓ Sends the rules and FAQ.")
     @commands.has_permissions(administrator=True)
     @commands.cooldown(1, 180)
-    async def rules(self, ctx: discord.ApplicationContext):
+    async def rules_n_faq(self, ctx: discord.ApplicationContext):
         embed1 = discord.Embed(color=cfc).set_image(
             url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true"
         )
@@ -401,21 +401,10 @@ URL: `{url}`
 **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
         """,
         )
-        embed3 = discord.Embed(title="Links", description="""
-- [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
-- [Discord](https://discord.gg/jjpwtusf6n)
-                               """, colour=cfc)
-        await ctx.respond("Rules posted!", ephemeral=True)
-        await ctx.send(embeds=[embed1, embed2, embed3], view=RulesView(bot=self.bot))
-
-    @admin.command(name="faq", description="Sends the faq.")
-    @commands.has_permissions(administrator=True)
-    @commands.cooldown(1, 180)
-    async def faq(self, ctx: discord.ApplicationContext):
-        embed1 = discord.Embed(colour=cfc).set_image(
+        embed3 = discord.Embed(colour=cfc).set_image(
             url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true"
         )
-        embed2 = discord.Embed(
+        embed4 = discord.Embed(
             title="ClearFly FAQ",
             description="""
 **Q: When will the Boeing 737-100 be released?**
@@ -429,8 +418,14 @@ A: This is unlikely, but not impossible in the future.
         """,
             color=cfc,
         )
-        await ctx.respond("FAQ posted!", ephemeral=True)
-        await ctx.send(embeds=[embed1, embed2], view=FAQView(bot=self.bot))
+        embed5 = discord.Embed(title="Links", description="""
+- [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
+- [Discord](https://discord.gg/jjpwtusf6n)
+                               """, colour=cfc)
+        await ctx.respond("Rules and faq posted!", ephemeral=True)
+        await ctx.send(embeds=[embed1, embed2], view=RulesView(bot=self.bot))
+        await ctx.send(embeds=[embed3, embed4], view=FAQView(bot=self.bot))
+        await ctx.send(embed=embed5)
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))
