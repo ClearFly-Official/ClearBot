@@ -82,7 +82,7 @@ Started bot up on {now}
                 color=0x00FF00,
             )
             await channel.send(embed=embed)
-        print("| listeners cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mListeners\033[0;36m cog loaded sucessfully\033[0m")
 
     @tasks.loop(minutes=10, reconnect=False)
     async def presence(self):

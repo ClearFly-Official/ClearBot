@@ -23,7 +23,7 @@ class LevelingCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("| Leveling cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mLevel\033[0;36m cog loaded sucessfully\033[0m")
 
     @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")

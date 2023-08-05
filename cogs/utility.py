@@ -11,13 +11,12 @@ import zoneinfo
 import math
 from discord import option
 from discord.ext import commands
-from dotenv import load_dotenv
 import aiosqlite
 from main import cogs
 from main import cfc, errorc
 
 
-load_dotenv()
+timezones = pytz.all_timezones
 
 
 class PollTypeYesNo(discord.ui.Modal):
@@ -157,7 +156,7 @@ class UtilityCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("| Utility cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mUtility\033[0;36m cog loaded sucessfully\033[0m")
 
     @discord.command(
         name="report",

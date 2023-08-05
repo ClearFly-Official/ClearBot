@@ -22,7 +22,7 @@ class TagCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("| Tags cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mTags\033[0;36m cog loaded sucessfully\033[0m")
 
     async def get_tags(ctx: discord.AutocompleteContext):
         async with aiosqlite.connect("main.db") as db:

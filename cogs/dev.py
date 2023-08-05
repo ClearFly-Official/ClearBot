@@ -59,7 +59,7 @@ class DevCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("| Dev cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mDev\033[0;36m cog loaded sucessfully\033[0m")
 
     async def convert_attr(self, path):
         doc_part = discord

@@ -62,8 +62,7 @@ class AdminCommands(discord.Cog):
     async def on_ready(self):
         self.bot.add_view(RulesView(bot=self.bot))
         self.bot.add_view(FAQView(bot=self.bot))
-        self.bot.add_view(SelfRolesView(bot=self.bot))
-        print("| Admin cog loaded sucessfully")
+        print("\033[34m|\033[0m \033[96;1mAdmin\033[0;36m cog loaded sucessfully\033[0m")
 
     admin = discord.SlashCommandGroup(
         name="admin", description="🔒 Commands for admins only."

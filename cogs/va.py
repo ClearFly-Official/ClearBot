@@ -305,9 +305,11 @@ class VACommands(discord.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.bot.add_view(VAStartView(self.bot))
-        self.trial_check.start()
-        self.completed_flight_check.start()
-        print("| VA cog loaded successfully")
+        if not self.trial_check.is_running():
+            self.trial_check.start()
+        if not self.completed_flight_check.is_running():
+            self.completed_flight_check.start()
+        print("\033[34m|\033[0m \033[96;1mVA\033[0;36m cog loaded sucessfully\033[0m")
 
     @tasks.loop(minutes=10)
     async def trial_check(self):
