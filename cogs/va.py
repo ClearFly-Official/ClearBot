@@ -15,6 +15,7 @@ import plotly.io as pio
 import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
+import pymongo
 from main import errorc, warningc, cfc
 from airports import airports, airports_icao
 from PIL import Image, ImageDraw, ImageFont
@@ -284,6 +285,10 @@ class VAReportModal(discord.ui.Modal):
 class VACommands(discord.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
+        
+        self.client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
+        self.db = self.client["ClearFly"]
+        self.col = self.db["SAReportUsers"]
 
     va = discord.SlashCommandGroup(
         name="va", description="🛬 All commands related to the ClearFly Virtual Airline."
@@ -1687,13 +1692,13 @@ Most used aircraft: **{most_used_aircraft}**
             description=f"""
 ClearFly VA is a Virtual Airline that offers a fun way to fly without requiring any prior training or extensive knowledge on aviation. However, we expect our pilots to behave professionally, without engaging in any intentional crashing, starting engines on the runway, or any other unprofessional activities.
 
-**__Ready to get started with ClearFly VA? Follow these steps:__**
+## Ready to get started with ClearFly VA? Follow these steps
     **1.** Visit {fbo.mention} and enter </va flight file:1016059999056826479>.
     **2.** Click on the command that appears and input the necessary information. Then, run the command.
     **3.** Fly your flight with a ClearFly livery (available in <#1041057335449227314> or <#1087399445966110881>).
     **4.** Once you complete your flight, run the command </va flight complete:1016059999056826479> within 24 hours. Otherwise, the flight will be automatically cancelled.
 
-**__Wondering what aircraft you can fly?__**
+## Wondering what aircraft you can fly?
 You can choose any aircraft that has a ClearFly livery, available in <#1041057335449227314> for official paints or in <#1087399445966110881> for community-made liveries. Just be sure you equip your aircraft with a ClearFly livery before taking off. 
 
 Happy flying!
@@ -1703,14 +1708,15 @@ Happy flying!
             title="Recommended add-ons: StableApproach",
             colour=cfc,
             description="""
-**__Download:__**
+## Download
 https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/ 
-**__Setup:__**
+## Setup
 **1.** Open the StableApproach settings in the plugins menu.
 **2.** Open the “Virtual Airline” category.
-**3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”.
+**3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”. Also copy your User ID, you'll need this later.
 **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
-**5.** That’s it! StableApproach will now download our custom aircraft profiles.
+**5.** Use the `/va user set_sa_id` command and paste the User ID you copied earlier in it.
+**6.** That’s it! StableApproach will now download our custom aircraft profiles and send landing reports in <#1013934267966967848>.
         """,
         )
         embm = discord.Embed(
@@ -1946,6 +1952,17 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         embs = [embm, emb1, emb2, emb3, emb4]
         await ctx.respond(embeds=embs)
 
+    @user.command(name="set_sa_id", description="🆔 Set your StableApproach ID so we can post your landings on Discord.")
+    @discord.option("sa_id", description="Your StableApproach UserID, found in the plugin settings.")
+    async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
+        await ctx.defer(ephemeral=True)
+        self.col.update_one(
+            {"discord_id": ctx.author.id},
+            {"$set": {"sa_id": sa_id, "discord_id": ctx.author.id}},
+            upsert=True,
+        )
+        embed = discord.Embed(title="Successfully set your StableApproach ID", colour=cfc)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(VACommands(bot))
