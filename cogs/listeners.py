@@ -58,30 +58,30 @@ class Listeners(discord.Cog):
         if not self.join_stats_loop.is_running():
             self.join_stats_loop.start()
 
-        channel = self.bot.get_channel(1001405648828891187)
-        now = discord.utils.format_dt(datetime.datetime.now())
-        if os.popen("hostname -s").readline() == "raspberrypi\n":
-            embed = discord.Embed(
-                title="I started up!",
-                description=f"""
-Started bot up on {now}
+#         channel = self.bot.get_channel(1001405648828891187)
+#         now = discord.utils.format_dt(datetime.datetime.now())
+#         if os.popen("hostname -s").readline() == "raspberrypi\n":
+#             embed = discord.Embed(
+#                 title="I started up!",
+#                 description=f"""
+# Started bot up on {now}
 
-*Host is Raspberry Pi*
-            """,
-                color=0x00FF00,
-            )
-            await channel.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="I started up!",
-                description=f"""
-Started bot up on {now}
+# *Host is Raspberry Pi*
+#             """,
+#                 color=0x00FF00,
+#             )
+#             await channel.send(embed=embed)
+#         else:
+#             embed = discord.Embed(
+#                 title="I started up!",
+#                 description=f"""
+# Started bot up on {now}
 
-*Host is on {platform.system()}*
-            """,
-                color=0x00FF00,
-            )
-            await channel.send(embed=embed)
+# *Host is on {platform.system()}*
+#             """,
+#                 color=0x00FF00,
+#             )
+#             await channel.send(embed=embed)
         print("\033[34m|\033[0m \033[96;1mListeners\033[0;36m cog loaded sucessfully\033[0m")
 
     @tasks.loop(minutes=10, reconnect=False)

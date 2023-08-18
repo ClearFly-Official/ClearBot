@@ -442,7 +442,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         autocomplete=get_airports,
     )
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 600, commands.BucketType.user)
+    @commands.cooldown(1, 180, commands.BucketType.user)
     async def va_file(
         self,
         ctx: discord.ApplicationContext,
@@ -497,13 +497,17 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             await ctx.respond(embed=embed)
             return
         hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-        async with aiohttp.ClientSession() as cs:
-            async with cs.get(
-                f"https://api.checkwx.com/metar/{origin[:4].upper()}",
-                headers=hdr,
-            ) as r:
-                r.raise_for_status()
-                resp = await r.json()
+        timeout = aiohttp.ClientTimeout(total=10)
+        try:
+            async with aiohttp.ClientSession(timeout=timeout) as cs:
+                async with cs.get(
+                    f"https://api.checkwx.com/metar/{origin[:4].upper()}",
+                    headers=hdr,
+                ) as r:
+                    resp = await r.json()
+        except:
+            resp = {"results": 0}
+                
         flight_num = await generate_flight_number(
             aircraft, origin[:4].upper(), destination[:4].upper()
         )
@@ -697,7 +701,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     @flight.command(
         name="complete", description="✅ Mark your last flight as completed."
     )
-    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.cooldown(1, 1800, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
     async def va_complete(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -746,7 +750,7 @@ Destination: **{flight_id2[0][5]}**
         await ctx.respond(embed=embed)
 
     @flight.command(name="cancel", description="❌ Cancel your last flight.")
-    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
     async def va_cancel(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -867,7 +871,6 @@ Destination: **{flight_id2[0][5]}**
     @user.command(name="view_report", description="📄 View a users reports.")
     @discord.option(name="user", description="The user you want to see the flights of.")
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 10, commands.BucketType.user)
     async def va_view_report(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -911,7 +914,6 @@ Destination: **{flight_id2[0][5]}**
     @user.command(name="flights", description="🛬 View a users flights.")
     @discord.option(name="user", description="The user you want to see the flights of.")
     @commands.has_role(1013933799777783849)
-    @commands.cooldown(1, 20, commands.BucketType.user)
     async def va_flights(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
