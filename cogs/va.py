@@ -316,6 +316,62 @@ class VACommands(discord.Cog):
             self.completed_flight_check.start()
         print("\033[34m|\033[0m \033[96;1mVA\033[0;36m cog loaded sucessfully\033[0m")
 
+    @commands.Cog.listener("on_message")
+    async def auto_complete_flight(self, message: discord.Message):
+        if message.channel.id != 1013934267966967848:
+            return
+        if message.author.id != self.bot.user.id:
+            embed = message.embeds[0]
+
+            lines = embed.description.split('\n')
+
+            title = lines[0].replace("### <@", "").replace(">", "").replace("!", "").split(" ")
+            data = (title[0], title[3], title[6])
+
+            async with aiosqlite.connect("va.db") as db:
+                cur = await db.execute(
+                    "SELECT id FROM flights WHERE user_id=? AND is_completed=0 AND destination=? AND aircraft=?",
+                    data,
+                )
+                flight_ids = await cur.fetchall()
+                cur2 = await db.execute(
+                    "SELECT * FROM flights WHERE user_id=? AND is_completed=0 AND destination=? AND aircraft=?",
+                    data,
+                )
+                flight_id2 = await cur2.fetchall()
+
+                if flight_ids == []:
+                    embed = discord.Embed(
+                        title="I couldn't find any non-completed flights",
+                        colour=warningc,
+                        description="""
+- You may have completed your flight as completed before landing (which you shouldn't do).
+- You were not flying for the VA, but still using our profile. If that is the case, please click 'download offical profile' next time when you're not flying for the VA.
+- You needed to divert to another airport, use </va flight divert:1016059999056826479> if so.
+""",
+                    )
+                    await message.reply(f"<@{data[0]}>", embed=embed)
+                    return
+                else:
+                    await db.execute(
+                        "UPDATE flights SET is_completed=1 WHERE id=?", (flight_ids[0][0],)
+                    )
+                    await db.commit()
+                embed = discord.Embed(
+                    title="Flight automatically completed!",
+                    colour=cfc,
+                    description="I have marked your flight as completed, and it has been permantly logged.",
+                ).add_field(
+                    name="Flight Details",
+                    value=f"""
+Flight number: **{flight_id2[0][2]}**
+Aircraft: **{flight_id2[0][3]}**
+Origin: **{flight_id2[0][4]}**
+Destination: **{flight_id2[0][5]}**
+                """,
+                )
+            await message.reply(embed=embed)
+
     @tasks.loop(minutes=10)
     async def trial_check(self):
         users = await get_users()
@@ -1956,6 +2012,11 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @discord.option("sa_id", description="Your StableApproach UserID, found in the plugin settings.")
     async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
         await ctx.defer(ephemeral=True)
+        if await is_banned(ctx.author):
+            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            await ctx.respond(embed=embed)
+            return
+        
         self.col.update_one(
             {"discord_id": ctx.author.id},
             {"$set": {"sa_id": sa_id, "discord_id": ctx.author.id}},
