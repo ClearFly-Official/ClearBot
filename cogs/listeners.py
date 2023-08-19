@@ -84,30 +84,33 @@ class Listeners(discord.Cog):
 #             await channel.send(embed=embed)
         print("\033[34m|\033[0m \033[96;1mListeners\033[0;36m cog loaded sucessfully\033[0m")
 
-    @tasks.loop(minutes=10, reconnect=False)
+    @tasks.loop(minutes=1)
     async def presence(self):
+        guild = self.bot.get_guild(965419296937365514)
+        if not guild:
+            print("\033[31mCould not fetch the ClearFly guild.\033[0m")
+            return
+        
         statements = [
-            "Give me Baby Boeing 😩",
-            "Boeing > Airbus",
-            "How are you doing?",
-            "Use me please.",
-            "How can I assist you today?",
-            "BABY BOEINGGGG",
-            "If it ain't Boeing, I ain't going.",
-            "I'm tired",
-            "Nuke airbus smh",
-            "Boeing supremacy",
-            "*Sends missile to Airbus hq*",
-            "Wolfair = Chad",
-            "Deep™",
-            "What ya looking at 🤨",
-            "What about you stfu.",
-            "Goofy ah",
-            "There's an impostor among us.",
-            "Bored",
+            (discord.ActivityType.watching, "ClearFly"),
+            (discord.ActivityType.watching, f"{guild.member_count} users"),
+            (discord.ActivityType.listening, "ATC"),
+            (discord.ActivityType.listening, "ATIS"),
+            (discord.ActivityType.watching, "METAR via /aviation airport metar"),
+            (discord.ActivityType.watching, "approach charts via /aviation airport charts"),
+            (discord.ActivityType.playing, "X-Plane 10"),
+            (discord.ActivityType.playing, "X-Plane 11"),
+            (discord.ActivityType.playing, "X-Plane 12"),
+            (discord.ActivityType.playing, "Plane Maker"),
+            (discord.ActivityType.playing, "Airfoil Maker"),
+            (discord.ActivityType.playing, "tuning my radios"),
+            (discord.ActivityType.watching, "the ClearFly VA"),
         ]
+
+        statement = random.choice(statements)
+
         await self.bot.change_presence(
-            activity=discord.Game(name=f"/help | {random.choice(statements)}"),
+            activity=discord.Activity(type=statement[0], name=statement[1]),
             status=discord.Status.online,
         )
 

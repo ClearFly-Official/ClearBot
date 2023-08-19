@@ -320,7 +320,7 @@ class VACommands(discord.Cog):
     async def auto_complete_flight(self, message: discord.Message):
         if message.channel.id != 1013934267966967848:
             return
-        if message.author.id != self.bot.user.id:
+        if message.author.id != self.bot.user.id and len(message.embeds):
             embed = message.embeds[0]
 
             lines = embed.description.split('\n')
