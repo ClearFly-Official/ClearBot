@@ -320,7 +320,7 @@ class VACommands(discord.Cog):
     async def auto_complete_flight(self, message: discord.Message):
         if message.channel.id != 1013934267966967848:
             return
-        if message.author.id != self.bot.user.id and len(message.embeds):
+        if message.author.id != self.bot.user.id and len(message.embeds) != 0:
             embed = message.embeds[0]
 
             lines = embed.description.split('\n')
@@ -345,7 +345,7 @@ class VACommands(discord.Cog):
                         title="I couldn't find any non-completed flights",
                         colour=warningc,
                         description="""
-- You may have completed your flight as completed before landing (which you shouldn't do).
+- You may have marked your flight as completed before landing (which you shouldn't do).
 - You were not flying for the VA, but still using our profile. If that is the case, please click 'download offical profile' next time when you're not flying for the VA.
 - You needed to divert to another airport, use </va flight divert:1016059999056826479> if so.
 """,
