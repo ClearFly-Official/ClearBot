@@ -286,7 +286,7 @@ class VAReportModal(discord.ui.Modal):
 class VACommands(discord.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
-        
+
         self.client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
         self.db = self.client["ClearFly"]
         self.col = self.db["SAReportUsers"]
@@ -324,9 +324,15 @@ class VACommands(discord.Cog):
         if message.author.id != self.bot.user.id and len(message.embeds) != 0:
             embed = message.embeds[0]
 
-            lines = embed.description.split('\n')
+            lines = embed.description.split("\n")
 
-            title = lines[0].replace("### <@", "").replace(">", "").replace("!", "").split(" ")
+            title = (
+                lines[0]
+                .replace("### <@", "")
+                .replace(">", "")
+                .replace("!", "")
+                .split(" ")
+            )
             data = (title[0], title[3], title[6])
 
             async with aiosqlite.connect("va.db") as db:
@@ -347,15 +353,16 @@ class VACommands(discord.Cog):
                         colour=warningc,
                         description="""
 - You may have marked your flight as completed before landing (which you shouldn't do).
-- You were not flying for the VA, but still using our profile. If that is the case, please click 'download offical profile' next time when you're not flying for the VA.
-- You needed to divert to another airport, use </va flight divert:1016059999056826479> if so.
+- You were not flying for the VA, but still had it enabled. To disable, go to settings and change the VA name (`ClearFly-Official/StableApproach`) to something else.
+- You needed to divert to another airport, use </va flight divert:1016059999056826479> if so. *This warning might appear when landing at the diverted airport even if you ran the command*
 """,
                     )
                     await message.reply(f"<@{data[0]}>", embed=embed)
                     return
                 else:
                     await db.execute(
-                        "UPDATE flights SET is_completed=1 WHERE id=?", (flight_ids[0][0],)
+                        "UPDATE flights SET is_completed=1 WHERE id=?",
+                        (flight_ids[0][0],),
                     )
                     await db.commit()
                 embed = discord.Embed(
@@ -569,7 +576,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     resp = await r.json()
         except:
             resp = {"results": 0}
-                
+
         flight_num = await generate_flight_number(
             aircraft, origin[:4].upper(), destination[:4].upper()
         )
@@ -2013,22 +2020,30 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         embs = [embm, emb1, emb2, emb3, emb4]
         await ctx.respond(embeds=embs)
 
-    @user.command(name="set_sa_id", description="🆔 Set your StableApproach ID so we can post your landings on Discord.")
-    @discord.option("sa_id", description="Your StableApproach UserID, found in the plugin settings.")
+    @user.command(
+        name="set_sa_id",
+        description="🆔 Set your StableApproach ID so we can post your landings on Discord.",
+    )
+    @discord.option(
+        "sa_id", description="Your StableApproach UserID, found in the plugin settings."
+    )
     async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
         await ctx.defer(ephemeral=True)
         if await is_banned(ctx.author):
             embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
             await ctx.respond(embed=embed)
             return
-        
+
         self.col.update_one(
             {"discord_id": ctx.author.id},
             {"$set": {"sa_id": sa_id, "discord_id": ctx.author.id}},
             upsert=True,
         )
-        embed = discord.Embed(title="Successfully set your StableApproach ID", colour=cfc)
+        embed = discord.Embed(
+            title="Successfully set your StableApproach ID", colour=cfc
+        )
         await ctx.respond(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(VACommands(bot))
