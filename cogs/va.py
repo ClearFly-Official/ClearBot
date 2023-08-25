@@ -2,6 +2,7 @@ import datetime
 import io
 import json
 import math
+import platform
 import sqlite3
 import textwrap
 import aiohttp
@@ -1206,6 +1207,8 @@ Destination: **{flight_id2[0][5]}**
                     text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
                 )
             await ctx.respond(embed=embed, file=map_file)
+            if platform.system().lower() != "windows":
+                os.system("killall kaleido")
 
     @user.command(name="flight", description="🗺️ View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
@@ -1537,6 +1540,8 @@ Notes:
                             child.disabled = False
 
                 await interaction.response.edit_message(view=self)
+                if platform.system().lower() != "windows":
+                    os.system("killall kaleido")
 
         embed = discord.Embed(title=f"Select one of {user.name}'s flights!", colour=cfc)
         await ctx.respond(
