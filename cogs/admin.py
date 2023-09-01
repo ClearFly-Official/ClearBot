@@ -286,7 +286,7 @@ URL: `{url}`
         "channel", description="The channel to apply the slowmode to.", required=False
     )
     @commands.has_permissions(manage_channels=True)
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def sm(
         self,
         ctx: discord.ApplicationContext,
@@ -307,7 +307,7 @@ URL: `{url}`
     @admin.command(description="🗑️ Delete large amounts of messages from a channel.")
     @option("amount", description="The number of messages you want to delete.")
     @commands.has_permissions(manage_channels=True)
-    @commands.cooldown(3, 30, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def purge(self, ctx: discord.ApplicationContext, amount: int):
         global confirm
         confirm = 0
@@ -378,7 +378,7 @@ URL: `{url}`
 
     @admin.command(name="rules-n-faq", description="❓ Sends the rules and FAQ.")
     @commands.has_permissions(administrator=True)
-    @commands.cooldown(1, 180)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def rules_n_faq(self, ctx: discord.ApplicationContext):
         embed1 = discord.Embed(color=cfc).set_image(
             url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true"

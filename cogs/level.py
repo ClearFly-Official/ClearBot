@@ -27,7 +27,7 @@ class LevelingCommands(discord.Cog):
 
     @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def userlevel(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -152,7 +152,7 @@ class LevelingCommands(discord.Cog):
     @discord.user_command(
         name="User Level", description="🥇 Gets the provided user's level."
     )
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def userlevel_app(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -277,7 +277,7 @@ class LevelingCommands(discord.Cog):
     @leveling.command(
         name="leaderboard", description="📊 See the leaderboard of the whole server."
     )
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         output = []

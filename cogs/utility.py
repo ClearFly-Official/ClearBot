@@ -180,7 +180,7 @@ class UtilityCommands(discord.Cog):
     @option(
         "comments", description="Anything else to say about the report?", required=False
     )
-    @commands.cooldown(1, 600, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def report(
         self,
         ctx: discord.ApplicationContext,
@@ -263,7 +263,7 @@ class UtilityCommands(discord.Cog):
         description="Get information for a specific command by inputting this option.",
         autocomplete=get_commands,
     )
-    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def help(self, ctx: discord.ApplicationContext, command: str = None):
         if command != None:
             cmds = []
@@ -375,7 +375,7 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed, view=HelpView(self.bot))
 
     @utility.command(name="the-team", description="👏 Shows The ClearFly Team!")
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def team(self, ctx: discord.ApplicationContext):
         with open("dev/team.json", "r") as f:
             data = json.load(f)
@@ -390,7 +390,7 @@ class UtilityCommands(discord.Cog):
 
     @utility.command(name="avatar", description="🌌 Shows your avatar.")
     @option("user", description="The user you want the avatar of.")
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def avatar(
         self, ctx: discord.ApplicationContext, user: discord.Member = None
     ):
@@ -411,7 +411,7 @@ class UtilityCommands(discord.Cog):
     @discord.user_command(
         name="User Avatar", description="Get's the avatar from the user"
     )
-    @commands.cooldown(1, 15, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def avatar_app(self, ctx, user: discord.Member):
         await ctx.defer()
         embed = discord.Embed(
@@ -422,7 +422,7 @@ class UtilityCommands(discord.Cog):
 
     @utility.command(name="who-is", description="📰 Fetches a user profile.")
     @option("user", description="The user you want the user profile of.")
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def whois(self, ctx: discord.ApplicationContext, user: discord.Member = None):
         await ctx.defer()
         if user == None:
@@ -461,7 +461,7 @@ class UtilityCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @discord.user_command(name="User Profile")
-    @commands.cooldown(1, 15, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def whois_app(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
         roles = []
@@ -502,6 +502,7 @@ class UtilityCommands(discord.Cog):
     @utility.command(
         name="github", description="🗄️ Shows ClearFly's GitHub repositories."
     )
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def github(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(
             title="ClearFly GitHub:",
@@ -518,6 +519,7 @@ class UtilityCommands(discord.Cog):
     )
     @option("input1", description="The first number.")
     @option("input2", description="The second number.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def basic(
         self, ctx: discord.ApplicationContext, type, input1: int, input2: int
     ):
@@ -591,6 +593,7 @@ class UtilityCommands(discord.Cog):
 
     @utility.command(description="🔎 Search the web!")
     @option("query", description="The content you want to search for.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def search(self, ctx: discord.ApplicationContext, query: str):
         convquery = urllib.parse.quote_plus(query)
         view = discord.ui.View()
@@ -630,7 +633,7 @@ class UtilityCommands(discord.Cog):
         description="You're desired type of poll.",
         choices=["Yes/No", "2 choices", "3 choices", "4 choices"],
     )
-    @commands.cooldown(4, 60, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def new_poll(self, ctx: discord.ApplicationContext, poll_type: str):
         if poll_type == "Yes/No":
             await ctx.send_modal(
@@ -647,7 +650,7 @@ class UtilityCommands(discord.Cog):
 
     @poll.command(name="end", description="❌ End a poll and see its results.")
     @discord.option("poll_id", description="ID of the poll you want to end.")
-    @commands.cooldown(4, 60, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def end_poll(self, ctx: discord.ApplicationContext, poll_id: str):
         await ctx.defer(ephemeral=True)
 
@@ -752,7 +755,7 @@ Total votes: **{total_count}**
     @discord.option(name="hour", description="Hours.")
     @discord.option(name="minute", description="Minutes.")
     @discord.option(name="second", description="Seconds.")
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def time2stamp(
         self,
         ctx: discord.ApplicationContext,
@@ -976,7 +979,7 @@ Joins last week: **{join_stats[2]}**
         await ctx.respond(embed=embed)
 
     @stats.command(name="bot", description="📈 Show statistics about the bot.")
-    @commands.cooldown(1, 7, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def stats(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         loc = 0

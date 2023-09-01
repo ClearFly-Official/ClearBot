@@ -239,7 +239,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
     @airport.command(
         name="charts", description="🗺️ Fetches charts of the provided airport."
     )
-    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "airport",
         description="The airport you want charts from.",

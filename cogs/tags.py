@@ -43,7 +43,7 @@ class TagCommands(discord.Cog):
         description="Toggles if you want to view information about the tag.",
         required=False,
     )
-    @commands.cooldown(3, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def view(
         self, ctx: discord.ApplicationContext, tag: str, raw: bool, info: bool
     ):
@@ -95,7 +95,7 @@ Didn't found {tag}.
             await ctx.respond(embed=embed)
 
     @tags.command(name="list", description="📂 List all the tags.")
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def listtags(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         tags = []
@@ -130,7 +130,7 @@ Didn't found {tag}.
     @tags.command(description="➕ Add a new tag.")
     @option("name", description="The name of the new tag.")
     @option("value", description="The value of the new tag.")
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def add(self, ctx: discord.ApplicationContext):
         class AddTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
@@ -176,7 +176,7 @@ Didn't found {tag}.
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def edit(self, ctx: discord.ApplicationContext, edit: str):
         class EditTagModal(discord.ui.Modal):
             def __init__(self, *args, **kwargs) -> None:
@@ -250,7 +250,7 @@ Didn't found {edit}.
 
     @tags.command(description="⛔️ Delete a tag.")
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
         await ctx.defer()
         async with aiosqlite.connect("main.db") as db:

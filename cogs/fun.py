@@ -161,7 +161,7 @@ class FunCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     @fun.command(name="dadjoke", description="🃏 Get an unfunny dadjoke.")
-    @commands.cooldown(2, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def dadjoke(self, ctx: discord.ApplicationContext):
         dadjoke = Dadjoke()
         embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
@@ -219,7 +219,7 @@ class FunCommands(discord.Cog):
             await ctx.respond(f"{user.mention} {output}")
 
     @fun.command(name="button-game", description="🔘 Play a game with buttons!")
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def bgame(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(title="Choose a button!", color=cfc)
 
@@ -314,7 +314,7 @@ class FunCommands(discord.Cog):
         await ctx.respond(embed=embed, view=ButtonGame())
 
     @discord.message_command(name="Quote Message")
-    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def quote(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.defer()
         data = await message.author.display_avatar.read()
@@ -358,7 +358,7 @@ class FunCommands(discord.Cog):
         description="Difficulty level of the game",
         choices=["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
     )
-    @commands.cooldown(1, 30, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def flagsgame(self, ctx: discord.ApplicationContext, difficulty: str):
         await ctx.defer()
         fileName = "flaggame" + str(random.randint(0, 100)) + ".png"
@@ -535,7 +535,7 @@ class FunCommands(discord.Cog):
     @option("top_text", description="The text at the top of your meme.")
     @option("bottom_text", description="The text at the bottom of your meme.")
     @option("text_size", description="The size of text.")
-    @commands.cooldown(1, 60, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def meme(
         self,
         ctx: discord.ApplicationContext,
