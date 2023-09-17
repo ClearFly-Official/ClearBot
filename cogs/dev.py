@@ -794,6 +794,7 @@ Channel: {message.channel.mention}
         await ctx.respond(embed=embed)
 
     @dev.command(name="post_status", description="🌡️ Send a POST request to the status page.")
+    @commands.has_role(admin_role_id)
     async def post_status(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if platform.uname().node == "raspberrypi":
