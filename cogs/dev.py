@@ -758,16 +758,20 @@ Channel: {message.channel.mention}
     )
     @commands.is_owner()
     async def evalcmd(self, ctx: discord.ApplicationContext, code: str):
-        out = eval(code)
-        embed = discord.Embed(
-            title=f"`{code}` gives the following output:",
+        await ctx.defer()
+        try:
+            out = eval(code)
+            embed = discord.Embed(
+                title=f"`{code}` gives the following output:",
             description=f"""
 ```
 {out}
 ```
                 """,
-            colour=cfc,
-        )
+                colour=cfc,
+            )
+        except Exception as e:
+            embed = discord.Embed(title=f"Error executing `{code}`", description=f"```{e}```", colour=errorc)
         await ctx.respond(embed=embed)
 
     @dev.command(name="run_cmd", description="🖲️ Run a terminal command.")
@@ -776,14 +780,17 @@ Channel: {message.channel.mention}
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def run_cmd(self, ctx: discord.ApplicationContext, command: str):
         await ctx.defer()
-        embed = discord.Embed(
-            description=f"""
+        try:
+            embed = discord.Embed(
+                description=f"""
 ```
 {subprocess.check_output(command.split(" "))}
 ```
 """,
             colour=cfc,
-        )
+            )
+        except Exception as e:
+            embed = discord.Embed(title=f"Error executing `{command}`", description=f"```{e}```", colour=errorc)
         await ctx.respond(embed=embed)
 
     @dev.command(name="post_status", description="🌡️ Send a POST request to the status page.")
