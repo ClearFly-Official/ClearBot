@@ -796,19 +796,20 @@ Channel: {message.channel.mention}
     @dev.command(name="post_status", description="🌡️ Send a POST request to the status page.")
     async def post_status(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        eembed = discord.Embed(title="Unsuported system", description="The system where I'm being hosted on does not have a (valid) status page system.", colour=errorc)
         if platform.uname().node == "raspberrypi":
             try:
                 os.system("python3 ~/update.py")
-                view = discord.ui.View
-                view.add_item(discord.ui.Button(label="Status Page", url="https://local-status.vercel.app"))
-                embed = discord.Embed(title="Success!", description="Check out the new data!", view =view, colour=cfc)
-            except:
-                embed = eembed
+                view = discord.ui.View()
+                view.add_item(item=discord.ui.Button(label="Status Page", url="https://local-status.vercel.app"))
+                embed = discord.Embed(title="Success!", description="Check out the new data!", colour=cfc)
+                await ctx.respond(embed=embed, view=view)
+            except Exception as e:
+                embed = discord.Embed(title="POST failed!", description=f"```{e}```", colour=errorc)
+                await ctx.respond(embed=embed)
         else:
-            embed = eembed
+            embed = discord.Embed(title="Unsuported system", description="The system where I'm being hosted on does not have a (valid) status page system.", colour=errorc)
             
-        await ctx.respond(embed=embed)
+            await ctx.respond(embed=embed)
 
     @database.command(description="🔦 Execute an SQL Query.")
     @discord.option(
