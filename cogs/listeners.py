@@ -58,31 +58,33 @@ class Listeners(discord.Cog):
         if not self.join_stats_loop.is_running():
             self.join_stats_loop.start()
 
-#         channel = self.bot.get_channel(1001405648828891187)
-#         now = discord.utils.format_dt(datetime.datetime.now())
-#         if os.popen("hostname -s").readline() == "raspberrypi\n":
-#             embed = discord.Embed(
-#                 title="I started up!",
-#                 description=f"""
-# Started bot up on {now}
+        #         channel = self.bot.get_channel(1001405648828891187)
+        #         now = discord.utils.format_dt(datetime.datetime.now())
+        #         if os.popen("hostname -s").readline() == "raspberrypi\n":
+        #             embed = discord.Embed(
+        #                 title="I started up!",
+        #                 description=f"""
+        # Started bot up on {now}
 
-# *Host is Raspberry Pi*
-#             """,
-#                 color=0x00FF00,
-#             )
-#             await channel.send(embed=embed)
-#         else:
-#             embed = discord.Embed(
-#                 title="I started up!",
-#                 description=f"""
-# Started bot up on {now}
+        # *Host is Raspberry Pi*
+        #             """,
+        #                 color=0x00FF00,
+        #             )
+        #             await channel.send(embed=embed)
+        #         else:
+        #             embed = discord.Embed(
+        #                 title="I started up!",
+        #                 description=f"""
+        # Started bot up on {now}
 
-# *Host is on {platform.system()}*
-#             """,
-#                 color=0x00FF00,
-#             )
-#             await channel.send(embed=embed)
-        print("\033[34m|\033[0m \033[96;1mListeners\033[0;36m cog loaded sucessfully\033[0m")
+        # *Host is on {platform.system()}*
+        #             """,
+        #                 color=0x00FF00,
+        #             )
+        #             await channel.send(embed=embed)
+        print(
+            "\033[34m|\033[0m \033[96;1mListeners\033[0;36m cog loaded sucessfully\033[0m"
+        )
 
     @tasks.loop(minutes=1)
     async def presence(self):
@@ -90,14 +92,17 @@ class Listeners(discord.Cog):
         if not guild:
             print("\033[31mCould not fetch the ClearFly guild.\033[0m")
             return
-        
+
         statements = [
             (discord.ActivityType.watching, "ClearFly"),
             (discord.ActivityType.watching, f"{guild.member_count} users"),
             (discord.ActivityType.listening, "ATC"),
             (discord.ActivityType.listening, "ATIS"),
             (discord.ActivityType.watching, "METAR via /aviation airport metar"),
-            (discord.ActivityType.watching, "approach charts via /aviation airport charts"),
+            (
+                discord.ActivityType.watching,
+                "approach charts via /aviation airport charts",
+            ),
             (discord.ActivityType.playing, "X-Plane 10"),
             (discord.ActivityType.playing, "X-Plane 11"),
             (discord.ActivityType.playing, "X-Plane 12"),
@@ -126,20 +131,16 @@ class Listeners(discord.Cog):
                 return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute(
-                    f"SELECT lastID FROM {table}"
-                )
-                lastIDs = await lastID.fetchall()
-                if len(lastIDs) > 0:
+                lastIDs = await curs.execute(f"SELECT lastID FROM {table}")
+                lastIDs = await lastIDs.fetchall()
+                if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
-                else:
-                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    if len(lastIDs) == 0:
+                    if lastIDs:
                         await cursor.execute(
                             f"UPDATE {table} SET lastID=? WHERE id=1",
                             (feed.get("id"),),
@@ -148,18 +149,22 @@ class Listeners(discord.Cog):
                             f"UPDATE {table} SET lastID=? WHERE id=2",
                             (lastIDs[0],),
                         )
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=3",
+                            (lastIDs[0],),
+                        )
                     else:
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
                             (feed.get("id"),),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                     await db.commit()
                 await channel.send(
@@ -187,20 +192,16 @@ class Listeners(discord.Cog):
                 return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute(
-                    f"SELECT lastID FROM {table}"
-                )
-                lastIDs = await lastID.fetchall()
-                if len(lastIDs) > 0:
+                lastIDs = await curs.execute(f"SELECT lastID FROM {table}")
+                lastIDs = await lastIDs.fetchall()
+                if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
-                else:
-                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    if len(lastIDs) == 0:
+                    if lastIDs:
                         await cursor.execute(
                             f"UPDATE {table} SET lastID=? WHERE id=1",
                             (feed.get("id"),),
@@ -211,16 +212,16 @@ class Listeners(discord.Cog):
                         )
                     else:
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
                             (feed.get("id"),),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                     await db.commit()
                 await channel.send(
@@ -248,20 +249,16 @@ class Listeners(discord.Cog):
                 return
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
-                lastID = await curs.execute(
-                    f"SELECT lastID FROM {table}"
-                )
-                lastIDs = await lastID.fetchall()
-                if len(lastIDs) > 0:
+                lastIDs = await curs.execute(f"SELECT lastID FROM {table}")
+                lastIDs = await lastIDs.fetchall()
+                if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
-                else:
-                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    if len(lastIDs) == 0:
+                    if lastIDs:
                         await cursor.execute(
                             f"UPDATE {table} SET lastID=? WHERE id=1",
                             (feed.get("id"),),
@@ -270,18 +267,22 @@ class Listeners(discord.Cog):
                             f"UPDATE {table} SET lastID=? WHERE id=2",
                             (lastIDs[0],),
                         )
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=3",
+                            (lastIDs[1],),
+                        )
                     else:
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
                             (feed.get("id"),),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                         await cursor.execute(
-                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
-                            ('NULL',),
+                            f"INSERT INTO {table} (lastID) VALUES (?)",
+                            ("NULL",),
                         )
                     await db.commit()
                 await channel.send(
