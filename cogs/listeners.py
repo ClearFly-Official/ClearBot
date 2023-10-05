@@ -114,8 +114,9 @@ class Listeners(discord.Cog):
             status=discord.Status.online,
         )
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(minutes=5)
     async def rssfeedtres1(self):
+        table = "RSS_thresholdx_news"
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
@@ -126,17 +127,26 @@ class Listeners(discord.Cog):
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
-                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (1,)
+                    f"SELECT lastID FROM {table}"
                 )
-                lastID = await lastID.fetchone()
-            if lastID[1] == feed.get("id"):
+                lastIDs = await lastID.fetchall()
+                lastIDs = [lastID[0] for lastID in lastIDs]
+            if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=1",
+                        f"UPDATE {table} SET lastID=? WHERE id=1",
                         (feed.get("id"),),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=2",
+                        (lastIDs[0],),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=3",
+                        (lastIDs[1],),
                     )
                     await db.commit()
                 await channel.send(
@@ -152,8 +162,9 @@ class Listeners(discord.Cog):
             else:
                 raise
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(minutes=5)
     async def rssfeedtres2(self):
+        table = "RSS_thresholdx_opinion"
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
@@ -164,17 +175,26 @@ class Listeners(discord.Cog):
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
-                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (2,)
+                    f"SELECT lastID FROM {table}"
                 )
-                lastID = await lastID.fetchone()
-            if lastID[1] == feed.get("id"):
+                lastIDs = await lastID.fetchall()
+                lastIDs = [lastID[0] for lastID in lastIDs]
+            if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=2",
+                        f"UPDATE {table} SET lastID=? WHERE id=1",
                         (feed.get("id"),),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=2",
+                        (lastIDs[0],),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=3",
+                        (lastIDs[1],),
                     )
                     await db.commit()
                 await channel.send(
@@ -190,8 +210,9 @@ class Listeners(discord.Cog):
             else:
                 raise
 
-    @tasks.loop(minutes=10, reconnect=False)
+    @tasks.loop(minutes=5)
     async def rssfeedtres3(self):
+        table = "RSS_thresholdx_article"
         try:
             channel = self.bot.get_channel(fsnews)
             blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
@@ -202,17 +223,26 @@ class Listeners(discord.Cog):
             async with aiosqlite.connect("main.db") as db:
                 curs = await db.cursor()
                 lastID = await curs.execute(
-                    "SELECT * FROM RSS_Tresholdx WHERE id=?", (3,)
+                    f"SELECT lastID FROM {table}"
                 )
-                lastID = await lastID.fetchone()
-            if lastID[1] == feed.get("id"):
+                lastIDs = await lastID.fetchall()
+                lastIDs = [lastID[0] for lastID in lastIDs]
+            if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
                     await cursor.execute(
-                        "UPDATE RSS_Tresholdx SET lastID=? WHERE id=3",
+                        f"UPDATE {table} SET lastID=? WHERE id=1",
                         (feed.get("id"),),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=2",
+                        (lastIDs[0],),
+                    )
+                    await cursor.execute(
+                        f"UPDATE {table} SET lastID=? WHERE id=3",
+                        (lastIDs[1],),
                     )
                     await db.commit()
                 await channel.send(
