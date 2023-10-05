@@ -130,24 +130,37 @@ class Listeners(discord.Cog):
                     f"SELECT lastID FROM {table}"
                 )
                 lastIDs = await lastID.fetchall()
-                lastIDs = [lastID[0] for lastID in lastIDs]
+                if len(lastIDs) > 0:
+                    lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=1",
-                        (feed.get("id"),),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=2",
-                        (lastIDs[0],),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=3",
-                        (lastIDs[1],),
-                    )
+                    if len(lastIDs) == 0:
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=2",
+                            (lastIDs[0],),
+                        )
+                    else:
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
+                            ('NULL',),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
+                            ('NULL',),
+                        )
                     await db.commit()
                 await channel.send(
                     f"""
@@ -178,24 +191,37 @@ class Listeners(discord.Cog):
                     f"SELECT lastID FROM {table}"
                 )
                 lastIDs = await lastID.fetchall()
-                lastIDs = [lastID[0] for lastID in lastIDs]
+                if len(lastIDs) > 0:
+                    lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=1",
-                        (feed.get("id"),),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=2",
-                        (lastIDs[0],),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=3",
-                        (lastIDs[1],),
-                    )
+                    if len(lastIDs) == 0:
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=2",
+                            (lastIDs[0],),
+                        )
+                    else:
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
+                            ('NULL',),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
+                            ('NULL',),
+                        )
                     await db.commit()
                 await channel.send(
                     f"""
@@ -226,24 +252,37 @@ class Listeners(discord.Cog):
                     f"SELECT lastID FROM {table}"
                 )
                 lastIDs = await lastID.fetchall()
-                lastIDs = [lastID[0] for lastID in lastIDs]
+                if len(lastIDs) > 0:
+                    lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    lastIDs = []
             if feed.get("id") in lastIDs:
                 return
             else:
                 async with aiosqlite.connect("main.db") as db:
                     cursor = await db.cursor()
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=1",
-                        (feed.get("id"),),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=2",
-                        (lastIDs[0],),
-                    )
-                    await cursor.execute(
-                        f"UPDATE {table} SET lastID=? WHERE id=3",
-                        (lastIDs[1],),
-                    )
+                    if len(lastIDs) == 0:
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"UPDATE {table} SET lastID=? WHERE id=2",
+                            (lastIDs[0],),
+                        )
+                    else:
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=1",
+                            (feed.get("id"),),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=2",
+                            ('NULL',),
+                        )
+                        await cursor.execute(
+                            f"INSERT INTO {table} VALUES (?) WHERE id=3",
+                            ('NULL',),
+                        )
                     await db.commit()
                 await channel.send(
                     f"""
