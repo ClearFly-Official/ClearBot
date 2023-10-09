@@ -473,7 +473,7 @@ class FunCommands(discord.Cog):
             await ctx.respond(embed=embed)
 
     ####################################################################################
-    #              **Disabled due to Reddit API changes. (fucky u/spez!)**             #
+    #              **Disabled due to Reddit API changes. (fuck u/spez!)**             #
     ####################################################################################
     #
     # @fun.command(name="meme", description="🤣 Get a fresh meme from r/aviationmemes.")
@@ -567,17 +567,16 @@ class FunCommands(discord.Cog):
         img_data = await image.read()
         img = Image.open(io.BytesIO(img_data))
         resolution = img.size
-        if (img.size[0] > 4096) or (img.size[1] > 4096):
+        if (len(img_data) >= 6000000):
             embed = discord.Embed(
                 title="You provided too big of an image!",
-                description="Try again, and this time give me a smaller image.",
+                description="Try again, and this time give me a smaller image (<8MB).",
                 colour=errorc,
             )
             await ctx.respond(embed=embed)
-            os.remove(meme_id)
             return
         if text_size is None:
-            text_size = round(resolution[0] * 0.08)
+            text_size = round(resolution[0] * 0.06)
         font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
         font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
         border_offset = round(text_size / 25)
@@ -588,7 +587,6 @@ class FunCommands(discord.Cog):
                     draw.rectangle(
                         ((0, 0), (resolution[0], round(resolution[1] / 6))),
                         fill=(255, 255, 255),
-                        align="center",
                     )
                     pilmoji.text(
                         (
@@ -676,13 +674,12 @@ class FunCommands(discord.Cog):
                             (resolution[0], resolution[1]),
                         ),
                         fill=(255, 255, 255),
-                        align="center",
                     )
                     pilmoji.text(
                         (
                             round(resolution[0] / 2)
                             - round(font_bars.getlength(bottom_text) / 2),
-                            round(resolution[1] - resolution[1] / 6),
+                            round(resolution[1] - resolution[1] / 7),
                         ),
                         textwrap.fill(bottom_text, 25, max_lines=2),
                         font=font_bars,
@@ -758,8 +755,9 @@ class FunCommands(discord.Cog):
             img.save(output, format="PNG")
             output.seek(0)
             file = discord.File(output, filename=meme_id)
+
         embed = (
-            discord.Embed(title="Here's your meme!", colour=cfc)
+            discord.Embed(title="Here's your meme!", colour=cfc, description=f"**Text Size**: {text_size}")
             .set_image(url=f"attachment://{meme_id}")
             .set_author(
                 name=f"Made by {ctx.author.name}", icon_url=ctx.author.display_avatar
