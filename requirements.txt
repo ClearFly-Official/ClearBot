@@ -38,6 +38,6 @@ speedtest-cli==2.1.3
 tenacity==8.2.2
 typing_extensions==4.7.1
 update-checker==0.18.0
-urllib3==2.0.6
+urllib3>=2.0.7
 wonderwords==2.2.0
 yarl==1.9.2
