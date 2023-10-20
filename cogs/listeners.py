@@ -847,7 +847,11 @@ After: **{after.category}**
                     return True
                 change += 1
 
-        if self.bot.roles.get("admin") not in message.author.roles:
+        guild = self.bot.get_guild(self.bot.server_id)
+        role = guild.get_role(self.bot.roles.get("admin"))
+        members = [member.id for member in role.members]
+
+        if message.author.id not in members:
             if scamChecker(message.clean_content):
                 await message.reply(
                     content="Your message included blacklisted words, and has been deleted."
