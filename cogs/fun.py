@@ -1,12 +1,9 @@
-import base64
 import io
 import discord
 import pyfiglet
 import random
 import textwrap
-import os
 import flag
-import asyncpraw
 import time
 from dadjokes import Dadjoke
 from discord import option
@@ -14,17 +11,11 @@ from discord.ext import commands
 from pilmoji import Pilmoji
 from wonderwords import RandomSentence
 from PIL import Image, ImageDraw, ImageFont
-from main import cfc, errorc
-
-reddit = asyncpraw.Reddit(
-    client_id=os.getenv("RED_C_ID"),
-    client_secret=os.getenv("RED_C_SECR"),
-    user_agent=f"linuxDebian:{os.getenv('RED_C_ID')}:v0.0.2 (by /u/duvbolone)",
-)
+from main import ClearBot
 
 
 class FunCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     fun = discord.SlashCommandGroup(
@@ -73,7 +64,7 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(
                 title="Too long output",
                 description="The output of the converted text is more than 2000 characters, as Discord only allows a maximum of 2000 characters in a message I can't send it. Please try again with a shorter input.",
-                color=errorc,
+                color=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
         else:
@@ -123,7 +114,9 @@ class FunCommands(discord.Cog):
                 "Signs point to yes",
             ]
             embed = discord.Embed(
-                title=f"{question}", description=f"{random.choice(answers)}", color=cfc
+                title=f"{question}",
+                description=f"{random.choice(answers)}",
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
         else:
@@ -156,7 +149,9 @@ class FunCommands(discord.Cog):
                 "I politely ask you to shut up.",
             ]
             embed = discord.Embed(
-                title=f"{question}", description=f"{random.choice(answers)}", color=cfc
+                title=f"{question}",
+                description=f"{random.choice(answers)}",
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
 
@@ -164,7 +159,7 @@ class FunCommands(discord.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dadjoke(self, ctx: discord.ApplicationContext):
         dadjoke = Dadjoke()
-        embed = discord.Embed(title=f"{dadjoke.joke}", color=cfc)
+        embed = discord.Embed(title=f"{dadjoke.joke}", color=self.bot.color())
         await ctx.respond(embed=embed)
 
     @fun.command(
@@ -221,7 +216,7 @@ class FunCommands(discord.Cog):
     @fun.command(name="button-game", description="🔘 Play a game with buttons!")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def bgame(self, ctx: discord.ApplicationContext):
-        embed = discord.Embed(title="Choose a button!", color=cfc)
+        embed = discord.Embed(title="Choose a button!", color=self.bot.color())
 
         class ButtonGame(discord.ui.View):
             def __init__(self):
@@ -247,13 +242,13 @@ class FunCommands(discord.Cog):
                     if output == b:
                         embed = discord.Embed(
                             description=":partying_face: You guessed right. Congrats!",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
                         embed = discord.Embed(
                             description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                 else:
@@ -272,13 +267,13 @@ class FunCommands(discord.Cog):
                     if output == b:
                         embed = discord.Embed(
                             description=":partying_face: You guessed right. Congrats!",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
                         embed = discord.Embed(
                             description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                 else:
@@ -297,13 +292,13 @@ class FunCommands(discord.Cog):
                     if output == b:
                         embed = discord.Embed(
                             description=":partying_face: You guessed right. Congrats!",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                     elif isPressed == 1:
                         embed = discord.Embed(
                             description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         await interaction.response.edit_message(embed=embed)
                 else:
@@ -320,8 +315,8 @@ class FunCommands(discord.Cog):
         data = await message.author.display_avatar.read()
         avatarorigin = Image.open(io.BytesIO(data))
         avatar = avatarorigin.resize((1024, 1024))
-        qclear = Image.open("images/quoteClear.png")
-        qavmask = Image.open("images/quoteAVMask.png")
+        qclear = Image.open("images/quote/quote.png")
+        qavmask = Image.open("images/quote/AVMask.png")
         img = Image.new("RGBA", (2048, 1024), 0)
         img.paste(avatar, qavmask)
         img.paste(qclear, mask=qclear)
@@ -414,12 +409,12 @@ class FunCommands(discord.Cog):
             with io.BytesIO() as output:
                 image.save(output, format="PNG")
                 output.seek(0)
-                file=discord.File(output, filename=fileName)
+                file = discord.File(output, filename=fileName)
 
         embed = discord.Embed(
             title="Guess the sentence!",
             description=f"Hurry up, game ends <t:{round(time.time())+120}:R>!\n\nDifficulty: **{difficulty}**\n*Reply ping with your answer!*",
-            color=cfc,
+            color=self.bot.color(),
         )
         embed.set_image(url=f"attachment://{fileName}")
         await ctx.respond(embed=embed, file=file)
@@ -439,7 +434,7 @@ class FunCommands(discord.Cog):
                 embed = discord.Embed(
                     title="Guess the sentence!",
                     description=f"**Game finished, {ctx.author.mention} won!**\n\nDifficulty: **{difficulty}**",
-                    color=cfc,
+                    color=self.bot.color(),
                 )
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
@@ -447,13 +442,13 @@ class FunCommands(discord.Cog):
                 embed = discord.Embed(
                     title="🥲 Sad, you got it wrong...",
                     description=f"The correct answer was: `{oldText}`",
-                    color=errorc,
+                    color=self.bot.color(1),
                 )
                 await msg.reply(embed=embed)
                 embed = discord.Embed(
                     title="Guess the sentence!",
                     description=f"**Game finished, {ctx.author.mention} lost...**\n\nDifficulty: **{difficulty}**",
-                    color=cfc,
+                    color=self.bot.color(),
                 )
                 embed.set_image(url=f"attachment://{fileName}")
                 await ctx.edit(embed=embed)
@@ -461,14 +456,14 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(
                 title="Guess the sentence!",
                 description=f"**Game finished, {ctx.author.mention} ran out of time...**\n\nDifficulty: **{difficulty}**",
-                color=cfc,
+                color=self.bot.color(),
             )
             embed.set_image(url=f"attachment://{fileName}")
             await ctx.edit(embed=embed)
             embed = discord.Embed(
                 title="Timeout",
                 description=f"You ran out of time! The answer was: `{oldText}`",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -491,7 +486,7 @@ class FunCommands(discord.Cog):
     #         embed = discord.Embed(
     #             title="`limit` too large",
     #             description="You gave too big of a number for the `limit` option!",
-    #             colour=errorc,
+    #             colour=self.bot.color(1),
     #         )
     #         await ctx.respond(embed=embed)
     #     else:
@@ -506,7 +501,7 @@ class FunCommands(discord.Cog):
     #             embed = discord.Embed(
     #                 title="Error 404!",
     #                 description="I did not find any valid posts, try again later.",
-    #                 colour=errorc,
+    #                 colour=self.bot.color(1),
     #             )
     #             await ctx.respond(embed=embed)
     #         else:
@@ -517,7 +512,7 @@ class FunCommands(discord.Cog):
     #                 title=subm.title[:256],
     #                 url="https://reddit.com" + subm.permalink,
     #                 description=f"<t:{round(int(subm.created_utc))}:R>",
-    #                 colour=cfc,
+    #                 colour=self.bot.color(),
     #             )
     #             embed.set_author(
     #                 name=f"r/aviatonmemes | by {subm.author}",
@@ -550,7 +545,7 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(
                 title="You didn't provide any text!",
                 description="Try again, and this time give me some text.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -558,7 +553,7 @@ class FunCommands(discord.Cog):
             embed = discord.Embed(
                 title="You didn't provide a valid image!",
                 description="Try again, and this time give me a valid image.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -567,11 +562,11 @@ class FunCommands(discord.Cog):
         img_data = await image.read()
         img = Image.open(io.BytesIO(img_data))
         resolution = img.size
-        if (len(img_data) >= 6000000):
+        if len(img_data) >= 6000000:
             embed = discord.Embed(
                 title="You provided too big of an image!",
                 description="Try again, and this time give me a smaller image (<8MB).",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -757,7 +752,11 @@ class FunCommands(discord.Cog):
             file = discord.File(output, filename=meme_id)
 
         embed = (
-            discord.Embed(title="Here's your meme!", colour=cfc, description=f"**Text Size**: {text_size}")
+            discord.Embed(
+                title="Here's your meme!",
+                colour=self.bot.color(),
+                description=f"**Text Size**: {text_size}",
+            )
             .set_image(url=f"attachment://{meme_id}")
             .set_author(
                 name=f"Made by {ctx.author.name}", icon_url=ctx.author.display_avatar

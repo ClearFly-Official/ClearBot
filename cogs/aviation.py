@@ -3,13 +3,12 @@ import discord
 import aiohttp
 import io
 import os, json, fitz
-import aiofiles
 import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
 from discord.ext import commands
 from airports import airports
-from main import cfc, errorc
+from main import ClearBot
 
 
 def return_numbers(string: str) -> int:
@@ -40,7 +39,7 @@ def calculate_active_runways(
 
 
 class AvCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     av = discord.SlashCommandGroup(
@@ -61,7 +60,9 @@ class AvCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("\033[34m|\033[0m \033[96;1mAviation\033[0;36m cog loaded sucessfully\033[0m")
+        print(
+            "\033[34m|\033[0m \033[96;1mAviation\033[0;36m cog loaded sucessfully\033[0m"
+        )
 
     @airport.command(name="metar", description="⛅️ Get the metar data of an airport.")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -103,7 +104,7 @@ class AvCommands(discord.Cog):
                     )
                     embed = discord.Embed(
                         title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
-                        color=cfc,
+                        color=self.bot.color(),
                     )
                     embed.add_field(
                         name="Raw Metar Data:",
@@ -159,7 +160,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                     )
                     embed = discord.Embed(
                         title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
-                        color=cfc,
+                        color=self.bot.color(),
                     )
                     embed.add_field(
                         name="Raw Metar Data:",
@@ -201,7 +202,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(
                 title=f"Metar data for **{airportn}** from **{time}** ({obstime})",
-                color=cfc,
+                color=self.bot.color(),
             )
             embed.add_field(
                 name="Raw Metar Data:",
@@ -232,7 +233,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             embed = discord.Embed(
                 title="Error 404!",
                 description=f"Didn't found metar data for {airport[:4].upper()}.",
-                color=errorc,
+                color=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -263,7 +264,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                     embed = discord.Embed(
                         title="Error 404",
                         description=f"Didn't found a diagram for {airport[:4].upper()}.",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await ctx.respond(embed=embed)
                 else:
@@ -290,7 +291,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                                         discord.Embed(
                                             title=f"{load[airport[:4].upper()][i]['chart_name']} for {airport[:4].upper()}",
                                             description=f"[PDF link]({load[airport[:4].upper()][i]['pdf_path']})",
-                                            colour=cfc,
+                                            colour=self.bot.color(),
                                         )
                                     ],
                                     files=[dfile],
@@ -308,7 +309,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                 embed = discord.Embed(
                     title="Invalid airport code",
                     description="Only US airports are allowed as input.",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
         if chart == "Minimums":
@@ -322,7 +323,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                     embed = discord.Embed(
                         title="Error 404",
                         description=f"Didn't found a diagram for {airport[:4].upper()}.",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await ctx.respond(embed=embed)
                 else:
@@ -349,7 +350,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                                         discord.Embed(
                                             title=f"{load[airport[:4].upper()][j]['chart_name']} for {airport[:4].upper()}",
                                             description=f"[PDF link]({load[airport[:4].upper()][j]['pdf_path']})",
-                                            colour=cfc,
+                                            colour=self.bot.color(),
                                         )
                                     ],
                                     files=[dfile],
@@ -366,7 +367,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                 embed = discord.Embed(
                     title="Invalid airport code",
                     description="Only US airports are allowed as input.",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
         if chart == "Airport Diagram":
@@ -381,7 +382,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                     embed = discord.Embed(
                         title="Error 404",
                         description=f"Didn't found a diagram for {airport[:4].upper()}.",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await ctx.respond(embed=embed)
                 else:
@@ -397,7 +398,8 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                         chart_img = io.BytesIO(img_data)
                         dfile = discord.File(chart_img, filename=f"apd.jpg")
                     embed = discord.Embed(
-                        title=f"{airport[:4].upper()}'s airport diagram:", colour=cfc
+                        title=f"{airport[:4].upper()}'s airport diagram:",
+                        colour=self.bot.color(),
                     )
                     embed.set_image(url="attachment://apd.jpg")
                     await ctx.respond(embed=embed, file=dfile)
@@ -405,7 +407,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                 embed = discord.Embed(
                     title="Invalid airport code",
                     description="Only US airports are allowed as input.",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
 
@@ -425,7 +427,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                 else:
                     embed = discord.Embed(
                         title="No airport information found.",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await ctx.respond(embed=embed)
                     return
@@ -436,18 +438,23 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             button = discord.ui.Button(label="Open airport site", url=site_link)
             view.add_item(button)
         else:
-            button = discord.ui.Button(label="Open airport site", url="https://matt3o0.is-a.dev", disabled=True)
+            button = discord.ui.Button(
+                label="Open airport site", url="https://matt3o0.is-a.dev", disabled=True
+            )
             view.add_item(button)
 
         if site_link != "":
-            button = discord.ui.Button(label="Open Wikipedia page", url="https://matt3o0.is-a.dev")
+            button = discord.ui.Button(
+                label="Open Wikipedia page", url="https://matt3o0.is-a.dev"
+            )
             view.add_item(button)
         else:
-            button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link, disabled=True)
+            button = discord.ui.Button(
+                label="Open Wikipedia page", url=wiki_link, disabled=True
+            )
             view.add_item(button)
 
         iata = "N/A" if json_resp.get("iata_code") == "" else json_resp.get("iata_code")
-        
 
         if json_resp.get("continent", "N/A") == "NA":
             continent = "North America"
@@ -479,7 +486,7 @@ Country Code: **{json_resp.get('iso_country', 'N/A')}**
 Region Code: **{json_resp.get('iso_region', 'N/A')}**
 Municipality: **{json_resp.get('municipality', 'N/A')}**
         """,
-            colour=cfc
+            colour=self.bot.color(),
         )
         await ctx.respond(embed=embed, view=view)
 
@@ -531,7 +538,7 @@ Municipality: **{json_resp.get('municipality', 'N/A')}**
                         embed = discord.Embed(
                             title="No wind data found",
                             description="Wind data is required to make a prediction on active runways at the given airport.",
-                            colour=errorc,
+                            colour=self.bot.color(1),
                         )
                         await ctx.respond(embed=embed)
                         return
@@ -543,11 +550,13 @@ Municipality: **{json_resp.get('municipality', 'N/A')}**
                     embed = discord.Embed(
                         title=f"Active runways at {airport[:4].upper()}",
                         description="\n".join(ac_runways),
-                        colour=cfc,
+                        colour=self.bot.color(),
                     ).set_footer(text="These are predictions, and not official data.")
                     await ctx.respond(embed=embed)
                 else:
-                    embed = discord.Embed(title="Airport not found", colour=errorc)
+                    embed = discord.Embed(
+                        title="Airport not found", colour=self.bot.color(1)
+                    )
                     await ctx.respond(embed=embed)
 
 

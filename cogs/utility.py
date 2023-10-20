@@ -1,26 +1,23 @@
 import json
 import os
 import platform
-import aiofiles
 import pytz
 import discord
 import psutil
 import urllib.parse
 import datetime
-import zoneinfo
 import math
 from discord import option
 from discord.ext import commands
 import aiosqlite
-from main import cogs
-from main import cfc, errorc
+from main import ClearBot
 
 
 timezones = pytz.all_timezones
 
 
 class PollTypeYesNo(discord.ui.Modal):
-    def __init__(self, bot, *args, **kwargs) -> None:
+    def __init__(self, bot: ClearBot, *args, **kwargs) -> None:
         self.bot = bot
         super().__init__(*args, **kwargs)
 
@@ -33,11 +30,13 @@ class PollTypeYesNo(discord.ui.Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        conf_embed = discord.Embed(title="Successfully created poll", colour=cfc)
+        conf_embed = discord.Embed(
+            title="Successfully created poll", colour=self.bot.color()
+        )
         conf_embed.add_field(name="Question", value=self.children[0].value)
         conf_embed.add_field(name="Type", value="Yes/No")
         await interaction.response.send_message(embed=conf_embed, ephemeral=True)
-        embed = discord.Embed(title="Creating poll...", colour=cfc)
+        embed = discord.Embed(title="Creating poll...", colour=self.bot.color())
         message = await interaction.channel.send(embed=embed)
         poll_id = message.id
 
@@ -61,7 +60,7 @@ class PollTypeYesNo(discord.ui.Modal):
 
 2️⃣ No
         """,
-            colour=cfc,
+            colour=self.bot.color(),
         )
         embed.set_author(
             name="Asked by " + interaction.user.name,
@@ -96,11 +95,13 @@ class PollTypeMChoice(discord.ui.Modal):
             )
 
     async def callback(self, interaction: discord.Interaction):
-        conf_embed = discord.Embed(title="Successfully created poll", colour=cfc)
+        conf_embed = discord.Embed(
+            title="Successfully created poll", colour=self.bot.color()
+        )
         conf_embed.add_field(name="Question", value=self.children[0].value)
         conf_embed.add_field(name="Type", value=f"{self.choices} choices")
         await interaction.response.send_message(embed=conf_embed, ephemeral=True)
-        embed = discord.Embed(title="Creating poll...", colour=cfc)
+        embed = discord.Embed(title="Creating poll...", colour=self.bot.color())
         message = await interaction.channel.send(embed=embed)
         poll_id = message.id
         new_poll = {
@@ -131,7 +132,7 @@ class PollTypeMChoice(discord.ui.Modal):
             description=f"""
 {''.join(choices)}
         """,
-            colour=cfc,
+            colour=self.bot.color(),
         )
         embed.set_author(
             name="Asked by " + interaction.user.name,
@@ -156,7 +157,9 @@ class UtilityCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("\033[34m|\033[0m \033[96;1mUtility\033[0;36m cog loaded sucessfully\033[0m")
+        print(
+            "\033[34m|\033[0m \033[96;1mUtility\033[0;36m cog loaded sucessfully\033[0m"
+        )
 
     @discord.command(
         name="report",
@@ -191,12 +194,14 @@ class UtilityCommands(discord.Cog):
     ):
         await ctx.defer(ephemeral=True)
         channel = self.bot.get_channel(965655791468183612)
-        embed = discord.Embed(title=f"{ctx.author} submitted a report!", color=cfc)
+        embed = discord.Embed(
+            title=f"{ctx.author} submitted a report!", color=self.bot.color()
+        )
         embed.set_thumbnail(url=ctx.author.display_avatar.url)
         confirmembed = discord.Embed(
             title="Report send!",
             description="The team will come to help you as soon as possible.",
-            color=cfc,
+            color=self.bot.color(),
         )
         if user == None:
             user = "None was given"
@@ -294,14 +299,14 @@ class UtilityCommands(discord.Cog):
 **Options**: 
 {opts}
                 """,
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(
                     title="Command not found",
                     description=f"I didn't found the command `{command}`.",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
         else:
@@ -363,14 +368,14 @@ class UtilityCommands(discord.Cog):
                     embed = discord.Embed(
                         title=f"{select.values[0]} Commands",
                         description="\n".join(listed_cmds),
-                        colour=cfc,
+                        colour=self.bot.color(),
                     )
                     await interaction.edit_original_message(embed=embed)
 
             embed = discord.Embed(
                 title="Help!",
                 description="Select a command group below to view all the available commands inside it.",
-                colour=cfc,
+                colour=self.bot.color(),
             )
             await ctx.respond(embed=embed, view=HelpView(self.bot))
 
@@ -379,7 +384,7 @@ class UtilityCommands(discord.Cog):
     async def team(self, ctx: discord.ApplicationContext):
         with open("dev/team.json", "r") as f:
             data = json.load(f)
-        embed = discord.Embed(title="The ClearFly Team", color=cfc)
+        embed = discord.Embed(title="The ClearFly Team", color=self.bot.color())
         logo = data["icon"]
         for member in data["members"]:
             embed.add_field(
@@ -398,11 +403,15 @@ class UtilityCommands(discord.Cog):
         if user == None:
             user = ctx.author
             embed = discord.Embed(
-                title="Your avatar", url=user.display_avatar.url, colour=cfc
+                title="Your avatar",
+                url=user.display_avatar.url,
+                colour=self.bot.color(),
             )
         else:
             embed = discord.Embed(
-                title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc
+                title=f"{user.name}'s avatar",
+                url=user.display_avatar.url,
+                colour=self.bot.color(),
             )
 
         embed.set_image(url=user.display_avatar.url)
@@ -415,7 +424,9 @@ class UtilityCommands(discord.Cog):
     async def avatar_app(self, ctx, user: discord.Member):
         await ctx.defer()
         embed = discord.Embed(
-            title=f"{user.name}'s avatar", url=user.display_avatar.url, colour=cfc
+            title=f"{user.name}'s avatar",
+            url=user.display_avatar.url,
+            colour=self.bot.color(),
         )
         embed.set_image(url=user.display_avatar.url)
         await ctx.respond(embed=embed)
@@ -443,7 +454,7 @@ class UtilityCommands(discord.Cog):
                 device = "Desktop/Web"
         embed = discord.Embed(
             title=f"**{user}'s profile:**",
-            color=cfc,
+            color=self.bot.color(),
             description=f"""
 {user.mention}
 **Created on:** {discord.utils.format_dt(user.created_at)}
@@ -482,7 +493,7 @@ class UtilityCommands(discord.Cog):
                 device = "Desktop/Web"
         embed = discord.Embed(
             title=f"**{user}'s profile:**",
-            color=cfc,
+            color=self.bot.color(),
             description=f"""
 {user.mention}
 **Created on:** {discord.utils.format_dt(user.created_at)}
@@ -507,7 +518,7 @@ class UtilityCommands(discord.Cog):
         embed = discord.Embed(
             title="ClearFly GitHub:",
             description="- [ClearFly](https://github.com/ClearFly-Official/)\n- [ClearBot](https://github.com/ClearFly-Official/ClearBot)\n- [ClearFly-Branding](https://github.com/ClearFly-Official/ClearFly-Branding)",
-            color=cfc,
+            color=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 
@@ -526,17 +537,20 @@ class UtilityCommands(discord.Cog):
         await ctx.defer()
         if type == "Addition":
             embed = discord.Embed(
-                description=f"{input1} + {input2} = **{input1+input2}**", color=cfc
+                description=f"{input1} + {input2} = **{input1+input2}**",
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
         if type == "Subtraction":
             embed = discord.Embed(
-                description=f"{input1} - {input2} = **{input1-input2}**", color=cfc
+                description=f"{input1} - {input2} = **{input1-input2}**",
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
         if type == "Multiplication":
             embed = discord.Embed(
-                description=f"{input1} x {input2} = **{input1*input2}**", color=cfc
+                description=f"{input1} x {input2} = **{input1*input2}**",
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
         if type == "Division":
@@ -544,7 +558,8 @@ class UtilityCommands(discord.Cog):
                 await ctx.respond("You can't divide by 0!")
             else:
                 embed = discord.Embed(
-                    description=f"{input1} : {input2} = **{input1/input2}**", color=cfc
+                    description=f"{input1} : {input2} = **{input1/input2}**",
+                    color=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
 
@@ -569,14 +584,16 @@ class UtilityCommands(discord.Cog):
             embed = discord.Embed(
                 title=f"The square root of {input} is",
                 description=f"**{math.sqrt(input)}**",
-                color=cfc,
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed)
         if type == "Power" and exponent == None:
             await ctx.respond("You need to give a exponent...")
         if type == "Power":
             if exponent > 2000:
-                embed = discord.Embed(title="Exponent too large!", colour=errorc)
+                embed = discord.Embed(
+                    title="Exponent too large!", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
                 return
             result = input**exponent
@@ -584,11 +601,13 @@ class UtilityCommands(discord.Cog):
                 embed = discord.Embed(
                     title=f"{input} to the power of {exponent} is",
                     description=f"**{result}**",
-                    color=cfc,
+                    color=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
             else:
-                embed = discord.Embed(title="Number too large!", colour=errorc)
+                embed = discord.Embed(
+                    title="Number too large!", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
 
     @utility.command(description="🔎 Search the web!")
@@ -619,7 +638,7 @@ class UtilityCommands(discord.Cog):
         view.add_item(yahoo)
         embed = discord.Embed(
             title=f"Click the links below to view the results of your search: '**{query}**'.",
-            colour=cfc,
+            colour=self.bot.color(),
         )
         embed.set_author(
             name=f"Requested by {ctx.author.name}",
@@ -667,7 +686,7 @@ class UtilityCommands(discord.Cog):
             embed = discord.Embed(
                 title="Not a valid poll id!",
                 description="Please give an actual poll id, where you are the author of. You can find the poll id at the bottom of the poll itself.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
         else:
@@ -679,7 +698,8 @@ class UtilityCommands(discord.Cog):
                 poll = await poll.fetchone()
             if poll == None:
                 embed = discord.Embed(
-                    title="It looks like this poll already ended...", colour=cfc
+                    title="It looks like this poll already ended...",
+                    colour=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
             elif poll[2] == str(ctx.author.id):
@@ -709,7 +729,7 @@ Total votes: **{total_count}**
 
 {''.join(out)}
                 """,
-                    colour=cfc,
+                    colour=self.bot.color(),
                 ).set_author(
                     icon_url=author.display_avatar, name=f"Poll by {author.name}"
                 )
@@ -718,13 +738,15 @@ Total votes: **{total_count}**
                     cursor = await db.cursor()
                     await cursor.execute("DELETE FROM poll WHERE poll_id=?", (poll_id,))
                     await db.commit()
-                embed = discord.Embed(title="Successfully closed poll!", colour=cfc)
+                embed = discord.Embed(
+                    title="Successfully closed poll!", colour=self.bot.color()
+                )
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(
                     title="You're not the author of this poll!",
                     description="Try again with a poll you own.",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
 
@@ -883,7 +905,7 @@ Total votes: **{total_count}**
             embed = discord.Embed(
                 title="Invalid year input",
                 description="Year parameter must be greater or equal to 0 and smaller than 10000",
-                colour=cfc,
+                colour=self.bot.color(),
             )
             await ctx.respond(embed=embed)
             return
@@ -903,7 +925,7 @@ Total votes: **{total_count}**
         conv_time = discord.utils.format_dt(time_2_conv, style=style)  # type: ignore
         embed = discord.Embed(
             title="Here's your converted time!",
-            colour=cfc,
+            colour=self.bot.color(),
         )
         embed.add_field(name="Display", value=conv_time)
         embed.add_field(name="Raw", value=f"`{conv_time}`")
@@ -948,9 +970,9 @@ Second: **{second}**
 
         guild = ctx.guild
 
-        embed = discord.Embed(title="Server Stats", colour=cfc).set_thumbnail(
-            url=guild.icon.url
-        )
+        embed = discord.Embed(
+            title="Server Stats", colour=self.bot.color()
+        ).set_thumbnail(url=guild.icon.url)
         embed.add_field(
             name="General",
             value=f"""
@@ -985,7 +1007,7 @@ Joins last week: **{join_stats[2]}**
         loc = 0
         f = open("main.py", "r")
         loc += int(len(f.readlines()))
-        for cog in cogs:
+        for cog in self.bot.cog_list:
             f = open(f"cogs/{cog}.py")
             loc += int(len(f.readlines()))
         if platform.system().lower() == "linux":
@@ -993,7 +1015,7 @@ Joins last week: **{join_stats[2]}**
             temp = temp.replace("temp=", "")
         else:
             temp = "N/A"
-        cogs_list = "\n".join(cogs)
+        cogs_list = "\n".join(self.bot.cog_list)
         delta_uptime = datetime.datetime.utcnow() - self.bot.start_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -1013,7 +1035,7 @@ Joins last week: **{join_stats[2]}**
 {cogs_list}
 ```
         """,
-            color=cfc,
+            color=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 

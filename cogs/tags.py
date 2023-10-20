@@ -1,19 +1,17 @@
 import discord
 import aiosqlite
-import os
 import time
-from main import cogs
 from discord import option
 from discord.ext import commands
 from dotenv import load_dotenv
-from main import cfc, errorc
+from main import ClearBot
 from discord.ext.pages import Page, Paginator
 
 load_dotenv()
 
 
 class TagCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     tags = discord.SlashCommandGroup(
@@ -64,7 +62,7 @@ class TagCommands(discord.Cog):
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
             elif info:
-                embed = discord.Embed(title="Tag information", colour=cfc)
+                embed = discord.Embed(title="Tag information", colour=self.bot.color())
                 tagAuthor = await self.bot.fetch_user(int(output[3]))
                 embed.add_field(name="Name", value=output[1], inline=False)
                 embed.add_field(name="Value", value=output[2], inline=False)
@@ -90,7 +88,7 @@ class TagCommands(discord.Cog):
                 description=f"""
 Didn't found {tag}. 
             """,
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -118,7 +116,7 @@ Didn't found {tag}.
                     discord.Embed(
                         title=f"Tags {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                        colour=cfc,
+                        colour=self.bot.color(),
                     ).set_footer(text=f"Showing 25/page, total of {len(tags)} tags")
                 ]
             )
@@ -165,7 +163,7 @@ Didn't found {tag}.
                 embed = discord.Embed(
                     title=f"Tag created with following data:",
                     description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 await interaction.response.send_message(embed=embed)
 
@@ -216,7 +214,7 @@ Didn't found {tag}.
                     embed = discord.Embed(
                         title=f"Tag edited with following data:",
                         description=f"\n\n**Name:** {self.children[0].value}\n\n**Value:** {self.children[1].value}",
-                        colour=cfc,
+                        colour=self.bot.color(),
                     )
                     await interaction.response.send_message(embed=embed)
                 else:
@@ -225,7 +223,7 @@ Didn't found {tag}.
                         description=f"""
 Didn't found {edit}. 
                         """,
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await interaction.response.send_message(embed=embed)
 
@@ -244,7 +242,7 @@ Didn't found {edit}.
             embed = discord.Embed(
                 title="Not author",
                 description="You are not authorised to edit this tag!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -263,7 +261,9 @@ Didn't found {edit}.
                 cursor = await db.cursor()
                 await cursor.execute("DELETE FROM tags WHERE name=?", (tag,))
                 await db.commit()
-            embed = discord.Embed(title=f"Tag `{tag}` deleted successfully", colour=cfc)
+            embed = discord.Embed(
+                title=f"Tag `{tag}` deleted successfully", colour=self.bot.color()
+            )
         elif 965422406036488282 in authroles:
             async with aiosqlite.connect("main.db") as db:
                 cursor = await db.cursor()
@@ -271,13 +271,13 @@ Didn't found {edit}.
                 await db.commit()
             embed = discord.Embed(
                 title=f"Tag `{tag}` deleted successfully (it was not yours!)",
-                colour=cfc,
+                colour=self.bot.color(),
             )
         else:
             embed = discord.Embed(
                 title="Not author",
                 description="You are not authorised to delete this tag!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
 
         await ctx.respond(embed=embed)

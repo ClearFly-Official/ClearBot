@@ -1,12 +1,8 @@
-import platform
 import re
-import shutil
 import aiofiles
 import aiohttp
 import discord
 import os
-import zoneinfo
-import configparser
 import random
 import aiosqlite
 import feedparser
@@ -14,15 +10,11 @@ import time
 import datetime
 from http.client import RemoteDisconnected
 from discord.ext import commands, tasks
-from main import cfc, errorc
-
-
-adminids = [668874138160594985, 871893179450925148, 917477940650971227]
-fsnews = 1066124540318588928  # *CB test 1001401783689678868
+from main import ClearBot
 
 
 class DeleteMsgView(discord.ui.View):
-    def __init__(self, bot, auth):
+    def __init__(self, bot: ClearBot, auth):
         self.bot = bot
         self.auth = auth
         super().__init__(timeout=240.0, disable_on_timeout=True)
@@ -42,7 +34,7 @@ class DeleteMsgView(discord.ui.View):
 
 
 class Listeners(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -88,7 +80,7 @@ class Listeners(discord.Cog):
 
     @tasks.loop(minutes=1)
     async def presence(self):
-        guild = self.bot.get_guild(965419296937365514)
+        guild = self.bot.get_guild(self.bot.server_id)
         if not guild:
             print("\033[31mCould not fetch the ClearFly guild.\033[0m")
             return
@@ -123,7 +115,7 @@ class Listeners(discord.Cog):
     async def rssfeedtres1(self):
         table = "RSS_thresholdx_news"
         try:
-            channel = self.bot.get_channel(fsnews)
+            channel = self.bot.get_channel(self.bot.channels.get("news"))
             blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -184,7 +176,7 @@ class Listeners(discord.Cog):
     async def rssfeedtres2(self):
         table = "RSS_thresholdx_opinion"
         try:
-            channel = self.bot.get_channel(fsnews)
+            channel = self.bot.get_channel(self.bot.channels.get("news"))
             blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -241,7 +233,7 @@ class Listeners(discord.Cog):
     async def rssfeedtres3(self):
         table = "RSS_thresholdx_article"
         try:
-            channel = self.bot.get_channel(fsnews)
+            channel = self.bot.get_channel(self.bot.channels.get("news"))
             blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -430,7 +422,7 @@ class Listeners(discord.Cog):
                         )
                 embed = discord.Embed(
                     title="Weekly ClearFly Join Report",
-                    colour=cfc,
+                    colour=self.bot.color(),
                     description=f"""
     Joins this week: **{join_stats[3]}**
     Joins last week: **{join_stats[2]}**
@@ -451,7 +443,7 @@ class Listeners(discord.Cog):
         emb = discord.Embed(
             title=f"Welcome to ClearFly!",
             description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!",
-            color=cfc,
+            color=self.bot.color(),
         )
         await channel.send(member.mention, embed=emb)
         guild_count = str(member.guild.member_count)
@@ -479,7 +471,7 @@ class Listeners(discord.Cog):
         emb = discord.Embed(
             title=f"**{member.name}** joined",
             description=f"{member.mention} is the **{guild_count}**{guild_c_suffix} member!",
-            color=cfc,
+            color=self.bot.color(),
         ).set_thumbnail(url=member.display_avatar.url)
         async with aiosqlite.connect("main.db") as db:
             await db.execute(
@@ -499,7 +491,7 @@ class Listeners(discord.Cog):
         channel = self.bot.get_channel(1001405648828891187)
         emb = discord.Embed(
             title=f"{member} left.",
-            color=cfc,
+            color=self.bot.color(),
             description=f"Joined on {discord.utils.format_dt(member.joined_at)}",
         )
         pfp = member.display_avatar.url
@@ -545,7 +537,7 @@ Message Content:
                             discord.Embed(
                                 title="Attachment deleted",
                                 url=attach.url,
-                                colour=cfc,
+                                colour=self.bot.color(),
                             )
                             .set_image(url=attach.url)
                             .set_footer(
@@ -558,13 +550,13 @@ Message Content:
                                 title="Attachment deleted",
                                 url=attach.url,
                                 description="*Attachment is* ***not*** *image*",
-                                colour=cfc,
+                                colour=self.bot.color(),
                             ).set_footer(
                                 text="If the image doesn't load, try opening it in your browser by clicking the title."
                             )
                         )
             pfp = message.author.display_avatar.url
-            embed = discord.Embed(title="Message Deleted", color=cfc)
+            embed = discord.Embed(title="Message Deleted", color=self.bot.color())
             embed.add_field(name="Content", value=f"{msgcontent[:1024]}", inline=False)
             embed.add_field(name="Author", value=f"{msgatr}", inline=True)
             embed.add_field(name="Channel", value=f"{msgcnl}", inline=True)
@@ -624,7 +616,7 @@ After:
                 pfp = before.author.display_avatar.url
                 emb = discord.Embed(
                     title="Message Edited",
-                    color=cfc,
+                    color=self.bot.color(),
                     url=f"https://discord.com/channels/965419296937365514/{after.channel.id}/{after.id}",
                 )
                 emb.add_field(
@@ -651,7 +643,7 @@ ID: **{after.id}**
         self, before: discord.channel, after: discord.channel
     ):
         channel = self.bot.get_channel(1001405648828891187)
-        embed = discord.Embed(title=f"Channel Updated", colour=cfc)
+        embed = discord.Embed(title=f"Channel Updated", colour=self.bot.color())
         embed.add_field(name="", value=after.mention, inline=False)
         if before.name != after.name:
             embed.add_field(
@@ -767,27 +759,28 @@ After: **{after.category}**
             channel = self.bot.get_channel(1001405648828891187)
             if before.name != after.name:
                 embed = discord.Embed(
-                    title=f"{before} changed their name to `{after.name}`.", colour=cfc
+                    title=f"{before} changed their name to `{after.name}`.",
+                    colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.display_name != after.display_name:
                 embed = discord.Embed(
                     title=f"{before} changed their nickname to `{after.display_name}`.",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.discriminator != after.discriminator:
                 embed = discord.Embed(
                     title=f"{before} changed their discriminator to `{after.discriminator}`.",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
                 await channel.send(embed=embed)
             if before.roles != after.roles:
                 embed = discord.Embed(
-                    title=f"{before} got their roles changed.", colour=cfc
+                    title=f"{before} got their roles changed.", colour=self.bot.color()
                 )
                 brole = [str(role.id) for role in before.roles]
                 brole = ["<@&" + str(role) for role in brole]
@@ -812,7 +805,7 @@ After: **{after.category}**
             if before.display_avatar != after.display_avatar:
                 embed = discord.Embed(
                     title=f"{before} changed their avatar to the following image.",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 embed.set_image(url=after.display_avatar.url)
                 await channel.send(embed=embed)
@@ -820,7 +813,7 @@ After: **{after.category}**
             pass
 
     @commands.Cog.listener("on_message")
-    async def scamcheck(self, message):
+    async def scamcheck(self, message: discord.Message):
         class BanView(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -842,7 +835,7 @@ After: **{after.category}**
                     embed = discord.Embed(
                         title=f"While trying to ban `{message.author}`, I got the following error:",
                         description=f"\n```{error}\n```",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                     )
                     await interaction.response.send_message(embed=embed)
 
@@ -854,7 +847,7 @@ After: **{after.category}**
                     return True
                 change += 1
 
-        if message.author.id not in adminids:
+        if self.bot.roles.get("admin") not in message.author.roles:
             if scamChecker(message.clean_content):
                 await message.reply(
                     content="Your message included blacklisted words, and has been deleted."
@@ -863,7 +856,7 @@ After: **{after.category}**
                 embed = discord.Embed(
                     title=f"`{message.author}` might have sent a scam",
                     description=message.content,
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await message.delete(reason=f"{message.author} might have sent a scam.")
                 await channel.send(embed=embed, view=BanView(bot=self.bot))
@@ -920,7 +913,7 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Take a break!",
                 description=error,
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
@@ -928,7 +921,7 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Missing required permissions",
                 description="You're not authorised to use this command!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
@@ -936,7 +929,7 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Incorrect Values",
                 description="You gave some values that are incorrect/invalid to me, try again with correct ones!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
@@ -944,7 +937,7 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Missing required roles",
                 description="You're not authorised to use this command!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
@@ -952,14 +945,14 @@ After: **{after.category}**
             embed = discord.Embed(
                 title="Owner only command",
                 description="This command is for the owner of the bot only, so not for you!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
         if isinstance(error, commands.errors.NoPrivateMessage):
             embed = discord.Embed(
                 title="This command cannot be used in DMs",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             notHandled = False
@@ -971,7 +964,7 @@ After: **{after.category}**
             bot_author = self.bot.get_user(668874138160594985)
             alert_emb = discord.Embed(
                 title="Hey there!",
-                colour=cfc,
+                colour=self.bot.color(),
                 description=f"""
 {ctx.author.mention} experienced some issues with me, please fix them as soon as possible! Error is provided below, more info can be found in the terminal.
 ```py
@@ -986,7 +979,7 @@ After: **{after.category}**
 We're sorry for the inconvenience. The bot author has been notified about this issue.
 ```{error}```
                 """,
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             raise error

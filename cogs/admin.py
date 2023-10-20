@@ -1,12 +1,13 @@
 import discord
 from discord import option
 from discord.ext import commands
-from main import cfc, errorc
 import datetime
+
+from main import ClearBot
 
 
 class RulesView(discord.ui.View):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
         super().__init__(timeout=None)
 
@@ -17,7 +18,7 @@ class RulesView(discord.ui.View):
         emoji="<:ClearFly:1054526148576559184>",
     )
     async def button_callback(self, button, interaction):
-        guilds = self.bot.get_guild(965419296937365514)
+        guilds = self.bot.get_guild(self.bot.server_id)
         roles = guilds.get_role(1002200398905483285)
         if roles in interaction.user.roles:
             await interaction.response.send_message(
@@ -25,7 +26,7 @@ class RulesView(discord.ui.View):
             )
         else:
             author = interaction.user
-            guild = self.bot.get_guild(965419296937365514)
+            guild = self.bot.get_guild(self.bot.server_id)
             role = guild.get_role(1002200398905483285)
             await author.add_roles(role)
             await interaction.response.send_message(
@@ -33,36 +34,16 @@ class RulesView(discord.ui.View):
             )
 
 
-class FAQView(discord.ui.View):
-    def __init__(self, bot):
-        self.bot = bot
-        super().__init__(timeout=None)
-
-    @discord.ui.button(
-        label="I have read the FAQ",
-        custom_id="faqbutton",
-        style=discord.ButtonStyle.secondary,
-        emoji="<:ClearFly:1054526148576559184>",
-    )
-    async def button_callback(self, button, interaction):
-        author = interaction.user
-        guild = self.bot.get_guild(965419296937365514)
-        role = guild.get_role(1002932992534134814)
-        await author.add_roles(role)
-        await interaction.response.send_message(
-            "Thanks for reading the FAQ!", ephemeral=True
-        )
-
-
 class AdminCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.bot.add_view(RulesView(bot=self.bot))
-        self.bot.add_view(FAQView(bot=self.bot))
-        print("\033[34m|\033[0m \033[96;1mAdmin\033[0;36m cog loaded sucessfully\033[0m")
+        print(
+            "\033[34m|\033[0m \033[96;1mAdmin\033[0;36m cog loaded sucessfully\033[0m"
+        )
 
     admin = discord.SlashCommandGroup(
         name="admin", description="🔒 Commands for admins only."
@@ -73,11 +54,11 @@ class AdminCommands(discord.Cog):
     @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def echo(self, ctx: discord.ApplicationContext, text: str):
-        await ctx.respond("posted your message!", ephemeral=True)
+        await ctx.respond("Posted your message!", ephemeral=True)
         await ctx.channel.send(text)
         channel = self.bot.get_channel(1001405648828891187)
         emb = discord.Embed(
-            title=f"{ctx.author} used echo:", description=text, color=cfc
+            title=f"{ctx.author} used echo", description=text, color=self.bot.color()
         )
         emb.set_thumbnail(url=ctx.author.display_avatar.url)
         await channel.send(embed=emb)
@@ -143,7 +124,9 @@ class AdminCommands(discord.Cog):
         timestamp: bool,
         colour: str,
     ):
-        ademb = discord.Embed(title=f"{ctx.author} posted an embed", colour=cfc)
+        ademb = discord.Embed(
+            title=f"{ctx.author} posted an embed", colour=self.bot.color()
+        )
         if colour == None:
             colour = f"6db2d9"
         else:
@@ -215,7 +198,7 @@ URL: `{url}`
         if amount >= 100:
 
             class Spam(discord.ui.View):
-                def __init__(self, bot):
+                def __init__(self, bot: ClearBot):
                     self.bot = bot
                     super().__init__(timeout=15.0, disable_on_timeout=True)
 
@@ -231,7 +214,7 @@ URL: `{url}`
                     embed = discord.Embed(
                         title=f"**{ctx.author}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:",
                         description=text,
-                        color=cfc,
+                        color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
                     await channel.send(embed=embed)
@@ -260,15 +243,14 @@ URL: `{url}`
             embed = discord.Embed(
                 title="**Do you want to continue?**",
                 description=f"You are spamming **{amount} times**. That's a lot!",
-                color=cfc,
+                color=self.bot.color(),
             )
             await ctx.respond(embed=embed, view=Spam(bot=self.bot), ephemeral=True)
         else:
-            chnlmention = self.bot.get_channel(ctx.channel.id)
             embed = discord.Embed(
                 title=f"**{ctx.author}** spammed `{ctx.channel}` **{amount} times** with the following text:",
                 description=text,
-                color=cfc,
+                color=self.bot.color(),
             )
             embed.set_thumbnail(url=user.display_avatar.url)
             await ctx.respond(
@@ -300,7 +282,7 @@ URL: `{url}`
         await channel.edit(slowmode_delay=slowmode)
         embed = discord.Embed(
             title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!",
-            color=cfc,
+            color=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 
@@ -332,7 +314,7 @@ URL: `{url}`
                     )
                     embed = discord.Embed(
                         title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}` after confirmation!",
-                        color=cfc,
+                        color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
                     await channel.send(embed=embed)
@@ -360,7 +342,7 @@ URL: `{url}`
             embed = discord.Embed(
                 title="**Do you want to continue?**",
                 description=f"You are purging **{amount} messages**. that's a lot!",
-                color=cfc,
+                color=self.bot.color(2),
             )
             await ctx.respond(embed=embed, view=PurgeView(bot=self.bot), ephemeral=True)
         else:
@@ -368,23 +350,30 @@ URL: `{url}`
                 limit=amount, check=lambda message: not message.pinned
             )
             await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
-            chnlmention = self.bot.get_channel(ctx.channel.id)
             embed = discord.Embed(
                 title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!",
-                color=cfc,
+                color=self.bot.color(),
             )
             embed.set_thumbnail(url=ctx.author.display_avatar.url)
             await channel.send(embed=embed)
 
-    @admin.command(name="rules-n-faq", description="❓ Sends the rules and FAQ.")
+    @admin.command(name="setup", description="⚙️ Setup the server.")
     @commands.has_permissions(administrator=True)
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def rules_n_faq(self, ctx: discord.ApplicationContext):
-        embed1 = discord.Embed(color=cfc).set_image(
-            url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/rules.png?raw=true"
+    async def setup(self, ctx: discord.ApplicationContext):
+        await ctx.defer(ephemeral=True)
+
+        file1 = discord.File(
+            f"images/banners/{self.bot.theme}/rules.png", filename="rules.png"
+        )
+        file2 = discord.File(
+            f"images/banners/{self.bot.theme}/faq.png", filename="faq.png"
+        )
+        embed1 = discord.Embed(color=self.bot.color()).set_image(
+            url="attachment://rules.png"
         )
         embed2 = discord.Embed(
-            color=cfc,
+            color=self.bot.color(),
             description="""
 **1.** Don’t post any inappropriate content.
 
@@ -401,31 +390,40 @@ URL: `{url}`
 **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
         """,
         )
-        embed3 = discord.Embed(colour=cfc).set_image(
-            url="https://github.com/ClearFly-Official/ClearFly-Branding/blob/main/Banners/RulesNFAQ/faq.png?raw=true"
+        embed3 = discord.Embed(colour=self.bot.color()).set_image(
+            url="attachment://faq.png"
         )
         embed4 = discord.Embed(
-            title="ClearFly FAQ",
             description="""
-**Q: When will the Boeing 737-100 be released?**
-A: We don’t currently have a set release date. Follow our progress in <#965597725519405106>
-
-**Q: Will there be a 3D cabin?**
-A: Yes!
-
-**Q: Will there be a custom FMC?**
-A: This is unlikely, but not impossible in the future.
+**Q: What happened to the 737-100?**
+A: We decided that the project was announced way too early. It is still in active development and a "re-announcement" will be made when significant progress has been made by the team.
         """,
-            color=cfc,
+            color=self.bot.color(),
         )
-        embed5 = discord.Embed(title="Links", description="""
+        embed5 = discord.Embed(
+            title="Links",
+            description="""
 - [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
 - [Discord](https://discord.gg/jjpwtusf6n)
-                               """, colour=cfc)
-        await ctx.respond("Rules and faq posted!", ephemeral=True)
-        await ctx.send(embeds=[embed1, embed2], view=RulesView(bot=self.bot))
-        await ctx.send(embeds=[embed3, embed4], view=FAQView(bot=self.bot))
-        await ctx.send(embed=embed5)
+                               """,
+            colour=self.bot.color(),
+        )
+
+        def check(msg: discord.Message) -> bool:
+            return msg.author.bot
+
+        info = self.bot.get_channel(self.bot.channels.get("info"))
+        if isinstance(info, discord.TextChannel):
+            await info.purge(check=check)
+            await info.send(
+                embeds=[embed1, embed2], view=RulesView(bot=self.bot), file=file1
+            )
+            await info.send(embeds=[embed3, embed4], file=file2)
+            await info.send(embed=embed5)
+            await ctx.respond("Rules and faq posted!")
+        else:
+            await ctx.respond("Couldn't fetch the channel.")
+
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))

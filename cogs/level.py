@@ -1,8 +1,6 @@
 import io
+from typing import Literal
 import discord
-import os
-import configparser
-import glob
 import re
 import aiosqlite
 from pilmoji import Pilmoji
@@ -10,12 +8,21 @@ from numerize import numerize as n
 from PIL import Image, ImageDraw, ImageFont
 from discord import option
 from discord.ext import commands
-from main import cfc, errorc
+from main import ClearBot
 
 
 class LevelingCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
+
+    def userlevel_color(self, c: int = 0) -> tuple[int, int, int]:
+        colors = {
+            0: {0: (9, 57, 97), 1: (38, 129, 180)},
+            1: {0: (253, 133, 45), 1: (254, 179, 45)},
+            2: {0: (119, 0, 18), 1: (0, 166, 40)},
+        }
+
+        return colors[self.bot.theme][c]
 
     leveling = discord.SlashCommandGroup(
         name="level", description="🏆 Commands related to the leveling system."
@@ -23,7 +30,9 @@ class LevelingCommands(discord.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("\033[34m|\033[0m \033[96;1mLevel\033[0;36m cog loaded sucessfully\033[0m")
+        print(
+            "\033[34m|\033[0m \033[96;1mLevel\033[0;36m cog loaded sucessfully\033[0m"
+        )
 
     @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
     @option("user", description="The user you want level information about.")
@@ -47,7 +56,7 @@ class LevelingCommands(discord.Cog):
                 usrdata = await usrdata.fetchone()
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
-            img = Image.open("images/userlevelClear.png")
+            img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
             avatar_data = await user.display_avatar.read()
             avatarorigin = Image.open(io.BytesIO(avatar_data))
             avatar = avatarorigin.resize((256, 256))
@@ -103,27 +112,29 @@ class LevelingCommands(discord.Cog):
             bar = Image.new("RGBA", img.size, 1)
             I3 = ImageDraw.ImageDraw(bar)
             I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2), fill=(9, 57, 97)
+                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
+                fill=self.userlevel_color(0),
             )
             I3.ellipse(
-                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2), fill=(9, 57, 97)
+                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2),
+                fill=self.userlevel_color(0),
             )
-            I3.rectangle((x1, y1, x2, y2), fill=(9, 57, 97))
-            I3.rectangle((x3, y3, x4, y4), fill=(38, 129, 180))
+            I3.rectangle((x1, y1, x2, y2), fill=self.userlevel_color(0))
+            I3.rectangle((x3, y3, x4, y4), fill=self.userlevel_color(1))
             I3.ellipse(
                 (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=(38, 129, 180),
+                fill=self.userlevel_color(1),
             )
             I3.ellipse(
                 (x4 - ((y2 - y1) / 2), y1, x4 + ((y2 - y1) / 2), y4),
-                fill=(38, 129, 180),
+                fill=self.userlevel_color(1),
             )
             img.paste(bar, mask=bar)
             with io.BytesIO() as output:
                 img.save(output, format="PNG")
                 output.seek(0)
                 file = discord.File(output, filename="userlevel.png")
-            embed = discord.Embed(color=cfc)
+            embed = discord.Embed(color=self.bot.color())
             embed.set_image(url=f"attachment://userlevel.png")
             await ctx.respond(embed=embed, file=file)
         else:
@@ -131,7 +142,7 @@ class LevelingCommands(discord.Cog):
                 embed = discord.Embed(
                     title="No data found",
                     description="I didn't found any data of leveling, because the provided user is a bot. They don't get to use this amazing leveling system!",
-                    color=errorc,
+                    color=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
             else:
@@ -139,13 +150,13 @@ class LevelingCommands(discord.Cog):
                     embed = discord.Embed(
                         title="No data found",
                         description=f"This most probably means that you never sent a message in this server.",
-                        color=errorc,
+                        color=self.bot.color(1),
                     )
                 else:
                     embed = discord.Embed(
                         title="No data found",
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
-                        color=errorc,
+                        color=self.bot.color(1),
                     )
                 await ctx.respond(embed=embed)
 
@@ -172,7 +183,7 @@ class LevelingCommands(discord.Cog):
                 usrdata = await usrdata.fetchone()
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
-            img = Image.open("images/userlevelClear.png")
+            img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
             avatar_data = await user.display_avatar.read()
             avatarorigin = Image.open(io.BytesIO(avatar_data))
             avatar = avatarorigin.resize((256, 256))
@@ -228,27 +239,29 @@ class LevelingCommands(discord.Cog):
             bar = Image.new("RGBA", img.size, 1)
             I3 = ImageDraw.ImageDraw(bar)
             I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2), fill=(9, 57, 97)
+                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
+                fill=self.userlevel_color(0),
             )
             I3.ellipse(
-                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2), fill=(9, 57, 97)
+                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2),
+                fill=self.userlevel_color(0),
             )
-            I3.rectangle((x1, y1, x2, y2), fill=(9, 57, 97))
-            I3.rectangle((x3, y3, x4, y4), fill=(38, 129, 180))
+            I3.rectangle((x1, y1, x2, y2), fill=self.userlevel_color(0))
+            I3.rectangle((x3, y3, x4, y4), fill=self.userlevel_color(1))
             I3.ellipse(
                 (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=(38, 129, 180),
+                fill=self.userlevel_color(1),
             )
             I3.ellipse(
                 (x4 - ((y2 - y1) / 2), y1, x4 + ((y2 - y1) / 2), y4),
-                fill=(38, 129, 180),
+                fill=self.userlevel_color(1),
             )
             img.paste(bar, mask=bar)
             with io.BytesIO() as output:
                 img.save(output, format="PNG")
                 output.seek(0)
                 file = discord.File(output, filename="userlevel.png")
-            embed = discord.Embed(color=cfc)
+            embed = discord.Embed(color=self.bot.color())
             embed.set_image(url=f"attachment://userlevel.png")
             await ctx.respond(embed=embed, file=file)
         else:
@@ -256,7 +269,7 @@ class LevelingCommands(discord.Cog):
                 embed = discord.Embed(
                     title="No data found",
                     description="I didn't found any data of leveling, because the provided user is a bot. They don't get to use this amazing leveling system!",
-                    color=errorc,
+                    color=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
             else:
@@ -264,13 +277,13 @@ class LevelingCommands(discord.Cog):
                     embed = discord.Embed(
                         title="No data found",
                         description=f"This most probably means that you never sent a message in this server.",
-                        color=errorc,
+                        color=self.bot.color(1),
                     )
                 else:
                     embed = discord.Embed(
                         title="No data found",
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
-                        color=errorc,
+                        color=self.bot.color(1),
                     )
                 await ctx.respond(embed=embed)
 
@@ -282,7 +295,7 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         output = []
         nameoutput = []
-        img = Image.open(f"images/lbClear.png")
+        img = Image.open(f"images/leaderboard/{self.bot.theme}/lb.png")
         async with aiosqlite.connect("main.db") as db:
             sel = await db.execute("SELECT * FROM leveling")
             fetsel = await sel.fetchall()
@@ -321,9 +334,9 @@ class LevelingCommands(discord.Cog):
             embed = discord.Embed(
                 title="ClearFly Level Leaderboard",
                 description=f"""
-    Chat to earn xp!
+Chat to earn xp!
                 """,
-                color=cfc,
+                color=self.bot.color(),
             )
             font = ImageFont.truetype(
                 "fonts/Inter-Regular.ttf",

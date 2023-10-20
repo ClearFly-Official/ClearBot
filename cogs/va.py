@@ -3,9 +3,7 @@ import datetime
 import io
 import json
 import math
-import platform
 import sqlite3
-import subprocess
 import textwrap
 import aiohttp
 import discord
@@ -14,18 +12,14 @@ import os
 import random
 import plotly.graph_objects as go
 from io import BytesIO
-import plotly.io as pio
 import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
 import pymongo
-from main import errorc, warningc, cfc
+from main import ClearBot
 from airports import airports, airports_icao
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
 from pilmoji import Pilmoji
-
-overv_id = 1099712642916044881  # 1040927466975404054
-fbo_id = 1013934267966967848
 
 
 async def get_users(get_type="full"):
@@ -186,7 +180,7 @@ def calculate_time(
 
 
 class VAStartView(discord.ui.View):
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
         super().__init__(timeout=None)
 
@@ -200,7 +194,7 @@ class VAStartView(discord.ui.View):
         if str(interaction.user.id) in user_ids:
             embed = discord.Embed(
                 title="You're already part of the VA!",
-                colour=errorc,
+                colour=self.bot.color(1),
                 description="Joining the VA when you're already in it, is not possible. Flying two aircraft in different parts of the world at the same time is impossible after all.",
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -208,10 +202,10 @@ class VAStartView(discord.ui.View):
             guild = self.bot.get_guild(965419296937365514)
             role = guild.get_role(1013933799777783849)
             await interaction.user.add_roles(role)
-            fbo = self.bot.get_channel(fbo_id)
+            fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
             embed = discord.Embed(
                 title="Thanks for joining our VA!",
-                colour=cfc,
+                colour=self.bot.color(),
                 description=f"""
 Head over to {fbo.mention} to file your first flight!
 *Don't know how to file your first flight? Check the message above!*
@@ -234,7 +228,8 @@ Head over to {fbo.mention} to file your first flight!
 
 
 class VAReportModal(discord.ui.Modal):
-    def __init__(self, title):
+    def __init__(self, bot: ClearBot, title: str):
+        self.bot = bot
         super().__init__(title=title)
         self.add_item(
             discord.ui.InputText(
@@ -280,13 +275,13 @@ class VAReportModal(discord.ui.Modal):
             embed = discord.Embed(
                 title="Successfully reported incident!",
                 description="You may view it with </va user view_report:1016059999056826479>.\n**Don't forget to complete your flight, otherwise it will be __deleted__!**",
-                colour=cfc,
+                colour=self.bot.color(),
             )
             await interaction.response.send_message(embed=embed)
 
 
 class VACommands(discord.Cog):
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
         self.client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
@@ -321,7 +316,7 @@ class VACommands(discord.Cog):
 
     @commands.Cog.listener("on_message")
     async def auto_complete_flight(self, message: discord.Message):
-        if message.channel.id != 1013934267966967848:
+        if message.channel.id != self.bot.channels.get("fbo"):
             return
         if message.author.id != self.bot.user.id and len(message.embeds) != 0:
             embed = message.embeds[0]
@@ -352,7 +347,7 @@ class VACommands(discord.Cog):
                 if flight_ids == []:
                     embed = discord.Embed(
                         title="I couldn't find any non-completed flights",
-                        colour=warningc,
+                        colour=self.bot.color(2),
                         description="""
 - You may have marked your flight as completed before landing (which you shouldn't do).
 - You were not flying for the VA, but still had it enabled. To disable, go to settings and change the VA name (`ClearFly-Official/StableApproach`) to something else.
@@ -369,7 +364,7 @@ class VACommands(discord.Cog):
                     await db.commit()
                 embed = discord.Embed(
                     title="Flight automatically completed!",
-                    colour=cfc,
+                    colour=self.bot.color(),
                     description="I have marked your flight as completed, and it has been permantly logged.",
                 ).add_field(
                     name="Flight Details",
@@ -396,7 +391,7 @@ Destination: **{flight_id2[0][5]}**
                     if user_dm is not None:
                         user_embed = discord.Embed(
                             title="You have been kicked from the ClearFly VA.",
-                            colour=cfc,
+                            colour=self.bot.color(),
                             description=f"""
 Hi there {user_dm.name},
 
@@ -426,10 +421,10 @@ The ClearFly Team
                     round(time.time() - flight[6]) <= 83_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(fbo_id)
+                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
-                        colour=warningc,
+                        colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
@@ -445,10 +440,10 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                     round(time.time() - flight[6]) <= 65_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(fbo_id)
+                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
-                        colour=warningc,
+                        colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
@@ -462,10 +457,10 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You
                     round(time.time() - flight[6]) <= 43_800
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(fbo_id)
+                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
-                        colour=warningc,
+                        colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
@@ -481,10 +476,10 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Ano
                         "DELETE FROM reports WHERE flight_id=?", (flight[0],)
                     )
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(fbo_id)
+                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
                     embed = discord.Embed(
                         title="Your last filed flight has been cancelled.",
-                        colour=warningc,
+                        colour=self.bot.color(2),
                         description=f"""
 Hi there {user.name},
 
@@ -523,15 +518,17 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         usrs = await get_users("id")
         if str(ctx.author.id) not in usrs:
-            overv_channel = self.bot.get_channel(overv_id)
+            overv_channel = self.bot.get_channel(self.bot.channels.get("va-overview"))
             embed = discord.Embed(
                 title="You're not part of the VA!",
-                colour=errorc,
+                colour=self.bot.color(1),
                 description=f"Feel free to sign up at any time in {overv_channel.mention}",
             )
             await ctx.respond(embed=embed)
@@ -545,7 +542,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         if aircraft not in ac_list:
             embed = discord.Embed(
                 title="Invalid aircraft",
-                colour=errorc,
+                colour=self.bot.color(1),
                 description="Please provide a valid aircraft ICAO code (e.g. B738).",
             )
             await ctx.respond(embed=embed)
@@ -554,7 +551,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         if (origin[:4].upper()) not in airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
-                colour=errorc,
+                colour=self.bot.color(1),
                 description="Please provide a valid airport ICAO code (e.g. KJFK).",
             )
             await ctx.respond(embed=embed)
@@ -562,7 +559,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         if (destination[:4].upper()) not in airports_icao:
             embed = discord.Embed(
                 title="Invalid destination",
-                colour=errorc,
+                colour=self.bot.color(1),
                 description="Please provide a valid airport ICAO code (e.g. KJFK).",
             )
             await ctx.respond(embed=embed)
@@ -584,7 +581,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         )
         embed = discord.Embed(
             title="Flight filed successfully!",
-            colour=cfc,
+            colour=self.bot.color(),
             description=f"Flight will automatically be removed if not marked as completed <t:{round(time.time())+86_400}:R>.",
         )
         embed.set_author(
@@ -612,13 +609,13 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 if is_completed[-1][0] == 0:
                     embed = discord.Embed(
                         title="You haven't completed your last flight!",
-                        colour=errorc,
+                        colour=self.bot.color(1),
                         description="The last flight you filed hasn't been marked as completed, thus you can't file a new one.",
                     )
                     await ctx.respond(embed=embed)
                     return
         card_id = "flight_card" + str(random.randint(0, 9)) + ".png"
-        img = Image.open("images/va_flightcard_blank.png")
+        img = Image.open(f"images/va_card/{self.bot.theme}/va_flightcard_blank.png")
         font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=48)
         route_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=128)
         metar_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=36)
@@ -777,7 +774,9 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     async def va_complete(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         async with aiosqlite.connect("va.db") as db:
@@ -795,7 +794,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             if flight_ids == []:
                 embed = discord.Embed(
                     title="You do not have any non-completed flights!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                     description="I did not find any flights filed by you that are not marked as completed.",
                 )
                 await ctx.respond(embed=embed)
@@ -807,7 +806,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 await db.commit()
             embed = discord.Embed(
                 title="Flight completed!",
-                colour=cfc,
+                colour=self.bot.color(),
                 description="You have marked your flight as completed, and it has been permantly logged.",
             ).add_field(
                 name="Flight Details",
@@ -826,7 +825,9 @@ Destination: **{flight_id2[0][5]}**
     async def va_cancel(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         async with aiosqlite.connect("va.db") as db:
@@ -836,7 +837,9 @@ Destination: **{flight_id2[0][5]}**
             flights = await cur.fetchall()
 
             if flights == []:
-                embed = discord.Embed(title="No flights found!", colour=errorc)
+                embed = discord.Embed(
+                    title="No flights found!", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
                 return
             last_flight = flights[-1]
@@ -845,7 +848,7 @@ Destination: **{flight_id2[0][5]}**
                 embed = discord.Embed(
                     title="You completed your last flight!",
                     description="I can't cancel a flight you have done already!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
             else:
@@ -855,7 +858,7 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await db.commit()
                 embed = discord.Embed(
-                    title="Flight successfully cancelled!", colour=cfc
+                    title="Flight successfully cancelled!", colour=self.bot.color()
                 )
                 await ctx.respond(embed=embed)
 
@@ -872,7 +875,9 @@ Destination: **{flight_id2[0][5]}**
     async def va_divert(self, ctx: discord.ApplicationContext, airport):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         async with aiosqlite.connect("va.db") as db:
@@ -882,7 +887,9 @@ Destination: **{flight_id2[0][5]}**
             flights = await cur.fetchall()
 
             if flights == []:
-                embed = discord.Embed(title="No flights found!", colour=errorc)
+                embed = discord.Embed(
+                    title="No flights found!", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
                 return
             last_flight = flights[-1]
@@ -891,7 +898,7 @@ Destination: **{flight_id2[0][5]}**
                 embed = discord.Embed(
                     title="You completed your last flight!",
                     description="I can't edit a flight you have completed already!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
             else:
@@ -902,7 +909,7 @@ Destination: **{flight_id2[0][5]}**
                 await db.commit()
                 embed = discord.Embed(
                     title=f"Flight successfully diverted to `{airport[:4].upper()}`!",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
 
@@ -914,7 +921,9 @@ Destination: **{flight_id2[0][5]}**
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def va_report(self, ctx: discord.ApplicationContext):
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         async with aiosqlite.connect("va.db") as db:
@@ -924,7 +933,9 @@ Destination: **{flight_id2[0][5]}**
             flights = await cur.fetchall()
 
             if flights == []:
-                embed = discord.Embed(title="No flights found!", colour=errorc)
+                embed = discord.Embed(
+                    title="No flights found!", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
                 return
             last_flight = flights[-1]
@@ -933,7 +944,7 @@ Destination: **{flight_id2[0][5]}**
                 embed = discord.Embed(
                     title="You completed your last flight!",
                     description="I can't edit a flight you have completed already!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                 )
                 await ctx.respond(embed=embed)
             else:
@@ -947,7 +958,9 @@ Destination: **{flight_id2[0][5]}**
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         if user == None:
@@ -959,7 +972,9 @@ Destination: **{flight_id2[0][5]}**
             )
             reports = await cur.fetchall()
             if reports == []:
-                embed = discord.Embed(title="No reports found", colour=errorc)
+                embed = discord.Embed(
+                    title="No reports found", colour=self.bot.color(1)
+                )
                 await ctx.respond(embed=embed)
                 return
             reports.reverse()
@@ -973,7 +988,7 @@ Destination: **{flight_id2[0][5]}**
 **<t:{report[3]}:F>: {report[4]}**
 {report[5]}
                         """,
-                        colour=cfc,
+                        colour=self.bot.color(),
                     ).set_footer(text=f"Total of {len(reports)} reports")
                 ]
             )
@@ -990,7 +1005,9 @@ Destination: **{flight_id2[0][5]}**
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
 
@@ -1001,7 +1018,7 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(
                 title="No flights found",
                 description="This user has no flights filed.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -1028,7 +1045,7 @@ Destination: **{flight_id2[0][5]}**
                     discord.Embed(
                         title=f"Flights {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                        colour=cfc,
+                        colour=self.bot.color(),
                     ).set_footer(
                         text=f"Showing 10/page, total of {len(flights)} flights"
                     )
@@ -1060,7 +1077,9 @@ Destination: **{flight_id2[0][5]}**
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
 
@@ -1071,7 +1090,7 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(
                 title="No flights found",
                 description="This user has no flights filed.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -1209,7 +1228,7 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(
                 title=f"{user.name}'s flight map",
                 description=f"{user.mention} has completed **{len(waypoints_data)}** {flight_type} flight(s)!",
-                colour=cfc,
+                colour=self.bot.color(),
             ).set_image(url=f"attachment://{output_filename}")
             if auto_zoom:
                 embed.set_footer(
@@ -1234,7 +1253,9 @@ Destination: **{flight_id2[0][5]}**
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
 
@@ -1245,7 +1266,7 @@ Destination: **{flight_id2[0][5]}**
             embed = discord.Embed(
                 title="No flights found",
                 description="This user has no flights filed.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
             return
@@ -1477,7 +1498,7 @@ Filed at: **<t:{flight_data[6]}:F>**
 Notes:
 {notes}
                         """,
-                            colour=cfc,
+                            colour=self.bot.color(),
                         )
                         .set_image(url=f"attachment://{output_filename}")
                         .set_author(
@@ -1550,7 +1571,9 @@ Notes:
 
                 await interaction.response.edit_message(view=self)
 
-        embed = discord.Embed(title=f"Select one of {user.name}'s flights!", colour=cfc)
+        embed = discord.Embed(
+            title=f"Select one of {user.name}'s flights!", colour=self.bot.color()
+        )
         await ctx.respond(
             embed=embed,
             view=VAFlightSelectView(
@@ -1565,7 +1588,9 @@ Notes:
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
         async with aiosqlite.connect("va.db") as db:
@@ -1579,9 +1604,9 @@ Notes:
             size=43,
             layout_engine=ImageFont.Layout.BASIC,
         )
-        img = Image.open("images/lbClear.png")
+        img = Image.open(f"images/leaderboard/{self.bot.theme}/lb.png")
         names = [
-            f"{i}      {self.bot.get_user(int(elem[0])).name}"
+            f"{i}      {(await self.bot.get_or_fetch_user(int(elem[0]))).name}"
             for i, elem in enumerate(lb, 1)
         ]
         values = [f"Flights: {elem[1]}" for elem in lb]
@@ -1613,7 +1638,7 @@ Notes:
         embed = discord.Embed(
             title="ClearFly VA Leaderboard",
             description="See more information with </va stats:1016059999056826479>!",
-            colour=cfc,
+            colour=self.bot.color(),
         ).set_image(url="attachment://lb.png")
         await ctx.respond(embed=embed, file=file)
 
@@ -1622,7 +1647,9 @@ Notes:
     async def va_stats(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
 
@@ -1717,7 +1744,7 @@ Notes:
         if total_distance_km > 384400:
             distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
 
-        embed = discord.Embed(title="ClearFly VA Statistics", colour=cfc)
+        embed = discord.Embed(title="ClearFly VA Statistics", colour=self.bot.color())
         embed.add_field(
             name="Users",
             inline=False,
@@ -1753,10 +1780,10 @@ Most used aircraft: **{most_used_aircraft}**
     @vadmin.command(description="⚙️ Setup the VA system.")
     @commands.has_role(965422406036488282)
     async def setup(self, ctx: discord.ApplicationContext):
-        fbo = self.bot.get_channel(fbo_id)
+        fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
         embed = discord.Embed(
             title="ClearFly VA",
-            colour=cfc,
+            colour=self.bot.color(),
             description=f"""
 ClearFly VA is a Virtual Airline that offers a fun way to fly without requiring any prior training or extensive knowledge on aviation. However, we expect our pilots to behave professionally, without engaging in any intentional crashing, starting engines on the runway, or any other unprofessional activities.
 
@@ -1774,7 +1801,7 @@ Happy flying!
         )
         embed2 = discord.Embed(
             title="Recommended add-ons: StableApproach",
-            colour=cfc,
+            colour=self.bot.color(),
             description="""
 ## Download
 https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/ 
@@ -1789,40 +1816,40 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         )
         embm = discord.Embed(
             title="ClearFly VA Official Liveries",
-            colour=cfc,
+            colour=self.bot.color(),
             description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!",
         )
         emb1 = discord.Embed(
             title="Boeing 737-800 by Zibo",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
         )
         emb2 = discord.Embed(
             title="Cessna Citation X by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
         )
         emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
         emb4 = discord.Embed(
             title="Cessna 172SP (G1000) by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
         )
         embs = [embm, emb1, emb2, emb3, emb4]
         liv_channel = self.bot.get_channel(1041057335449227314)
-        overv_channel = self.bot.get_channel(overv_id)
+        overv_channel = self.bot.get_channel(self.bot.channels.get("va-overview"))
         await ctx.respond("All ready to go!", ephemeral=True)
         await overv_channel.send(embeds=[embed, embed2], view=VAStartView(bot=self.bot))
         await liv_channel.send(embeds=embs)
@@ -1866,7 +1893,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             if icao.upper() in aircraft:
                 embed = discord.Embed(
                     title=f"`{icao.upper()}` is already in the fleet!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                     description="The aircraft you provided is already in the ClearFly VA fleet, please provide an aircraft that hasn't been added yet.",
                 )
                 await ctx.respond(embed=embed)
@@ -1877,7 +1904,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             )
             await db.commit()
             embed = (
-                discord.Embed(title="Successfully added new aircraft", colour=cfc)
+                discord.Embed(
+                    title="Successfully added new aircraft", colour=self.bot.color()
+                )
                 .add_field(name="ICAO", value=icao.upper())
                 .add_field(name="Type", value=aircraft_type)
                 .add_field(name="CRZ speed", value=f"{crz_speed}kts (TAS)")
@@ -1905,13 +1934,14 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                 await db.execute("DELETE FROM aircraft WHERE icao=?", (icao.upper(),))
                 await db.commit()
                 embed = discord.Embed(
-                    title=f"`{icao.upper()}` deleted successfully", colour=cfc
+                    title=f"`{icao.upper()}` deleted successfully",
+                    colour=self.bot.color(),
                 )
                 await ctx.respond(embed=embed)
             else:
                 embed = discord.Embed(
                     title=f"`{icao.upper()}` is not in the fleet!",
-                    colour=errorc,
+                    colour=self.bot.color(1),
                     description="The aircraft you provided is no in the ClearFly VA fleet, please provide an aircraft that is actually in the fleet.",
                 )
                 await ctx.respond(embed=embed)
@@ -1932,7 +1962,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             for i, aircraft in enumerate(aircraft, 1)
         ]
         embed = discord.Embed(
-            title="List of VA fleet", description="\n".join(aircraft), colour=cfc
+            title="List of VA fleet",
+            description="\n".join(aircraft),
+            colour=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 
@@ -1944,7 +1976,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         await ctx.defer()
         if not str(user.id) in await get_users("id"):
             embed = discord.Embed(
-                title="That user is not part of the VA!", colour=errorc
+                title="That user is not part of the VA!", colour=self.bot.color(1)
             )
             await ctx.respond(embed=embed)
             return
@@ -1954,7 +1986,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             )
             await db.commit()
 
-        embed = discord.Embed(title="Successfully banned user!", colour=cfc)
+        embed = discord.Embed(
+            title="Successfully banned user!", colour=self.bot.color()
+        )
         await ctx.respond(embed=embed)
 
     @vadmin.command(name="unban", description="🔨 Unban a user from the VA.")
@@ -1965,7 +1999,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         await ctx.defer()
         if not str(user.id) in await get_users("id"):
             embed = discord.Embed(
-                title="That user is not part of the VA!", colour=errorc
+                title="That user is not part of the VA!", colour=self.bot.color(1)
             )
             await ctx.respond(embed=embed)
             return
@@ -1975,7 +2009,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             )
             await db.commit()
 
-        embed = discord.Embed(title="Successfully unbanned user!", colour=cfc)
+        embed = discord.Embed(
+            title="Successfully unbanned user!", colour=self.bot.color()
+        )
         await ctx.respond(embed=embed)
 
     @va.command(
@@ -1986,33 +2022,33 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     async def va_livs(self, ctx: discord.ApplicationContext):
         embm = discord.Embed(
             title="ClearFly VA Official Liveries",
-            colour=cfc,
+            colour=self.bot.color(),
             description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!",
         )
         emb1 = discord.Embed(
             title="Boeing 737-800 by Zibo",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
         )
         emb2 = discord.Embed(
             title="Cessna Citation X by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
         )
         emb3 = discord.Embed(
             title="Cessna 172SP by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
         )
         emb4 = discord.Embed(
             title="Cessna 172SP (G1000) by Laminar Research",
-            colour=cfc,
+            colour=self.bot.color(),
             url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
@@ -2030,7 +2066,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
         await ctx.defer(ephemeral=True)
         if await is_banned(ctx.author):
-            embed = discord.Embed(title="You're banned from the VA!", colour=errorc)
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
             await ctx.respond(embed=embed)
             return
 
@@ -2040,7 +2078,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             upsert=True,
         )
         embed = discord.Embed(
-            title="Successfully set your StableApproach ID", colour=cfc
+            title="Successfully set your StableApproach ID", colour=self.bot.color()
         )
         await ctx.respond(embed=embed)
 

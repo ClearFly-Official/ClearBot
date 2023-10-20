@@ -1,6 +1,7 @@
 import inspect
 import platform
 import subprocess
+from typing import Literal
 import discord
 import json
 import os
@@ -9,10 +10,10 @@ import aiosqlite
 from inspect import cleandoc
 from discord import option
 from discord.ext import commands
-from main import cfc, errorc, cogs
 from discord.ext.pages import Page, Paginator
 
-admin_role_id = 965422406036488282
+from main import ClearBot, roles
+
 
 async def getattrs(ctx):
     input = ctx.options["doc_part"]
@@ -45,7 +46,7 @@ async def getattrs2(ctx):
 
 
 class DevCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
         self.current_table = ""
         self.current_db = ""
@@ -76,7 +77,7 @@ class DevCommands(discord.Cog):
         return doc_part, path
 
     @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
-    @commands.has_role(admin_role_id)
+    @commands.has_role(roles.get("admin"))
     @option(
         "doc_part",
         autocomplete=getattrs,
@@ -89,14 +90,14 @@ class DevCommands(discord.Cog):
             embed = discord.Embed(
                 title=f"Error 404!",
                 description=f"Couldn't find `{raw_part}`.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             return await ctx.respond(embed=embed)
         if doc_part.__doc__ is None:
             embed = discord.Embed(
                 title=f"Error 404!",
                 description=f"Couldn't find documentation `{raw_part}`.",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             return await ctx.respond(embed=embed)
         embed = discord.Embed(
@@ -106,17 +107,17 @@ class DevCommands(discord.Cog):
 {cleandoc(doc_part.__doc__)[:1993]}
 ```
             """,
-            colour=cfc,
+            colour=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 
     @dev.command(name="reload_cogs", description="🔄 Reload the Cogs you want.")
-    @commands.has_role(admin_role_id)
+    @commands.has_role(roles.get("admin"))
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def reloadCogs(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         select_cogs = []
-        for cog in cogs:
+        for cog in self.bot.cog_list:
             select_cogs.append(
                 discord.SelectOption(
                     label=cog.capitalize(),
@@ -126,7 +127,7 @@ class DevCommands(discord.Cog):
             )
 
         class CogSelectView(discord.ui.View):
-            def __init__(self, bot):
+            def __init__(self, bot: ClearBot):
                 self.bot = bot
                 super().__init__(timeout=30.0, disable_on_timeout=True)
 
@@ -147,21 +148,23 @@ Reloaded cogs:
 {select.values}
 ```
                         """,
-                    color=cfc,
+                    color=self.bot.color(),
                 )
                 await interaction.response.edit_message(
                     embed=embed, view=CogSelectView(bot=self.bot)
                 )
 
-        embed = discord.Embed(title="Select the cogs you want to reload:", color=cfc)
+        embed = discord.Embed(
+            title="Select the cogs you want to reload:", color=self.bot.color()
+        )
         await ctx.respond(embed=embed, view=CogSelectView(bot=self.bot))
 
     @dev.command(name="restart", description="🔁 Restarst the bot.")
-    @commands.has_role(admin_role_id)
+    @commands.has_role(roles.get("admin"))
     async def restart(self, ctx: discord.ApplicationContext):
         os.system("clear")
         embed = discord.Embed(
-            title=f"Restarting {self.bot.user.display_name}...", colour=cfc
+            title=f"Restarting {self.bot.user.display_name}...", colour=self.bot.color()
         )
         await ctx.respond(embed=embed, ephemeral=True)
         os.execv(sys.executable, ["python"] + sys.argv)
@@ -181,7 +184,7 @@ Reloaded cogs:
                 f"**2:** {os.popen('hostname -I').readline().split(' ')[1]}\n"
                 f"**Full**\n```sh\n{''.join(os.popen('hostname -I').readlines())}```"
             ),
-            colour=cfc,
+            colour=self.bot.color(),
         ).set_footer(text="WARN: IP addresses are dynamic!")
         await ctx.respond(embed=embed)
 
@@ -189,7 +192,7 @@ Reloaded cogs:
         name="update",
         description="⬇️ Pull the latest version of the bot from the GitHub repo.",
     )
-    @commands.has_role(admin_role_id)
+    @commands.has_role(roles.get("admin"))
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def gitupdate(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -199,7 +202,7 @@ Reloaded cogs:
 {subprocess.check_output(['git','pull', 'https://github.com/ClearFly-Official/ClearBot'])}
 ```
 """,
-            colour=cfc,
+            colour=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 
@@ -488,7 +491,7 @@ Reloaded cogs:
                     discord.Embed(
                         title=f"DataRefs {i+1}-{i+len(chunk)}",
                         description="\n".join(chunk),
-                        colour=cfc,
+                        colour=self.bot.color(),
                     ).set_footer(
                         text=f"Showing 25/page, total of {len(drefs)} DataRefs"
                     )
@@ -520,7 +523,7 @@ Reloaded cogs:
                     dref = await dref.fetchone()
                 embed = discord.Embed(
                     title=f"Found this information for the provided dataref:",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 embed.add_field(
                     name="Dataref Information:",
@@ -540,7 +543,7 @@ Description :
                 datarefs = datarefJson["datarefs"]
                 embed = discord.Embed(
                     title=f"Found this information for the provided dataref:",
-                    colour=cfc,
+                    colour=self.bot.color(),
                 )
                 embed.add_field(
                     name="Dataref Information:",
@@ -559,7 +562,7 @@ Description :
             embed = discord.Embed(
                 title="Error 404!",
                 description=f"Didn't found the dataref `{dataref}`",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -606,7 +609,7 @@ Description :
                 await db.commit()
             embed = discord.Embed(
                 title=f"Added new dataref `{path}` to dataref list successfully.",
-                color=cfc,
+                color=self.bot.color(),
             )
             embed.set_footer(
                 text="Don't forget to make the dataref with SASL if you didn't already do so."
@@ -616,7 +619,7 @@ Description :
             embed = discord.Embed(
                 title="Wrong path format",
                 description="All custom dataref paths should start with `ClearFly`. This is to keep the dataref structure organized. \n\n Example dataref: `ClearFly/731/foo/bar`",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -681,7 +684,8 @@ Description :
                 )
                 await db.commit()
             embed = discord.Embed(
-                title=f"Edited dataref `{dataref}` successfully.", colour=cfc
+                title=f"Edited dataref `{dataref}` successfully.",
+                colour=self.bot.color(),
             )
             embed.set_footer(
                 text="Don't forget to edit the type of the dataref with SASL, if it changed and if you didn't already do so."
@@ -691,7 +695,7 @@ Description :
             embed = discord.Embed(
                 title="Dataref not found",
                 description=f"Didn't found the dataref `{dataref}`. I can't edit a dataref when it doesn't exist!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
 
@@ -711,18 +715,19 @@ Description :
                 await cursor.execute("DELETE FROM datarefs WHERE path=?", (dataref,))
                 await db.commit()
             embed = discord.Embed(
-                title=f"Dataref `{dataref}` successfully deleted.", colour=cfc
+                title=f"Dataref `{dataref}` successfully deleted.",
+                colour=self.bot.color(),
             )
         else:
             embed = discord.Embed(
                 title=f"Dataref not found",
                 description=f"Didn't found the dateref `{dataref}`. I can't delete a dataref if it doesn't exist!",
-                colour=errorc,
+                colour=self.bot.color(1),
             )
         await ctx.respond(embed=embed)
 
     @discord.message_command(name="Message Info")
-    @commands.has_role(admin_role_id)
+    @commands.has_role(roles.get("admin"))
     async def msginfo(self, ctx: discord.ApplicationContext, message: discord.Message):
         await ctx.respond(
             f"""
@@ -765,15 +770,19 @@ Channel: {message.channel.mention}
             out = eval(code)
             embed = discord.Embed(
                 title=f"`{code}` gives the following output:",
-            description=f"""
+                description=f"""
 ```
 {out}
 ```
                 """,
-                colour=cfc,
+                colour=self.bot.color(),
             )
         except Exception as e:
-            embed = discord.Embed(title=f"Error executing `{code}`", description=f"```{e}```", colour=errorc)
+            embed = discord.Embed(
+                title=f"Error executing `{code}`",
+                description=f"```{e}```",
+                colour=self.bot.color(1),
+            )
         await ctx.respond(embed=embed)
 
     @dev.command(name="run_cmd", description="🖲️ Run a terminal command.")
@@ -789,29 +798,51 @@ Channel: {message.channel.mention}
 {subprocess.check_output(command.split(" "))}
 ```
 """,
-            colour=cfc,
+                colour=self.bot.color(),
             )
         except Exception as e:
-            embed = discord.Embed(title=f"Error executing `{command}`", description=f"```{e}```", colour=errorc)
+            embed = discord.Embed(
+                title=f"Error executing `{command}`",
+                description=f"```{e}```",
+                colour=self.bot.color(1),
+            )
         await ctx.respond(embed=embed)
 
-    @dev.command(name="post_status", description="🌡️ Send a POST request to the status page.")
-    @commands.has_role(admin_role_id)
+    @dev.command(
+        name="post_status", description="🌡️ Send a POST request to the status page."
+    )
+    @commands.has_role(roles.get("admin"))
     async def post_status(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if platform.uname().node == "raspberrypi":
             try:
                 os.system("python3 ~/update.py")
                 view = discord.ui.View()
-                view.add_item(item=discord.ui.Button(label="Status Page", url="https://local-status.vercel.app"))
-                embed = discord.Embed(title="Success!", description="Check out the new data!", colour=cfc)
+                view.add_item(
+                    item=discord.ui.Button(
+                        label="Status Page", url="https://local-status.vercel.app"
+                    )
+                )
+                embed = discord.Embed(
+                    title="Success!",
+                    description="Check out the new data!",
+                    colour=self.bot.color(),
+                )
                 await ctx.respond(embed=embed, view=view)
             except Exception as e:
-                embed = discord.Embed(title="POST failed!", description=f"```{e}```", colour=errorc)
+                embed = discord.Embed(
+                    title="POST failed!",
+                    description=f"```{e}```",
+                    colour=self.bot.color(1),
+                )
                 await ctx.respond(embed=embed)
         else:
-            embed = discord.Embed(title="Unsuported system", description="The system where I'm being hosted on does not have a (valid) status page system.", colour=errorc)
-            
+            embed = discord.Embed(
+                title="Unsuported system",
+                description="The system where I'm being hosted on does not have a (valid) status page system.",
+                colour=self.bot.color(1),
+            )
+
             await ctx.respond(embed=embed)
 
     @database.command(description="🔦 Execute an SQL Query.")
@@ -839,26 +870,32 @@ Channel: {message.channel.mention}
                 self.database = ctx.value
 
         return [database for database in databases if ctx.value in database]
-    
+
     async def get_tables(self, ctx: discord.AutocompleteContext):
         try:
             async with aiosqlite.connect(self.database) as db:
-                tables = await db.execute("SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name")
+                tables = await db.execute(
+                    "SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name"
+                )
                 tables = await tables.fetchall()
                 tables = [table[0] for table in tables]
 
             return tables
         except:
             return [f"Database '{self.database}' is invalid."]
-        
+
     @database.command(name="list", description="🧾 List a table of a database.")
     @discord.option(
         name="database",
         description="Database to list a table of.",
         autocomplete=get_databases,
     )
-    @discord.option(name="table", description="Database to list a table of.", autocomplete=get_tables)
-    @commands.has_role(admin_role_id)
+    @discord.option(
+        name="table",
+        description="Database to list a table of.",
+        autocomplete=get_tables,
+    )
+    @commands.has_role(roles.get("admin"))
     async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
         out = None
         try:
@@ -868,6 +905,75 @@ Channel: {message.channel.mention}
             await ctx.respond(str(out)[:4090], ephemeral=True)
         except Exception as e:
             await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
+
+    @dev.command(name="theme", description="🛋️ Set the theme of the bot.")
+    @discord.option(
+        name="theme",
+        description="The theme you want.",
+        choices=["Default", "Halloween", "Christmas"],
+    )
+    @commands.has_role(roles.get("admin"))
+    async def theme(self, ctx: discord.ApplicationContext, theme: str):
+        await ctx.defer()
+
+        theme_id = 0
+        match theme:
+            case "Default":
+                theme_id = 0
+            case "Halloween":
+                theme_id = 1
+            case "Christmas":
+                theme_id = 2
+
+        await self.bot.set_theme(theme_id)
+        self.bot.theme = theme_id
+
+        role_colors = {
+            "*": {0: 0x6DB2D9, 1: 0xFEB32D, 2: 0x00A628},
+            "member": {0: 0x2681B4, 1: 0xFD852D, 2: 0x00771D},
+        }
+
+        guild = self.bot.get_guild(self.bot.server_id)
+        if not guild:
+            guild = await self.bot.fetch_guild(self.bot.server_id)
+
+        failed = []
+
+        if guild:
+            for name, role_id in self.bot.roles.items():
+                try:
+                    if name == "member":
+                        role = guild.get_role(role_id)
+                        await role.edit(
+                            color=role_colors["member"][self.bot.theme],
+                            reason=f"{ctx.author.name} asked for a theme change.",
+                        )
+                    elif name != "admin":
+                        role = guild.get_role(role_id)
+                        await role.edit(
+                            color=role_colors["*"][self.bot.theme],
+                            reason=f"{ctx.author.name} asked for a theme change.",
+                        )
+                except Exception:
+                    failed.append(guild.get_role(role_id).name)
+
+        else:
+            embed = discord.Embed(
+                title=f"I couldn't change the role colours!",
+                description="The theme has nevertheless been changed.",
+                color=self.bot.color(2),
+            )
+            await ctx.respond(embed=embed)
+            return
+
+        failed = ", ".join(failed)
+
+        embed = discord.Embed(
+            title=f"Succesfully set the theme to **{theme}**!",
+            description=f"Roles that failed: {failed}",
+            color=self.bot.color(),
+        )
+        await ctx.respond(embed=embed)
 
 
 def setup(bot):
