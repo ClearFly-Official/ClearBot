@@ -322,7 +322,7 @@ class Listeners(discord.Cog):
             channel = self.bot.get_channel(self.bot.channels.get("logs"))
 
             await channel.send(embed=embed)
-        elif self.bot.theme != 0:
+        elif self.bot.theme != 0 and now.month != 10 and now.month != 12:
             result = await self.bot.set_theme("auto-theme", 0)
 
             failed = ", ".join(result.get("failed_roles"))
