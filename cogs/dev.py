@@ -927,7 +927,7 @@ Channel: {message.channel.mention}
 
         result = await self.bot.set_theme(ctx.author.name, theme_id)
 
-        failed = ", ".join(result.get("failed_rules"))
+        failed = ", ".join(result.get("failed_roles"))
 
         embed = discord.Embed(
             title=f"Succesfully set the theme to **{theme}**!",

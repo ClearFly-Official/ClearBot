@@ -71,33 +71,33 @@ class ClearBot(discord.Bot):
             )
             await db.commit()
 
-        self.bot.theme = theme
+        self.theme = theme
 
         role_colors = {
             "*": {0: 0x6DB2D9, 1: 0xFEB32D, 2: 0x00A628},
             "member": {0: 0x2681B4, 1: 0xFD852D, 2: 0x00771D},
         }
 
-        guild = self.bot.get_guild(self.bot.server_id)
+        guild = self.get_guild(self.server_id)
         if not guild:
-            guild = await self.bot.fetch_guild(self.bot.server_id)
+            guild = await self.fetch_guild(self.server_id)
 
         failed = []
         guild_success = False
 
         if guild:
-            for name, role_id in self.bot.roles.items():
+            for name, role_id in self.roles.items():
                 try:
                     if name == "member":
                         role = guild.get_role(role_id)
                         await role.edit(
-                            color=role_colors["member"][self.bot.theme],
+                            color=role_colors["member"][self.theme],
                             reason=f"{author} asked for a theme ({self.theme_name}) change.",
                         )
                     elif name != "admin":
                         role = guild.get_role(role_id)
                         await role.edit(
-                            color=role_colors["*"][self.bot.theme],
+                            color=role_colors["*"][self.theme],
                             reason=f"{author} asked for a theme ({self.theme_name}) change.",
                         )
                 except Exception:

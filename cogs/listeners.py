@@ -47,6 +47,8 @@ class Listeners(discord.Cog):
             self.rssfeedtres2.start()
         if not self.rssfeedtres3.is_running():
             self.rssfeedtres3.start()
+        if not self.check_theme.is_running():
+            self.check_theme.start()
         if not self.join_stats_loop.is_running():
             self.join_stats_loop.start()
 
@@ -297,7 +299,7 @@ class Listeners(discord.Cog):
         if now.month == 10 and self.bot.theme != 1:
             result = await self.bot.set_theme("auto-theme", 1)
 
-            failed = ", ".join(result.get("failed_rules"))
+            failed = ", ".join(result.get("failed_roles"))
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
@@ -310,7 +312,7 @@ class Listeners(discord.Cog):
         elif now.month == 12 and self.bot.theme != 2:
             result = await self.bot.set_theme("auto-theme", 2)
 
-            failed = ", ".join(result.get("failed_rules"))
+            failed = ", ".join(result.get("failed_roles"))
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
@@ -323,7 +325,7 @@ class Listeners(discord.Cog):
         elif self.bot.theme != 0:
             result = await self.bot.set_theme("auto-theme", 0)
 
-            failed = ", ".join(result.get("failed_rules"))
+            failed = ", ".join(result.get("failed_roles"))
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
