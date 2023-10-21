@@ -33,6 +33,7 @@ class ClearBot(discord.Bot):
             "fbo": 1013934267966967848,
             "va-overview": 1099712642916044881,
             "news": 1066124540318588928,
+            "logs": 1001405648828891187,
         }
         self.roles = {
             "admin": 965422406036488282,
@@ -63,12 +64,59 @@ class ClearBot(discord.Bot):
         except KeyError:
             return self._colors[0][self.theme]
 
-    async def set_theme(self, theme: int = 0) -> None:
+    async def set_theme(self, author: str, theme: int = 0) -> dict[bool, list[str]]:
         async with aiosqlite.connect("main.db") as db:
             await db.execute(
                 "UPDATE config SET value = ? WHERE key = 'theme'", (theme,)
             )
             await db.commit()
+
+        self.bot.theme = theme
+
+        role_colors = {
+            "*": {0: 0x6DB2D9, 1: 0xFEB32D, 2: 0x00A628},
+            "member": {0: 0x2681B4, 1: 0xFD852D, 2: 0x00771D},
+        }
+
+        guild = self.bot.get_guild(self.bot.server_id)
+        if not guild:
+            guild = await self.bot.fetch_guild(self.bot.server_id)
+
+        failed = []
+        guild_success = False
+
+        if guild:
+            for name, role_id in self.bot.roles.items():
+                try:
+                    if name == "member":
+                        role = guild.get_role(role_id)
+                        await role.edit(
+                            color=role_colors["member"][self.bot.theme],
+                            reason=f"{author} asked for a theme ({self.theme_name}) change.",
+                        )
+                    elif name != "admin":
+                        role = guild.get_role(role_id)
+                        await role.edit(
+                            color=role_colors["*"][self.bot.theme],
+                            reason=f"{author} asked for a theme ({self.theme_name}) change.",
+                        )
+                except Exception:
+                    failed.append(guild.get_role(role_id).name)
+            guild_success = True
+
+        return {"guild_success": guild_success, "failed_roles": failed}
+
+    @property
+    def theme_name(self):
+        match self.theme:
+            case 0:
+                return "Default"
+            case 1:
+                return "Halloween"
+            case 2:
+                return "Christmas"
+            case _:
+                return "Unknown"
 
 
 bot = ClearBot(intents=discord.Intents.all())

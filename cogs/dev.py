@@ -925,48 +925,9 @@ Channel: {message.channel.mention}
             case "Christmas":
                 theme_id = 2
 
-        await self.bot.set_theme(theme_id)
-        self.bot.theme = theme_id
+        result = await self.bot.set_theme(ctx.author.name, theme_id)
 
-        role_colors = {
-            "*": {0: 0x6DB2D9, 1: 0xFEB32D, 2: 0x00A628},
-            "member": {0: 0x2681B4, 1: 0xFD852D, 2: 0x00771D},
-        }
-
-        guild = self.bot.get_guild(self.bot.server_id)
-        if not guild:
-            guild = await self.bot.fetch_guild(self.bot.server_id)
-
-        failed = []
-
-        if guild:
-            for name, role_id in self.bot.roles.items():
-                try:
-                    if name == "member":
-                        role = guild.get_role(role_id)
-                        await role.edit(
-                            color=role_colors["member"][self.bot.theme],
-                            reason=f"{ctx.author.name} asked for a theme change.",
-                        )
-                    elif name != "admin":
-                        role = guild.get_role(role_id)
-                        await role.edit(
-                            color=role_colors["*"][self.bot.theme],
-                            reason=f"{ctx.author.name} asked for a theme change.",
-                        )
-                except Exception:
-                    failed.append(guild.get_role(role_id).name)
-
-        else:
-            embed = discord.Embed(
-                title=f"I couldn't change the role colours!",
-                description="The theme has nevertheless been changed.",
-                color=self.bot.color(2),
-            )
-            await ctx.respond(embed=embed)
-            return
-
-        failed = ", ".join(failed)
+        failed = ", ".join(result.get("failed_rules"))
 
         embed = discord.Embed(
             title=f"Succesfully set the theme to **{theme}**!",

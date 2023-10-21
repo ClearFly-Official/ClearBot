@@ -290,6 +290,50 @@ class Listeners(discord.Cog):
             else:
                 raise
 
+    @tasks.loop(hours=12)
+    async def check_theme(self):
+        now = datetime.datetime.utcnow()
+
+        if now.month == 10 and self.bot.theme != 1:
+            result = await self.bot.set_theme("auto-theme", 1)
+
+            failed = ", ".join(result.get("failed_rules"))
+
+            embed = discord.Embed(
+                title=f"Automatically set theme to **{self.bot.theme_name}**",
+                description=f"Failed roles: {failed}",
+                color=self.bot.color(),
+            )
+            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+
+            await channel.send(embed=embed)
+        elif now.month == 12 and self.bot.theme != 2:
+            result = await self.bot.set_theme("auto-theme", 2)
+
+            failed = ", ".join(result.get("failed_rules"))
+
+            embed = discord.Embed(
+                title=f"Automatically set theme to **{self.bot.theme_name}**",
+                description=f"Failed roles: {failed}",
+                color=self.bot.color(),
+            )
+            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+
+            await channel.send(embed=embed)
+        elif self.bot.theme != 0:
+            result = await self.bot.set_theme("auto-theme", 0)
+
+            failed = ", ".join(result.get("failed_rules"))
+
+            embed = discord.Embed(
+                title=f"Automatically set theme to **{self.bot.theme_name}**",
+                description=f"Failed roles: {failed}",
+                color=self.bot.color(),
+            )
+            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+
+            await channel.send(embed=embed)
+
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
         if isinstance(message.author, discord.User):
@@ -426,9 +470,9 @@ class Listeners(discord.Cog):
                     title="Weekly ClearFly Join Report",
                     colour=self.bot.color(),
                     description=f"""
-    Joins this week: **{join_stats[3]}**
-    Joins last week: **{join_stats[2]}**
-    {join_pphrase}
+Joins this week: **{join_stats[3]}**
+Joins last week: **{join_stats[2]}**
+{join_pphrase}
                 """,
                 )
                 logchannel = self.bot.get_channel(1001405648828891187)
@@ -444,7 +488,7 @@ class Listeners(discord.Cog):
         logchannel = self.bot.get_channel(1001405648828891187)
         emb = discord.Embed(
             title=f"Welcome to ClearFly!",
-            description=f"Hey there, {member.mention}! Be sure to read the <#1002194493304479784> to become a member and gain full access to the server! Thanks for joining!",
+            description=f"Hey there, {member.mention}! Be sure to read the <#{self.bot.channels.get('info')}> to become a member and gain full access to the server! Thanks for joining!",
             color=self.bot.color(),
         )
         await channel.send(member.mention, embed=emb)
