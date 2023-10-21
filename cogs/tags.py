@@ -69,11 +69,11 @@ class TagCommands(discord.Cog):
                 embed.add_field(name="Author", value=tagAuthor.mention, inline=False)
                 embed.add_field(
                     name="Created At",
-                    value=f"<t:{round(int(output[5]))}:f>(<t:{round(int(output[5]))}:R>)",
+                    value=f"<t:{round(float(output[5]))}:f>(<t:{round(float(output[5]))}:R>)",
                 )
                 embed.add_field(
                     name="Edited At",
-                    value=f"<t:{round(int(output[4]))}:f>(<t:{round(int(output[4]))}:R>)",
+                    value=f"<t:{round(float(output[4]))}:f>(<t:{round(float(output[4]))}:R>)",
                 )
                 embed.set_thumbnail(url=tagAuthor.display_avatar.url)
                 await ctx.respond(embed=embed)
