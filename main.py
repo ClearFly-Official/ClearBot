@@ -26,6 +26,8 @@ class ClearBot(discord.Bot):
         con.close()
 
         self.server_id = 965419296937365514
+        self.bot_author = 668874138160594985
+
         self.channels = {
             "info": 1002194493304479784,
             "fbo": 1013934267966967848,

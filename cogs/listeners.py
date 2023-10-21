@@ -292,6 +292,8 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
+        if isinstance(message.author, discord.User):
+            return
         nowlvlnom = 0
         if message.channel.id == 966077223260004402:
             return
@@ -500,6 +502,9 @@ class Listeners(discord.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
+        if isinstance(message.author, discord.User):
+            return
+
         class ViewRawMessage(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -574,6 +579,9 @@ ID: **{message.id}**
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
+        if isinstance(before.author, discord.User):
+            return
+
         class ViewRawMessage(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -814,6 +822,9 @@ After: **{after.category}**
 
     @commands.Cog.listener("on_message")
     async def scamcheck(self, message: discord.Message):
+        if isinstance(message.author, discord.User):
+            return
+
         class BanView(discord.ui.View):
             def __init__(self, bot):
                 self.bot = bot
@@ -965,7 +976,7 @@ After: **{after.category}**
         if ctx.command.name.startswith("dev database"):
             notHandled = False
         if notHandled:
-            bot_author = self.bot.get_user(668874138160594985)
+            bot_author = self.bot.get_user(self.bot.bot_author)
             alert_emb = discord.Embed(
                 title="Hey there!",
                 colour=self.bot.color(),
@@ -976,15 +987,25 @@ After: **{after.category}**
 ```
             """,
             )
-            await bot_author.send(embed=alert_emb)
-            embed = discord.Embed(
-                title="Something went wrong...",
-                description=f"""
+            if bot_author.id != ctx.author.id:
+                await bot_author.send(embed=alert_emb)
+                embed = discord.Embed(
+                    title="Something went wrong...",
+                    description=f"""
 We're sorry for the inconvenience. The bot author has been notified about this issue.
 ```{error}```
-                """,
-                colour=self.bot.color(1),
-            )
+                    """,
+                    colour=self.bot.color(1),
+                )
+            else:
+                embed = discord.Embed(
+                    title="Something went wrong...",
+                    description=f"""
+See the terminal for more information.
+```{error}```
+                    """,
+                    colour=self.bot.color(1),
+                )
             await ctx.respond(embed=embed)
             raise error
 
