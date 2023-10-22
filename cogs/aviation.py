@@ -93,7 +93,7 @@ class AvCommands(discord.Cog):
             async def button_callback(self, button, interaction):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
-                    obstime = discord.utils.format_dt(
+                    obstime = discord.utils.format_dt(  # type: ignore
                         datetime.datetime.strptime(
                             time + "+00:00", "%Y-%m-%dT%H:%M:%S%z"
                         ),
@@ -149,7 +149,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             async def button_callback(self, button, interaction):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
-                    obstime = discord.utils.format_dt(
+                    obstime = discord.utils.format_dt(  # type: ignore
                         datetime.datetime.strptime(
                             time + "+00:00", "%Y-%m-%dT%H:%M:%S%z"
                         ),
@@ -196,7 +196,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
 
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
-            obstime = discord.utils.format_dt(
+            obstime = discord.utils.format_dt(  # type: ignore
                 datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ"), "R"
             )
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
@@ -279,7 +279,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                             async with cs.get(url) as r:
                                 chart_data = await r.content.read()
                         chart_file = io.BytesIO(chart_data)
-                        doc = fitz.open("pdf", chart_file)
+                        doc = fitz.open("pdf", chart_file)  # type: ignore
                         for page in doc:
                             pix = page.get_pixmap(dpi=150)
                             img_data = pix.pil_tobytes(format="JPEG", optimize=True)
@@ -338,7 +338,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                             async with cs.get(url) as r:
                                 chart_data = await r.content.read()
                         chart_file = io.BytesIO(chart_data)
-                        doc = fitz.open("pdf", chart_file)
+                        doc = fitz.open("pdf", chart_file)  # type: ignore
                         for page in doc:
                             pix = page.get_pixmap(dpi=150)
                             img_data = pix.pil_tobytes(format="JPEG", optimize=True)
@@ -387,11 +387,12 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                     await ctx.respond(embed=embed)
                 else:
                     url = load[airport[:4].upper()][0]["pdf_path"]
+                    dfile = None
                     async with aiohttp.ClientSession() as cs:
                         async with cs.get(url) as r:
                             chart_data = await r.content.read()
                             chart_file = io.BytesIO(chart_data)
-                            doc = fitz.open("pdf", chart_file)
+                            doc = fitz.open("pdf", chart_file)  # type: ignore
                     for i, page in enumerate(doc):
                         pix = page.get_pixmap(dpi=150)
                         img_data = pix.pil_tobytes(format="JPEG", optimize=True)
