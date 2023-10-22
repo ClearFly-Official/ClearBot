@@ -197,7 +197,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
         if resp["results"] == 1:
             time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
             obstime = discord.utils.format_dt(
-                datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S%Z"), "R"
+                datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%SZ"), "R"
             )
             airportn = json.dumps(resp["data"][0]["station"]["name"]).replace('"', "")
             embed = discord.Embed(
