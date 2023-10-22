@@ -18,6 +18,7 @@ images/avataroriginq.png
 images/avatarq.png
 images/qoute.png
 venv/
+.dev
 *.kra
 *.kra~
 *.png~

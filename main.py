@@ -10,6 +10,7 @@ from datetime import datetime
 class ClearBot(discord.Bot):
     def __init__(self, *args, **kwargs):
         self.color = self.embed_color
+        self.dev_mode = os.path.exists(".dev")
 
         self.start_time = datetime.utcnow()
         self.cog_list = [
@@ -137,9 +138,11 @@ async def on_ready():
 \033[34m| \033[96m \____|_|\___|\__,_|_|  |____/ \___/ \__|\033[0m
 \033[34m|-----------------------------------------\033[0m"""
     )
+    if bot.dev_mode:
+        print("| DEV MODE")
 
 
 for cog in bot.cog_list:
     bot.load_extension(f"cogs.{cog}")
 
-bot.run(os.getenv("TOKEN"))
+bot.run(os.getenv("DEV_TOKEN" if bot.dev_mode else "TOKEN"))

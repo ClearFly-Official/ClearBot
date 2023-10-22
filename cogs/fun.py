@@ -1,5 +1,7 @@
+import asyncio
 import io
 import discord
+from discord.ui.item import Item
 import pyfiglet
 import random
 import textwrap
@@ -12,6 +14,100 @@ from pilmoji import Pilmoji
 from wonderwords import RandomSentence
 from PIL import Image, ImageDraw, ImageFont
 from main import ClearBot
+
+
+class ButtonGameView(discord.ui.View):
+    def __init__(
+        self,
+        ctx: discord.ApplicationContext,
+        bot: ClearBot,
+        embed: discord.Embed,
+    ):
+        self.ctx = ctx
+        self.bot = bot
+        self.embed = embed
+
+        self.button = random.randint(1, 3)
+
+        super().__init__(timeout=60, disable_on_timeout=True)
+
+    @discord.ui.button(label="1")
+    async def b1_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "Run the command yourself to play the game!", ephemeral=True
+            )
+
+        embed = self.embed
+
+        if str(self.button) == button.label:
+            embed.title = "🥳 Correct button!"
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
+        else:
+            embed.title = f"😢 Incorrect button..."
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
+
+    @discord.ui.button(label="2")
+    async def b2_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "Run the command yourself to play the game!", ephemeral=True
+            )
+
+        embed = self.embed
+
+        if str(self.button) == button.label:
+            embed.title = "🥳 Correct button!"
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
+        else:
+            embed.title = f"😢 Incorrect button..."
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
+
+    @discord.ui.button(label="3")
+    async def b3_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "Run the command yourself to play the game!", ephemeral=True
+            )
+
+        embed = self.embed
+
+        if str(self.button) == button.label:
+            embed.title = "🥳 Correct button!"
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
+        else:
+            embed.title = f"😢 Incorrect button..."
+            await interaction.response.edit_message(embed=embed, view=None)
+            await asyncio.sleep(3)
+            self.button = random.randint(1, 3)
+            embed.title = "Guess the correct button!"
+            await self.ctx.edit(embed=embed, view=self)
 
 
 class FunCommands(discord.Cog):
@@ -218,95 +314,7 @@ class FunCommands(discord.Cog):
     async def bgame(self, ctx: discord.ApplicationContext):
         embed = discord.Embed(title="Choose a button!", color=self.bot.color())
 
-        class ButtonGame(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=20, disable_on_timeout=True)
-
-            async def on_timeout(self, interaction):
-                interaction.response.edit_message(
-                    "You ran out of time! Rerun the command to play again."
-                )
-
-            global b, isPressed
-            b = 0
-            isPressed = 0
-
-            @discord.ui.button(label="1", style=discord.ButtonStyle.green)
-            async def first_button_callback(self, button, interaction):
-                if interaction.user == ctx.author:
-                    global b, isPressed
-                    b = 1
-                    isPressed = 1
-                    opts = [1, 2, 1, 2, 3, 3, 1, 2]
-                    output = random.choice(opts)
-                    if output == b:
-                        embed = discord.Embed(
-                            description=":partying_face: You guessed right. Congrats!",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                    elif isPressed == 1:
-                        embed = discord.Embed(
-                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                else:
-                    await interaction.response.send_message(
-                        "Run the command yourself to use it!", ephemeral=True
-                    )
-
-            @discord.ui.button(label="2", style=discord.ButtonStyle.green)
-            async def second_button_callback(self, button, interaction):
-                if interaction.user == ctx.author:
-                    global b, isPressed
-                    b = 2
-                    isPressed = 1
-                    opts = [1, 2, 3, 1, 3, 3, 1, 2]
-                    output = random.choice(opts)
-                    if output == b:
-                        embed = discord.Embed(
-                            description=":partying_face: You guessed right. Congrats!",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                    elif isPressed == 1:
-                        embed = discord.Embed(
-                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                else:
-                    await interaction.response.send_message(
-                        "Run the command yourself to use it!", ephemeral=True
-                    )
-
-            @discord.ui.button(label="3", style=discord.ButtonStyle.green)
-            async def third_button_callback(self, button, interaction):
-                if interaction.user == ctx.author:
-                    global b, isPressed
-                    b = 3
-                    isPressed = 1
-                    opts = [1, 2, 3, 1, 2, 3, 1, 2]
-                    output = random.choice(opts)
-                    if output == b:
-                        embed = discord.Embed(
-                            description=":partying_face: You guessed right. Congrats!",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                    elif isPressed == 1:
-                        embed = discord.Embed(
-                            description=f":disappointed_relieved: You guessed wrong. The right answer was {output}",
-                            colour=self.bot.color(),
-                        )
-                        await interaction.response.edit_message(embed=embed)
-                else:
-                    await interaction.response.send_message(
-                        "Run the command yourself to use it!", ephemeral=True
-                    )
-
-        await ctx.respond(embed=embed, view=ButtonGame())
+        await ctx.respond(embed=embed, view=ButtonGameView(ctx, self.bot, embed))
 
     @discord.message_command(name="Quote Message")
     @commands.cooldown(1, 5, commands.BucketType.user)
