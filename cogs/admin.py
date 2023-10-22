@@ -18,16 +18,21 @@ class RulesView(discord.ui.View):
         emoji="<:ClearFly:1054526148576559184>",
     )
     async def button_callback(self, button, interaction):
-        guilds = self.bot.get_guild(self.bot.server_id)
-        roles = guilds.get_role(1002200398905483285)
-        if roles in interaction.user.roles:
+        guild = self.bot.get_guild(self.bot.server_id)
+        if not guild:
+            await interaction.response.send_message(
+                "Something went wrong while trying to verify your roles...",
+                ephemeral=True,
+            )
+            return
+
+        role = guild.get_role(self.bot.roles.get("member", 0))
+        if role in interaction.user.roles:
             await interaction.response.send_message(
                 "You already accepted the rules!", ephemeral=True
             )
         else:
             author = interaction.user
-            guild = self.bot.get_guild(self.bot.server_id)
-            role = guild.get_role(1002200398905483285)
             await author.add_roles(role)
             await interaction.response.send_message(
                 "Rules accepted, have fun in the server!", ephemeral=True
@@ -54,14 +59,19 @@ class AdminCommands(discord.Cog):
     @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def echo(self, ctx: discord.ApplicationContext, text: str):
-        await ctx.respond("Posted your message!", ephemeral=True)
-        await ctx.channel.send(text)
-        channel = self.bot.get_channel(1001405648828891187)
+        sendable = self.bot.sendable_channel(ctx.channel)
+        if sendable[0] and sendable[1]:
+            await sendable[1].send(text)
+        else:
+            raise ValueError("Invalid channel")
+
         emb = discord.Embed(
             title=f"{ctx.author} used echo", description=text, color=self.bot.color()
         )
         emb.set_thumbnail(url=ctx.author.display_avatar.url)
-        await channel.send(embed=emb)
+        if self.bot.logs:
+            await self.bot.logs.send(embed=emb)
+        await ctx.respond("Posted your message!", ephemeral=True)
 
     @admin.command(name="embed", description="📦 Send an embed as ClearBot.")
     @option("title", description="The title of the embed.")
@@ -142,17 +152,17 @@ URL: `{url}`
                             """,
             inline=False,
         )
-        if timestamp == True:
-            timestamp = datetime.datetime.now()
-        else:
-            timestamp = None
+
         emb = discord.Embed(
             title=title,
             description=description,
             colour=int(colour, 16),
             url=url,
-            timestamp=timestamp,
         )
+
+        if timestamp:
+            emb.timestamp = datetime.datetime.now()
+
         if footer_text != None:
             if footer_icon_url != None:
                 emb.set_footer(text=footer_text, icon_url=footer_icon_url)
@@ -179,11 +189,17 @@ URL: `{url}`
         if thumbnail_url != None:
             emb.set_thumbnail(url=thumbnail_url)
             ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
-        await ctx.channel.send(embed=emb)
+
+        sendable = self.bot.sendable_channel(ctx.channel)
+        if sendable[0] and sendable[1]:
+            await sendable[1].send(embed=emb)
+        else:
+            raise ValueError("Invalid channel")
+
         await ctx.respond("Posted your embed!", ephemeral=True)
-        logchannel = self.bot.get_channel(1001405648828891187)
         ademb.set_thumbnail(url=ctx.author.display_avatar.url)
-        await logchannel.send(embed=ademb)
+        if self.bot.logs:
+            await self.bot.logs.send(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
@@ -191,48 +207,45 @@ URL: `{url}`
     @commands.has_permissions(manage_channels=True)
     @commands.cooldown(1, 120, commands.BucketType.user)
     async def spam(self, ctx: discord.ApplicationContext, amount: int, text: str):
-        channel = self.bot.get_channel(1001405648828891187)
         user = ctx.author
-        global confirm
-        confirm = 0
         if amount >= 100:
 
             class Spam(discord.ui.View):
                 def __init__(self, bot: ClearBot):
                     self.bot = bot
+                    self.confirm = 0
                     super().__init__(timeout=15.0, disable_on_timeout=True)
 
                 @discord.ui.button(style=discord.ButtonStyle.green, label="Yes")
-                async def button_callback(self, button, interaction):
-                    global confirm
-                    confirm = 1
-                    channel = self.bot.get_channel(1001405648828891187)
+                async def button_callback(
+                    self, button: discord.Button, interaction: discord.Interaction
+                ):
+                    self.confirm = 1
                     await interaction.response.send_message(
                         f"Ok, here we go! `{ctx.channel}` {amount} times",
                         ephemeral=True,
                     )
                     embed = discord.Embed(
-                        title=f"**{ctx.author}** spammed `{ctx.channel}` **{amount} times**(after confirmation) with the following text:",
+                        title=f"**{ctx.author}** spammed `{ctx.channel}` **{amount} times** (after confirmation) with the following text:",
                         description=text,
                         color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
-                    await channel.send(embed=embed)
+                    if self.bot.logs:
+                        await self.bot.logs.send(embed=embed)
                     for i in range(amount):
                         await ctx.send(text)
 
                 @discord.ui.button(style=discord.ButtonStyle.danger, label="No")
                 async def second_button_callback(self, button, interaction):
-                    global confirm
-                    confirm = 1
+                    self.confirm = 1
                     await interaction.response.send_message(
                         f"Ok, cancelling.", ephemeral=True
                     )
                     await ctx.edit(view=None)
 
                 async def on_timeout(self):
-                    global confirm
-                    if confirm == 0:
+                    if self.confirm == 0:
                         await ctx.respond(
                             "You waited too long. Rerun the command to start over!",
                             ephemeral=True,
@@ -256,7 +269,8 @@ URL: `{url}`
             await ctx.respond(
                 "Get ready for the show <:aye:965627580743024671>", ephemeral=True
             )
-            await channel.send(embed=embed)
+            if self.bot.logs:
+                await self.bot.logs.send(embed=embed)
             for i in range(amount):
                 await ctx.send(text)
 
@@ -277,8 +291,14 @@ URL: `{url}`
     ):
         if slowmode > 21600:
             await ctx.respond("Maximum slowmode is 21600(6 hours) seconds!")
-        if channel == None:
-            channel = ctx.channel
+
+        if not channel:
+            if isinstance(ctx.channel, discord.TextChannel):
+                channel = ctx.channel
+            else:
+                await ctx.respond("You can't use that command here!", ephemeral=True)
+                return
+
         await channel.edit(slowmode_delay=slowmode)
         embed = discord.Embed(
             title=f"`{channel}`'s slow mode has been set to {slowmode} second(s)!",
@@ -291,49 +311,51 @@ URL: `{url}`
     @commands.has_permissions(manage_channels=True)
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def purge(self, ctx: discord.ApplicationContext, amount: int):
-        global confirm
-        confirm = 0
-        channel = self.bot.get_channel(1001405648828891187)
         if amount > 100:
 
             class PurgeView(discord.ui.View):
-                def __init__(self, bot):
+                def __init__(self, bot: ClearBot):
                     self.bot = bot
+                    self.confirm = 0
                     super().__init__(timeout=15.0, disable_on_timeout=True)
 
                 @discord.ui.button(style=discord.ButtonStyle.green, label="Yes")
-                async def button_callback(self, button, interaction):
-                    global confirm
-                    confirm = 1
-                    channel = self.bot.get_channel(1001405648828891187)
+                async def yes_callback(
+                    self, button: discord.Button, interaction: discord.Interaction
+                ):
+                    self.confirm = 1
                     await interaction.response.send_message(
                         f"Ok, purging {amount} messages.", ephemeral=True
                     )
-                    await ctx.channel.purge(
-                        limit=amount, check=lambda message: not message.pinned
-                    )
+                    sendable = self.bot.sendable_channel(ctx.channel)
+                    if sendable[0] and sendable[1]:
+                        await sendable[1].purge(
+                            limit=amount, check=lambda message: not message.pinned
+                        )
+
                     embed = discord.Embed(
                         title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}` after confirmation!",
                         color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
-                    await channel.send(embed=embed)
+                    if self.bot.logs:
+                        await self.bot.logs.send(embed=embed)
                     await ctx.edit(view=None)
 
                 @discord.ui.button(style=discord.ButtonStyle.danger, label="No")
-                async def second_button_callback(self, button, interaction):
-                    global confirm
-                    confirm = 1
+                async def no_callback(
+                    self, button: discord.Button, interaction: discord.Interaction
+                ):
+                    self.confirm = 1
                     await interaction.response.send_message(
                         f"Ok, cancelling purge.", ephemeral=True
                     )
                     await ctx.edit(view=None)
 
                 async def on_timeout(self):
-                    global confirm
-                    if confirm == 0:
+                    if not self.confirm:
                         await ctx.respond(
-                            "You waited too long. Rerun the command to purge!",
+                            "You waited too long. Re-run the command to purge!",
                             ephemeral=True,
                         )
                     else:
@@ -346,16 +368,20 @@ URL: `{url}`
             )
             await ctx.respond(embed=embed, view=PurgeView(bot=self.bot), ephemeral=True)
         else:
-            await ctx.channel.purge(
-                limit=amount, check=lambda message: not message.pinned
-            )
+            sendable = self.bot.sendable_channel(ctx.channel)
+            if sendable[0] and sendable[1]:
+                await sendable[1].purge(
+                    limit=amount, check=lambda message: not message.pinned
+                )
+
             await ctx.respond(f"Purging {amount} messages.", ephemeral=True)
             embed = discord.Embed(
                 title=f"{ctx.author} purged **{amount}** messages in `{ctx.channel}`!",
                 color=self.bot.color(),
             )
             embed.set_thumbnail(url=ctx.author.display_avatar.url)
-            await channel.send(embed=embed)
+            if self.bot.logs:
+                await self.bot.logs.send(embed=embed)
 
     @admin.command(name="setup", description="⚙️ Setup the server.")
     @commands.has_permissions(administrator=True)
@@ -412,7 +438,7 @@ A: We decided that the project was announced way too early. It is still in activ
         def check(msg: discord.Message) -> bool:
             return msg.author.bot
 
-        info = self.bot.get_channel(self.bot.channels.get("info"))
+        info = self.bot.get_channel(self.bot.channels.get("info", 0))
         if isinstance(info, discord.TextChannel):
             await info.purge(check=check)
             await info.send(

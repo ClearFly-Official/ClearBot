@@ -26,6 +26,8 @@ class ClearBot(discord.Bot):
         )
         con.close()
 
+        self.logs: None | discord.TextChannel = None
+
         self.server_id = 965419296937365514
         self.bot_author = 668874138160594985
 
@@ -65,7 +67,7 @@ class ClearBot(discord.Bot):
         except KeyError:
             return self._colors[0][self.theme]
 
-    async def set_theme(self, author: str, theme: int = 0) -> dict[bool, list[str]]:
+    async def set_theme(self, author: str, theme: int = 0) -> dict[str, bool | list]:
         async with aiosqlite.connect("main.db") as db:
             await db.execute(
                 "UPDATE config SET value = ? WHERE key = 'theme'", (theme,)
@@ -91,21 +93,48 @@ class ClearBot(discord.Bot):
                 try:
                     if name == "member":
                         role = guild.get_role(role_id)
-                        await role.edit(
-                            color=role_colors["member"][self.theme],
-                            reason=f"{author} asked for a theme ({self.theme_name}) change.",
-                        )
+                        if role:
+                            await role.edit(
+                                color=role_colors["member"][self.theme],
+                                reason=f"{author} asked for a theme ({self.theme_name}) change.",
+                            )
+                        else:
+                            raise discord.DiscordException("Role not found")
+
                     elif name != "admin":
                         role = guild.get_role(role_id)
-                        await role.edit(
-                            color=role_colors["*"][self.theme],
-                            reason=f"{author} asked for a theme ({self.theme_name}) change.",
-                        )
+                        if role:
+                            await role.edit(
+                                color=role_colors["*"][self.theme],
+                                reason=f"{author} asked for a theme ({self.theme_name}) change.",
+                            )
+                        else:
+                            raise discord.DiscordException("Role not found")
                 except Exception:
-                    failed.append(guild.get_role(role_id).name)
+                    role = guild.get_role(role_id)
+                    if role:
+                        failed.append(role)
+                    else:
+                        failed.append("Unknown Role")
             guild_success = True
 
         return {"guild_success": guild_success, "failed_roles": failed}
+
+    def sendable_channel(
+        self, channel
+    ) -> tuple[bool, discord.TextChannel | discord.VoiceChannel | None]:
+        if isinstance(channel, discord.StageChannel):
+            return (False, None)
+        elif isinstance(channel, discord.ForumChannel):
+            return (False, None)
+        elif isinstance(channel, discord.CategoryChannel):
+            return (False, None)
+        elif not channel.can_send():
+            return (False, None)
+        elif not channel:
+            return (False, None)
+        else:
+            return (True, channel)
 
     @property
     def theme_name(self):
@@ -128,8 +157,13 @@ load_dotenv()
 @bot.listen()
 async def on_ready():
     gc.collect()
+    logs = bot.get_channel(bot.channels.get("logs", 0))
+
+    if isinstance(logs, discord.TextChannel):
+        bot.logs = logs
+
     print(
-        f"""
+        r"""
 \033[34m|-----------------------------------------\033[0m
 \033[34m| \033[96m  ____ _                 ____        _   \033[0m
 \033[34m| \033[96m / ___| | ___  __ _ _ __| __ )  ___ | |_ \033[0m
