@@ -383,9 +383,9 @@ class FunCommands(discord.Cog):
             case _:
                 oldText = s.simple_sentence()
 
-        def flagGen(
+        def flag_gen(
             text: str,
-            difficulty: Literal["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
+            difficulty: str,
         ) -> str:
             match difficulty:
                 case "Very Easy":
@@ -404,16 +404,22 @@ class FunCommands(discord.Cog):
             with open(f"ccodes/{diff}", "r") as f:
                 ccodes = f.readlines()
 
-            convText = text
+            conv_text = text
 
             for ccode in ccodes:
-                convText = convText.replace(ccode.lower()[:2], flag.flag(ccode.upper()))
-            if convText == text:
-                flagGen(text, difficulty)
-            else:
-                return convText
+                conv_text = conv_text.replace(
+                    ccode.lower()[:2], flag.flag(ccode.upper())
+                )
 
-        newText = flagGen(text=oldText, difficulty=difficulty)
+            if conv_text == text:
+                try:
+                    return flag_gen(text, difficulty)
+                except:
+                    return "S🇴🇲🇪🇹h🇮🇳g went w🇷🇴🇳🇬..."
+            else:
+                return conv_text
+
+        newText = flag_gen(oldText, difficulty)
         newText = textwrap.fill(newText, 28, max_lines=2)
 
         with Image.new("RGBA", (2048, 512)) as image:
@@ -547,21 +553,25 @@ class FunCommands(discord.Cog):
 
     @fun.command(name="create_meme", description="🌄 Create your own meme!")
     @option("image", description="The image you want to 'memify'.")
-    @option("top_text", description="The text at the top of your meme.")
-    @option("bottom_text", description="The text at the bottom of your meme.")
-    @option("text_size", description="The size of text.")
+    @option("top_text", description="The text at the top of your meme.", required=False)
+    @option(
+        "bottom_text",
+        description="The text at the bottom of your meme.",
+        required=False,
+    )
+    @option("text_size", description="The size of text.", required=False)
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def meme(
         self,
         ctx: discord.ApplicationContext,
         image: discord.Attachment,
-        top_text: str = None,
-        bottom_text: str = None,
-        text_size: int = None,
+        top_text: str,
+        bottom_text: str,
+        text_size: int,
         bars: bool = False,
     ):
         await ctx.defer()
-        if top_text == None and bottom_text == None:
+        if not top_text and not bottom_text:
             embed = discord.Embed(
                 title="You didn't provide any text!",
                 description="Try again, and this time give me some text.",
@@ -569,7 +579,8 @@ class FunCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
             return
-        if not image.content_type.startswith("image/"):
+
+        if not str(image.content_type).startswith("image/"):
             embed = discord.Embed(
                 title="You didn't provide a valid image!",
                 description="Try again, and this time give me a valid image.",
@@ -577,6 +588,7 @@ class FunCommands(discord.Cog):
             )
             await ctx.respond(embed=embed)
             return
+
         meme_id_n = random.randint(10, 99)
         meme_id = f"meme{meme_id_n}.png"
         img_data = await image.read()

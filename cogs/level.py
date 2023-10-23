@@ -35,14 +35,17 @@ class LevelingCommands(discord.Cog):
         )
 
     @leveling.command(name="userlevel", description="🥇 Gets the provided user's level.")
-    @option("user", description="The user you want level information about.")
+    @option(
+        "user", description="The user you want level information about.", required=False
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def userlevel(
-        self, ctx: discord.ApplicationContext, user: discord.Member = None
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
-        if user == None:
+        if not user:
             user = ctx.author
+
         async with aiosqlite.connect("main.db") as db:
             sel = await db.execute("SELECT author_id FROM leveling")
             rows = await sel.fetchall()
@@ -54,6 +57,9 @@ class LevelingCommands(discord.Cog):
                     "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
                 )
                 usrdata = await usrdata.fetchone()
+                if not usrdata:
+                    raise ValueError("Couldn't fetch data from database.")
+
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
@@ -165,11 +171,9 @@ class LevelingCommands(discord.Cog):
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def userlevel_app(
-        self, ctx: discord.ApplicationContext, user: discord.Member = None
+        self, ctx: discord.ApplicationContext, user: discord.Member
     ):
         await ctx.defer()
-        if user == None:
-            user = ctx.author
         async with aiosqlite.connect("main.db") as db:
             sel = await db.execute("SELECT author_id FROM leveling")
             rows = await sel.fetchall()
@@ -181,6 +185,9 @@ class LevelingCommands(discord.Cog):
                     "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
                 )
                 usrdata = await usrdata.fetchone()
+                if not usrdata:
+                    raise ValueError("Couldn't fetch data from database.")
+
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
             img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
@@ -317,7 +324,7 @@ class LevelingCommands(discord.Cog):
                 return int(text) if text.isdigit() else text
 
             def natural_keys(text):
-                return [atoi(c) for c in re.split("(\d+)", text)]
+                return [atoi(c) for c in re.split(r"(\d+)", text)]
 
             output.sort(key=natural_keys, reverse=True)
             nameoutput.sort(key=natural_keys, reverse=True)
