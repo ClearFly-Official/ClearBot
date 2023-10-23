@@ -24,8 +24,15 @@ class DeleteMsgView(discord.ui.View):
         style=discord.ButtonStyle.danger,
     )
     async def button_callback(self, button, interaction: discord.Interaction):
-        if interaction.user.id == self.auth.id:
-            await interaction.message.delete()
+        if not self.bot.is_interaction_owner(interaction, self.auth.id):
+            msg = interaction.message
+            if msg:
+                await msg.delete()
+            else:
+                await interaction.response.send_message(
+                    "Something went wrong while trying to delete the message.",
+                    ephemeral=True,
+                )
         else:
             await interaction.response.send_message(
                 "You did not send the link, so you can't delete the snippet!",
@@ -36,6 +43,7 @@ class DeleteMsgView(discord.ui.View):
 class Listeners(discord.Cog):
     def __init__(self, bot: ClearBot):
         self.bot = bot
+        self.logs = bot.logs
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -117,7 +125,9 @@ class Listeners(discord.Cog):
     async def rssfeedtres1(self):
         table = "RSS_thresholdx_news"
         try:
-            channel = self.bot.get_channel(self.bot.channels.get("news"))
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("news", 0))
+            )
             blog_feed = feedparser.parse("https://www.thresholdx.net/news/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -129,6 +139,8 @@ class Listeners(discord.Cog):
                 lastIDs = await lastIDs.fetchall()
                 if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    return
             if feed.get("id") in lastIDs:
                 return
             else:
@@ -161,13 +173,15 @@ class Listeners(discord.Cog):
                             ("NULL",),
                         )
                     await db.commit()
-                await channel.send(
-                    f"""
+
+                if channel:
+                    await channel.send(
+                        f"""
 # {feed.get('title')}
 
 {feed.get('link')}
                     """
-                )
+                    )
         except Exception as e:
             if isinstance(e, RemoteDisconnected):
                 pass
@@ -178,7 +192,9 @@ class Listeners(discord.Cog):
     async def rssfeedtres2(self):
         table = "RSS_thresholdx_opinion"
         try:
-            channel = self.bot.get_channel(self.bot.channels.get("news"))
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("news", 0))
+            )
             blog_feed = feedparser.parse("https://www.thresholdx.net/opinion/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -190,6 +206,8 @@ class Listeners(discord.Cog):
                 lastIDs = await lastIDs.fetchall()
                 if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    return
             if feed.get("id") in lastIDs:
                 return
             else:
@@ -218,13 +236,14 @@ class Listeners(discord.Cog):
                             ("NULL",),
                         )
                     await db.commit()
-                await channel.send(
-                    f"""
+                if channel:
+                    await channel.send(
+                        f"""
 # {feed.get('title')}
 
 {feed.get('link')}
                     """
-                )
+                    )
         except Exception as e:
             if isinstance(e, RemoteDisconnected):
                 pass
@@ -235,7 +254,9 @@ class Listeners(discord.Cog):
     async def rssfeedtres3(self):
         table = "RSS_thresholdx_article"
         try:
-            channel = self.bot.get_channel(self.bot.channels.get("news"))
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("news", 0))
+            )
             blog_feed = feedparser.parse("https://www.thresholdx.net/article/rss.xml")
             try:
                 feed = dict(blog_feed.entries[0])
@@ -247,6 +268,8 @@ class Listeners(discord.Cog):
                 lastIDs = await lastIDs.fetchall()
                 if lastIDs:
                     lastIDs = [lastID[0] for lastID in lastIDs]
+                else:
+                    return
             if feed.get("id") in lastIDs:
                 return
             else:
@@ -279,13 +302,14 @@ class Listeners(discord.Cog):
                             ("NULL",),
                         )
                     await db.commit()
-                await channel.send(
-                    f"""
+                if channel:
+                    await channel.send(
+                        f"""
 # {feed.get('title')}
 
 {feed.get('link')}
                     """
-                )
+                    )
         except Exception as e:
             if isinstance(e, RemoteDisconnected):
                 pass
@@ -299,42 +323,45 @@ class Listeners(discord.Cog):
         if now.month == 10 and self.bot.theme != 1:
             result = await self.bot.set_theme("auto-theme", 1)
 
-            failed = ", ".join(result.get("failed_roles"))
+            failed = ", ".join(result.get("failed_roles", ["N/A"]))  # type: ignore
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+            channel = self.logs
 
-            await channel.send(embed=embed)
+            if channel:
+                await channel.send(embed=embed)
         elif now.month == 12 and self.bot.theme != 2:
             result = await self.bot.set_theme("auto-theme", 2)
 
-            failed = ", ".join(result.get("failed_roles"))
+            failed = ", ".join(result.get("failed_roles", ["N/A"]))  # type: ignore
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+            channel = self.logs
 
-            await channel.send(embed=embed)
+            if channel:
+                await channel.send(embed=embed)
         elif self.bot.theme != 0 and now.month != 10 and now.month != 12:
             result = await self.bot.set_theme("auto-theme", 0)
 
-            failed = ", ".join(result.get("failed_roles"))
+            failed = ", ".join(result.get("failed_roles", ["N/A"]))  # type: ignore
 
             embed = discord.Embed(
                 title=f"Automatically set theme to **{self.bot.theme_name}**",
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.bot.get_channel(self.bot.channels.get("logs"))
+            channel = self.logs
 
-            await channel.send(embed=embed)
+            if channel:
+                await channel.send(embed=embed)
 
     @commands.Cog.listener("on_message")
     async def levellisten(self, message):
@@ -361,6 +388,9 @@ class Listeners(discord.Cog):
                         (str(message.author.id),),
                     )
                     usrdata = await usrdata.fetchone()
+                    if not usrdata:
+                        raise ValueError("Couldn't fetch data from database.")
+
                 belvlnom = usrdata[3]
                 last = usrdata[5]
                 now = round(time.time())
@@ -416,6 +446,9 @@ class Listeners(discord.Cog):
                             (str(message.author.id),),
                         )
                         usrdata = await usrdata.fetchone()
+                        if not usrdata:
+                            raise ValueError("Couldn't fetch data from database.")
+
                     lvlp = usrdata[2]
                     await message.channel.send(
                         f"{message.author.mention} :partying_face: You reached level {lvlp}!"
@@ -447,6 +480,9 @@ class Listeners(discord.Cog):
                 )
                 cur = await db.execute("SELECT * FROM stats WHERE name='join'")
                 join_stats = await cur.fetchone()
+                if not join_stats:
+                    raise ValueError("Couldn't fetch data from database.")
+
                 if int(join_stats[2]) == 0:
                     join_pphrase = ""
                 else:
@@ -477,8 +513,9 @@ Joins last week: **{join_stats[2]}**
 {join_pphrase}
                 """,
                 )
-                logchannel = self.bot.get_channel(1001405648828891187)
-                await logchannel.send(embed=embed)
+                logs = self.logs
+                if logs:
+                    await logs.send(embed=embed)
                 await db.execute(
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
                 )
@@ -486,14 +523,17 @@ Joins last week: **{join_stats[2]}**
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        channel = self.bot.get_channel(965600413376200726)
-        logchannel = self.bot.get_channel(1001405648828891187)
+        channel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("arrivals", 0))
+        )
+        logchannel = self.logs
         emb = discord.Embed(
             title=f"Welcome to ClearFly!",
             description=f"Hey there, {member.mention}! Be sure to read the <#{self.bot.channels.get('info')}> to become a member and gain full access to the server! Thanks for joining!",
             color=self.bot.color(),
         )
-        await channel.send(member.mention, embed=emb)
+        if channel:
+            await channel.send(member.mention, embed=emb)
         guild_count = str(member.guild.member_count)
         guild_c_suffix = "th"
         if (
@@ -532,19 +572,21 @@ Joins last week: **{join_stats[2]}**
             await db.execute("UPDATE stats SET now = now + 1 WHERE name = 'join'")
             await db.commit()
 
-        await logchannel.send(embed=emb)
+        if logchannel:
+            await logchannel.send(embed=emb)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        channel = self.bot.get_channel(1001405648828891187)
+        channel = self.logs
         emb = discord.Embed(
             title=f"{member} left.",
             color=self.bot.color(),
-            description=f"Joined on {discord.utils.format_dt(member.joined_at)}",
+            description=f"Joined on {discord.utils.format_dt(member.joined_at)}",  # type: ignore
         )
         pfp = member.display_avatar.url
         emb.set_thumbnail(url=pfp)
-        await channel.send(embed=emb)
+        if channel:
+            await channel.send(embed=emb)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
@@ -574,15 +616,22 @@ Message Content:
                 )
 
         if message.author.bot == False:
-            channel = self.bot.get_channel(1001405648828891187)
+            channel = self.logs
             msgcontent = message.clean_content
             if msgcontent == "":
                 msgcontent = "None"
             msgatr = message.author.mention
-            msgcnl = message.channel.mention
+            msgcnl = self.bot.sendable_channel(message.channel)
+            if msgcnl:
+                msgcnl = msgcnl.mention
+            else:
+                return
             embs = []
             if message.attachments != []:
                 for attach in message.attachments:
+                    if not attach.content_type:
+                        continue
+
                     if attach.content_type[:5] == "image":
                         embs.append(
                             discord.Embed(
@@ -621,7 +670,8 @@ ID: **{message.id}**
             )
             embed.set_thumbnail(url=pfp)
             embs.append(embed)
-            await channel.send(embeds=embs, view=ViewRawMessage(self.bot))
+            if channel:
+                await channel.send(embeds=embs, view=ViewRawMessage(self.bot))
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -662,7 +712,7 @@ After:
             if before.content == after.content:
                 pass
             else:
-                channel = self.bot.get_channel(1001405648828891187)
+                channel = self.logs
                 msgeditb = before.clean_content
                 msgedita = after.clean_content
                 msgatr = before.author.mention
@@ -690,13 +740,14 @@ ID: **{after.id}**
                 """,
                 )
                 emb.set_thumbnail(url=pfp)
-                await channel.send(embed=emb, view=ViewRawMessage(self.bot))
+                if channel:
+                    await channel.send(embed=emb, view=ViewRawMessage(self.bot))
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
-        self, before: discord.channel, after: discord.channel
+        self, before: discord.TextChannel, after: discord.TextChannel
     ):
-        channel = self.bot.get_channel(1001405648828891187)
+        channel = self.logs
         embed = discord.Embed(title=f"Channel Updated", colour=self.bot.color())
         embed.add_field(name="", value=after.mention, inline=False)
         if before.name != after.name:
@@ -805,33 +856,36 @@ After: **{after.category}**
                         """
                     )
             embed.add_field(name="Permissions", value="\n".join(out), inline=False)
-        await channel.send(embed=embed)
+        if channel:
+            await channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if before.bot == False:
-            channel = self.bot.get_channel(1001405648828891187)
             if before.name != after.name:
                 embed = discord.Embed(
                     title=f"{before} changed their name to `{after.name}`.",
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                await channel.send(embed=embed)
+                if self.logs:
+                    await self.logs.send(embed=embed)
             if before.display_name != after.display_name:
                 embed = discord.Embed(
                     title=f"{before} changed their nickname to `{after.display_name}`.",
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                await channel.send(embed=embed)
+                if self.logs:
+                    await self.logs.send(embed=embed)
             if before.discriminator != after.discriminator:
                 embed = discord.Embed(
                     title=f"{before} changed their discriminator to `{after.discriminator}`.",
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                await channel.send(embed=embed)
+                if self.logs:
+                    await self.logs.send(embed=embed)
             if before.roles != after.roles:
                 embed = discord.Embed(
                     title=f"{before} got their roles changed.", colour=self.bot.color()
@@ -852,17 +906,19 @@ After: **{after.category}**
                     difa = None
                 else:
                     difa = "\n".join(list(difa))
-                embed.add_field(name="Roles removed:", value=difr)
-                embed.add_field(name="Roles added:", value=difa)
+                embed.add_field(name="Roles removed:", value=str(difr))
+                embed.add_field(name="Roles added:", value=str(difa))
                 embed.set_thumbnail(url=after.display_avatar.url)
-                await channel.send(embed=embed)
+                if self.logs:
+                    await self.logs.send(embed=embed)
             if before.display_avatar != after.display_avatar:
                 embed = discord.Embed(
                     title=f"{before} changed their avatar to the following image.",
                     colour=self.bot.color(),
                 )
                 embed.set_image(url=after.display_avatar.url)
-                await channel.send(embed=embed)
+                if self.logs:
+                    await self.logs.send(embed=embed)
         else:
             pass
 
@@ -881,6 +937,9 @@ After: **{after.category}**
             )
             async def button_callback(self, button, interaction):
                 try:
+                    if isinstance(message.author, discord.User):
+                        return
+
                     await message.author.ban(
                         reason=f"{message.author} sent a scam, confirmed by {interaction.user}"
                     )
@@ -905,7 +964,12 @@ After: **{after.category}**
                 change += 1
 
         guild = self.bot.get_guild(self.bot.server_id)
-        role = guild.get_role(self.bot.roles.get("admin"))
+        if guild:
+            role = guild.get_role(self.bot.roles.get("admin", 0))
+            if not role:
+                return
+        else:
+            return
         members = [member.id for member in role.members]
 
         if message.author.id not in members:
@@ -913,14 +977,14 @@ After: **{after.category}**
                 await message.reply(
                     content="Your message included blacklisted words, and has been deleted."
                 )
-                channel = self.bot.get_channel(1001405648828891187)
                 embed = discord.Embed(
                     title=f"`{message.author}` might have sent a scam",
                     description=message.content,
                     colour=self.bot.color(1),
                 )
                 await message.delete(reason=f"{message.author} might have sent a scam.")
-                await channel.send(embed=embed, view=BanView(bot=self.bot))
+                if self.logs:
+                    await self.logs.send(embed=embed, view=BanView(bot=self.bot))
             else:
                 pass
         else:
@@ -1033,7 +1097,12 @@ After: **{after.category}**
 ```
             """,
             )
-            if bot_author.id != ctx.author.id:
+            if not bot_author:
+                bot_author_id = 0
+            else:
+                bot_author_id = bot_author.id
+
+            if bot_author_id != ctx.author.id and bot_author:
                 await bot_author.send(embed=alert_emb)
                 embed = discord.Embed(
                     title="Something went wrong...",

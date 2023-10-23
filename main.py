@@ -33,6 +33,7 @@ class ClearBot(discord.Bot):
 
         self.channels = {
             "info": 1002194493304479784,
+            "arrivals": 965600413376200726,
             "fbo": 1013934267966967848,
             "va-overview": 1099712642916044881,
             "news": 1066124540318588928,
