@@ -122,19 +122,27 @@ class ClearBot(discord.Bot):
 
     def sendable_channel(
         self, channel
-    ) -> tuple[bool, discord.TextChannel | discord.VoiceChannel | None]:
+    ) -> discord.TextChannel | discord.VoiceChannel | None:
         if isinstance(channel, discord.StageChannel):
-            return (False, None)
+            return
         elif isinstance(channel, discord.ForumChannel):
-            return (False, None)
+            return
         elif isinstance(channel, discord.CategoryChannel):
-            return (False, None)
+            return
         elif not channel.can_send():
-            return (False, None)
+            return
         elif not channel:
-            return (False, None)
+            return
         else:
-            return (True, channel)
+            return channel
+
+    def is_interaction_owner(
+        self, interaction: discord.Interaction, user_id: int
+    ) -> bool:
+        if interaction.user:
+            return interaction.user.id == user_id
+        else:
+            return False
 
     @property
     def theme_name(self):

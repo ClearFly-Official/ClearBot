@@ -1,8 +1,8 @@
 {
     "python.analysis.typeCheckingMode": "basic",
     "discord.enabled": true,
-    "python.formatting.provider": "none",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+    },
+    "python.analysis.autoImportCompletions": true
 }

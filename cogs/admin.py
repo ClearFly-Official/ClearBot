@@ -60,8 +60,8 @@ class AdminCommands(discord.Cog):
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def echo(self, ctx: discord.ApplicationContext, text: str):
         sendable = self.bot.sendable_channel(ctx.channel)
-        if sendable[0] and sendable[1]:
-            await sendable[1].send(text)
+        if sendable:
+            await sendable.send(text)
         else:
             raise ValueError("Invalid channel")
 
@@ -191,8 +191,8 @@ URL: `{url}`
             ademb.add_field(name="Thumbnail URL:", value=f"`{thumbnail_url}`")
 
         sendable = self.bot.sendable_channel(ctx.channel)
-        if sendable[0] and sendable[1]:
-            await sendable[1].send(embed=emb)
+        if sendable:
+            await sendable.send(embed=emb)
         else:
             raise ValueError("Invalid channel")
 
@@ -328,8 +328,8 @@ URL: `{url}`
                         f"Ok, purging {amount} messages.", ephemeral=True
                     )
                     sendable = self.bot.sendable_channel(ctx.channel)
-                    if sendable[0] and sendable[1]:
-                        await sendable[1].purge(
+                    if sendable:
+                        await sendable.purge(
                             limit=amount, check=lambda message: not message.pinned
                         )
 
@@ -369,8 +369,8 @@ URL: `{url}`
             await ctx.respond(embed=embed, view=PurgeView(bot=self.bot), ephemeral=True)
         else:
             sendable = self.bot.sendable_channel(ctx.channel)
-            if sendable[0] and sendable[1]:
-                await sendable[1].purge(
+            if sendable:
+                await sendable.purge(
                     limit=amount, check=lambda message: not message.pinned
                 )
 

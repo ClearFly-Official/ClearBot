@@ -1,5 +1,6 @@
 import asyncio
 import io
+from typing import Literal
 import discord
 from discord.ui.item import Item
 import pyfiglet
@@ -35,7 +36,7 @@ class ButtonGameView(discord.ui.View):
     async def b1_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if interaction.user.id != self.ctx.author.id:
+        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
@@ -61,7 +62,7 @@ class ButtonGameView(discord.ui.View):
     async def b2_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if interaction.user.id != self.ctx.author.id:
+        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
@@ -87,7 +88,7 @@ class ButtonGameView(discord.ui.View):
     async def b3_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if interaction.user.id != self.ctx.author.id:
+        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
@@ -181,12 +182,12 @@ class FunCommands(discord.Cog):
     @option(
         "mode",
         description="The mode of the answers. This will determine the answer type.",
-        choices=["Normal", "Weird Mode"],
+        choices=["Normal", "Weird"],
     )
     async def VIIIball(
-        self, ctx: discord.ApplicationContext, question: str, mode: str = None
+        self, ctx: discord.ApplicationContext, question: str, mode: str = "Normal"
     ):
-        if (mode == None) or (mode == "Normal"):
+        if mode == "Normal":
             answers = [
                 "It is certain",
                 "Reply hazy, try again",
@@ -326,7 +327,7 @@ class FunCommands(discord.Cog):
         qclear = Image.open("images/quote/quote.png")
         qavmask = Image.open("images/quote/AVMask.png")
         img = Image.new("RGBA", (2048, 1024), 0)
-        img.paste(avatar, qavmask)
+        img.paste(avatar, qavmask)  # type: ignore
         img.paste(qclear, mask=qclear)
         font = ImageFont.truetype(
             "fonts/Inter-Regular.ttf",
@@ -367,28 +368,39 @@ class FunCommands(discord.Cog):
         fileName = "flaggame" + str(random.randint(0, 100)) + ".png"
 
         s = RandomSentence()
-        if difficulty == "Very Easy":
-            oldText = s.bare_bone_sentence()
-        if difficulty == "Easy":
-            oldText = s.simple_sentence()
-        if difficulty == "Normal":
-            oldText = s.bare_bone_with_adjective()
-        if difficulty == "Hard":
-            oldText = s.sentence()
-        if difficulty == "Very Hard":
-            oldText = s.sentence()
 
-        def flagGen(self, text, difficulty):
-            if difficulty == "Very Easy":
-                diff = "countrycodes_veasy.txt"
-            if difficulty == "Easy":
-                diff = "countrycodes_easy.txt"
-            if difficulty == "Normal":
-                diff = "countrycodes_normal.txt"
-            if difficulty == "Hard":
-                diff = "countrycodes_hard.txt"
-            if difficulty == "Very Hard":
-                diff = "countrycodes_vhard.txt"
+        match difficulty:
+            case "Very Easy":
+                oldText = s.simple_sentence()
+            case "Easy":
+                oldText = s.simple_sentence()
+            case "Normal":
+                oldText = s.bare_bone_with_adjective()
+            case "Hard":
+                oldText = s.sentence()
+            case "Very Hard":
+                oldText = s.sentence()
+            case _:
+                oldText = s.simple_sentence()
+
+        def flagGen(
+            text: str,
+            difficulty: Literal["Very Easy", "Easy", "Normal", "Hard", "Very Hard"],
+        ) -> str:
+            match difficulty:
+                case "Very Easy":
+                    diff = "countrycodes_veasy.txt"
+                case "Easy":
+                    diff = "countrycodes_easy.txt"
+                case "Normal":
+                    diff = "countrycodes_normal.txt"
+                case "Hard":
+                    diff = "countrycodes_hard.txt"
+                case "Very Hard":
+                    diff = "countrycodes_vhard.txt"
+                case _:
+                    diff = "countrycodes_veasy.txt"
+
             with open(f"ccodes/{diff}", "r") as f:
                 ccodes = f.readlines()
 
@@ -401,8 +413,8 @@ class FunCommands(discord.Cog):
             else:
                 return convText
 
-        newText = flagGen(self, text=oldText, difficulty=difficulty)
-        newText = str(textwrap.fill(newText, 28, max_lines=2))
+        newText = flagGen(text=oldText, difficulty=difficulty)
+        newText = textwrap.fill(newText, 28, max_lines=2)
 
         with Image.new("RGBA", (2048, 512)) as image:
             font = ImageFont.truetype("fonts/Inter-Regular.ttf", 144)
