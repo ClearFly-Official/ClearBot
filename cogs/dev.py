@@ -1,7 +1,5 @@
-import inspect
 import platform
 import subprocess
-from typing import Literal
 import discord
 import json
 import os
@@ -77,7 +75,7 @@ class DevCommands(discord.Cog):
         return doc_part, path
 
     @dev.command(name="docs", description="🗃️ Get information from the Pycord docs.")
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     @option(
         "doc_part",
         autocomplete=getattrs,
@@ -112,7 +110,7 @@ class DevCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @dev.command(name="reload_cogs", description="🔄 Reload the Cogs you want.")
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def reloadCogs(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -160,11 +158,13 @@ Reloaded cogs:
         await ctx.respond(embed=embed, view=CogSelectView(bot=self.bot))
 
     @dev.command(name="restart", description="🔁 Restarst the bot.")
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     async def restart(self, ctx: discord.ApplicationContext):
+        user = self.bot.user
         os.system("clear")
         embed = discord.Embed(
-            title=f"Restarting {self.bot.user.display_name}...", colour=self.bot.color()
+            title=f"Restarting {user.display_name if user else ''}...",
+            colour=self.bot.color(),
         )
         await ctx.respond(embed=embed, ephemeral=True)
         os.execv(sys.executable, ["python"] + sys.argv)
@@ -192,7 +192,7 @@ Reloaded cogs:
         name="update",
         description="⬇️ Pull the latest version of the bot from the GitHub repo.",
     )
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def gitupdate(self, ctx: discord.ApplicationContext):
         await ctx.defer()
@@ -521,6 +521,9 @@ Reloaded cogs:
                         "SELECT * FROM datarefs WHERE path = ?", (dataref,)
                     )
                     dref = await dref.fetchone()
+                    if not dref:
+                        raise ValueError("Couldn't fetch dataref from database.")
+
                 embed = discord.Embed(
                     title=f"Found this information for the provided dataref:",
                     colour=self.bot.color(),
@@ -663,12 +666,14 @@ Description :
         if dataref in customDatarefList:
             await ctx.defer()
             async with aiosqlite.connect("main.db") as db:
-                oldDref = await db.execute(
+                old_dref = await db.execute(
                     "SELECT * FROM datarefs WHERE path = ?", (dataref,)
                 )
-                oldDref = await oldDref.fetchone()
+                old_dref = await old_dref.fetchone()
+                if not old_dref:
+                    raise ValueError("Couldn't fetch dataref from database.")
             if path == None:
-                path = oldDref[1]
+                path = old_dref[1]
             newDref = {
                 "path": path,
                 "type": dataref_type,
@@ -727,8 +732,10 @@ Description :
         await ctx.respond(embed=embed)
 
     @discord.message_command(name="Message Info")
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     async def msginfo(self, ctx: discord.ApplicationContext, message: discord.Message):
+        sendable = self.bot.sendable_channel(message.channel)
+
         await ctx.respond(
             f"""
 ID: **{message.id}**
@@ -753,7 +760,7 @@ Type: **{message.type}**
 Author: **{message.author.mention}**
 Interaction: {message.interaction}
 Thread: {message.thread}
-Channel: {message.channel.mention}
+Channel: {sendable.mention if sendable else 'N/A' }
         """,
             allowed_mentions=discord.AllowedMentions.none(),
         )
@@ -811,7 +818,7 @@ Channel: {message.channel.mention}
     @dev.command(
         name="post_status", description="🌡️ Send a POST request to the status page."
     )
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     async def post_status(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         if platform.uname().node == "raspberrypi":
@@ -873,7 +880,7 @@ Channel: {message.channel.mention}
 
     async def get_tables(self, ctx: discord.AutocompleteContext):
         try:
-            async with aiosqlite.connect(self.database) as db:
+            async with aiosqlite.connect(str(self.database)) as db:
                 tables = await db.execute(
                     "SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name"
                 )
@@ -895,7 +902,7 @@ Channel: {message.channel.mention}
         description="Database to list a table of.",
         autocomplete=get_tables,
     )
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
         out = None
         try:
@@ -912,7 +919,7 @@ Channel: {message.channel.mention}
         description="The theme you want.",
         choices=["Default", "Halloween", "Christmas"],
     )
-    @commands.has_role(roles.get("admin"))
+    @commands.has_role(roles.get("admin", 0))
     async def theme(self, ctx: discord.ApplicationContext, theme: str):
         await ctx.defer()
 
@@ -926,8 +933,8 @@ Channel: {message.channel.mention}
                 theme_id = 2
 
         result = await self.bot.set_theme(ctx.author.name, theme_id)
-
-        failed = ", ".join(result.get("failed_roles"))
+        failed_roles = result.get("failed_rules", ["N/A"])
+        failed = ", ".join(failed_roles)  # type: ignore
 
         embed = discord.Embed(
             title=f"Succesfully set the theme to **{theme}**!",
