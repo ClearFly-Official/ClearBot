@@ -38,6 +38,7 @@ class ClearBot(discord.Bot):
             "va-overview": 1099712642916044881,
             "news": 1066124540318588928,
             "logs": 1001405648828891187,
+            "dev-chat": 965655791468183612,
         }
         self.roles = {
             "admin": 965422406036488282,

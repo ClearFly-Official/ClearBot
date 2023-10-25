@@ -33,12 +33,16 @@ class PollTypeYesNo(discord.ui.Modal):
         conf_embed = discord.Embed(
             title="Successfully created poll", colour=self.bot.color()
         )
-        conf_embed.add_field(name="Question", value=self.children[0].value)
+        conf_embed.add_field(name="Question", value=str(self.children[0].value))
         conf_embed.add_field(name="Type", value="Yes/No")
         await interaction.response.send_message(embed=conf_embed, ephemeral=True)
         embed = discord.Embed(title="Creating poll...", colour=self.bot.color())
-        message = await interaction.channel.send(embed=embed)
-        poll_id = message.id
+        channel = self.bot.sendable_channel(interaction.channel)
+        if channel and interaction.user:
+            message = await channel.send(embed=embed)
+            poll_id = message.id
+        else:
+            raise Exception("Unable to send poll message.")
 
         new_poll = {
             "poll_id": str(poll_id),
@@ -98,12 +102,17 @@ class PollTypeMChoice(discord.ui.Modal):
         conf_embed = discord.Embed(
             title="Successfully created poll", colour=self.bot.color()
         )
-        conf_embed.add_field(name="Question", value=self.children[0].value)
+        conf_embed.add_field(name="Question", value=str(self.children[0].value))
         conf_embed.add_field(name="Type", value=f"{self.choices} choices")
         await interaction.response.send_message(embed=conf_embed, ephemeral=True)
         embed = discord.Embed(title="Creating poll...", colour=self.bot.color())
-        message = await interaction.channel.send(embed=embed)
-        poll_id = message.id
+        channel = self.bot.sendable_channel(interaction.channel)
+        if channel and interaction.user:
+            message = await channel.send(embed=embed)
+            poll_id = message.id
+        else:
+            raise Exception("Unable to send poll message.")
+
         new_poll = {
             "poll_id": str(poll_id),
             "author": str(interaction.user.id),
@@ -143,7 +152,7 @@ class PollTypeMChoice(discord.ui.Modal):
 
 
 class UtilityCommands(discord.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: ClearBot):
         self.bot = bot
 
     utility = discord.SlashCommandGroup(
@@ -153,7 +162,7 @@ class UtilityCommands(discord.Cog):
     poll = utility.create_subgroup(name="poll", description="Commands related to polls")
     stats = utility.create_subgroup(
         name="stats", description="Commands related to statistics"
-    )
+    )  # type: ignore
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -177,7 +186,7 @@ class UtilityCommands(discord.Cog):
     )
     @option(
         "user",
-        description="The user involved(if more than one mention in comments unless raid)",
+        description="The user involved (if more than one mention in comments unless raid)",
         required=False,
     )
     @option(
@@ -193,7 +202,9 @@ class UtilityCommands(discord.Cog):
         comments: str,
     ):
         await ctx.defer(ephemeral=True)
-        channel = self.bot.get_channel(965655791468183612)
+        channel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("dev-chat", 0))
+        )
         embed = discord.Embed(
             title=f"{ctx.author} submitted a report!", color=self.bot.color()
         )
@@ -203,11 +214,12 @@ class UtilityCommands(discord.Cog):
             description="The team will come to help you as soon as possible.",
             color=self.bot.color(),
         )
-        if user == None:
-            user = "None was given"
         if priority == "low":
             embed.add_field(name="Subject:", value=subject)
-            embed.add_field(name="Involved User:", value=f"{user.mention}")
+            embed.add_field(
+                name="Involved User:",
+                value=f"{user.mention if user else '*None was given*'}",
+            )
             embed.add_field(
                 name="Comments *if any*:",
                 value=f"""
@@ -218,10 +230,14 @@ class UtilityCommands(discord.Cog):
                 inline=False,
             )
             await ctx.respond(embed=confirmembed)
-            await channel.send("Low priority report", embed=embed)
+            if channel:
+                await channel.send("Low priority report", embed=embed)
         if priority == "medium":
             embed.add_field(name="Subject:", value=subject)
-            embed.add_field(name="Involved User:", value=user)
+            embed.add_field(
+                name="Involved User:",
+                value=f"{user.mention if user else '*None was given*'}",
+            )
             embed.add_field(
                 name="Comments *if any*:",
                 value=f"""
@@ -232,12 +248,16 @@ class UtilityCommands(discord.Cog):
                 inline=False,
             )
             await ctx.respond(embed=confirmembed)
-            await channel.send(
-                "<@&965422406036488282> Medium priority report", embed=embed
-            )
+            if channel:
+                await channel.send(
+                    "<@&965422406036488282> Medium priority report", embed=embed
+                )
         if priority == "high":
             embed.add_field(name="Subject:", value=subject)
-            embed.add_field(name="Involved User:", value=user)
+            embed.add_field(
+                name="Involved User:",
+                value=f"{user.mention if user else '*None was given*'}",
+            )
             embed.add_field(
                 name="Comments *if any*:",
                 value=f"""
@@ -248,12 +268,13 @@ class UtilityCommands(discord.Cog):
                 inline=False,
             )
             await ctx.respond(embed=confirmembed)
-            await channel.send(
-                "<@&965422406036488282> ATTENTION ALL ADMINS", embed=embed
-            )
-            await channel.send(
-                "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
-            )
+            if channel:
+                await channel.send(
+                    "<@&965422406036488282> ATTENTION ALL ADMINS", embed=embed
+                )
+                await channel.send(
+                    "<@&965422406036488282> ^ THIS IS A HIGH PRIORITY REPORT"
+                )
 
     async def get_commands(self, ctx: discord.AutocompleteContext):
         cmds = []
@@ -267,21 +288,25 @@ class UtilityCommands(discord.Cog):
         "command",
         description="Get information for a specific command by inputting this option.",
         autocomplete=get_commands,
+        required=False,
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def help(self, ctx: discord.ApplicationContext, command: str = None):
-        if command != None:
-            cmds = []
+    async def help(self, ctx: discord.ApplicationContext, command: str):
+        if command:
+            cmd_list = []
             for cmd in self.bot.walk_application_commands():
                 if isinstance(cmd, discord.commands.SlashCommand):
-                    cmds.append(str(cmd))
-            if command in cmds:
+                    cmd_list.append(str(cmd))
+            if command in cmd_list:
                 cmd = self.bot.get_application_command(command)
-                if cmd.options == []:
+                if not cmd:
+                    raise Exception("Couldn't find command.")
+
+                if cmd.options == []:  # type: ignore
                     opts = ["`No options`"]
                 else:
                     opts = []
-                    for opt in cmd.options:
+                    for opt in cmd.options:  # type: ignore
                         opts.append(
                             f"`{opt.name}`(required: {opt.required}): {opt.description}"
                         )
@@ -290,11 +315,12 @@ class UtilityCommands(discord.Cog):
                     cd = "`No cooldown`"
                 else:
                     cd = f"`{cmd.cooldown.rate}` run(s) every `{round(cmd.cooldown.per)}s`"
+                cmd_m, cmd_d = cmd.mention, cmd.description  # type: ignore
                 embed = discord.Embed(
                     title=f"`/{command}` info",
                     description=f"""
-**Name**: {cmd.mention}
-**Description**: {cmd.description}
+**Name**: {cmd_m}
+**Description**: {cmd_d}
 **Cooldown**: {cd}
 **Options**: 
 {opts}
@@ -318,7 +344,7 @@ class UtilityCommands(discord.Cog):
                         group_names.append(cmd.name)
                         groups.append(cmd)
 
-            cmds = {"other": []}
+            cmds: dict = {"other": []}
             for cmd in self.bot.walk_application_commands():
                 if isinstance(cmd, discord.commands.SlashCommand):
                     if str(cmd).split(" ")[0] in group_names:
@@ -351,11 +377,11 @@ class UtilityCommands(discord.Cog):
                     options=select_groups,
                 )
                 async def select_callback(
-                    self, select: discord.SelectMenu, interaction: discord.Interaction
+                    self, select: discord.ui.Select, interaction: discord.Interaction
                 ):
                     await interaction.response.defer()
                     listed_cmds = []
-                    for cmd in cmds[select.values[0].lower()]:
+                    for cmd in cmds[str(select.values[0]).lower()]:
                         if cmd.options == []:
                             opts = ["`No options`"]
                         else:
@@ -370,7 +396,7 @@ class UtilityCommands(discord.Cog):
                         description="\n".join(listed_cmds),
                         colour=self.bot.color(),
                     )
-                    await interaction.edit_original_message(embed=embed)
+                    await interaction.edit_original_response(embed=embed)
 
             embed = discord.Embed(
                 title="Help!",
@@ -394,13 +420,13 @@ class UtilityCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @utility.command(name="avatar", description="🌌 Shows your avatar.")
-    @option("user", description="The user you want the avatar of.")
+    @option("user", description="The user you want the avatar of.", required=False)
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def avatar(
-        self, ctx: discord.ApplicationContext, user: discord.Member = None
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
-        if user == None:
+        if not user:
             user = ctx.author
             embed = discord.Embed(
                 title="Your avatar",
@@ -432,38 +458,50 @@ class UtilityCommands(discord.Cog):
         await ctx.respond(embed=embed)
 
     @utility.command(name="who-is", description="📰 Fetches a user profile.")
-    @option("user", description="The user you want the user profile of.")
+    @option(
+        "user", description="The user you want the user profile of.", required=False
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def whois(self, ctx: discord.ApplicationContext, user: discord.Member = None):
+    async def whois(
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
+    ):
         await ctx.defer()
-        if user == None:
+        if not user:
             user = ctx.author
         roles = []
-        status = str(user.status)
+        status = str(user.status) if isinstance(user, discord.Member) else "N/A"
         if status == "dnd":
             status = "Do Not Disturb"
-        for role in user.roles:
-            roles.append(f"<@&{role.id}>")
+
+        if isinstance(user, discord.Member):
+            for role in user.roles:
+                roles.append(f"<@&{role.id}>")
         roles = "\n".join(reversed(roles))
-        if user.is_on_mobile():
-            device = "Mobile"
-        else:
-            if status == "offline":
-                device = "User is offline"
+        if isinstance(user, discord.Member):
+            if user.is_on_mobile():
+                device = "Mobile"
             else:
-                device = "Desktop/Web"
+                if status == "offline":
+                    device = "User is offline"
+                else:
+                    device = "Desktop/Web"
+        else:
+            device = "N/A"
+
+        created_at = discord.utils.format_dt(user.created_at)  # type: ignore
+        joined_at = discord.utils.format_dt(user.joined_at) if isinstance(user, discord.Member) else "N/A"  # type: ignore
         embed = discord.Embed(
             title=f"**{user}'s profile:**",
             color=self.bot.color(),
             description=f"""
 {user.mention}
-**Created on:** {discord.utils.format_dt(user.created_at)}
+**Created on:** {created_at}
 **Status:** `{status.title()}`
-**Activity:** {user.activity}
+**Activity:** {user.activity if isinstance(user, discord.Member) else "N/A"}
 **Device:** `{device}`
 
-**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
-**Nickname:** {user.nick}
+**Joined ClearFly:** {joined_at}
+**Nickname:** {user.nick if isinstance(user, discord.Member) else "N/A"}
 **Roles:** 
 {roles}
         """,
@@ -473,36 +511,45 @@ class UtilityCommands(discord.Cog):
 
     @discord.user_command(name="User Profile")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def whois_app(self, ctx: discord.ApplicationContext, user: discord.Member):
+    async def whois_app(
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
+    ):
         await ctx.defer()
         roles = []
-        status = str(user.status)
-        for role in user.roles:
-            roles.append(f"<@&{role.id}>")
-        roles = "\n".join(reversed(roles))
+        status = str(user.status) if isinstance(user, discord.Member) else "N/A"
         if status == "dnd":
             status = "Do Not Disturb"
-        if user == None:
-            user = ctx.author
-        if user.is_on_mobile():
-            device = "Mobile"
-        else:
-            if status == "offline":
-                device = "User is offline"
+
+        if isinstance(user, discord.Member):
+            for role in user.roles:
+                roles.append(f"<@&{role.id}>")
+
+        roles = "\n".join(reversed(roles))
+        if isinstance(user, discord.Member):
+            if user.is_on_mobile():
+                device = "Mobile"
             else:
-                device = "Desktop/Web"
+                if status == "offline":
+                    device = "User is offline"
+                else:
+                    device = "Desktop/Web"
+        else:
+            device = "N/A"
+
+        created_at = discord.utils.format_dt(user.created_at)  # type: ignore
+        joined_at = discord.utils.format_dt(user.joined_at) if isinstance(user, discord.Member) else "N/A"  # type: ignore
         embed = discord.Embed(
             title=f"**{user}'s profile:**",
             color=self.bot.color(),
             description=f"""
 {user.mention}
-**Created on:** {discord.utils.format_dt(user.created_at)}
+**Created on:** {created_at}
 **Status:** `{status.title()}`
-**Activity:** {user.activity}
+**Activity:** {user.activity if isinstance(user, discord.Member) else "N/A"}
 **Device:** `{device}`
 
-**Joined ClearFly:** {discord.utils.format_dt(user.joined_at)}
-**Nickname:** {user.nick}
+**Joined ClearFly:** {joined_at}
+**Nickname:** {user.nick if isinstance(user, discord.Member) else "N/A"}
 **Roles:** 
 {roles}
         """,
@@ -577,7 +624,7 @@ class UtilityCommands(discord.Cog):
         ctx: discord.ApplicationContext,
         type: str,
         input: int,
-        exponent: int = None,
+        exponent: int | None = None,
     ):
         await ctx.defer()
         if type == "Square root":
@@ -589,7 +636,8 @@ class UtilityCommands(discord.Cog):
             await ctx.respond(embed=embed)
         if type == "Power" and exponent == None:
             await ctx.respond("You need to give a exponent...")
-        if type == "Power":
+            return
+        if type == "Power" and isinstance(exponent, int):
             if exponent > 2000:
                 embed = discord.Embed(
                     title="Exponent too large!", colour=self.bot.color(1)
@@ -670,7 +718,7 @@ class UtilityCommands(discord.Cog):
     @poll.command(name="end", description="❌ End a poll and see its results.")
     @discord.option("poll_id", description="ID of the poll you want to end.")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def end_poll(self, ctx: discord.ApplicationContext, poll_id: str):
+    async def end_poll(self, ctx: discord.ApplicationContext, poll_id_str: str):
         await ctx.defer(ephemeral=True)
 
         def progress_bar(percent: int) -> str:
@@ -679,8 +727,12 @@ class UtilityCommands(discord.Cog):
             return bar
 
         try:
-            poll_id = int(poll_id)
-            poll_msg = await ctx.channel.fetch_message(poll_id)
+            poll_id = int(poll_id_str)
+            channel = self.bot.sendable_channel(ctx.channel)
+            if channel:
+                poll_msg = await channel.fetch_message(poll_id)
+            else:
+                raise Exception("Message not found")
 
         except discord.NotFound:
             embed = discord.Embed(
@@ -952,6 +1004,8 @@ Second: **{second}**
         async with aiosqlite.connect("main.db") as db:
             cur = await db.execute("SELECT * FROM stats WHERE name='join'")
             join_stats = await cur.fetchone()
+            if not join_stats:
+                raise Exception("Couldn't fetch join_stats from database.")
 
         if int(join_stats[2]) == 0:
             join_pphrase = ""
@@ -969,15 +1023,23 @@ Second: **{second}**
                 join_pphrase = f"There was a {join_perc}% decrease in joins..."
 
         guild = ctx.guild
+        if not guild:
+            raise Exception("Couldn't fetch guild.")
+
+        created_at, created_at_rel = discord.utils.format_dt(guild.created_at), discord.utils.format_dt(guild.created_at, style="R")  # type: ignore
 
         embed = discord.Embed(
             title="Server Stats", colour=self.bot.color()
-        ).set_thumbnail(url=guild.icon.url)
+        ).set_thumbnail(
+            url=guild.icon.url
+            if guild.icon
+            else "https://matt3o0.is-a.dev/r/img_not_found/"
+        )
         embed.add_field(
             name="General",
             value=f"""
-Owner: {guild.owner.mention}({guild.owner.name}#{guild.owner.discriminator})
-Created At: {discord.utils.format_dt(guild.created_at)}({discord.utils.format_dt(guild.created_at, style="R")})
+Owner: {guild.owner.mention if guild.owner else "N/A"}({guild.owner.name if guild.owner else "N/A"})
+Created At: {created_at}({created_at_rel})
 Channel Count: **{len(guild.channels)}**
 Role Count: **{len(guild.roles)}**
         """,
@@ -1002,7 +1064,7 @@ Joins last week: **{join_stats[2]}**
 
     @stats.command(name="bot", description="📈 Show statistics about the bot.")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def stats(self, ctx: discord.ApplicationContext):
+    async def stats_cmd(self, ctx: discord.ApplicationContext):
         await ctx.defer()
         loc = 0
         f = open("main.py", "r")
