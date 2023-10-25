@@ -1,5 +1,7 @@
+import datetime
 import platform
 import subprocess
+import aiohttp
 import discord
 import json
 import os
@@ -41,6 +43,55 @@ async def getattrs2(ctx):
             return [f"{path}.{x}" for x in dir(variable) if not x.startswith("_")][:25]
         except AttributeError:
             return [f"{path}.{x}" for x in dir(variable) if ctx.value in x][:25]
+
+
+class LocalStatusStatsView(discord.ui.View):
+    def __init__(self, bot: ClearBot, author_id: int):
+        self.bot = bot
+        self.author_id = author_id
+        super().__init__(timeout=60, disable_on_timeout=True)
+
+    @discord.ui.button(
+        label="API Response", style=discord.ButtonStyle.primary, emoji="👁️"
+    )
+    async def button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        if not self.bot.is_interaction_owner(interaction, self.author_id):
+            await interaction.response.send_message(
+                "Run the command yourself to use it!"
+            )
+            return
+
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(
+                "https://local-status.vercel.app/api/fetch?name=rpi-stats"
+            ) as resp:
+                data = await resp.json()
+                cpu = data.get("cpu", {"temperature": -1, "usage_percent": -1})
+                ram = data.get(
+                    "ram", {"usage_percent": -1, "usage_mb": -1, "total_mb": -1}
+                )
+
+        last_update = datetime.datetime.fromtimestamp(data.get("last_update", 0))
+        embed = discord.Embed(
+            title="LocalStatus API Response",
+            description=f"""
+## CPU
+**Temperature**: {cpu.get("temperature")}°C
+**Usage**: {cpu.get("usage_percent")}%
+
+## RAM
+**Usage**: {ram.get("usage_percent")}% ({ram.get("usage_mb")}MB/{ram.get("total_mb")}MB)
+
+## Misc
+**PMIC Temperature**: {data.get("misc", {"pmic_temp": -1}).get("pmic_temp")}°C
+        """,
+            color=self.bot.color(),
+            timestamp=last_update,
+        )
+
+        await interaction.response.send_message(embed=embed, delete_after=15)
 
 
 class DevCommands(discord.Cog):
@@ -824,15 +875,16 @@ Channel: {sendable.mention if sendable else 'N/A' }
         if platform.uname().node == "raspberrypi":
             try:
                 os.system("python3 ~/update.py")
-                view = discord.ui.View()
+                view = LocalStatusStatsView(self.bot, ctx.author.id)
                 view.add_item(
                     item=discord.ui.Button(
-                        label="Status Page", url="https://local-status.vercel.app"
+                        label="LocalStatus",
+                        url="https://local-status.vercel.app",
                     )
                 )
                 embed = discord.Embed(
                     title="Success!",
-                    description="Check out the new data!",
+                    description="I've successfully sent a POST request to the [status page](https://local-status.vercel.app). Check it out in the browser or by the blue button below.",
                     colour=self.bot.color(),
                 )
                 await ctx.respond(embed=embed, view=view)

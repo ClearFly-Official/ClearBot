@@ -22,7 +22,7 @@ class TagCommands(discord.Cog):
     async def on_ready(self):
         print("\033[34m|\033[0m \033[96;1mTags\033[0;36m cog loaded sucessfully\033[0m")
 
-    async def get_tags(ctx: discord.AutocompleteContext):
+    async def get_tags(self, ctx: discord.AutocompleteContext):
         async with aiosqlite.connect("main.db") as db:
             cursor = await db.execute("SELECT name FROM tags")
             rows = await cursor.fetchall()
@@ -56,6 +56,8 @@ class TagCommands(discord.Cog):
                 curs = await db.cursor()
                 output = await curs.execute("SELECT * FROM tags WHERE name=?", (tag,))
                 output = await output.fetchone()
+                if not output:
+                    raise ValueError("Couldn't fetch the tag from the database")
             if raw:
                 await ctx.respond(
                     f"```\n{output[2]}\n```",
@@ -131,7 +133,8 @@ Didn't found {tag}.
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def add(self, ctx: discord.ApplicationContext):
         class AddTagModal(discord.ui.Modal):
-            def __init__(self, *args, **kwargs) -> None:
+            def __init__(self, bot: ClearBot, *args, **kwargs) -> None:
+                self.bot = bot
                 super().__init__(*args, **kwargs)
 
                 self.add_item(
@@ -167,17 +170,19 @@ Didn't found {tag}.
                 )
                 await interaction.response.send_message(embed=embed)
 
-        modal = AddTagModal(title="Create a new tag.")
+        modal = AddTagModal(bot=self.bot, title="Create a new tag.")
         await ctx.send_modal(modal)
 
     @tags.command(description="✍️ Edit a tag.")
     @option("edit", description="The tag you want to edit.", autocomplete=get_tags)
     @option("name", description="The name of the edited tag.")
     @option("value", description="The value of the edited tag.")
+    @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def edit(self, ctx: discord.ApplicationContext, edit: str):
         class EditTagModal(discord.ui.Modal):
-            def __init__(self, *args, **kwargs) -> None:
+            def __init__(self, bot: ClearBot, *args, **kwargs) -> None:
+                self.bot = bot
                 super().__init__(*args, **kwargs)
 
                 self.add_item(
@@ -231,12 +236,20 @@ Didn't found {edit}.
             curs = await db.cursor()
             edit_tag = await curs.execute("SELECT * FROM tags WHERE name=?", (edit,))
             edit_tag = await edit_tag.fetchone()
+            if not edit_tag:
+                raise ValueError("Couldn't fetch tag from database.")
+
+        if isinstance(ctx.author, discord.User):
+            return
+
         authroles = [role.id for role in ctx.author.roles]
         if int(edit_tag[3]) == ctx.author.id:
-            modal = EditTagModal(title="Edit a tag.")
+            modal = EditTagModal(bot=self.bot, title="Edit a tag.")
             await ctx.send_modal(modal)
-        elif 965422406036488282 in authroles:
-            modal = EditTagModal(title="Edit a tag(this is not your tag!).")
+        elif self.bot.roles.get("admin", 0) in authroles:
+            modal = EditTagModal(
+                bot=self.bot, title="Edit a tag (this is not your tag!)."
+            )
             await ctx.send_modal(modal)
         else:
             embed = discord.Embed(
@@ -248,6 +261,7 @@ Didn't found {edit}.
 
     @tags.command(description="⛔️ Delete a tag.")
     @option("tag", description="The tag you want to delete.", autocomplete=get_tags)
+    @commands.guild_only()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def delete(self, ctx: discord.ApplicationContext, tag: str):
         await ctx.defer()
@@ -255,6 +269,12 @@ Didn't found {edit}.
             curs = await db.cursor()
             del_tag = await curs.execute("SELECT * FROM tags WHERE name=?", (tag,))
             del_tag = await del_tag.fetchone()
+            if not del_tag:
+                raise ValueError("Couldn't fetch tag from database.")
+
+        if isinstance(ctx.author, discord.User):
+            return
+
         authroles = [role.id for role in ctx.author.roles]
         if int(del_tag[3]) == ctx.author.id:
             async with aiosqlite.connect("main.db") as db:
@@ -264,7 +284,7 @@ Didn't found {edit}.
             embed = discord.Embed(
                 title=f"Tag `{tag}` deleted successfully", colour=self.bot.color()
             )
-        elif 965422406036488282 in authroles:
+        elif self.bot.roles.get("admin", 0) in authroles:
             async with aiosqlite.connect("main.db") as db:
                 cursor = await db.cursor()
                 await cursor.execute("DELETE FROM tags WHERE name=?", (tag,))
