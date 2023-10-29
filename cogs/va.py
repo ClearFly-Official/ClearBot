@@ -1412,7 +1412,7 @@ Destination: **{flight_id2[5]}**
             async def select_callback(
                 self, select: discord.ui.Select, interaction: discord.Interaction
             ):
-                if self.bot.is_interaction_owner(interaction, ctx.author.id):
+                if not self.bot.is_interaction_owner(interaction, ctx.author.id):
                     await interaction.response.send_message(
                         "Run the command yourself to use it!", ephemeral=True
                     )
