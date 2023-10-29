@@ -7,6 +7,14 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 
+class UserObject:
+    def __init__(self):
+        self.id = 0
+        self.name = "N/A"
+        self.display_name = "N/A"
+        self.global_name = "N/A"
+
+
 class ClearBot(discord.Bot):
     def __init__(self, *args, **kwargs):
         self.color = self.embed_color
@@ -30,12 +38,17 @@ class ClearBot(discord.Bot):
 
         self.server_id = 965419296937365514
         self.bot_author = 668874138160594985
+        self.bot_id = 0
+
+        if self.user:
+            self.bot_id = self.user.id
 
         self.channels = {
             "info": 1002194493304479784,
             "arrivals": 965600413376200726,
             "fbo": 1013934267966967848,
             "va-overview": 1099712642916044881,
+            "va-liveries": 1041057335449227314,
             "news": 1066124540318588928,
             "logs": 1001405648828891187,
             "dev-chat": 965655791468183612,
@@ -137,6 +150,15 @@ class ClearBot(discord.Bot):
             return
         else:
             return channel
+
+    def user_object(
+        self, user: discord.User | discord.Member | None
+    ) -> UserObject | discord.Member | discord.User:
+        if user:
+            return user
+        else:
+            user_o = UserObject()
+            return user_o
 
     def is_interaction_owner(
         self, interaction: discord.Interaction, user_id: int

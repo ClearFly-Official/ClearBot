@@ -5,6 +5,7 @@ import json
 import math
 import sqlite3
 import textwrap
+from typing import List, Literal
 import aiohttp
 import discord
 import aiosqlite
@@ -22,7 +23,7 @@ from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
 
-async def get_users(get_type="full"):
+async def get_users(get_type: Literal["id", "full"] = "id"):
     out = []
     async with aiosqlite.connect("va.db") as db:
         cur = await db.execute("SELECT * FROM users")
@@ -109,7 +110,7 @@ async def generate_flight_number(
 
 async def get_aircraft_from_type(
     aircraft_type: str = "All", output_type: str = "list"
-) -> list[str] | list[tuple]:
+) -> list:
     aircraft_types = ["Airliner", "GA", "All"]
     if aircraft_type not in aircraft_types:
         aircraft_type = "All"
@@ -127,10 +128,11 @@ async def get_aircraft_from_type(
         aircraft = [ac[1] for ac in aircraft]
     elif output_type == "IN_SQL":
         aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
-    return aircraft
+
+    return list(aircraft)
 
 
-def get_flights_from_user(user: discord.Member) -> list[tuple]:
+def get_flights_from_user(user: discord.Member | discord.User) -> list[tuple]:
     db = sqlite3.connect("va.db")
     cur = db.execute("SELECT * FROM flights WHERE user_id=?", (str(user.id),))
     flights = cur.fetchall()
@@ -191,7 +193,9 @@ class VAStartView(discord.ui.View):
         self, button: discord.Button, interaction: discord.Interaction
     ):
         user_ids = await get_users("id")
-        if str(interaction.user.id) in user_ids:
+        if not interaction.user or isinstance(interaction.user, discord.User):
+            return
+        if str(interaction.user.id) in list(user_ids):
             embed = discord.Embed(
                 title="You're already part of the VA!",
                 colour=self.bot.color(1),
@@ -199,10 +203,15 @@ class VAStartView(discord.ui.View):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            guild = self.bot.get_guild(965419296937365514)
-            role = guild.get_role(1013933799777783849)
-            await interaction.user.add_roles(role)
-            fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+            guild = self.bot.get_guild(self.bot.server_id)
+            if guild:
+                role = guild.get_role(self.bot.roles.get("clearfly-pilot", 0))
+                if role:
+                    await interaction.user.add_roles(role)
+            fbo = self.bot.get_channel(self.bot.channels.get("fbo", 0))
+            if not isinstance(fbo, discord.TextChannel):
+                return
+
             embed = discord.Embed(
                 title="Thanks for joining our VA!",
                 colour=self.bot.color(),
@@ -249,6 +258,9 @@ class VAReportModal(discord.ui.Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
+        if not interaction.user:
+            return
+
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
                 "SELECT id FROM flights WHERE user_id=?", (str(interaction.user.id),)
@@ -257,7 +269,7 @@ class VAReportModal(discord.ui.Modal):
 
             report = {
                 "user_id": str(interaction.user.id),
-                "flight_id": flights[-1][0],
+                "flight_id": flights[-1][0],  # type: ignore
                 "time": round(time.time()),
                 "title": self.children[0].value,
                 "content": self.children[1].value,
@@ -269,7 +281,7 @@ class VAReportModal(discord.ui.Modal):
             )
             await db.execute(
                 "UPDATE flights SET incident=' **__INCIDENT__**' WHERE id=?",
-                (flights[-1][0],),
+                (flights[-1][0],),  # type: ignore
             )
             await db.commit()
             embed = discord.Embed(
@@ -318,10 +330,10 @@ class VACommands(discord.Cog):
     async def auto_complete_flight(self, message: discord.Message):
         if message.channel.id != self.bot.channels.get("fbo"):
             return
-        if message.author.id != self.bot.user.id and len(message.embeds) != 0:
+        if message.author.id != self.bot.bot_id and len(message.embeds) != 0:
             embed = message.embeds[0]
 
-            lines = embed.description.split("\n")
+            lines = str(embed.description).split("\n")
 
             title = (
                 lines[0]
@@ -359,9 +371,11 @@ class VACommands(discord.Cog):
                 else:
                     await db.execute(
                         "UPDATE flights SET is_completed=1 WHERE id=?",
-                        (flight_ids[0][0],),
+                        (flight_ids[0][0],),  # type: ignore
                     )
                     await db.commit()
+
+                flight_id2 = flight_id2[0]  # type: ignore
                 embed = discord.Embed(
                     title="Flight automatically completed!",
                     colour=self.bot.color(),
@@ -369,10 +383,10 @@ class VACommands(discord.Cog):
                 ).add_field(
                     name="Flight Details",
                     value=f"""
-Flight number: **{flight_id2[0][2]}**
-Aircraft: **{flight_id2[0][3]}**
-Origin: **{flight_id2[0][4]}**
-Destination: **{flight_id2[0][5]}**
+Flight number: **{flight_id2[2]}**
+Aircraft: **{flight_id2[3]}**
+Origin: **{flight_id2[4]}**
+Destination: **{flight_id2[5]}**
                 """,
                 )
             await message.reply(embed=embed)
@@ -384,10 +398,13 @@ Destination: **{flight_id2[0][5]}**
             if ((round(time.time()) - user[2]) > 86_400) and (user[3] == 1):
                 try:
                     user_dm = self.bot.get_user(int(user[1]))
-                    guild = self.bot.get_guild(965419296937365514)
+                    guild = self.bot.get_guild(self.bot.server_id)
+                    if not guild:
+                        return
                     user_role = guild.get_member(int(user[1]))
-                    role = guild.get_role(1013933799777783849)
-                    await user_role.remove_roles(role)
+                    role = guild.get_role(self.bot.roles.get("clearfly-pilot", 0))
+                    if role and user_role:
+                        await user_role.remove_roles(role)
                     if user_dm is not None:
                         user_embed = discord.Embed(
                             title="You have been kicked from the ClearFly VA.",
@@ -421,7 +438,11 @@ The ClearFly Team
                     round(time.time() - flight[6]) <= 83_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=self.bot.color(2),
@@ -434,13 +455,18 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
 **THIS IS YOUR __LAST__ REMINDER**
                                 """,
                     )
-                    await fbo.send(user.mention, embed=embed)
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
 
                 if (round(time.time() - flight[6]) >= 64_800) and (
                     round(time.time() - flight[6]) <= 65_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=self.bot.color(2),
@@ -451,13 +477,18 @@ We have noticed that you have not completed your last flight yet. Please remembe
 Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You will be reminded one last time before it's too late <t:{flight[6]+82_800}:R>
                                 """,
                     )
-                    await fbo.send(user.mention, embed=embed)
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
 
                 if (round(time.time() - flight[6]) >= 43_200) and (
                     round(time.time() - flight[6]) <= 43_800
                 ):
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
                     embed = discord.Embed(
                         title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
                         colour=self.bot.color(2),
@@ -468,7 +499,8 @@ We have noticed that you have not completed your last flight yet. Please remembe
 Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Another reminder will be sent <t:{flight[6]+64_800}:R> if you haven't completed it yet.
                                 """,
                     )
-                    await fbo.send(user.mention, embed=embed)
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
 
                 if (round(time.time()) - flight[6]) > 86_400:
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
@@ -476,7 +508,11 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Ano
                         "DELETE FROM reports WHERE flight_id=?", (flight[0],)
                     )
                     user = self.bot.get_user(int(flight[1]))
-                    fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
                     embed = discord.Embed(
                         title="Your last filed flight has been cancelled.",
                         colour=self.bot.color(2),
@@ -487,7 +523,8 @@ Around <t:{flight[6]}:R> you filed a flight, but never marked it as completed. T
 This sadly happened to your last flight. Please remember to mark your flight as completed next time!
                                 """,
                     )
-                    await fbo.send(user.mention, embed=embed)
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
 
             await db.commit()
 
@@ -524,15 +561,18 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             await ctx.respond(embed=embed)
             return
         usrs = await get_users("id")
-        if str(ctx.author.id) not in usrs:
-            overv_channel = self.bot.get_channel(self.bot.channels.get("va-overview"))
-            embed = discord.Embed(
-                title="You're not part of the VA!",
-                colour=self.bot.color(1),
-                description=f"Feel free to sign up at any time in {overv_channel.mention}",
+        if str(ctx.author.id) not in list(usrs):
+            overv_channel = self.bot.get_channel(
+                self.bot.channels.get("va-overview", 0)
             )
-            await ctx.respond(embed=embed)
-            return
+            if isinstance(overv_channel, discord.TextChannel):
+                embed = discord.Embed(
+                    title="You're not part of the VA!",
+                    colour=self.bot.color(1),
+                    description=f"Feel free to sign up at any time in {overv_channel.mention}",
+                )
+                await ctx.respond(embed=embed)
+                return
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
@@ -574,7 +614,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 ) as r:
                     resp = await r.json()
         except:
-            resp = {"results": 0}
+            resp = {"results": []}
 
         flight_num = await generate_flight_number(
             aircraft, origin[:4].upper(), destination[:4].upper()
@@ -596,6 +636,10 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 (str(ctx.author.id),),
             )
             is_trial = await cur.fetchone()
+            if not is_trial:
+                raise Exception(
+                    "Failed to check wether you are a first time user or not."
+                )
             is_completed = await cur2.fetchall()
             if is_trial[0] == 1:
                 embed.set_footer(
@@ -606,7 +650,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 )
                 await db.commit()
             if not is_completed == []:
-                if is_completed[-1][0] == 0:
+                if is_completed[-1][0] == 0:  # type: ignore
                     embed = discord.Embed(
                         title="You haven't completed your last flight!",
                         colour=self.bot.color(1),
@@ -621,14 +665,23 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         metar_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=36)
 
         data = ""
-        if resp["results"] == 0:
+        if not resp["results"]:
             data = "No METAR data found."
         else:
-            data = str(resp["data"][0])
+            data = str(
+                resp.get(
+                    "data",
+                    [
+                        "N/A",
+                    ],
+                )[0]
+            )
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT * FROM aircraft WHERE icao=?", (aircraft,))
             aircraft_data = await cur.fetchone()
+            if not aircraft_data:
+                raise Exception("Couldn't fetch aircraft data.")
 
         with open("airports.json", "r") as f:
             airport_data = json.load(f)
@@ -665,7 +718,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             flight_time = f"{flight_time[0]}:{flight_time[1]}"
 
             pilmoji.text(
-                (img.size[0] - (font.getlength(time_str) + x_padding), 43),
+                (img.size[0] - (font.getlength(time_str) + x_padding), 43),  # type: ignore
                 time_str,
                 font=font,
                 fill=colour,
@@ -687,7 +740,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                             route_font.getlength(destination[:4].upper())
                             + (x_padding + 10)
                         )
-                    ),
+                    ),  # type: ignore
                     145,
                 ),
                 destination[:4].upper(),
@@ -733,7 +786,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 fill=colour,
             )
             pilmoji.text(
-                (x_padding + 5, 525 + x_padding / 2),
+                (x_padding + 5, 525 + x_padding / 2),  # type: ignore
                 textwrap.fill(data, 46, max_lines=3),
                 font=metar_font,
                 fill=colour,
@@ -801,9 +854,11 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 return
             else:
                 await db.execute(
-                    "UPDATE flights SET is_completed=1 WHERE id=?", (flight_ids[0][0],)
+                    "UPDATE flights SET is_completed=1 WHERE id=?", (flight_ids[0][0],)  # type: ignore
                 )
                 await db.commit()
+
+            flight_id2 = flight_id2[0]  # type: ignore
             embed = discord.Embed(
                 title="Flight completed!",
                 colour=self.bot.color(),
@@ -811,10 +866,10 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             ).add_field(
                 name="Flight Details",
                 value=f"""
-Flight number: **{flight_id2[0][2]}**
-Aircraft: **{flight_id2[0][3]}**
-Origin: **{flight_id2[0][4]}**
-Destination: **{flight_id2[0][5]}**
+Flight number: **{flight_id2[2]}**
+Aircraft: **{flight_id2[3]}**
+Origin: **{flight_id2[4]}**
+Destination: **{flight_id2[5]}**
             """,
             )
         await ctx.respond(embed=embed)
@@ -842,7 +897,7 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await ctx.respond(embed=embed)
                 return
-            last_flight = flights[-1]
+            last_flight = flights[-1]  # type: ignore
 
             if last_flight[7]:
                 embed = discord.Embed(
@@ -892,7 +947,7 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await ctx.respond(embed=embed)
                 return
-            last_flight = flights[-1]
+            last_flight = flights[-1]  # type: ignore
 
             if last_flight[7]:
                 embed = discord.Embed(
@@ -938,7 +993,7 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await ctx.respond(embed=embed)
                 return
-            last_flight = flights[-1]
+            last_flight = flights[-1]  # type: ignore
 
             if last_flight[7]:
                 embed = discord.Embed(
@@ -948,13 +1003,19 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await ctx.respond(embed=embed)
             else:
-                await ctx.send_modal(VAReportModal(title="Report an incident"))
+                await ctx.send_modal(
+                    VAReportModal(self.bot, title="Report an incident")
+                )
 
     @user.command(name="view_report", description="📄 View a users reports.")
-    @discord.option(name="user", description="The user you want to see the flights of.")
+    @discord.option(
+        name="user",
+        description="The user you want to see the flights of.",
+        required=False,
+    )
     @commands.has_role(1013933799777783849)
     async def va_view_report(
-        self, ctx: discord.ApplicationContext, user: discord.Member = None
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
@@ -963,7 +1024,7 @@ Destination: **{flight_id2[0][5]}**
             )
             await ctx.respond(embed=embed)
             return
-        if user == None:
+        if not user:
             user = ctx.author
 
         async with aiosqlite.connect("va.db") as db:
@@ -977,7 +1038,7 @@ Destination: **{flight_id2[0][5]}**
                 )
                 await ctx.respond(embed=embed)
                 return
-            reports.reverse()
+            reports.reverse()  # type: ignore
 
         pages = [
             Page(
@@ -989,7 +1050,9 @@ Destination: **{flight_id2[0][5]}**
 {report[5]}
                         """,
                         colour=self.bot.color(),
-                    ).set_footer(text=f"Total of {len(reports)} reports")
+                    ).set_footer(
+                        text=f"Total of {len(reports)} reports"  # type: ignore
+                    )
                 ]
             )
             for report in reports
@@ -998,10 +1061,14 @@ Destination: **{flight_id2[0][5]}**
         await paginator.respond(ctx.interaction)
 
     @user.command(name="flights", description="🛬 View a users flights.")
-    @discord.option(name="user", description="The user you want to see the flights of.")
+    @discord.option(
+        name="user",
+        description="The user you want to see the flights of.",
+        required=False,
+    )
     @commands.has_role(1013933799777783849)
     async def va_flights(
-        self, ctx: discord.ApplicationContext, user: discord.Member = None
+        self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
         if await is_banned(ctx.author):
@@ -1058,7 +1125,11 @@ Destination: **{flight_id2[0][5]}**
 
     @user.command(name="map", description="🌍 View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
-    @discord.option(name="user", description="The user you want to see the flights of.")
+    @discord.option(
+        name="user",
+        description="The user you want to see the flights of.",
+        required=False,
+    )
     @discord.option(
         name="version",
         description="The map version you want to use.",
@@ -1071,7 +1142,7 @@ Destination: **{flight_id2[0][5]}**
     async def va_flight_map(
         self,
         ctx: discord.ApplicationContext,
-        user: discord.Member = None,
+        user: discord.Member | discord.User,
         version: str = "All",
         auto_zoom: bool = True,
     ):
@@ -1083,7 +1154,7 @@ Destination: **{flight_id2[0][5]}**
             await ctx.respond(embed=embed)
             return
 
-        if user is None:
+        if not user:
             user = ctx.author
 
         if not await has_flights(user):
@@ -1227,7 +1298,7 @@ Destination: **{flight_id2[0][5]}**
             map_file = discord.File(output, filename=output_filename)
             embed = discord.Embed(
                 title=f"{user.name}'s flight map",
-                description=f"{user.mention} has completed **{len(waypoints_data)}** {flight_type} flight(s)!",
+                description=f"{user.mention} has completed **{len(waypoints_data)}** {flight_type} flight(s)!",  # type: ignore
                 colour=self.bot.color(),
             ).set_image(url=f"attachment://{output_filename}")
             if auto_zoom:
@@ -1240,7 +1311,11 @@ Destination: **{flight_id2[0][5]}**
 
     @user.command(name="flight", description="🗺️ View a user's flights in map style.")
     @commands.has_role(1013933799777783849)
-    @discord.option(name="user", description="The user you want to see the flight of.")
+    @discord.option(
+        name="user",
+        description="The user you want to see the flight of.",
+        required=False,
+    )
     @discord.option(
         name="auto_zoom", description="Zoom automatically to fit the flight."
     )
@@ -1248,7 +1323,7 @@ Destination: **{flight_id2[0][5]}**
     async def va_flight(
         self,
         ctx: discord.ApplicationContext,
-        user: discord.Member = None,
+        user: discord.Member | discord.User,
         auto_zoom: bool = True,
     ):
         await ctx.defer()
@@ -1259,7 +1334,7 @@ Destination: **{flight_id2[0][5]}**
             await ctx.respond(embed=embed)
             return
 
-        if user is None:
+        if not user:
             user = ctx.author
 
         if not await has_flights(user):
@@ -1312,7 +1387,7 @@ Destination: **{flight_id2[0][5]}**
         class VAFlightSelectView(discord.ui.View):
             def __init__(
                 self,
-                bot: discord.Bot,
+                bot: ClearBot,
                 flights: list[list[str]],
                 flight_list_number: int,
             ):
@@ -1323,7 +1398,10 @@ Destination: **{flight_id2[0][5]}**
 
             async def on_timeout(self):
                 for child in self.children:
-                    child.disabled = True
+                    if isinstance(child, discord.ui.Select) or isinstance(
+                        child, discord.ui.Button
+                    ):
+                        child.disabled = True
                 await ctx.edit(view=self)
 
             @discord.ui.select(
@@ -1332,13 +1410,16 @@ Destination: **{flight_id2[0][5]}**
                 options=get_flights(),
             )
             async def select_callback(
-                self, select: discord.SelectMenu, interaction: discord.Interaction
+                self, select: discord.ui.Select, interaction: discord.Interaction
             ):
-                if interaction.user.id != ctx.author.id:
+                if self.bot.is_interaction_owner(interaction, ctx.author.id):
                     await interaction.response.send_message(
                         "Run the command yourself to use it!", ephemeral=True
                     )
                     return
+                if not isinstance(select.values[0], str):
+                    return
+
                 await interaction.response.defer()
                 async with aiosqlite.connect("va.db") as db:
                     cursor = await db.execute(
@@ -1346,11 +1427,15 @@ Destination: **{flight_id2[0][5]}**
                         (int(select.values[0]),),
                     )
                     flight_data = await cursor.fetchone()
+                    if not flight_data:
+                        return
                     cursor = await db.execute(
                         "SELECT crz_speed, type FROM aircraft WHERE icao=?",
                         (flight_data[3],),
                     )
                     aircraft_data = await cursor.fetchone()
+                    if not aircraft_data:
+                        raise Exception("No aircraft data available.")
 
                 with open("airports.json", "r") as file:
                     airports_data = json.load(file)
@@ -1365,6 +1450,8 @@ Destination: **{flight_id2[0][5]}**
                     origin_coords = (origin_data["lat"], origin_data["lon"])
                     dest_coords = (dest_data["lat"], dest_data["lon"])
                     waypoints.append((origin_coords, dest_coords))
+                else:
+                    raise Exception("No origin/destination data available.")
 
                 for waypoint in waypoints:
                     fig.add_trace(
@@ -1522,12 +1609,14 @@ Notes:
                 if self.flight_list_number < 0:
                     return
                 for child in self.children:
-                    if str(child.type) == "ComponentType.string_select":
-                        child.options = self.flights[self.flight_list_number]
-                    else:
+                    if str(child.type) == "ComponentType.string_select" and isinstance(
+                        child, discord.ui.Select
+                    ):
+                        child.options = self.flights[self.flight_list_number]  # type: ignore
+                    elif isinstance(child, discord.ui.Button):
                         if (self.flight_list_number == 0) and (child.label == "<"):
                             child.disabled = True
-                        elif child.label.endswith(str(len(self.flights))):
+                        elif str(child.label).endswith(str(len(self.flights))):
                             child.label = (
                                 f"{self.flight_list_number+1}/{len(self.flights)}"
                             )
@@ -1555,14 +1644,16 @@ Notes:
                 if self.flight_list_number > len(self.flights) - 1:
                     return
                 for child in self.children:
-                    if str(child.type) == "ComponentType.string_select":
-                        child.options = self.flights[self.flight_list_number]
-                    else:
+                    if str(child.type) == "ComponentType.string_select" and isinstance(
+                        child, discord.ui.Select
+                    ):
+                        child.options = self.flights[self.flight_list_number]  # type: ignore
+                    elif isinstance(child, discord.ui.Button):
                         if (self.flight_list_number == (len(self.flights) - 1)) and (
                             child.label == ">"
                         ):
                             child.disabled = True
-                        elif child.label.endswith(str(len(self.flights))):
+                        elif str(child.label).endswith(str(len(self.flights))):
                             child.label = (
                                 f"{self.flight_list_number+1}/{len(self.flights)}"
                             )
@@ -1606,7 +1697,7 @@ Notes:
         )
         img = Image.open(f"images/leaderboard/{self.bot.theme}/lb.png")
         names = [
-            f"{i}      {(await self.bot.get_or_fetch_user(int(elem[0]))).name}"
+            f"{i}      {self.bot.user_object(await self.bot.get_or_fetch_user(int(elem[0]))).name}"
             for i, elem in enumerate(lb, 1)
         ]
         values = [f"Flights: {elem[1]}" for elem in lb]
@@ -1655,38 +1746,61 @@ Notes:
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT COUNT(*) FROM flights")
-            total_flights = (await cur.fetchone())[0]
+            total_flights = await cur.fetchone()
+            if not total_flights:
+                raise Exception("Failed to get flight count.")
+            total_flights = total_flights[0]
 
             cur = await db.execute("SELECT COUNT(*) FROM flights WHERE incident != ''")
-            incident_flights = (await cur.fetchone())[0]
+            incident_flights = await cur.fetchone()
+            if not incident_flights:
+                raise Exception("Failed to get incident count.")
+            incident_flights = incident_flights[0]
 
             cur = await db.execute("SELECT COUNT(*) FROM users")
-            total_users = (await cur.fetchone())[0]
+            total_users = await cur.fetchone()
+            if not total_users:
+                raise Exception("Failed to get incident count.")
+            total_users = total_users[0]
 
             cur = await db.execute(
                 "SELECT aircraft, COUNT(*) as count FROM flights GROUP BY aircraft ORDER BY count DESC LIMIT 1"
             )
-            most_used_aircraft = (await cur.fetchone())[0]
+            most_used_aircraft = await cur.fetchone()
+            if not most_used_aircraft:
+                raise Exception("Failed to get most used aircraft.")
+            most_used_aircraft = most_used_aircraft[0]
 
             cur = await db.execute(
                 "SELECT COUNT(*), COUNT(CASE WHEN is_official THEN 1 END) FROM aircraft"
             )
             total_aircraft = await cur.fetchone()
+            if not total_aircraft:
+                raise Exception("Failed to get aircraft count.")
 
             cur = await db.execute(
                 "SELECT origin, COUNT(*) as count FROM flights GROUP BY origin ORDER BY count DESC LIMIT 1"
             )
-            most_common_origin = (await cur.fetchone())[0]
+            most_common_origin = await cur.fetchone()
+            if not most_common_origin:
+                raise Exception("Failed to get most common origin.")
+            most_common_origin = most_common_origin[0]
 
             cur = await db.execute(
                 "SELECT destination, COUNT(*) as count FROM flights GROUP BY destination ORDER BY count DESC LIMIT 1"
             )
-            most_common_destination = (await cur.fetchone())[0]
+            most_common_destination = await cur.fetchone()
+            if not most_common_destination:
+                raise Exception("Failed to get most common destination.")
+            most_common_destination = most_common_destination[0]
 
             cur = await db.execute(
                 "SELECT COUNT(*) FROM flights WHERE divert IS NOT ''"
             )
-            diversions = (await cur.fetchone())[0]
+            diversions = await cur.fetchone()
+            if not diversions:
+                raise Exception("Failed to get diversions count.")
+            diversions = diversions[0]
 
             cur = await db.execute("SELECT origin, destination FROM flights")
             origins_dests = await cur.fetchall()
@@ -1735,14 +1849,16 @@ Notes:
 
         if total_distance_km > 0:
             distance_compare_phrase = f"{round((total_distance_km/12742)*100 ,1)}% of the diameter of the Earth"
-        if total_distance_km > 13000:
+        elif total_distance_km > 13000:
             distance_compare_phrase = f"{round((total_distance_km/17964)*100 ,1)}% of the A350's maximum range"
-        if total_distance_km > 18000:
+        elif total_distance_km > 18000:
             distance_compare_phrase = (
                 f"{round((total_distance_km/40075)*100 ,1)}% of the equator's length"
             )
-        if total_distance_km > 384400:
+        elif total_distance_km > 384400:
             distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
+        else:
+            distance_compare_phrase = f""
 
         embed = discord.Embed(title="ClearFly VA Statistics", colour=self.bot.color())
         embed.add_field(
@@ -1780,7 +1896,11 @@ Most used aircraft: **{most_used_aircraft}**
     @vadmin.command(description="⚙️ Setup the VA system.")
     @commands.has_role(965422406036488282)
     async def setup(self, ctx: discord.ApplicationContext):
-        fbo = self.bot.get_channel(self.bot.channels.get("fbo"))
+        fbo = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("fbo", 0))
+        )
+        if not fbo:
+            raise Exception("Didn't find the fbo channel.")
         embed = discord.Embed(
             title="ClearFly VA",
             colour=self.bot.color(),
@@ -1848,11 +1968,18 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
         )
         embs = [embm, emb1, emb2, emb3, emb4]
-        liv_channel = self.bot.get_channel(1041057335449227314)
-        overv_channel = self.bot.get_channel(self.bot.channels.get("va-overview"))
+        liv_channel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("va-liveries", 0))
+        )
+        overv_channel = self.bot.sendable_channel(
+            self.bot.channels.get("va-overview", 0)
+        )
         await ctx.respond("All ready to go!", ephemeral=True)
-        await overv_channel.send(embeds=[embed, embed2], view=VAStartView(bot=self.bot))
-        await liv_channel.send(embeds=embs)
+        if overv_channel and liv_channel:
+            await overv_channel.send(
+                embeds=[embed, embed2], view=VAStartView(bot=self.bot)
+            )
+            await liv_channel.send(embeds=embs)
 
     @vadmin.command(
         name="add_aircraft", description="➕ Add a new aircraft to the VA fleet."
@@ -1910,7 +2037,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                 .add_field(name="ICAO", value=icao.upper())
                 .add_field(name="Type", value=aircraft_type)
                 .add_field(name="CRZ speed", value=f"{crz_speed}kts (TAS)")
-                .add_field(name="Is Official?", value=is_official)
+                .add_field(name="Is Official?", value=str(is_official))
             )
             await ctx.respond(embed=embed)
 
@@ -1974,7 +2101,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @commands.has_role(965422406036488282)
     async def va_ban(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
-        if not str(user.id) in await get_users("id"):
+        if not str(user.id) in list(await get_users("id")):
             embed = discord.Embed(
                 title="That user is not part of the VA!", colour=self.bot.color(1)
             )
@@ -1997,7 +2124,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @commands.has_role(965422406036488282)
     async def va_uunban(self, ctx: discord.ApplicationContext, user: discord.Member):
         await ctx.defer()
-        if not str(user.id) in await get_users("id"):
+        if not str(user.id) in list(await get_users("id")):
             embed = discord.Embed(
                 title="That user is not part of the VA!", colour=self.bot.color(1)
             )
