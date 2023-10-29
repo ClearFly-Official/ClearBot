@@ -94,9 +94,7 @@ class AvCommands(discord.Cog):
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(  # type: ignore
-                        datetime.datetime.strptime(
-                            time + "+00:00", "%Y-%m-%dT%H:%M:%S"
-                        ),
+                        datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"),
                         "R",
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
@@ -150,9 +148,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                 if ctx.author == interaction.user:
                     time = str(json.dumps(resp["data"][0]["observed"]).replace('"', ""))
                     obstime = discord.utils.format_dt(  # type: ignore
-                        datetime.datetime.strptime(
-                            time + "+00:00", "%Y-%m-%dT%H:%M:%S"
-                        ),
+                        datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S"),
                         "R",
                     )
                     airportn = json.dumps(resp["data"][0]["station"]["name"]).replace(
