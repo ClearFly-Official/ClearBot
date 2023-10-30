@@ -1930,6 +1930,10 @@ Most used aircraft: **{most_used_aircraft}**
             cur = await db.execute("SELECT icao FROM aircraft")
             ac_list = await cur.fetchall()
             ac_list = [craft[0] for craft in ac_list]
+            cur = await db.execute("SELECT * FROM aircraft WHERE icao=?", (aircraft,))
+            aircraft_data = await cur.fetchone()
+            if not aircraft_data:
+                raise Exception("Couldn't fetch aircraft data.")
 
         if aircraft not in ac_list:
             embed = discord.Embed(
