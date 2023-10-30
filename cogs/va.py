@@ -1930,7 +1930,7 @@ Most used aircraft: **{most_used_aircraft}**
         origin = origin[:4].upper()
         destination = destination[:4].upper()
         embed = discord.Embed(
-            title=generate_flight_number(aircraft, origin, destination),
+            title=await generate_flight_number(aircraft, origin, destination),
             description=f"""
 Departs from **{origin[:4].upper}**, landing at **{destination[:4].upper}** using a **{aircraft[:4].upper}**
 """,
