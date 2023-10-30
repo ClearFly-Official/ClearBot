@@ -1925,14 +1925,85 @@ Most used aircraft: **{most_used_aircraft}**
             )
             await ctx.respond(embed=embed)
             return
-        
-        aircraft = origin[:4].upper()
+
+        async with aiosqlite.connect("va.db") as db:
+            cur = await db.execute("SELECT icao FROM aircraft")
+            ac_list = await cur.fetchall()
+            ac_list = [craft[0] for craft in ac_list]
+
+        if aircraft not in ac_list:
+            embed = discord.Embed(
+                title="Invalid aircraft",
+                colour=self.bot.color(1),
+                description="Please provide a valid aircraft ICAO code (e.g. B738).",
+            )
+            await ctx.respond(embed=embed)
+            return
+
+        if (origin[:4].upper()) not in airports_icao:
+            embed = discord.Embed(
+                title="Invalid origin",
+                colour=self.bot.color(1),
+                description="Please provide a valid airport ICAO code (e.g. KJFK).",
+            )
+            await ctx.respond(embed=embed)
+            return
+        if (destination[:4].upper()) not in airports_icao:
+            embed = discord.Embed(
+                title="Invalid destination",
+                colour=self.bot.color(1),
+                description="Please provide a valid airport ICAO code (e.g. KJFK).",
+            )
+            await ctx.respond(embed=embed)
+            return
+
         origin = origin[:4].upper()
         destination = destination[:4].upper()
+
+        with open("airports.json", "r") as f:
+            airport_data = json.load(f)
+
+        flight_time = str(
+            datetime.timedelta(
+                hours=calculate_time(
+                    (
+                        airport_data.get(origin[:4].upper()).get("lat", 0),
+                        airport_data.get(origin[:4].upper()).get("lon", 0),
+                    ),
+                    (
+                        airport_data.get(destination[:4].upper()).get("lat", 0),
+                        airport_data.get(destination[:4].upper()).get("lon", 0),
+                    ),
+                    aircraft_data[4],
+                )
+            )
+        ).split(":")
+
+        flight_time = f"{flight_time[0]}:{flight_time[1]}"
+
+        distance = (
+            str(
+                round(
+                    calculate_distance(
+                        (
+                            airport_data.get(origin[:4].upper()).get("lat", 0),
+                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                        ),
+                        (
+                            airport_data.get(destination[:4].upper()).get("lat", 0),
+                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                        ),
+                    )
+                )
+            )
+            + " NM"
+        )
+
         embed = discord.Embed(
             title=await generate_flight_number(aircraft, origin, destination),
             description=f"""
-Departs from **{origin[:4].upper}**, landing at **{destination[:4].upper}** using a **{aircraft[:4].upper}**
+Departs from **{origin[:4].upper()}**, landing at **{destination[:4].upper()}** using a **{aircraft[:4].upper()}. 
+The distance between airports is **{distance}**. with estimated flight time being **{flight_time}**
 """,
             color=self.bot.color(),
         )
