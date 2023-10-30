@@ -108,9 +108,7 @@ async def generate_flight_number(
     return flight_number
 
 
-async def get_aircraft_from_type(
-    aircraft_type: str = "All", output_type: str = "list"
-) -> list:
+async def get_aircraft_from_type(aircraft_type: str = "All", output_type: str = "list"):
     aircraft_types = ["Airliner", "GA", "All"]
     if aircraft_type not in aircraft_types:
         aircraft_type = "All"
@@ -129,7 +127,7 @@ async def get_aircraft_from_type(
     elif output_type == "IN_SQL":
         aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
 
-    return list(aircraft)
+    return aircraft
 
 
 def get_flights_from_user(user: discord.Member | discord.User) -> list[tuple]:
@@ -395,7 +393,7 @@ Destination: **{flight_id2[5]}**
     async def trial_check(self):
         users = await get_users()
         for user in users:
-            if ((round(time.time()) - user[2]) > 86_400) and (user[3] == 1):
+            if ((round(time.time()) - int(user[2])) > 86_400) and (user[3] == 1):
                 try:
                     user_dm = self.bot.get_user(int(user[1]))
                     guild = self.bot.get_guild(self.bot.server_id)
@@ -434,8 +432,8 @@ The ClearFly Team
             flights = await cur.fetchall()
 
             for flight in flights:
-                if (round(time.time() - flight[6]) >= 82_800) and (
-                    round(time.time() - flight[6]) <= 83_400
+                if (round(time.time() - int(flight[6])) >= 82_800) and (
+                    round(time.time() - int(flight[6])) <= 83_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
@@ -444,13 +442,13 @@ The ClearFly Team
                         self.bot.get_channel(self.bot.channels.get("fbo", 0))
                     )
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
                         colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
 We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. 
+Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. 
 
 **THIS IS YOUR __LAST__ REMINDER**
                                 """,
@@ -458,8 +456,8 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
 
-                if (round(time.time() - flight[6]) >= 64_800) and (
-                    round(time.time() - flight[6]) <= 65_400
+                if (round(time.time() - int(int(flight[6]))) >= 64_800) and (
+                    round(time.time() - int(flight[6])) <= 65_400
                 ):
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
@@ -468,20 +466,20 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>.
                         self.bot.get_channel(self.bot.channels.get("fbo", 0))
                     )
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
                         colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
 We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You will be reminded one last time before it's too late <t:{flight[6]+82_800}:R>
+Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. You will be reminded one last time before it's too late <t:{int(flight[6])+82_800}:R>
                                 """,
                     )
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
 
-                if (round(time.time() - flight[6]) >= 43_200) and (
-                    round(time.time() - flight[6]) <= 43_800
+                if (round(time.time() - int(flight[6])) >= 43_200) and (
+                    round(time.time() - int(flight[6])) <= 43_800
                 ):
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
@@ -490,19 +488,19 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. You
                         self.bot.get_channel(self.bot.channels.get("fbo", 0))
                     )
                     embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{flight[6]+86_400}:R>.",
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
                         colour=self.bot.color(2),
                         description=f"""
 Hey {user.name}! 
 
 We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Another reminder will be sent <t:{flight[6]+64_800}:R> if you haven't completed it yet.
+Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. Another reminder will be sent <t:{int(flight[6])+64_800}:R> if you haven't completed it yet.
                                 """,
                     )
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
 
-                if (round(time.time()) - flight[6]) > 86_400:
+                if (round(time.time()) - int(flight[6])) > 86_400:
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
                     await db.execute(
                         "DELETE FROM reports WHERE flight_id=?", (flight[0],)
@@ -519,7 +517,7 @@ Your flight will be cancelled if you fail to do so <t:{flight[6]+86_400}:R>. Ano
                         description=f"""
 Hi there {user.name},
 
-Around <t:{flight[6]}:R> you filed a flight, but never marked it as completed. To prevent people filing a flight, but never actually completing it, we automatically cancel it after 24 hours. 
+Around <t:{int(flight[6])}:R> you filed a flight, but never marked it as completed. To prevent people filing a flight, but never actually completing it, we automatically cancel it after 24 hours. 
 This sadly happened to your last flight. Please remember to mark your flight as completed next time!
                                 """,
                     )
@@ -1890,6 +1888,53 @@ Most common destination: **{most_common_destination}**
 Number of aircraft: **{total_aircraft[0]}** (**{total_aircraft[1]}** official)
 Most used aircraft: **{most_used_aircraft}**
         """,
+        )
+        await ctx.respond(embed=embed)
+
+    @flight.command(
+        name="flightnumber",
+        description="💯 Generate a flight number based on the provided values.",
+    )
+    @discord.option(
+        name="aircraft",
+        description="The aircraft you want to fly with, ICAO code please (e.g. B738).",
+        autocomplete=get_aircraft,
+    )
+    @discord.option(
+        name="origin",
+        description="The airport you want to fly from, in ICAO format (e.g. KJFK).",
+        autocomplete=get_airports,
+    )
+    @discord.option(
+        name="destination",
+        description="The airport you want to fly to, in ICAO format (e.g. EBBR).",
+        autocomplete=get_airports,
+    )
+    @commands.has_role(1013933799777783849)
+    async def va_flightnumber(
+        self,
+        ctx: discord.ApplicationContext,
+        aircraft: str,
+        origin: str,
+        destination: str,
+    ):
+        await ctx.defer()
+        if await is_banned(ctx.author):
+            embed = discord.Embed(
+                title="You're banned from the VA!", colour=self.bot.color(1)
+            )
+            await ctx.respond(embed=embed)
+            return
+        
+        aircraft = origin[:4].upper()
+        origin = origin[:4].upper()
+        destination = destination[:4].upper()
+        embed = discord.Embed(
+            title=generate_flight_number(aircraft, origin, destination),
+            description=f"""
+Departs from **{origin[:4].upper}**, landing at **{destination[:4].upper}** using a **{aircraft[:4].upper}**
+""",
+            color=self.bot.color(),
         )
         await ctx.respond(embed=embed)
 

@@ -40,9 +40,6 @@ class ClearBot(discord.Bot):
         self.bot_author = 668874138160594985
         self.bot_id = 0
 
-        if self.user:
-            self.bot_id = self.user.id
-
         self.channels = {
             "info": 1002194493304479784,
             "arrivals": 965600413376200726,
@@ -193,6 +190,9 @@ async def on_ready():
 
     if isinstance(logs, discord.TextChannel):
         bot.logs = logs
+
+    if bot.user:
+        bot.bot_id = bot.user.id
 
     print(
         """
