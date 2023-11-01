@@ -34,8 +34,6 @@ class ClearBot(discord.Bot):
         )
         con.close()
 
-        self.logs: None | discord.TextChannel = None
-
         self.server_id = 965419296937365514
         self.bot_author = 668874138160594985
         self.bot_id = 0
@@ -59,7 +57,6 @@ class ClearBot(discord.Bot):
             "clearfly-livery-painter": 1055909461488844931,
             "clearfly-unofficial-painter": 1098964227689033759,
             "bot": 970019585858363482,
-            "clearbot": 1001457701022343181,
         }
 
         self._colors = {
@@ -80,6 +77,9 @@ class ClearBot(discord.Bot):
             return self._colors[0][self.theme]
 
     async def set_theme(self, author: str, theme: int = 0) -> dict[str, bool | list]:
+        if not self.is_ready():
+            return {"guild_success": False, "failed_roles": list(self.roles.items())}
+
         async with aiosqlite.connect("main.db") as db:
             await db.execute(
                 "UPDATE config SET value = ? WHERE key = 'theme'", (theme,)
@@ -125,7 +125,7 @@ class ClearBot(discord.Bot):
                 except Exception:
                     role = guild.get_role(role_id)
                     if role:
-                        failed.append(role)
+                        failed.append(role.name)
                     else:
                         failed.append("Unknown Role")
             guild_success = True
@@ -186,11 +186,6 @@ load_dotenv()
 @bot.listen()
 async def on_ready():
     gc.collect()
-    logs = bot.get_channel(bot.channels.get("logs", 0))
-
-    if isinstance(logs, discord.TextChannel):
-        bot.logs = logs
-
     if bot.user:
         bot.bot_id = bot.user.id
 

@@ -985,7 +985,7 @@ Channel: {sendable.mention if sendable else 'N/A' }
                 theme_id = 2
 
         result = await self.bot.set_theme(ctx.author.name, theme_id)
-        failed_roles = result.get("failed_rules", ["N/A"])
+        failed_roles = result.get("failed_roles", ["N/A"])
         failed = ", ".join(failed_roles)  # type: ignore
 
         embed = discord.Embed(

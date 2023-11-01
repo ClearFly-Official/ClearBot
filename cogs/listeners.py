@@ -1,3 +1,4 @@
+import asyncio
 import re
 import aiofiles
 import aiohttp
@@ -43,7 +44,6 @@ class DeleteMsgView(discord.ui.View):
 class Listeners(discord.Cog):
     def __init__(self, bot: ClearBot):
         self.bot = bot
-        self.logs = bot.logs
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -330,7 +330,9 @@ class Listeners(discord.Cog):
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.logs
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("logs", 0))
+            )
 
             if channel:
                 await channel.send(embed=embed)
@@ -344,7 +346,9 @@ class Listeners(discord.Cog):
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.logs
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("logs", 0))
+            )
 
             if channel:
                 await channel.send(embed=embed)
@@ -358,7 +362,9 @@ class Listeners(discord.Cog):
                 description=f"Failed roles: {failed}",
                 color=self.bot.color(),
             )
-            channel = self.logs
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("logs", 0))
+            )
 
             if channel:
                 await channel.send(embed=embed)
@@ -513,9 +519,12 @@ Joins last week: **{join_stats[2]}**
 {join_pphrase}
                 """,
                 )
-                logs = self.logs
-                if logs:
-                    await logs.send(embed=embed)
+                channel = self.bot.sendable_channel(
+                    self.bot.get_channel(self.bot.channels.get("logs", 0))
+                )
+
+                if channel:
+                    await channel.send(embed=embed)
                 await db.execute(
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
                 )
@@ -526,7 +535,10 @@ Joins last week: **{join_stats[2]}**
         channel = self.bot.sendable_channel(
             self.bot.get_channel(self.bot.channels.get("arrivals", 0))
         )
-        logchannel = self.logs
+        logchannel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("logs", 0))
+        )
+
         emb = discord.Embed(
             title=f"Welcome to ClearFly!",
             description=f"Hey there, {member.mention}! Be sure to read the <#{self.bot.channels.get('info')}> to become a member and gain full access to the server! Thanks for joining!",
@@ -577,7 +589,9 @@ Joins last week: **{join_stats[2]}**
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        channel = self.logs
+        channel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("logs", 0))
+        )
         emb = discord.Embed(
             title=f"{member} left.",
             color=self.bot.color(),
@@ -616,7 +630,9 @@ Message Content:
                 )
 
         if message.author.bot == False:
-            channel = self.logs
+            channel = self.bot.sendable_channel(
+                self.bot.get_channel(self.bot.channels.get("logs", 0))
+            )
             msgcontent = message.clean_content
             if msgcontent == "":
                 msgcontent = "None"
@@ -712,7 +728,9 @@ After:
             if before.content == after.content:
                 pass
             else:
-                channel = self.logs
+                channel = self.bot.sendable_channel(
+                    self.bot.get_channel(self.bot.channels.get("logs", 0))
+                )
                 msgeditb = before.clean_content
                 msgedita = after.clean_content
                 msgatr = before.author.mention
@@ -747,7 +765,9 @@ ID: **{after.id}**
     async def on_guild_channel_update(
         self, before: discord.TextChannel, after: discord.TextChannel
     ):
-        channel = self.logs
+        channel = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("logs", 0))
+        )
         embed = discord.Embed(title=f"Channel Updated", colour=self.bot.color())
         embed.add_field(name="", value=after.mention, inline=False)
         if before.name != after.name:
@@ -861,6 +881,9 @@ After: **{after.category}**
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
+        logs = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("logs", 0))
+        )
         if before.bot == False:
             if before.name != after.name:
                 embed = discord.Embed(
@@ -868,24 +891,24 @@ After: **{after.category}**
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                if self.logs:
-                    await self.logs.send(embed=embed)
+                if logs:
+                    await logs.send(embed=embed)
             if before.display_name != after.display_name:
                 embed = discord.Embed(
                     title=f"{before} changed their nickname to `{after.display_name}`.",
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                if self.logs:
-                    await self.logs.send(embed=embed)
+                if logs:
+                    await logs.send(embed=embed)
             if before.discriminator != after.discriminator:
                 embed = discord.Embed(
                     title=f"{before} changed their discriminator to `{after.discriminator}`.",
                     colour=self.bot.color(),
                 )
                 embed.set_thumbnail(url=after.display_avatar.url)
-                if self.logs:
-                    await self.logs.send(embed=embed)
+                if logs:
+                    await logs.send(embed=embed)
             if before.roles != after.roles:
                 embed = discord.Embed(
                     title=f"{before} got their roles changed.", colour=self.bot.color()
@@ -909,16 +932,16 @@ After: **{after.category}**
                 embed.add_field(name="Roles removed:", value=str(difr))
                 embed.add_field(name="Roles added:", value=str(difa))
                 embed.set_thumbnail(url=after.display_avatar.url)
-                if self.logs:
-                    await self.logs.send(embed=embed)
+                if logs:
+                    await logs.send(embed=embed)
             if before.display_avatar != after.display_avatar:
                 embed = discord.Embed(
                     title=f"{before} changed their avatar to the following image.",
                     colour=self.bot.color(),
                 )
                 embed.set_image(url=after.display_avatar.url)
-                if self.logs:
-                    await self.logs.send(embed=embed)
+                if logs:
+                    await logs.send(embed=embed)
         else:
             pass
 
@@ -971,7 +994,9 @@ After: **{after.category}**
         else:
             return
         members = [member.id for member in role.members]
-
+        logs = self.bot.sendable_channel(
+            self.bot.get_channel(self.bot.channels.get("logs", 0))
+        )
         if message.author.id not in members:
             if scamChecker(message.clean_content):
                 await message.reply(
@@ -983,8 +1008,8 @@ After: **{after.category}**
                     colour=self.bot.color(1),
                 )
                 await message.delete(reason=f"{message.author} might have sent a scam.")
-                if self.logs:
-                    await self.logs.send(embed=embed, view=BanView(bot=self.bot))
+                if logs:
+                    await logs.send(embed=embed, view=BanView(bot=self.bot))
             else:
                 pass
         else:

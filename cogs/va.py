@@ -2006,8 +2006,8 @@ Most used aircraft: **{most_used_aircraft}**
         embed = discord.Embed(
             title=await generate_flight_number(aircraft, origin, destination),
             description=f"""
-Departs from **{origin[:4].upper()}**, landing at **{destination[:4].upper()}** using a **{aircraft[:4].upper()}. 
-The distance between airports is **{distance}**. with estimated flight time being **{flight_time}**
+Departs from **{origin[:4].upper()}**, landing at **{destination[:4].upper()}** using a **{aircraft[:4].upper()}**. 
+The distance between airports is **{distance}** with estimated flight time being **{flight_time}**.
 """,
             color=self.bot.color(),
         )
