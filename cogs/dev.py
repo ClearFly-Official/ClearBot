@@ -106,9 +106,6 @@ class DevCommands(discord.Cog):
     dataref = dev.create_subgroup(
         name="datarefs", description="Commands related to X-Plane datarefs."
     )
-    database = dev.create_subgroup(
-        name="database", description="Commands for managing the database(s)"
-    )
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -904,11 +901,11 @@ Channel: {sendable.mention if sendable else 'N/A' }
 
             await ctx.respond(embed=embed)
 
-    @database.command(description="🔦 Execute an SQL Query.")
+    @dev.command(description="🔦 Execute an SQL Query.")
     @discord.option(
         name="database",
         description="Database to execute query on",
-        choices=["main.db", "va.db"],
+        choices=[db for db in os.listdir() if db.endswith(".db")],
     )
     @discord.option(name="query", description="Query to execute.")
     @commands.is_owner()
@@ -917,53 +914,9 @@ Channel: {sendable.mention if sendable else 'N/A' }
             async with aiosqlite.connect(database) as db:
                 o = await db.execute(query)
                 await db.commit()
-            await ctx.respond(f"Success!\n\n```{o}```", ephemeral=True)
+            await ctx.respond(f"Success!\n\n```{await o.fetchall()}```", ephemeral=True)
         except Exception as e:
-            await ctx.respond(f"```py\n{e}\n```", ephemeral=True)
-
-    async def get_databases(self, ctx: discord.AutocompleteContext):
-        databases = [database for database in os.listdir() if database.endswith("db")]
-
-        for database in databases:
-            if ctx.value.lower() == database.lower():
-                self.database = ctx.value
-
-        return [database for database in databases if ctx.value in database]
-
-    async def get_tables(self, ctx: discord.AutocompleteContext):
-        try:
-            async with aiosqlite.connect(str(self.database)) as db:
-                tables = await db.execute(
-                    "SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name"
-                )
-                tables = await tables.fetchall()
-                tables = [table[0] for table in tables]
-
-            return tables
-        except:
-            return [f"Database '{self.database}' is invalid."]
-
-    @database.command(name="list", description="🧾 List a table of a database.")
-    @discord.option(
-        name="database",
-        description="Database to list a table of.",
-        autocomplete=get_databases,
-    )
-    @discord.option(
-        name="table",
-        description="Database to list a table of.",
-        autocomplete=get_tables,
-    )
-    @commands.has_role(roles.get("admin", 0))
-    async def list_db(self, ctx: discord.ApplicationContext, database: str, table: str):
-        out = None
-        try:
-            async with aiosqlite.connect(database) as db:
-                cur = await db.execute(f"SELECT * FROM {table}")
-                out = await cur.fetchall()
-            await ctx.respond(str(out)[:4090], ephemeral=True)
-        except Exception as e:
-            await ctx.respond(f"```py\n{e}\n````", ephemeral=True)
+            await ctx.respond(f"```\n{e}\n```", ephemeral=True)
 
     @dev.command(name="theme", description="🛋️ Set the theme of the bot.")
     @discord.option(
