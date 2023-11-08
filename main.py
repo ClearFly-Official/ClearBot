@@ -22,6 +22,11 @@ class MissingPermissions(commands.CommandError):
         super().__init__(f"User is not authorised.")
 
 
+class UserVABanned(MissingPermissions):
+    def __init__(self):
+        super().__init__()
+
+
 class ClearBot(discord.Bot):
     def __init__(self, *args, **kwargs) -> None:
         self.color = self.embed_color
@@ -213,6 +218,106 @@ async def on_ready():
     )
     if bot.dev_mode:
         print("| DEV MODE")
+
+
+@bot.listen()
+async def on_application_command_error(
+    ctx: discord.ApplicationContext, error: discord.DiscordException
+):
+    notHandled = True
+    if isinstance(error, commands.CommandOnCooldown):
+        embed = discord.Embed(
+            title="Take a break!",
+            description=error,
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, commands.MissingPermissions):
+        embed = discord.Embed(
+            title="Missing required permissions",
+            description="You're not authorised to use this command!",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, UserVABanned):
+        embed = discord.Embed(
+            title="You're banned from the VA!",
+            description="Sadly you were banned from the ClearFly VA. You can't use any VA related commmands.",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, ValueError):
+        embed = discord.Embed(
+            title="Incorrect Values",
+            description="You gave some values that are incorrect/invalid to me, try again with correct ones!",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, commands.MissingRole):
+        embed = discord.Embed(
+            title="Missing required roles",
+            description="You're not authorised to use this command!",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, commands.NotOwner):
+        embed = discord.Embed(
+            title="Owner only command",
+            description="This command is for the owner of the bot only, so not for you!",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if isinstance(error, commands.errors.NoPrivateMessage):
+        embed = discord.Embed(
+            title="This command cannot be used in DMs",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
+    if notHandled:
+        bot_author = bot.get_user(bot.bot_author)
+        alert_emb = discord.Embed(
+            title="Hey there!",
+            colour=bot.color(),
+            description=f"""
+{ctx.author.mention} experienced some issues with me, please fix them as soon as possible! Error is provided below, more info can be found in the terminal.
+```py
+{error}
+```
+            """,
+        )
+        if not bot_author:
+            bot_author_id = 0
+        else:
+            bot_author_id = bot_author.id
+
+        if bot_author_id != ctx.author.id and bot_author:
+            await bot_author.send(embed=alert_emb)
+            embed = discord.Embed(
+                title="Something went wrong...",
+                description=f"""
+We're sorry for the inconvenience. The bot author has been notified about this issue.
+```{error}```
+                    """,
+                colour=bot.color(1),
+            )
+        else:
+            embed = discord.Embed(
+                title="Something went wrong...",
+                description=f"""
+See the terminal for more information.
+```{error}```
+                    """,
+                colour=bot.color(1),
+            )
+        await ctx.respond(embed=embed)
+        raise error
 
 
 for cog in bot.cog_list:

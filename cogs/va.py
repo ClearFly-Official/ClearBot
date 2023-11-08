@@ -17,7 +17,7 @@ import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
 import pymongo
-from main import ClearBot
+from main import ClearBot, UserVABanned
 from airports import airports, airports_icao
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
@@ -36,19 +36,30 @@ async def get_users(get_type: Literal["id", "full"] = "id"):
         raise ValueError(f"Didn't found get_type '{get_type}'")
 
 
-async def is_banned(user: discord.User | discord.Member):
-    async with aiosqlite.connect("va.db") as db:
-        cur = await db.execute(
-            "SELECT is_ban FROM users WHERE user_id=?", (str(user.id),)
-        )
-        is_ban = await cur.fetchone()
+def is_banned_check():
+    def predicate(ctx: discord.ApplicationContext):
+        if isinstance(ctx.author, discord.Member):
+            db = sqlite3.connect("va.db")
+            cur = db.execute(
+                "SELECT is_ban FROM users WHERE user_id=?", (str(ctx.author.id),)
+            )
+            is_ban = cur.fetchone()
 
-    if (is_ban == ()) or (is_ban is None):
-        return False
-    elif is_ban[0] == 1:
-        return True
-    else:
-        return False
+            if (is_ban == ()) or (is_ban is None):
+                status = False
+            elif is_ban[0] == 1:
+                status = True
+            else:
+                status = False
+        else:
+            status = False
+
+        if not status:
+            raise UserVABanned()
+        else:
+            return True
+
+    return commands.check(predicate)  # type: ignore
 
 
 async def get_airports(ctx: discord.AutocompleteContext):
@@ -544,6 +555,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     )
     @commands.has_role(1013933799777783849)
     @commands.cooldown(1, 30, commands.BucketType.user)
+    @is_banned_check()
     async def va_file(
         self,
         ctx: discord.ApplicationContext,
@@ -552,12 +564,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         destination: str,
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         usrs = await get_users("id")
         if str(ctx.author.id) not in list(usrs):
             overv_channel = self.bot.get_channel(
@@ -822,14 +829,10 @@ This sadly happened to your last flight. Please remember to mark your flight as 
     )
     @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_complete(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
                 "SELECT id FROM flights WHERE user_id=? AND is_completed=0",
@@ -875,14 +878,10 @@ Destination: **{flight_id2[5]}**
     @flight.command(name="cancel", description="❌ Cancel your last flight.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_cancel(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
                 "SELECT * FROM flights WHERE user_id=?", (str(ctx.author.id),)
@@ -925,14 +924,10 @@ Destination: **{flight_id2[5]}**
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_divert(self, ctx: discord.ApplicationContext, airport):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
                 "SELECT * FROM flights WHERE user_id=?", (str(ctx.author.id),)
@@ -972,13 +967,8 @@ Destination: **{flight_id2[5]}**
     )
     @commands.has_role(1013933799777783849)
     @commands.cooldown(1, 5, commands.BucketType.user)
+    @is_banned_check()
     async def va_report(self, ctx: discord.ApplicationContext):
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
                 "SELECT * FROM flights WHERE user_id=?", (str(ctx.author.id),)
@@ -1012,16 +1002,12 @@ Destination: **{flight_id2[5]}**
         required=False,
     )
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_view_report(
         self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         if not user:
             user = ctx.author
 
@@ -1065,16 +1051,11 @@ Destination: **{flight_id2[5]}**
         required=False,
     )
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_flights(
         self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         if user is None:
             user = ctx.author
@@ -1137,6 +1118,7 @@ Destination: **{flight_id2[5]}**
         name="auto_zoom", description="Zoom automatically to fit the flights."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
+    @is_banned_check()
     async def va_flight_map(
         self,
         ctx: discord.ApplicationContext,
@@ -1145,12 +1127,6 @@ Destination: **{flight_id2[5]}**
         auto_zoom: bool = True,
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         if not user:
             user = ctx.author
@@ -1318,6 +1294,7 @@ Destination: **{flight_id2[5]}**
         name="auto_zoom", description="Zoom automatically to fit the flight."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
+    @is_banned_check()
     async def va_flight(
         self,
         ctx: discord.ApplicationContext,
@@ -1325,12 +1302,6 @@ Destination: **{flight_id2[5]}**
         auto_zoom: bool = True,
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         if not user:
             user = ctx.author
@@ -1674,14 +1645,10 @@ Notes:
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
+    @is_banned_check()
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
+
         async with aiosqlite.connect("va.db") as db:
             cursor = await db.execute(
                 "SELECT user_id, COUNT(*) as flight_count FROM flights GROUP BY user_id ORDER BY flight_count DESC"
@@ -1733,14 +1700,9 @@ Notes:
 
     @va.command(name="stats", description="📊 See the statistics of the ClearFly VA!")
     @commands.cooldown(1, 5, commands.BucketType.user)
+    @is_banned_check()
     async def va_stats(self, ctx: discord.ApplicationContext):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT COUNT(*) FROM flights")
@@ -1911,6 +1873,7 @@ Most used aircraft: **{most_used_aircraft}**
         autocomplete=get_airports,
     )
     @commands.has_role(1013933799777783849)
+    @is_banned_check()
     async def va_flightnumber(
         self,
         ctx: discord.ApplicationContext,
@@ -1919,12 +1882,6 @@ Most used aircraft: **{most_used_aircraft}**
         destination: str,
     ):
         await ctx.defer()
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
@@ -2310,14 +2267,9 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
     @discord.option(
         "sa_id", description="Your StableApproach UserID, found in the plugin settings."
     )
+    @is_banned_check()
     async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
         await ctx.defer(ephemeral=True)
-        if await is_banned(ctx.author):
-            embed = discord.Embed(
-                title="You're banned from the VA!", colour=self.bot.color(1)
-            )
-            await ctx.respond(embed=embed)
-            return
 
         self.col.update_one(
             {"discord_id": ctx.author.id},
