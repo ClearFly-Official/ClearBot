@@ -38,26 +38,17 @@ async def get_users(get_type: Literal["id", "full"] = "id"):
 
 def is_banned_check():
     def predicate(ctx: discord.ApplicationContext):
+        check = False
         if isinstance(ctx.author, discord.Member):
             db = sqlite3.connect("va.db")
             cur = db.execute(
                 "SELECT is_ban FROM users WHERE user_id=?", (str(ctx.author.id),)
             )
-            is_ban = cur.fetchone()
+            is_ban = cur.fetchone()[0]
 
-            if (is_ban == ()) or (is_ban is None):
-                status = False
-            elif is_ban[0] == 1:
-                status = True
-            else:
-                status = False
-        else:
-            status = False
+            check = True if is_ban == 0 else False
 
-        if not status:
-            raise UserVABanned()
-        else:
-            return True
+        return True if check else 0
 
     return commands.check(predicate)  # type: ignore
 

@@ -1,4 +1,5 @@
 import gc
+import sys
 import aiosqlite
 import discord
 import os
@@ -320,7 +321,21 @@ See the terminal for more information.
         raise error
 
 
-for cog in bot.cog_list:
-    bot.load_extension(f"cogs.{cog}")
+cogs = os.listdir("cogs")
+cogs = [x.split(".")[0] for x in cogs if x.endswith(".py")]
 
-bot.run(os.getenv("DEV_TOKEN" if bot.dev_mode else "TOKEN"))
+if bot.dev_mode:
+    args = sys.argv
+    for arg in args:
+        if arg.endswith(".py"):
+            args.remove(arg)
+
+    for arg in args:
+        bot.load_extension(arg)
+
+    bot.run(os.getenv("DEV_TOKEN"))
+else:
+    for cog in cogs:
+        bot.load_extension(f"cogs.{cog}")
+
+    bot.run(os.getenv("TOKEN"))
