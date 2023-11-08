@@ -850,7 +850,7 @@ Channel: {sendable.mention if sendable else 'N/A' }
             embed = discord.Embed(
                 description=f"""
 ```
-{subprocess.check_output(command.split(" "))}
+{subprocess.check_output(command, shell=True, text=True)[:2048]}
 ```
 """,
                 colour=self.bot.color(),
