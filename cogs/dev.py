@@ -247,7 +247,7 @@ Reloaded cogs:
         embed = discord.Embed(
             description=f"""
 ```
-{subprocess.check_output(['git','pull', 'https://github.com/ClearFly-Official/ClearBot'])}
+{subprocess.check_output(['git','pull', 'https://github.com/ClearFly-Official/ClearBot'], shell=True, text=True)[:2048]}
 ```
 """,
             colour=self.bot.color(),
