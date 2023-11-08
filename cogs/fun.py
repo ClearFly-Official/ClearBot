@@ -36,7 +36,7 @@ class ButtonGameView(discord.ui.View):
     async def b1_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
+        if not self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
@@ -62,7 +62,7 @@ class ButtonGameView(discord.ui.View):
     async def b2_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
+        if not self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
@@ -88,7 +88,7 @@ class ButtonGameView(discord.ui.View):
     async def b3_callback(
         self, button: discord.Button, interaction: discord.Interaction
     ):
-        if self.bot.is_interaction_owner(interaction, self.ctx.author.id):
+        if not self.bot.is_interaction_owner(interaction, self.ctx.author.id):
             await interaction.response.send_message(
                 "Run the command yourself to play the game!", ephemeral=True
             )
