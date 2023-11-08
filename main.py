@@ -4,19 +4,26 @@ import discord
 import os
 import sqlite3
 from dotenv import load_dotenv
+from discord.ext import commands
 from datetime import datetime
 
 
-class UserObject:
-    def __init__(self):
+class UserObject(discord.Object):
+    def __init__(self) -> None:
         self.id = 0
         self.name = "N/A"
         self.display_name = "N/A"
         self.global_name = "N/A"
+        super().__init__(self.id)
+
+
+class MissingPermissions(commands.CommandError):
+    def __init__(self):
+        super().__init__(f"User is not authorised.")
 
 
 class ClearBot(discord.Bot):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.color = self.embed_color
         self.dev_mode = os.path.exists(".dev")
 
@@ -76,6 +83,39 @@ class ClearBot(discord.Bot):
         except KeyError:
             return self._colors[0][self.theme]
 
+    def sendable_channel(
+        self, channel
+    ) -> discord.TextChannel | discord.VoiceChannel | None:
+        if isinstance(channel, discord.StageChannel):
+            return
+        elif isinstance(channel, discord.ForumChannel):
+            return
+        elif isinstance(channel, discord.CategoryChannel):
+            return
+        elif not channel.can_send():
+            return
+        elif not channel:
+            return
+        else:
+            return channel
+
+    def user_object(
+        self, user: discord.User | discord.Member | None
+    ) -> UserObject | discord.Member | discord.User:
+        if user:
+            return user
+        else:
+            user_o = UserObject()
+            return user_o
+
+    def is_interaction_owner(
+        self, interaction: discord.Interaction, user_id: int
+    ) -> bool:
+        if interaction.user:
+            return interaction.user.id == user_id
+        else:
+            return False
+
     async def set_theme(self, author: str, theme: int = 0) -> dict[str, bool | list]:
         if not self.is_ready():
             return {"guild_success": False, "failed_roles": list(self.roles.items())}
@@ -132,38 +172,10 @@ class ClearBot(discord.Bot):
 
         return {"guild_success": guild_success, "failed_roles": failed}
 
-    def sendable_channel(
-        self, channel
-    ) -> discord.TextChannel | discord.VoiceChannel | None:
-        if isinstance(channel, discord.StageChannel):
-            return
-        elif isinstance(channel, discord.ForumChannel):
-            return
-        elif isinstance(channel, discord.CategoryChannel):
-            return
-        elif not channel.can_send():
-            return
-        elif not channel:
-            return
-        else:
-            return channel
-
-    def user_object(
-        self, user: discord.User | discord.Member | None
-    ) -> UserObject | discord.Member | discord.User:
-        if user:
-            return user
-        else:
-            user_o = UserObject()
-            return user_o
-
-    def is_interaction_owner(
-        self, interaction: discord.Interaction, user_id: int
-    ) -> bool:
-        if interaction.user:
-            return interaction.user.id == user_id
-        else:
-            return False
+    async def send_log(self, *args, **kwargs) -> None:
+        logs = self.get_channel(self.channels.get("logs", 0))
+        if isinstance(logs, discord.TextChannel):
+            await logs.send(*args, **kwargs)
 
     @property
     def theme_name(self):

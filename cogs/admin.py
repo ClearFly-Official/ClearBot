@@ -69,8 +69,7 @@ class AdminCommands(discord.Cog):
             title=f"{ctx.author} used echo", description=text, color=self.bot.color()
         )
         emb.set_thumbnail(url=ctx.author.display_avatar.url)
-        if self.bot.logs:
-            await self.bot.logs.send(embed=emb)
+        await self.bot.send_log(embed=emb)
         await ctx.respond("Posted your message!", ephemeral=True)
 
     @admin.command(name="embed", description="📦 Send an embed as ClearBot.")
@@ -198,8 +197,7 @@ URL: `{url}`
 
         await ctx.respond("Posted your embed!", ephemeral=True)
         ademb.set_thumbnail(url=ctx.author.display_avatar.url)
-        if self.bot.logs:
-            await self.bot.logs.send(embed=ademb)
+        await self.bot.send_log(embed=ademb)
 
     @admin.command(name="spam", description="⌨️ Spam the channel to oblivion.")
     @option("amount", description="Amount of messages to spam.")
@@ -231,8 +229,7 @@ URL: `{url}`
                         color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
-                    if self.bot.logs:
-                        await self.bot.logs.send(embed=embed)
+                    await self.bot.send_log(embed=embed)
                     for i in range(amount):
                         await ctx.send(text)
 
@@ -269,8 +266,7 @@ URL: `{url}`
             await ctx.respond(
                 "Get ready for the show <:aye:965627580743024671>", ephemeral=True
             )
-            if self.bot.logs:
-                await self.bot.logs.send(embed=embed)
+            await self.bot.send_log(embed=embed)
             for i in range(amount):
                 await ctx.send(text)
 
@@ -338,8 +334,7 @@ URL: `{url}`
                         color=self.bot.color(),
                     )
                     embed.set_thumbnail(url=ctx.author.display_avatar.url)
-                    if self.bot.logs:
-                        await self.bot.logs.send(embed=embed)
+                    await self.bot.send_log(embed=embed)
                     await ctx.edit(view=None)
 
                 @discord.ui.button(style=discord.ButtonStyle.danger, label="No")
@@ -380,8 +375,7 @@ URL: `{url}`
                 color=self.bot.color(),
             )
             embed.set_thumbnail(url=ctx.author.display_avatar.url)
-            if self.bot.logs:
-                await self.bot.logs.send(embed=embed)
+            await self.bot.send_log(embed=embed)
 
     @admin.command(name="setup", description="⚙️ Setup the server.")
     @commands.has_permissions(administrator=True)
