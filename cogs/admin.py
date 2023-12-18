@@ -6,46 +6,12 @@ import datetime
 from main import ClearBot
 
 
-class RulesView(discord.ui.View):
-    def __init__(self, bot: ClearBot):
-        self.bot = bot
-        super().__init__(timeout=None)
-
-    @discord.ui.button(
-        label="I have read and accept the rules",
-        custom_id="rulebutton",
-        style=discord.ButtonStyle.secondary,
-        emoji="<:ClearFly:1054526148576559184>",
-    )
-    async def button_callback(self, button, interaction):
-        guild = self.bot.get_guild(self.bot.server_id)
-        if not guild:
-            await interaction.response.send_message(
-                "Something went wrong while trying to verify your roles...",
-                ephemeral=True,
-            )
-            return
-
-        role = guild.get_role(self.bot.roles.get("member", 0))
-        if role in interaction.user.roles:
-            await interaction.response.send_message(
-                "You already accepted the rules!", ephemeral=True
-            )
-        else:
-            author = interaction.user
-            await author.add_roles(role)
-            await interaction.response.send_message(
-                "Rules accepted, have fun in the server!", ephemeral=True
-            )
-
-
 class AdminCommands(discord.Cog):
     def __init__(self, bot: ClearBot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.add_view(RulesView(bot=self.bot))
         print(
             "\033[34m|\033[0m \033[96;1mAdmin\033[0;36m cog loaded sucessfully\033[0m"
         )
@@ -383,66 +349,9 @@ URL: `{url}`
     async def setup(self, ctx: discord.ApplicationContext):
         await ctx.defer(ephemeral=True)
 
-        file1 = discord.File(
-            f"images/banners/{self.bot.theme}/rules.png", filename="rules.png"
-        )
-        file2 = discord.File(
-            f"images/banners/{self.bot.theme}/faq.png", filename="faq.png"
-        )
-        embed1 = discord.Embed(color=self.bot.color()).set_image(
-            url="attachment://rules.png"
-        )
-        embed2 = discord.Embed(
-            color=self.bot.color(),
-            description="""
-**1.** Don’t post any inappropriate content.
+        res = await self.bot.setup_server()
 
-**2.** Use channels for their intended use.
-
-**3.** Do not spam mention members.
-
-**4.** Do not be overly political.
-
-**5.** Use common sense.
-
-**6.** Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
-
-**7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
-        """,
-        )
-        embed3 = discord.Embed(colour=self.bot.color()).set_image(
-            url="attachment://faq.png"
-        )
-        embed4 = discord.Embed(
-            description="""
-**Q: What happened to the 737-100?**
-A: We decided that the project was announced way too early. It is still in active development and a "re-announcement" will be made when significant progress has been made by the team.
-        """,
-            color=self.bot.color(),
-        )
-        embed5 = discord.Embed(
-            title="Links",
-            description="""
-- [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
-- [Discord](https://discord.gg/jjpwtusf6n)
-                               """,
-            colour=self.bot.color(),
-        )
-
-        def check(msg: discord.Message) -> bool:
-            return msg.author.bot
-
-        info = self.bot.get_channel(self.bot.channels.get("info", 0))
-        if isinstance(info, discord.TextChannel):
-            await info.purge(check=check)
-            await info.send(
-                embeds=[embed1, embed2], view=RulesView(bot=self.bot), file=file1
-            )
-            await info.send(embeds=[embed3, embed4], file=file2)
-            await info.send(embed=embed5)
-            await ctx.respond("Rules and faq posted!")
-        else:
-            await ctx.respond("Couldn't fetch the channel.")
+        await ctx.respond("Posted!" if res else "Something went wrong...")
 
 
 def setup(bot):

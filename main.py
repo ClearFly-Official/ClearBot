@@ -1,5 +1,6 @@
 import gc
 import sys
+import aiofiles
 import aiosqlite
 import discord
 import os
@@ -122,6 +123,66 @@ class ClearBot(discord.Bot):
         else:
             return False
 
+    async def setup_server(self) -> bool:
+        file1 = discord.File(
+            f"images/banners/{self.theme}/rules.png", filename="rules.png"
+        )
+        file2 = discord.File(f"images/banners/{self.theme}/faq.png", filename="faq.png")
+        embed1 = discord.Embed(color=self.color()).set_image(
+            url="attachment://rules.png"
+        )
+        embed2 = discord.Embed(
+            color=self.color(),
+            description="""
+**1.** Don’t post any inappropriate content.
+
+**2.** Use channels for their intended use.
+
+**3.** Do not spam mention members.
+
+**4.** Do not be overly political.
+
+**5.** Use common sense.
+
+**6.** Follow the [Discord TOS](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
+
+**7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
+        """,
+        )
+        embed3 = discord.Embed(colour=self.color()).set_image(
+            url="attachment://faq.png"
+        )
+        embed4 = discord.Embed(
+            description="""
+**Q: What happened to the 737-100?**
+A: We decided that the project was announced way too early. It is still in active development and a "re-announcement" will be made when significant progress has been made by the team.
+        """,
+            color=self.color(),
+        )
+        embed5 = discord.Embed(
+            title="Links",
+            description="""
+- [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
+- [Discord](https://discord.gg/jjpwtusf6n)
+                               """,
+            colour=self.color(),
+        )
+
+        def check(msg: discord.Message) -> bool:
+            return msg.author.bot
+
+        info = self.get_channel(self.channels.get("info", 0))
+        if isinstance(info, discord.TextChannel):
+            await info.purge(check=check)
+            await info.send(
+                embeds=[embed1, embed2], view=RulesView(bot=self), file=file1
+            )
+            await info.send(embeds=[embed3, embed4], file=file2)
+            await info.send(embed=embed5)
+            return True
+        else:
+            return False
+
     async def set_theme(self, author: str, theme: int = 0) -> dict[str, bool | list]:
         if not self.is_ready():
             return {"guild_success": False, "failed_roles": list(self.roles.items())}
@@ -174,7 +235,13 @@ class ClearBot(discord.Bot):
                         failed.append(role.name)
                     else:
                         failed.append("Unknown Role")
-            guild_success = True
+
+            async with aiofiles.open(
+                os.path.join("images", "logo", str(theme), "logo.png"), "rb"
+            ) as f:
+                await guild.edit(icon=await f.read())
+
+            guild_success = await self.setup_server()
 
         return {"guild_success": guild_success, "failed_roles": failed}
 
@@ -196,6 +263,39 @@ class ClearBot(discord.Bot):
                 return "Unknown"
 
 
+class RulesView(discord.ui.View):
+    def __init__(self, bot: ClearBot):
+        self.bot = bot
+        super().__init__(timeout=None)
+
+    @discord.ui.button(
+        label="I have read and accept the rules",
+        custom_id="rulebutton",
+        style=discord.ButtonStyle.secondary,
+        emoji="<:ClearFly:1054526148576559184>",
+    )
+    async def button_callback(self, button, interaction):
+        guild = self.bot.get_guild(self.bot.server_id)
+        if not guild:
+            await interaction.response.send_message(
+                "Something went wrong while trying to verify your roles...",
+                ephemeral=True,
+            )
+            return
+
+        role = guild.get_role(self.bot.roles.get("member", 0))
+        if role in interaction.user.roles:
+            await interaction.response.send_message(
+                "You already accepted the rules!", ephemeral=True
+            )
+        else:
+            author = interaction.user
+            await author.add_roles(role)
+            await interaction.response.send_message(
+                "Rules accepted, have fun in the server!", ephemeral=True
+            )
+
+
 bot = ClearBot(intents=discord.Intents.all())
 roles = bot.roles
 load_dotenv()
@@ -206,6 +306,8 @@ async def on_ready():
     gc.collect()
     if bot.user:
         bot.bot_id = bot.user.id
+
+    bot.add_view(RulesView(bot=bot))
 
     print(
         """
