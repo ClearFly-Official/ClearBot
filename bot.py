@@ -318,7 +318,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
 **2.** Open the “Virtual Airline” category.
 **3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”. Also copy your User ID, you'll need this later.
 **4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
-**5.** Use the `/va user set_sa_id` command and paste the User ID you copied earlier in it.
+**5.** Use the </va user set_sa_id:1164987729969430603> command and paste the User ID you copied earlier in it.
 **6.** That’s it! StableApproach will now download our custom aircraft profiles and send landing reports in <#1013934267966967848>.
         """,
         )
@@ -365,6 +365,8 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         info = self.sendable_channel(self.get_channel(self.channels.get("info", 0)))
         if info and overv_channel and liv_channel:
             await info.purge(check=check)
+            await overv_channel.purge(check=check)
+            await liv_channel.purge(check=check)
             await info.send(
                 embeds=[embed1, embed2], view=RulesView(bot=self), file=file1
             )
