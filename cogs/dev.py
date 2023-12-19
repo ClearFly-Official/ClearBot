@@ -914,7 +914,9 @@ Channel: {sendable.mention if sendable else 'N/A' }
             async with aiosqlite.connect(database) as db:
                 o = await db.execute(query)
                 await db.commit()
-            await ctx.respond(f"Success!\n\n```{await o.fetchall()}```", ephemeral=True)
+                await ctx.respond(
+                    f"Success!\n\n```{await o.fetchall()}```", ephemeral=True
+                )
         except Exception as e:
             await ctx.respond(f"```\n{e}\n```", ephemeral=True)
 
