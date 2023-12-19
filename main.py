@@ -36,7 +36,9 @@ async def get_airports(ctx: discord.AutocompleteContext):
     return [
         airport
         for airport in bot.airports_ac
-        if (ctx.value.upper() in airport) or (ctx.value in airport)
+        if (ctx.value.upper() in airport)
+        or (ctx.value in airport)
+        or (ctx.value.lower() in airport)
     ]
 
 

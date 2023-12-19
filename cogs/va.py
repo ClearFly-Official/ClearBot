@@ -89,7 +89,6 @@ def calculate_time(
     return calculate_distance(origin_coords, dest_coords) / speed
 
 
-
 class VAReportModal(discord.ui.Modal):
     def __init__(self, bot: ClearBot, title: str):
         self.bot = bot
@@ -532,8 +531,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             if not aircraft_data:
                 raise Exception("Couldn't fetch aircraft data.")
 
-        with open("airports.json", "r") as f:
-            airport_data = json.load(f)
+        airport_data = self.bot.airports
 
         with Pilmoji(img) as pilmoji:
             colour = (255, 255, 255)
@@ -913,8 +911,7 @@ Destination: **{flight_id2[5]}**
             await ctx.respond(embed=embed)
             return
 
-        with open("airports.json", "r") as file:
-            airports_data = json.load(file)
+        airports_data = self.bot.airports
 
         flights = []
         async with aiosqlite.connect("va.db") as db:
@@ -1002,8 +999,7 @@ Destination: **{flight_id2[5]}**
                 )
             waypoints_data = await cursor.fetchall()
 
-        with open("airports.json", "r") as file:
-            airports_data = json.load(file)
+        airports_data = self.bot.airports
 
         waypoints = []
 
@@ -1250,8 +1246,7 @@ Destination: **{flight_id2[5]}**
                     if not aircraft_data:
                         raise Exception("No aircraft data available.")
 
-                with open("airports.json", "r") as file:
-                    airports_data = json.load(file)
+                airports_data = self.bot.airports
 
                 waypoints = []
                 fig = go.Figure()
@@ -1611,8 +1606,7 @@ Notes:
 
         avg_flights_per_user = total_flights / total_users if total_users else 0
 
-        with open("airports.json", "r") as file:
-            airports_data = json.load(file)
+        airports_data = self.bot.airports
 
         total_distance_nm = 0
         total_distance_km = 0
@@ -1765,8 +1759,7 @@ Most used aircraft: **{most_used_aircraft}**
         origin = origin[:4].upper()
         destination = destination[:4].upper()
 
-        with open("airports.json", "r") as f:
-            airport_data = json.load(f)
+        airport_data = self.bot.airports
 
         flight_time = str(
             datetime.timedelta(
@@ -1815,7 +1808,6 @@ The distance between airports is **{distance}** with estimated flight time being
             color=self.bot.color(),
         )
         await ctx.respond(embed=embed)
-
 
     @vadmin.command(
         name="add_aircraft", description="➕ Add a new aircraft to the VA fleet."
