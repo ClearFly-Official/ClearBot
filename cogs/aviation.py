@@ -7,8 +7,7 @@ import datetime
 from discord import option
 from discord.ext.pages import Page, Paginator
 from discord.ext import commands
-from airports import airports
-from main import ClearBot
+from main import ClearBot, get_airports
 
 
 def return_numbers(string: str) -> int:
@@ -48,15 +47,6 @@ class AvCommands(discord.Cog):
     airport = av.create_subgroup(
         name="airport", description="🛬 Commands related to airports."
     )
-
-    async def get_airports(self, ctx: discord.AutocompleteContext):
-        if ctx.value == "":
-            return [
-                "Start typing the name of an airport for results to appear(e.g. KJFK)"
-            ]
-        return [
-            airport for airport in airports if airport.startswith(ctx.value.upper())
-        ]
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -431,7 +421,8 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
         site_link = json_resp.get("home_link")
         wiki_link = json_resp.get("wikipedia_link")
         view = discord.ui.View()
-        if site_link != "":
+
+        if self.bot.is_valid_url(site_link):
             button = discord.ui.Button(label="Open airport site", url=site_link)
             view.add_item(button)
         else:
@@ -440,14 +431,16 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             )
             view.add_item(button)
 
-        if site_link != "":
+        if self.bot.is_valid_url(wiki_link):
             button = discord.ui.Button(
-                label="Open Wikipedia page", url="https://matt3o0.is-a.dev"
+                label="Open Wikipedia page", url=wiki_link, disabled=True
             )
             view.add_item(button)
         else:
             button = discord.ui.Button(
-                label="Open Wikipedia page", url=wiki_link, disabled=True
+                label="Open Wikipedia page",
+                url="https://matt3o0.is-a.dev",
+                disabled=True,
             )
             view.add_item(button)
 
@@ -470,22 +463,104 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
         else:
             continent = json_resp.get("continent", "N/A")
 
-        embed = discord.Embed(
+        pages = []
+        elevation = json_resp.get("elevation_ft")
+
+        gen_embed = discord.Embed(
             title=f"Information about '{airport}'",
             description=f"""
 ICAO: **{json_resp.get('icao_code', 'N/A')}**
 IATA: **{iata}**
 Type: **{json_resp.get('type', 'N/A').replace('_', ' ').title()}**
 Name: **{json_resp.get('name', 'N/A')}**
-Elevation: **{json_resp.get('elevation_ft', 'N/A')}**ft
+Elevation: **{elevation if elevation else 'N/A'}**ft
 Continent: **{continent}**
 Country Code: **{json_resp.get('iso_country', 'N/A')}**
 Region Code: **{json_resp.get('iso_region', 'N/A')}**
 Municipality: **{json_resp.get('municipality', 'N/A')}**
         """,
-            colour=self.bot.color(),
+            color=self.bot.color(),
         )
-        await ctx.respond(embed=embed, view=view)
+        pages.append(Page(embeds=[gen_embed], custom_view=view))
+
+        if json_resp.get("freqs"):
+            freq_emb = discord.Embed(title="Frequencies", color=self.bot.color())
+
+            for freq in json_resp.get("freqs"):
+                freq_emb.add_field(
+                    name=freq.get("description", "N/A"),
+                    value=f"Type: **{freq.get('type', 'N/A')}**\nFrequency: **{freq.get('frequency_mhz')}**MHz",
+                )
+
+            pages.append(Page(embeds=[freq_emb]))
+
+        if json_resp.get("runways"):
+            for rwy in json_resp.get("runways"):
+                embed = discord.Embed(color=self.bot.color())
+                le_ident = rwy.get("le_ident", "N/A")
+                le_ils = rwy.get("le_ils", {"e": 1})
+
+                he_ident = rwy.get("he_ident", "N/A")
+                he_ils = rwy.get("he_ils", {"e": 1})
+
+                le_deg = rwy.get("le_heading_degT", "N/A")
+                he_deg = rwy.get("he_heading_degT", "N/A")
+
+                surf = ""
+                match rwy.get("surface", "N/A").lower():
+                    # Abbrevations sourced from https://en.wikipedia.org/wiki/Runway
+                    case "asp":
+                        surf = "asphalt"
+                    case "bit":
+                        surf = "bituminous asphalt"
+                    case "bri":
+                        surf = "bricks"
+                    case "cla":
+                        surf = "clay"
+                    case _:
+                        surf = rwy.get("surface", "N/A")
+
+                dim = ["N/A", "N/A"]
+
+                if rwy.get("length_ft"):
+                    dim[0] = rwy.get("length_ft")
+
+                if rwy.get("width_ft"):
+                    dim[1] = rwy.get("width_ft")
+
+                elev = ["N/A", "N/A"]
+
+                if rwy.get("le_elevation_ft"):
+                    elev[0] = rwy.get("le_elevation_ft")
+
+                if rwy.get("he_elevation_ft"):
+                    elev[1] = rwy.get("he_elevation_ft")
+
+                embed.description = f"""
+## {'~~' if int(rwy.get('closed')) else ''}{'💡' if rwy.get('lighted') else '🌌'} Runway {le_ident}{f'*({le_deg}°)*' if le_deg else ''}/{he_ident}{f'*({he_deg}°)*' if he_deg else ''}{'~~' if int(rwy.get('closed')) else ''}
+**{dim[0]}**ft x **{dim[1]}**ft
+Surface: **{surf.title()}**
+Elevation: **{elev[0]}**ft / **{elev[1]}**ft
+            """
+
+                if le_ils.get("freq") and he_ils.get("freq"):
+                    embed.description += f"""
+### ILS
+{le_ident}: **{le_ils.get('freq')}**MHz (course **{le_ils.get('course')}**°)
+{he_ident}: **{he_ils.get('freq')}**MHz (course **{he_ils.get('course')}**°)
+"""
+                else:
+                    embed.description += "\n### *No ILS available*"
+
+                pages.append(Page(embeds=[embed]))
+
+        paginator = Paginator(
+            pages=pages,
+            use_default_buttons=False,
+            custom_buttons=self.bot.paginator_buttons,
+        )
+
+        await paginator.respond(ctx.interaction)
 
     @airport.command(
         name="active_runways",
