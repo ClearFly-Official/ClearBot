@@ -1,12 +1,15 @@
 import gc
+import re
 import sys
 import aiofiles
 import aiosqlite
 import discord
 import os
 import sqlite3
+import requests
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext.pages import PaginatorButton
 from datetime import datetime
 
 
@@ -39,6 +42,20 @@ class ClearBot(discord.Bot):
             x.split(".")[0] for x in os.listdir("cogs") if x.endswith(".py")
         ]
 
+        resp = requests.get("https://github.com/mwgg/Airports/raw/master/airports.json")
+        self.airports = resp.json()
+
+        self.airports_ac = []
+
+        for ap in self.airports:
+            icao = self.airports[ap].get("icao")
+            iata = self.airports[ap].get("iata")
+            name = self.airports[ap].get("name")
+
+            self.airports_ac.append(
+                f"{icao if icao else 'N/A'}, {iata if iata else 'N/A'}, {name if name else 'N/A'}"
+            )
+
         con = sqlite3.connect("main.db")
         # 0 = normal
         # 1 = halloween
@@ -47,6 +64,16 @@ class ClearBot(discord.Bot):
             con.execute("SELECT value FROM config WHERE key='theme'").fetchone()[0]
         )
         con.close()
+
+        self.paginator_buttons = [
+            PaginatorButton("first", label="<<", style=discord.ButtonStyle.secondary),
+            PaginatorButton("prev", label="<", style=discord.ButtonStyle.danger),
+            PaginatorButton(
+                "page_indicator", style=discord.ButtonStyle.gray, disabled=True
+            ),
+            PaginatorButton("next", label=">", style=discord.ButtonStyle.primary),
+            PaginatorButton("last", label=">>", style=discord.ButtonStyle.secondary),
+        ]
 
         self.server_id = 965419296937365514
         self.bot_author = 668874138160594985
@@ -250,6 +277,11 @@ A: We decided that the project was announced way too early. It is still in activ
         if isinstance(logs, discord.TextChannel):
             await logs.send(*args, **kwargs)
 
+    def is_valid_url(self, url: str) -> bool:
+        pattern = "(http|https):\/\/([0-z]*)\..*"
+
+        return True if re.search(pattern, url) else False
+
     @property
     def theme_name(self):
         match self.theme:
@@ -297,6 +329,19 @@ class RulesView(discord.ui.View):
 
 
 bot = ClearBot(intents=discord.Intents.all())
+
+
+async def get_airports(ctx: discord.AutocompleteContext):
+    if ctx.value == "":
+        return ["Start typing the name of an airport for results to appear (e.g. KJFK)"]
+
+    return [
+        airport
+        for airport in bot.airports_ac
+        if (ctx.value.upper() in airport) or (ctx.value in airport)
+    ]
+
+
 roles = bot.roles
 load_dotenv()
 

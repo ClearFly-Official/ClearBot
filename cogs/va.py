@@ -17,7 +17,7 @@ import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
 import pymongo
-from main import ClearBot, UserVABanned
+from main import ClearBot, UserVABanned, get_airports
 from airports import airports, airports_icao
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
@@ -51,12 +51,6 @@ def is_banned_check():
         return True if check else 0
 
     return commands.check(predicate)  # type: ignore
-
-
-async def get_airports(ctx: discord.AutocompleteContext):
-    if ctx.value == "":
-        return ["Start typing the name of an airport for results to appear(e.g. KJFK)"]
-    return [airport for airport in airports if airport.startswith(ctx.value.upper())]
 
 
 async def get_aircraft(ctx: discord.AutocompleteContext):
