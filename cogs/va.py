@@ -18,7 +18,6 @@ from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
 import pymongo
 from main import ClearBot, UserVABanned, get_airports
-from airports import airports, airports_icao
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
@@ -578,7 +577,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             await ctx.respond(embed=embed)
             return
 
-        if (origin[:4].upper()) not in airports_icao:
+        if (origin[:4].upper()) not in self.bot.airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
                 colour=self.bot.color(1),
@@ -586,7 +585,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
             )
             await ctx.respond(embed=embed)
             return
-        if (destination[:4].upper()) not in airports_icao:
+        if (destination[:4].upper()) not in self.bot.airports_icao:
             embed = discord.Embed(
                 title="Invalid destination",
                 colour=self.bot.color(1),
@@ -649,10 +648,10 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     await ctx.respond(embed=embed)
                     return
         card_id = "flight_card" + str(random.randint(0, 9)) + ".png"
-        img = Image.open(f"images/va_card/{self.bot.theme}/va_flightcard_blank.png")
-        font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=48)
-        route_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=128)
-        metar_font = ImageFont.truetype("fonts/Inter-Regular.ttf", size=36)
+        img = Image.open(f"ui/images/va_card/{self.bot.theme}/va_flightcard_blank.png")
+        font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=48)
+        route_font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=128)
+        metar_font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=36)
 
         data = ""
         if not resp["results"]:
@@ -1641,11 +1640,11 @@ Notes:
             lb = await cursor.fetchall()
 
         font = ImageFont.truetype(
-            "fonts/Inter-Regular.ttf",
+            "ui/fonts/Inter-Regular.ttf",
             size=43,
             layout_engine=ImageFont.Layout.BASIC,
         )
-        img = Image.open(f"images/leaderboard/{self.bot.theme}/lb.png")
+        img = Image.open(f"ui/images/leaderboard/{self.bot.theme}/lb.png")
         names = [
             f"{i}      {self.bot.user_object(await self.bot.get_or_fetch_user(int(elem[0]))).name}"
             for i, elem in enumerate(lb, 1)
@@ -1886,7 +1885,7 @@ Most used aircraft: **{most_used_aircraft}**
             await ctx.respond(embed=embed)
             return
 
-        if (origin[:4].upper()) not in airports_icao:
+        if (origin[:4].upper()) not in self.bot.airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
                 colour=self.bot.color(1),
@@ -1894,7 +1893,7 @@ Most used aircraft: **{most_used_aircraft}**
             )
             await ctx.respond(embed=embed)
             return
-        if (destination[:4].upper()) not in airports_icao:
+        if (destination[:4].upper()) not in self.bot.airports_icao:
             embed = discord.Embed(
                 title="Invalid destination",
                 colour=self.bot.color(1),

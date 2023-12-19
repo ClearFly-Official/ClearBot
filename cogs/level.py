@@ -62,7 +62,7 @@ class LevelingCommands(discord.Cog):
 
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
-            img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
+            img = Image.open(f"ui/images/userlevel/{self.bot.theme}/userlevel.png")
             avatar_data = await user.display_avatar.read()
             avatarorigin = Image.open(io.BytesIO(avatar_data))
             avatar = avatarorigin.resize((256, 256))
@@ -76,12 +76,12 @@ class LevelingCommands(discord.Cog):
             draw.ellipse((0, 0, 256, 256), fill=255)
             masked = Image.composite(avatar, clear, mask=avmask)
             font = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf",
+                "ui/fonts/Inter-Regular.ttf",
                 size=100,
                 layout_engine=ImageFont.Layout.BASIC,
             )
             fontbig = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf",
+                "ui/fonts/Inter-Regular.ttf",
                 size=150,
                 layout_engine=ImageFont.Layout.BASIC,
             )
@@ -190,7 +190,7 @@ class LevelingCommands(discord.Cog):
 
             x1, y1 = 860, 547
             x2, y2 = 2740, 710
-            img = Image.open(f"images/userlevel/{self.bot.theme}/userlevel.png")
+            img = Image.open(f"ui/images/userlevel/{self.bot.theme}/userlevel.png")
             avatar_data = await user.display_avatar.read()
             avatarorigin = Image.open(io.BytesIO(avatar_data))
             avatar = avatarorigin.resize((256, 256))
@@ -204,12 +204,12 @@ class LevelingCommands(discord.Cog):
             draw.ellipse((0, 0, 256, 256), fill=255)
             masked = Image.composite(avatar, clear, mask=avmask)
             font = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf",
+                "ui/fonts/Inter-Regular.ttf",
                 size=100,
                 layout_engine=ImageFont.Layout.BASIC,
             )
             fontbig = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf",
+                "ui/fonts/Inter-Regular.ttf",
                 size=150,
                 layout_engine=ImageFont.Layout.BASIC,
             )
@@ -302,7 +302,7 @@ class LevelingCommands(discord.Cog):
         await ctx.defer()
         output = []
         nameoutput = []
-        img = Image.open(f"images/leaderboard/{self.bot.theme}/lb.png")
+        img = Image.open(f"ui/images/leaderboard/{self.bot.theme}/lb.png")
         async with aiosqlite.connect("main.db") as db:
             sel = await db.execute("SELECT * FROM leveling")
             fetsel = await sel.fetchall()
@@ -346,7 +346,7 @@ Chat to earn xp!
                 color=self.bot.color(),
             )
             font = ImageFont.truetype(
-                "fonts/Inter-Regular.ttf",
+                "ui/fonts/Inter-Regular.ttf",
                 size=43,
                 layout_engine=ImageFont.Layout.BASIC,
             )

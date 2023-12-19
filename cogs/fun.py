@@ -324,13 +324,13 @@ class FunCommands(discord.Cog):
         data = await message.author.display_avatar.read()
         avatarorigin = Image.open(io.BytesIO(data))
         avatar = avatarorigin.resize((1024, 1024))
-        qclear = Image.open("images/quote/quote.png")
-        qavmask = Image.open("images/quote/AVMask.png")
+        qclear = Image.open("ui/images/quote/quote.png")
+        qavmask = Image.open("ui/images/quote/AVMask.png")
         img = Image.new("RGBA", (2048, 1024), 0)
         img.paste(avatar, qavmask)  # type: ignore
         img.paste(qclear, mask=qclear)
         font = ImageFont.truetype(
-            "fonts/Inter-Regular.ttf",
+            "ui/fonts/Inter-Regular.ttf",
             size=100,
             layout_engine=ImageFont.Layout.BASIC,
         )
@@ -423,7 +423,7 @@ class FunCommands(discord.Cog):
         newText = textwrap.fill(newText, 28, max_lines=2)
 
         with Image.new("RGBA", (2048, 512)) as image:
-            font = ImageFont.truetype("fonts/Inter-Regular.ttf", 144)
+            font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", 144)
             with Pilmoji(image) as pilmoji:
                 pilmoji.text(
                     (10, 10),
@@ -604,8 +604,8 @@ class FunCommands(discord.Cog):
             return
         if text_size is None:
             text_size = round(resolution[0] * 0.06)
-        font = ImageFont.truetype("fonts/Impact.ttf", size=text_size)
-        font_bars = ImageFont.truetype("fonts/Arial Bold.ttf", size=text_size)
+        font = ImageFont.truetype("ui/fonts/Impact.ttf", size=text_size)
+        font_bars = ImageFont.truetype("ui/fonts/Arial Bold.ttf", size=text_size)
         border_offset = round(text_size / 25)
         if top_text != None:
             with Pilmoji(img) as pilmoji:
