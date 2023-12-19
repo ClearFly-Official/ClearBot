@@ -432,9 +432,7 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
             view.add_item(button)
 
         if self.bot.is_valid_url(wiki_link):
-            button = discord.ui.Button(
-                label="Open Wikipedia page", url=wiki_link, disabled=True
-            )
+            button = discord.ui.Button(label="Open Wikipedia page", url=wiki_link)
             view.add_item(button)
         else:
             button = discord.ui.Button(
