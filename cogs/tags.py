@@ -124,7 +124,9 @@ Didn't found {tag}.
             )
             for i, chunk in enumerate(chunks)
         ]
-        paginator = Paginator(pages)
+        paginator = Paginator(
+            pages, use_default_buttons=False, custom_buttons=self.bot.paginator_buttons
+        )
         await paginator.respond(ctx.interaction)
 
     @tags.command(description="➕ Add a new tag.")

@@ -288,7 +288,11 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                             )
                             i += 1
 
-                    paginator = Paginator(pages=pages)
+                    paginator = Paginator(
+                        pages=pages,
+                        use_default_buttons=False,
+                        custom_buttons=self.bot.paginator_buttons,
+                    )
                     await paginator.respond(ctx.interaction)
 
             else:
@@ -347,7 +351,11 @@ Winds: **{json.dumps(resp['data'][0].get('wind', {'degrees':'N/A'}).get('degrees
                             )
                             i += 1
 
-                    paginator = Paginator(pages=pages)
+                    paginator = Paginator(
+                        pages=pages,
+                        use_default_buttons=False,
+                        custom_buttons=self.bot.paginator_buttons,
+                    )
                     await paginator.respond(ctx.interaction)
             else:
                 embed = discord.Embed(

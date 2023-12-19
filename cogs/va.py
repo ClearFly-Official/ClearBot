@@ -890,7 +890,9 @@ Destination: **{flight_id2[5]}**
             )
             for report in reports
         ]
-        paginator = Paginator(pages)
+        paginator = Paginator(
+            pages, use_default_buttons=False, custom_buttons=self.bot.paginator_buttons
+        )
         await paginator.respond(ctx.interaction)
 
     @user.command(name="flights", description="🛬 View a users flights.")
@@ -947,7 +949,9 @@ Destination: **{flight_id2[5]}**
             )
             for i, chunk in enumerate(chunks)
         ]
-        paginator = Paginator(pages)
+        paginator = Paginator(
+            pages, use_default_buttons=False, custom_buttons=self.bot.paginator_buttons
+        )
         await paginator.respond(ctx.interaction)
 
     @user.command(name="map", description="🌍 View a user's flights in map style.")
