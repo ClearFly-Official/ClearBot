@@ -13,7 +13,7 @@ from discord.ext import commands
 from discord.ext.pages import PaginatorButton
 from dotenv import load_dotenv
 
-from bot import ClearBot, RulesView
+from bot import ClearBot, RulesView, VAStartView
 
 
 class MissingPermissions(commands.CommandError):
@@ -51,6 +51,7 @@ async def on_ready():
         bot.bot_id = bot.user.id
 
     bot.add_view(RulesView(bot=bot))
+    bot.add_view(VAStartView(bot=bot))
 
     print(
         """

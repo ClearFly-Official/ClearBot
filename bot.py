@@ -2,6 +2,8 @@ import datetime
 import os
 import re
 import sqlite3
+import time
+from typing import List, Literal
 
 import aiofiles
 import aiosqlite
@@ -17,6 +19,94 @@ class UserObject(discord.Object):
         self.display_name = "N/A"
         self.global_name = "N/A"
         super().__init__(self.id)
+
+
+class VA:
+    @classmethod
+    async def get_users(cls, get_type: Literal["id", "full"] = "id"):
+        out = []
+        async with aiosqlite.connect("va.db") as db:
+            cur = await db.execute("SELECT * FROM users")
+            out = await cur.fetchall()
+        if (get_type == "full") or (get_type is None):
+            return out
+        elif get_type == "id":
+            return [usr[1] for usr in out]
+        else:
+            raise ValueError(f"Didn't found get_type '{get_type}'")
+
+    @classmethod
+    async def has_flights(cls, user: discord.User | discord.Member):
+        async with aiosqlite.connect("va.db") as db:
+            cur = await db.execute(
+                "SELECT id FROM flights WHERE user_id=?", (str(user.id),)
+            )
+            flights = await cur.fetchall()
+
+        if (flights == []) or (flights is None):
+            return False
+        else:
+            return True
+
+    @classmethod
+    async def generate_flight_number(
+        cls, aircraft_icao, origin_icao, destination_icao, prefix="CF"
+    ):
+        async with aiosqlite.connect("va.db") as db:
+            cur = await db.execute("SELECT icao FROM aircraft")
+            aircraft = await cur.fetchall()
+            aircraft = [aircraft[0] for aircraft in aircraft]
+        abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+        org_num = 0
+        for l in list(origin_icao):
+            org_num = org_num + list(abc).index(l)
+
+        des_num = 0
+        for l in list(destination_icao):
+            des_num = des_num + list(abc).index(l)
+
+        if len(str(aircraft.index(aircraft_icao))) > 2:
+            ac_incode = str(aircraft.index(aircraft_icao))[:2]
+            org_num += 1
+            des_num += 1
+        else:
+            ac_incode = aircraft.index(aircraft_icao)
+
+        flight_number = prefix + str(ac_incode) + str(org_num) + str(des_num)
+
+        return flight_number
+
+    @classmethod
+    async def get_aircraft_from_type(
+        cls, aircraft_type: str = "All", output_type: str = "list"
+    ):
+        aircraft_types = ["Airliner", "GA", "All"]
+        if aircraft_type not in aircraft_types:
+            aircraft_type = "All"
+        async with aiosqlite.connect("va.db") as db:
+            if aircraft_type != "All":
+                cur = await db.execute(
+                    "SELECT * FROM aircraft WHERE type=?",
+                    (aircraft_type,),
+                )
+                aircraft = await cur.fetchall()
+            else:
+                cur = await db.execute("SELECT * FROM aircraft")
+                aircraft = await cur.fetchall()
+        if output_type == "list":
+            aircraft = [ac[1] for ac in aircraft]
+        elif output_type == "IN_SQL":
+            aircraft = "(" + ", ".join([f"'{ac[1]}'" for ac in aircraft]) + ")"
+
+        return aircraft
+
+    @classmethod
+    def get_flights_from_user(cls, user: discord.Member | discord.User) -> list[tuple]:
+        db = sqlite3.connect("va.db")
+        cur = db.execute("SELECT * FROM flights WHERE user_id=?", (str(user.id),))
+        flights = cur.fetchall()
+        return flights
 
 
 class ClearBot(discord.Bot):
@@ -102,6 +192,9 @@ class ClearBot(discord.Bot):
             1: {0: 0xFF0000, 1: 0xFF0000, 2: 0xFF0000},
             2: {0: 0xFFAA00, 1: 0xFFAA00, 2: 0xFFAA00},
         }
+
+        self.va = VA
+
         super().__init__(*args, **kwargs)
 
     def embed_color(self, type: int = 0) -> int:
@@ -191,14 +284,94 @@ A: We decided that the project was announced way too early. It is still in activ
         def check(msg: discord.Message) -> bool:
             return msg.author.bot
 
-        info = self.get_channel(self.channels.get("info", 0))
-        if isinstance(info, discord.TextChannel):
+        fbo = self.sendable_channel(self.get_channel(self.channels.get("fbo", 0)))
+        if not fbo:
+            raise Exception("Didn't find the fbo channel.")
+        embed = discord.Embed(
+            title="ClearFly VA",
+            colour=self.color(),
+            description=f"""
+ClearFly VA is a Virtual Airline that offers a fun way to fly without requiring any prior training or extensive knowledge on aviation. However, we expect our pilots to behave professionally, without engaging in any intentional crashing, starting engines on the runway, or any other unprofessional activities.
+
+## Ready to get started with ClearFly VA? Follow these steps
+    **1.** Visit {fbo.mention} and enter </va flight file:1016059999056826479>.
+    **2.** Click on the command that appears and input the necessary information. Then, run the command.
+    **3.** Fly your flight with a ClearFly livery (available in <#1041057335449227314> or <#1087399445966110881>).
+    **4.** Once you complete your flight, run the command </va flight complete:1016059999056826479> within 24 hours. Otherwise, the flight will be automatically cancelled.
+
+## Wondering what aircraft you can fly?
+You can choose any aircraft that has a ClearFly livery, available in <#1041057335449227314> for official paints or in <#1087399445966110881> for community-made liveries. Just be sure you equip your aircraft with a ClearFly livery before taking off. 
+
+Happy flying!
+            """,
+        )
+        embed2 = discord.Embed(
+            title="Recommended add-ons: StableApproach",
+            colour=self.color(),
+            description="""
+## Download
+https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-data-monitoring-for-x-plane/ 
+## Setup
+**1.** Open the StableApproach settings in the plugins menu.
+**2.** Open the “Virtual Airline” category.
+**3.** Put the text in the box labeled “Virtual Airline”: “ClearFly-Official/StableApproach”. Also copy your User ID, you'll need this later.
+**4.** Go to the “Aircraft” tab. Click “Download VA Profile”, and click “Apply + Save”. This will enable StableApproach to use our profile for that aircraft whenever you fly it.
+**5.** Use the `/va user set_sa_id` command and paste the User ID you copied earlier in it.
+**6.** That’s it! StableApproach will now download our custom aircraft profiles and send landing reports in <#1013934267966967848>.
+        """,
+        )
+        embm = discord.Embed(
+            title="ClearFly VA Official Liveries",
+            colour=self.color(),
+            description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!",
+        )
+        emb1 = discord.Embed(
+            title="Boeing 737-800 by Zibo",
+            colour=self.color(),
+            url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
+        )
+        emb2 = discord.Embed(
+            title="Cessna Citation X by Laminar Research",
+            colour=self.color(),
+            url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
+        )
+        emb3 = discord.Embed(
+            title="Cessna 172SP by Laminar Research",
+            colour=self.color(),
+            url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
+        )
+        emb4 = discord.Embed(
+            title="Cessna 172SP (G1000) by Laminar Research",
+            colour=self.color(),
+            url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
+        )
+        embs = [embm, emb1, emb2, emb3, emb4]
+        liv_channel = self.sendable_channel(
+            self.get_channel(self.channels.get("va-liveries", 0))
+        )
+        overv_channel = self.sendable_channel(
+            self.get_channel(self.channels.get("va-overview", 0))
+        )
+        info = self.sendable_channel(self.get_channel(self.channels.get("info", 0)))
+        if info and overv_channel and liv_channel:
             await info.purge(check=check)
             await info.send(
                 embeds=[embed1, embed2], view=RulesView(bot=self), file=file1
             )
             await info.send(embeds=[embed3, embed4], file=file2)
             await info.send(embed=embed5)
+            await overv_channel.send(
+                embeds=[embed, embed2], view=VAStartView(bot=self)
+            )
+            await liv_channel.send(embeds=embs)
             return True
         else:
             return False
@@ -319,3 +492,58 @@ class RulesView(discord.ui.View):
             await interaction.response.send_message(
                 "Rules accepted, have fun in the server!", ephemeral=True
             )
+
+
+class VAStartView(discord.ui.View):
+    def __init__(self, bot: ClearBot):
+        self.bot = bot
+        super().__init__(timeout=None)
+
+    @discord.ui.button(
+        label="Start", style=discord.ButtonStyle.green, custom_id="VA:start_button"
+    )
+    async def start_button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        user_ids = await self.bot.va.get_users("id")
+        if not interaction.user or isinstance(interaction.user, discord.User):
+            return
+        if str(interaction.user.id) in list(user_ids):
+            embed = discord.Embed(
+                title="You're already part of the VA!",
+                colour=self.bot.color(1),
+                description="Joining the VA when you're already in it, is not possible. Flying two aircraft in different parts of the world at the same time is impossible after all.",
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            guild = self.bot.get_guild(self.bot.server_id)
+            if guild:
+                role = guild.get_role(self.bot.roles.get("clearfly-pilot", 0))
+                if role:
+                    await interaction.user.add_roles(role)
+            fbo = self.bot.get_channel(self.bot.channels.get("fbo", 0))
+            if not isinstance(fbo, discord.TextChannel):
+                return
+
+            embed = discord.Embed(
+                title="Thanks for joining our VA!",
+                colour=self.bot.color(),
+                description=f"""
+Head over to {fbo.mention} to file your first flight!
+*Don't know how to file your first flight? Check the message above!*
+
+**NOTE**: *If you don't file a flight within 24 hours you will be kicked from the VA*""",
+            )
+            user = {
+                "user_id": str(interaction.user.id),
+                "sign_time": round(time.time()),
+                "is_trial": True,
+                "is_ban": False,
+            }
+            async with aiosqlite.connect("va.db") as db:
+                await db.execute(
+                    "INSERT INTO users (user_id, sign_time, is_trial, is_ban) VALUES (:user_id, :sign_time, :is_trial, :is_ban)",
+                    user,
+                )
+                await db.commit()
+            await interaction.response.send_message(embed=embed, ephemeral=True)
