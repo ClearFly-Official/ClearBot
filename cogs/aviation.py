@@ -515,6 +515,10 @@ Municipality: **{json_resp.get('municipality', 'N/A')}**
                         surf = "bricks"
                     case "cla":
                         surf = "clay"
+                    case "con":
+                        surf = "contrete"
+                    case "conc-g":
+                        surf = "concrete - grooved"
                     case _:
                         surf = rwy.get("surface", "N/A")
 
