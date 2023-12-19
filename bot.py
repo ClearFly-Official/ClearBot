@@ -243,10 +243,10 @@ class ClearBot(discord.Bot):
         file2 = discord.File(
             f"ui/images/banners/{self.theme}/faq.png", filename="faq.png"
         )
-        embed1 = discord.Embed(color=self.color()).set_image(
+        rembed1 = discord.Embed(color=self.color()).set_image(
             url="attachment://rules.png"
         )
-        embed2 = discord.Embed(
+        rembed2 = discord.Embed(
             color=self.color(),
             description="""
 **1.** Don’t post any inappropriate content.
@@ -264,17 +264,17 @@ class ClearBot(discord.Bot):
 **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
         """,
         )
-        embed3 = discord.Embed(colour=self.color()).set_image(
+        rembed3 = discord.Embed(colour=self.color()).set_image(
             url="attachment://faq.png"
         )
-        embed4 = discord.Embed(
+        rembed4 = discord.Embed(
             description="""
 **Q: What happened to the 737-100?**
 A: We decided that the project was announced way too early. It is still in active development and a "re-announcement" will be made when significant progress has been made by the team.
         """,
             color=self.color(),
         )
-        embed5 = discord.Embed(
+        rembed5 = discord.Embed(
             title="Links",
             description="""
 - [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
@@ -289,7 +289,7 @@ A: We decided that the project was announced way too early. It is still in activ
         fbo = self.sendable_channel(self.get_channel(self.channels.get("fbo", 0)))
         if not fbo:
             raise Exception("Didn't find the fbo channel.")
-        embed = discord.Embed(
+        vembed = discord.Embed(
             title="ClearFly VA",
             colour=self.color(),
             description=f"""
@@ -307,7 +307,7 @@ You can choose any aircraft that has a ClearFly livery, available in <#104105733
 Happy flying!
             """,
         )
-        embed2 = discord.Embed(
+        vembed2 = discord.Embed(
             title="Recommended add-ons: StableApproach",
             colour=self.color(),
             description="""
@@ -368,11 +368,13 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             await overv_channel.purge(check=check)
             await liv_channel.purge(check=check)
             await info.send(
-                embeds=[embed1, embed2], view=RulesView(bot=self), file=file1
+                embeds=[rembed1, rembed2], view=RulesView(bot=self), file=file1
             )
-            await info.send(embeds=[embed3, embed4], file=file2)
-            await info.send(embed=embed5)
-            await overv_channel.send(embeds=[embed, embed2], view=VAStartView(bot=self))
+            await info.send(embeds=[rembed3, rembed4], file=file2)
+            await info.send(embed=rembed5)
+            await overv_channel.send(
+                embeds=[vembed, vembed2], view=VAStartView(bot=self)
+            )
             await liv_channel.send(embeds=embs)
             return True
         else:
