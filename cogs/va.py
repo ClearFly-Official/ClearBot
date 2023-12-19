@@ -55,6 +55,9 @@ def calculate_distance(
     lat2 = math.radians(loc2[0])
     lon2 = math.radians(loc2[1])
 
+    if loc1[0] > 180 or loc1[1] > 90 or loc2[0] > 180 or loc2[1] > 90:
+        return -1
+
     radius_values = {
         "NM": 3634.4492440605,
         "KM": 6371.0,
@@ -550,12 +553,12 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 datetime.timedelta(
                     hours=calculate_time(
                         (
-                            airport_data.get(origin[:4].upper()).get("lat", 0),
-                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                            airport_data.get(origin[:4].upper()).get("lat", 181),
+                            airport_data.get(origin[:4].upper()).get("lon", 181),
                         ),
                         (
-                            airport_data.get(destination[:4].upper()).get("lat", 0),
-                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                            airport_data.get(destination[:4].upper()).get("lat", 181),
+                            airport_data.get(destination[:4].upper()).get("lon", 181),
                         ),
                         aircraft_data[4],
                     )
@@ -618,12 +621,16 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     round(
                         calculate_distance(
                             (
-                                airport_data.get(origin[:4].upper()).get("lat", 0),
-                                airport_data.get(origin[:4].upper()).get("lon", 0),
+                                airport_data.get(origin[:4].upper()).get("lat", 181),
+                                airport_data.get(origin[:4].upper()).get("lon", 181),
                             ),
                             (
-                                airport_data.get(destination[:4].upper()).get("lat", 0),
-                                airport_data.get(destination[:4].upper()).get("lon", 0),
+                                airport_data.get(destination[:4].upper()).get(
+                                    "lat", 181
+                                ),
+                                airport_data.get(destination[:4].upper()).get(
+                                    "lon", 181
+                                ),
                             ),
                         )
                     )
@@ -920,7 +927,7 @@ Destination: **{flight_id2[5]}**
             )
             rows = await cursor.fetchall()
             flights = [
-                f"**{i}**: **{row[2]}**, **{row[3]}**, **{row[4]}** -> **{row[5]}**{row[8]} (**{round(calculate_distance((airports_data.get(row[4])['lat'], airports_data.get(row[4])['lon']),(airports_data.get(row[5])['lat'], airports_data.get(row[5])['lon'])))}**nm), *filed <t:{row[6]}:f>*{row[9]}"
+                f"**{i}**: **{row[2]}**, **{row[3]}**, **{row[4]}** -> **{row[5]}**{row[8]} (**{round(calculate_distance((airports_data.get(row[4], {'lat': 180})['lat'], airports_data.get(row[4], {'lon': 180})['lon']),(airports_data.get(row[5], {'lat': 180})['lat'], airports_data.get(row[5], {'lon': 180})['lon'])))}**nm), *filed <t:{row[6]}:f>*{row[9]}"
                 for i, row in enumerate(rows, 1)
             ]
 
@@ -1614,22 +1621,22 @@ Notes:
         for flight in origins_dests:
             total_distance_nm += calculate_distance(
                 (
-                    airports_data.get(flight[0])["lat"],
-                    airports_data.get(flight[0])["lon"],
+                    airports_data.get(flight[0]).get("lat", 181),
+                    airports_data.get(flight[0]).get("lon", 181),
                 ),
                 (
-                    airports_data.get(flight[1])["lat"],
-                    airports_data.get(flight[1])["lon"],
+                    airports_data.get(flight[1]).get("lat", 181),
+                    airports_data.get(flight[1]).get("lon", 181),
                 ),
             )
             total_distance_km += calculate_distance(
                 (
-                    airports_data.get(flight[0])["lat"],
-                    airports_data.get(flight[0])["lon"],
+                    airports_data.get(flight[0]).get("lat", 181),
+                    airports_data.get(flight[0]).get("lon", 181),
                 ),
                 (
-                    airports_data.get(flight[1])["lat"],
-                    airports_data.get(flight[1])["lon"],
+                    airports_data.get(flight[1]).get("lat", 181),
+                    airports_data.get(flight[1]).get("lon", 181),
                 ),
                 unit="KM",
             )
@@ -1765,12 +1772,12 @@ Most used aircraft: **{most_used_aircraft}**
             datetime.timedelta(
                 hours=calculate_time(
                     (
-                        airport_data.get(origin[:4].upper()).get("lat", 0),
-                        airport_data.get(origin[:4].upper()).get("lon", 0),
+                        airport_data.get(origin[:4].upper()).get("lat", 181),
+                        airport_data.get(origin[:4].upper()).get("lon", 181),
                     ),
                     (
-                        airport_data.get(destination[:4].upper()).get("lat", 0),
-                        airport_data.get(destination[:4].upper()).get("lon", 0),
+                        airport_data.get(destination[:4].upper()).get("lat", 181),
+                        airport_data.get(destination[:4].upper()).get("lon", 181),
                     ),
                     aircraft_data[4],
                 )
@@ -1784,12 +1791,12 @@ Most used aircraft: **{most_used_aircraft}**
                 round(
                     calculate_distance(
                         (
-                            airport_data.get(origin[:4].upper()).get("lat", 0),
-                            airport_data.get(origin[:4].upper()).get("lon", 0),
+                            airport_data.get(origin[:4].upper()).get("lat", 181),
+                            airport_data.get(origin[:4].upper()).get("lon", 181),
                         ),
                         (
-                            airport_data.get(destination[:4].upper()).get("lat", 0),
-                            airport_data.get(destination[:4].upper()).get("lon", 0),
+                            airport_data.get(destination[:4].upper()).get("lat", 181),
+                            airport_data.get(destination[:4].upper()).get("lon", 181),
                         ),
                     )
                 )
