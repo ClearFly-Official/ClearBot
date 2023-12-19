@@ -238,9 +238,11 @@ class ClearBot(discord.Bot):
 
     async def setup_server(self) -> bool:
         file1 = discord.File(
-            f"images/banners/{self.theme}/rules.png", filename="rules.png"
+            f"ui/images/banners/{self.theme}/rules.png", filename="rules.png"
         )
-        file2 = discord.File(f"images/banners/{self.theme}/faq.png", filename="faq.png")
+        file2 = discord.File(
+            f"ui/images/banners/{self.theme}/faq.png", filename="faq.png"
+        )
         embed1 = discord.Embed(color=self.color()).set_image(
             url="attachment://rules.png"
         )
@@ -368,9 +370,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             )
             await info.send(embeds=[embed3, embed4], file=file2)
             await info.send(embed=embed5)
-            await overv_channel.send(
-                embeds=[embed, embed2], view=VAStartView(bot=self)
-            )
+            await overv_channel.send(embeds=[embed, embed2], view=VAStartView(bot=self))
             await liv_channel.send(embeds=embs)
             return True
         else:
