@@ -33,13 +33,9 @@ async def get_airports(ctx: discord.AutocompleteContext):
     if ctx.value == "":
         return ["Start typing the name of an airport for results to appear (e.g. KJFK)"]
 
-    return [
-        airport
-        for airport in bot.airports_ac
-        if (ctx.value.upper() in airport)
-        or (ctx.value in airport)
-        or (ctx.value.lower() in airport)
-    ]
+    value = ctx.value.lower().replace("‘", "'").replace("’", "'")
+
+    return [airport for airport in bot.airports_ac if (value in airport.lower())]
 
 
 roles = bot.roles
