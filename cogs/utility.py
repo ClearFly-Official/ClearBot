@@ -1074,7 +1074,7 @@ Joins last week: **{join_stats[2]}**
         loc += int(len(f.readlines()))
         f.close()
         for cog in self.bot.cog_list:
-            f = open(os.path.join(f"cogs", "{cog}.py"))
+            f = open(os.path.join("cogs", f"{cog}.py"))
             loc += int(len(f.readlines()))
             f.close()
         if platform.system().lower() == "linux":
