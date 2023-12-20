@@ -1224,6 +1224,55 @@ Destination: **{flight_id2[5]}**
                         child.disabled = True
                 await ctx.edit(view=self)
 
+            async def reload_children(self, interaction: discord.Interaction):
+                for child in self.children:
+                    if str(child.type) == "ComponentType.string_select" and isinstance(
+                        child, discord.ui.Select
+                    ):
+                        child.options = self.flights[self.flight_list_number]  # type: ignore
+                    elif isinstance(child, discord.ui.Button):
+                        # if (self.flight_list_number == (len(self.flights) - 1)) and (
+                        #     child.label == ">"
+                        # ):
+                        #     child.disabled = True
+                        # elif (self.flight_list_number >= (len(self.flights) - 2)) and (
+                        #     child.label == ">>"
+                        # ):
+                        #     child.disabled = True
+                        # elif str(child.label).endswith(str(len(self.flights))):
+                        #     child.label = (
+                        #         f"{self.flight_list_number+1}/{len(self.flights)}"
+                        #     )
+                        # else:
+                        #     child.disabled = False
+
+                        if ">" in str(child.label):
+                            if child.label == ">" and (
+                                self.flight_list_number == (len(self.flights) - 1)
+                            ):
+                                child.disabled = True
+                            elif child.label == ">>" and (
+                                self.flight_list_number >= (len(self.flights) - 2)
+                            ):
+                                child.disabled = True
+                            else:
+                                child.disabled = False
+                        elif "<" in str(child.label):
+                            if child.label == "<" and (self.flight_list_number == 0):
+                                child.disabled = True
+                            elif child.label == "<<" and (self.flight_list_number < 2):
+                                child.disabled = True
+                            else:
+                                child.disabled = False
+                        elif str(child.label).endswith(str(len(self.flights))):
+                            child.label = (
+                                f"{self.flight_list_number+1}/{len(self.flights)}"
+                            )
+                        else:
+                            child.disabled = True
+
+                await interaction.response.edit_message(view=self)
+
             @discord.ui.select(
                 placeholder="CF12345",
                 max_values=1,
@@ -1419,6 +1468,16 @@ Notes:
                     await ctx.edit(embed=embed, file=map_file)
 
             @discord.ui.button(
+                label="<<", style=discord.ButtonStyle.secondary, disabled=True
+            )
+            async def first_button_callback(
+                self, button: discord.Button, interaction: discord.Interaction
+            ):
+                self.flight_list_number = 0
+
+                await self.reload_children(interaction)
+
+            @discord.ui.button(
                 label="<", style=discord.ButtonStyle.danger, disabled=True
             )
             async def back_button_callback(
@@ -1427,21 +1486,8 @@ Notes:
                 self.flight_list_number -= 1
                 if self.flight_list_number < 0:
                     return
-                for child in self.children:
-                    if str(child.type) == "ComponentType.string_select" and isinstance(
-                        child, discord.ui.Select
-                    ):
-                        child.options = self.flights[self.flight_list_number]  # type: ignore
-                    elif isinstance(child, discord.ui.Button):
-                        if (self.flight_list_number == 0) and (child.label == "<"):
-                            child.disabled = True
-                        elif str(child.label).endswith(str(len(self.flights))):
-                            child.label = (
-                                f"{self.flight_list_number+1}/{len(self.flights)}"
-                            )
-                        else:
-                            child.disabled = False
-                await interaction.response.edit_message(view=self)
+
+                await self.reload_children(interaction)
 
             @discord.ui.button(
                 label=f"{flight_list_number+1}/{len(flights)}",
@@ -1462,24 +1508,18 @@ Notes:
                 self.flight_list_number += 1
                 if self.flight_list_number > len(self.flights) - 1:
                     return
-                for child in self.children:
-                    if str(child.type) == "ComponentType.string_select" and isinstance(
-                        child, discord.ui.Select
-                    ):
-                        child.options = self.flights[self.flight_list_number]  # type: ignore
-                    elif isinstance(child, discord.ui.Button):
-                        if (self.flight_list_number == (len(self.flights) - 1)) and (
-                            child.label == ">"
-                        ):
-                            child.disabled = True
-                        elif str(child.label).endswith(str(len(self.flights))):
-                            child.label = (
-                                f"{self.flight_list_number+1}/{len(self.flights)}"
-                            )
-                        else:
-                            child.disabled = False
 
-                await interaction.response.edit_message(view=self)
+                await self.reload_children(interaction)
+
+            @discord.ui.button(
+                label=">>", style=discord.ButtonStyle.secondary, disabled=is_disabled()
+            )
+            async def last_button_callback(
+                self, button: discord.Button, interaction: discord.Interaction
+            ):
+                self.flight_list_number = len(self.flights) - 1
+
+                await self.reload_children(interaction)
 
         embed = discord.Embed(
             title=f"Select one of {user.name}'s flights!", colour=self.bot.color()
