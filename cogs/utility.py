@@ -1069,12 +1069,17 @@ Joins last week: **{join_stats[2]}**
         loc = 0
         f = open("main.py", "r")
         loc += int(len(f.readlines()))
+        f.close()
+        f = open("bot.py", "r")
+        loc += int(len(f.readlines()))
+        f.close()
         for cog in self.bot.cog_list:
-            f = open(f"cogs/{cog}.py")
+            f = open(os.path.join(f"cogs", "{cog}.py"))
             loc += int(len(f.readlines()))
+            f.close()
         if platform.system().lower() == "linux":
             temp = os.popen("vcgencmd measure_temp").readline()
-            temp = temp.replace("temp=", "")
+            temp = temp.replace("temp=", "").replace("'", "°")
         else:
             temp = "N/A"
         cogs_list = "\n".join(self.bot.cog_list)
