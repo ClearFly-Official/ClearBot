@@ -16,6 +16,7 @@ import time
 from discord.ext import commands, tasks
 from discord.ext.pages import Paginator, Page
 import pymongo
+from exceptions import UserVABanned, UserNotVA
 from main import ClearBot, get_airports
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
@@ -30,19 +31,27 @@ async def get_aircraft(ctx: discord.AutocompleteContext):
     return [craft for craft in aircraft if craft.startswith(ctx.value.upper())]
 
 
-def is_banned_check():
+def is_allowed_check():
     def predicate(ctx: discord.ApplicationContext):
-        check = False
-        if isinstance(ctx.author, discord.Member):
+        if isinstance(ctx.author, discord.Member | discord.User):
             db = sqlite3.connect("va.db")
             cur = db.execute(
                 "SELECT is_ban FROM users WHERE user_id=?", (str(ctx.author.id),)
             )
-            is_ban = cur.fetchone()[0]
+            result = cur.fetchone()
+            if result:
+                is_ban = True if result[0] != 0 else False
 
-            check = True if is_ban == 0 else False
+                if is_ban:
+                    raise UserVABanned
+            else:
+                raise UserNotVA
+            db.close()
 
-        return True if check else 0
+        else:
+            raise ValueError
+
+        return True
 
     return commands.check(predicate)  # type: ignore
 
@@ -399,9 +408,8 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         description="The airport you want to fly to, in ICAO format (e.g. EBBR).",
         autocomplete=get_airports,
     )
-    @commands.has_role(1013933799777783849)
     @commands.cooldown(1, 30, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_file(
         self,
         ctx: discord.ApplicationContext,
@@ -677,8 +685,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         name="complete", description="✅ Mark your last flight as completed."
     )
     @commands.cooldown(1, 30, commands.BucketType.user)
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_complete(self, ctx: discord.ApplicationContext):
         await ctx.defer()
 
@@ -726,8 +733,7 @@ Destination: **{flight_id2[5]}**
 
     @flight.command(name="cancel", description="❌ Cancel your last flight.")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_cancel(self, ctx: discord.ApplicationContext):
         await ctx.defer()
 
@@ -772,8 +778,7 @@ Destination: **{flight_id2[5]}**
         autocomplete=get_airports,
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_divert(self, ctx: discord.ApplicationContext, airport):
         await ctx.defer()
 
@@ -814,9 +819,8 @@ Destination: **{flight_id2[5]}**
         name="report",
         description="📝 Report an incident that happend on your last flight.",
     )
-    @commands.has_role(1013933799777783849)
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_report(self, ctx: discord.ApplicationContext):
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute(
@@ -850,8 +854,7 @@ Destination: **{flight_id2[5]}**
         description="The user you want to see the flights of.",
         required=False,
     )
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_view_report(
         self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
@@ -901,8 +904,7 @@ Destination: **{flight_id2[5]}**
         description="The user you want to see the flights of.",
         required=False,
     )
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_flights(
         self, ctx: discord.ApplicationContext, user: discord.Member | discord.User
     ):
@@ -955,7 +957,6 @@ Destination: **{flight_id2[5]}**
         await paginator.respond(ctx.interaction)
 
     @user.command(name="map", description="🌍 View a user's flights in map style.")
-    @commands.has_role(1013933799777783849)
     @discord.option(
         name="user",
         description="The user you want to see the flights of.",
@@ -970,7 +971,7 @@ Destination: **{flight_id2[5]}**
         name="auto_zoom", description="Zoom automatically to fit the flights."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_flight_map(
         self,
         ctx: discord.ApplicationContext,
@@ -1135,7 +1136,6 @@ Destination: **{flight_id2[5]}**
         await asyncio.sleep(20)
 
     @user.command(name="flight", description="🗺️ View a user's flights in map style.")
-    @commands.has_role(1013933799777783849)
     @discord.option(
         name="user",
         description="The user you want to see the flight of.",
@@ -1145,7 +1145,7 @@ Destination: **{flight_id2[5]}**
         name="auto_zoom", description="Zoom automatically to fit the flight."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_flight(
         self,
         ctx: discord.ApplicationContext,
@@ -1535,7 +1535,7 @@ Notes:
         name="leaderboard", description="🏆 See who has the most flights in the VA!"
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_lb(self, ctx: discord.ApplicationContext):
         await ctx.defer()
 
@@ -1590,7 +1590,7 @@ Notes:
 
     @va.command(name="stats", description="📊 See the statistics of the ClearFly VA!")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_stats(self, ctx: discord.ApplicationContext):
         await ctx.defer()
 
@@ -1761,8 +1761,7 @@ Most used aircraft: **{most_used_aircraft}**
         description="The airport you want to fly to, in ICAO format (e.g. EBBR).",
         autocomplete=get_airports,
     )
-    @commands.has_role(1013933799777783849)
-    @is_banned_check()
+    @is_allowed_check()
     async def va_flightnumber(
         self,
         ctx: discord.ApplicationContext,
@@ -2069,7 +2068,7 @@ The distance between airports is **{distance}** with estimated flight time being
     @discord.option(
         "sa_id", description="Your StableApproach UserID, found in the plugin settings."
     )
-    @is_banned_check()
+    @is_allowed_check()
     async def set_id(self, ctx: discord.ApplicationContext, sa_id: str):
         await ctx.defer(ephemeral=True)
 

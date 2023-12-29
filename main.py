@@ -9,21 +9,12 @@ import aiofiles
 import aiosqlite
 import discord
 import requests
+from exceptions import UserNotVA, UserVABanned
 from discord.ext import commands
 from discord.ext.pages import PaginatorButton
 from dotenv import load_dotenv
 
 from bot import ClearBot, RulesView, VAStartView
-
-
-class MissingPermissions(commands.CommandError):
-    def __init__(self):
-        super().__init__(f"User is not authorised.")
-
-
-class UserVABanned(MissingPermissions):
-    def __init__(self):
-        super().__init__()
 
 
 bot = ClearBot(intents=discord.Intents.all())
@@ -94,6 +85,14 @@ async def on_application_command_error(
         )
         await ctx.respond(embed=embed)
         notHandled = False
+    if isinstance(error, UserNotVA):
+        embed = discord.Embed(
+            title="You're not part of the VA!",
+            description=f"Head to <#{bot.channels.get('va-overview')}> to sign-up!",
+            colour=bot.color(1),
+        )
+        await ctx.respond(embed=embed)
+        notHandled = False
     if isinstance(error, ValueError):
         embed = discord.Embed(
             title="Incorrect Values",
@@ -120,7 +119,7 @@ async def on_application_command_error(
         notHandled = False
     if isinstance(error, commands.errors.NoPrivateMessage):
         embed = discord.Embed(
-            title="This command cannot be used in DMs",
+            title="This command cannot be used in DMs.",
             colour=bot.color(1),
         )
         await ctx.respond(embed=embed)
