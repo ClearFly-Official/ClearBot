@@ -434,7 +434,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                         failed.append("Unknown Role")
 
             async with aiofiles.open(
-                os.path.join("images", "logo", str(theme), "logo.png"), "rb"
+                os.path.join("ui", "images", "logo", str(theme), "logo.png"), "rb"
             ) as f:
                 await guild.edit(icon=await f.read())
 
