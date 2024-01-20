@@ -520,8 +520,8 @@ This sadly happened to your last flight. Please remember to mark your flight as 
         card_id = "flight_card" + str(random.randint(0, 9)) + ".png"
         img = Image.open(f"ui/images/va_card/{self.bot.theme}/va_flightcard_blank.png")
         font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=48)
-        route_font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=128)
-        metar_font = ImageFont.truetype("ui/fonts/Inter-Regular.ttf", size=36)
+        route_font = ImageFont.truetype("ui/fonts/RobotoMono-Regular.ttf", size=128)
+        metar_font = ImageFont.truetype("ui/fonts/RobotoMono-Regular.ttf", size=36)
 
         data = ""
         if not resp["results"]:
@@ -588,7 +588,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 fill=colour,
             )
             pilmoji.text(
-                (x_padding + 10, 145), origin[:4].upper(), font=route_font, fill=colour
+                (x_padding + 10, 135), origin[:4].upper(), font=route_font, fill=colour
             )
             pilmoji.text(
                 (
@@ -599,7 +599,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                             + (x_padding + 10)
                         )
                     ),  # type: ignore
-                    145,
+                    135,
                 ),
                 destination[:4].upper(),
                 font=route_font,
