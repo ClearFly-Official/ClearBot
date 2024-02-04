@@ -648,8 +648,8 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                 fill=colour,
             )
             pilmoji.text(
-                (x_padding + 5, 525 + x_padding / 2),  # type: ignore
-                textwrap.fill(data, 46, max_lines=3),
+                (x_padding + 5, 525 + x_padding // 6),
+                textwrap.fill(data, 42, max_lines=5),
                 font=metar_font,
                 fill=colour,
             )
