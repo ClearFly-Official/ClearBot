@@ -437,7 +437,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
                 os.path.join("ui", "images", "logo", str(theme), "logo.png"), "rb"
             ) as f:
                 await guild.edit(icon=await f.read())
-                await self.user.edit(icon=await f.read()) #type: ignore
+                await self.user.edit(avatar=await f.read())
 
             guild_success = await self.setup_server()
 
