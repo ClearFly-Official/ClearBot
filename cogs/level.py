@@ -1,4 +1,6 @@
 import io
+import os
+from types import NoneType
 from typing import Literal
 import discord
 import re
@@ -23,7 +25,95 @@ class LevelingCommands(discord.Cog):
         }
 
         return colors[self.bot.theme][c]
+    
 
+    async def generate_image(self, user: discord.User | discord.Member) -> tuple[int, discord.File | None]:
+        fail = (False, None)
+        async with aiosqlite.connect("main.db") as db:
+            usrdata = await db.execute(
+                "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
+            )
+            usrdata = await usrdata.fetchone()
+            if not usrdata:
+                return fail
+            
+            if len(usrdata) < 2:
+                return fail
+
+        x1, y1 = 860, 547
+        x2, y2 = 2740, 710
+        img = Image.open(os.path.join("ui", "images", "userlevel", str(self.bot.theme), "userlevel.png"))
+        avatar = Image.open(io.BytesIO(await user.display_avatar.read())).resize((1024, 1024))
+        lvlnom = usrdata[3]
+        lvl = usrdata[2]
+        lvldenom = usrdata[4]
+        h, w = avatar.size
+        avmask = Image.new("L", (h, w), 0)
+        clear = Image.new("RGBA", (h, w), 1)
+        draw = ImageDraw.Draw(avmask)
+        draw.ellipse((0, 0, h, w), fill=255)
+        masked = Image.composite(avatar, clear, mask=avmask)
+        font = ImageFont.truetype(
+            os.path.join("ui", "fonts", "Inter-Regular.ttf"),
+            size=100,
+            layout_engine=ImageFont.Layout.BASIC,
+        )
+        fontbig = ImageFont.truetype(
+            os.path.join("ui", "fonts", "Inter-Regular.ttf"),
+            size=150,
+            layout_engine=ImageFont.Layout.BASIC,
+        )
+        img.paste(
+            masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612))
+        )
+        with Pilmoji(img) as pilmoji:
+            pilmoji.text(
+                (860, 120), str(user.name), fill=(255, 255, 255), font=fontbig
+            )
+            pilmoji.text(
+                (900, 380),
+                f"LVL: {n.numerize(int(lvl))}",
+                fill=(255, 255, 255),
+                font=font,
+                emoji_position_offset=(0, 10),
+            )
+            x3, y3 = x1, y1
+            x4, y4 = x1 + ((x2 - x1) * (int(lvlnom) / int(lvldenom))), y2
+            pilmoji.text(
+                (2000, 380),
+                f"XP: {n.numerize(int(lvlnom))} / {n.numerize(int(lvldenom))}",
+                fill=(255, 255, 255),
+                font=font,
+                emoji_position_offset=(0, 10),
+            )
+        bar = Image.new("RGBA", img.size, 1)
+        draw = ImageDraw.ImageDraw(bar)
+        draw.ellipse(
+            (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
+            fill=self.userlevel_color(0),
+        )
+        draw.ellipse(
+            (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2),
+            fill=self.userlevel_color(0),
+        )
+        draw.rectangle((x1, y1, x2, y2), fill=self.userlevel_color(0))
+        draw.rectangle((x3, y3, x4, y4), fill=self.userlevel_color(1))
+        draw.ellipse(
+            (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
+            fill=self.userlevel_color(1),
+        )
+        draw.ellipse(
+            (x4 - ((y2 - y1) / 2), y1, x4 + ((y2 - y1) / 2), y4),
+            fill=self.userlevel_color(1),
+        )
+        img.paste(bar, mask=bar)
+        with io.BytesIO() as output:
+            img.save(output, format="PNG")
+            output.seek(0)
+            file = discord.File(output, filename="userlevel.png")
+        
+            return (True, file)
+        
     leveling = discord.SlashCommandGroup(
         name="level", description="🏆 Commands related to the leveling system."
     )
@@ -46,104 +136,9 @@ class LevelingCommands(discord.Cog):
         if not user:
             user = ctx.author
 
-        async with aiosqlite.connect("main.db") as db:
-            sel = await db.execute("SELECT author_id FROM leveling")
-            rows = await sel.fetchall()
-            usrs = [row[0] for row in rows]
-        if str(user.id) in usrs:
-            async with aiosqlite.connect("main.db") as db:
-                curs = await db.cursor()
-                usrdata = await curs.execute(
-                    "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
-                )
-                usrdata = await usrdata.fetchone()
-                if not usrdata:
-                    raise ValueError("Couldn't fetch data from database.")
+        result = await self.generate_image(user)
 
-            x1, y1 = 860, 547
-            x2, y2 = 2740, 710
-            img = Image.open(f"ui/images/userlevel/{self.bot.theme}/userlevel.png")
-            avatar_data = await user.display_avatar.read()
-            avatarorigin = Image.open(io.BytesIO(avatar_data))
-            avatar = avatarorigin.resize((256, 256))
-            lvlnom = usrdata[3]
-            lvl = usrdata[2]
-            lvldenom = usrdata[4]
-            h, w = avatar.size
-            avmask = Image.new("L", (h, w), 0)
-            clear = Image.new("RGBA", (h, w), 1)
-            draw = ImageDraw.Draw(avmask)
-            draw.ellipse((0, 0, 256, 256), fill=255)
-            masked = Image.composite(avatar, clear, mask=avmask)
-            font = ImageFont.truetype(
-                "ui/fonts/Inter-Regular.ttf",
-                size=100,
-                layout_engine=ImageFont.Layout.BASIC,
-            )
-            fontbig = ImageFont.truetype(
-                "ui/fonts/Inter-Regular.ttf",
-                size=150,
-                layout_engine=ImageFont.Layout.BASIC,
-            )
-            img.paste(
-                masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612))
-            )
-            with Pilmoji(img) as pilmoji:
-                pilmoji.text(
-                    (860, 120), str(user.name), fill=(255, 255, 255), font=fontbig
-                )
-                pilmoji.text(
-                    (2310, 120),
-                    f"#{user.discriminator}",
-                    fill=(200, 200, 200),
-                    font=fontbig,
-                    emoji_position_offset=(0, 10),
-                )
-                pilmoji.text(
-                    (900, 380),
-                    f"LVL: {n.numerize(int(lvl))}",
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 10),
-                )
-                x3, y3 = x1, y1
-                x4, y4 = x1 + ((x2 - x1) * (int(lvlnom) / int(lvldenom))), y2
-                pilmoji.text(
-                    (2000, 380),
-                    f"XP: {n.numerize(int(lvlnom))} / {n.numerize(int(lvldenom))}",
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 10),
-                )
-            bar = Image.new("RGBA", img.size, 1)
-            I3 = ImageDraw.ImageDraw(bar)
-            I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(0),
-            )
-            I3.ellipse(
-                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(0),
-            )
-            I3.rectangle((x1, y1, x2, y2), fill=self.userlevel_color(0))
-            I3.rectangle((x3, y3, x4, y4), fill=self.userlevel_color(1))
-            I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(1),
-            )
-            I3.ellipse(
-                (x4 - ((y2 - y1) / 2), y1, x4 + ((y2 - y1) / 2), y4),
-                fill=self.userlevel_color(1),
-            )
-            img.paste(bar, mask=bar)
-            with io.BytesIO() as output:
-                img.save(output, format="PNG")
-                output.seek(0)
-                file = discord.File(output, filename="userlevel.png")
-            embed = discord.Embed(color=self.bot.color())
-            embed.set_image(url=f"attachment://userlevel.png")
-            await ctx.respond(embed=embed, file=file)
-        else:
+        if not result[0]:
             if user.bot == True:
                 embed = discord.Embed(
                     title="No data found",
@@ -164,7 +159,12 @@ class LevelingCommands(discord.Cog):
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
                         color=self.bot.color(1),
                     )
-                await ctx.respond(embed=embed)
+                await ctx.respond(embed=embed)  
+            return
+
+        embed = discord.Embed(color=self.bot.color())
+        embed.set_image(url=f"attachment://userlevel.png")
+        await ctx.respond(embed=embed, file=result[1])
 
     @discord.user_command(
         name="User Level", description="🥇 Gets the provided user's level."
@@ -174,104 +174,10 @@ class LevelingCommands(discord.Cog):
         self, ctx: discord.ApplicationContext, user: discord.Member
     ):
         await ctx.defer()
-        async with aiosqlite.connect("main.db") as db:
-            sel = await db.execute("SELECT author_id FROM leveling")
-            rows = await sel.fetchall()
-            usrs = [row[0] for row in rows]
-        if str(user.id) in usrs:
-            async with aiosqlite.connect("main.db") as db:
-                curs = await db.cursor()
-                usrdata = await curs.execute(
-                    "SELECT * FROM leveling WHERE author_id=?", (str(user.id),)
-                )
-                usrdata = await usrdata.fetchone()
-                if not usrdata:
-                    raise ValueError("Couldn't fetch data from database.")
 
-            x1, y1 = 860, 547
-            x2, y2 = 2740, 710
-            img = Image.open(f"ui/images/userlevel/{self.bot.theme}/userlevel.png")
-            avatar_data = await user.display_avatar.read()
-            avatarorigin = Image.open(io.BytesIO(avatar_data))
-            avatar = avatarorigin.resize((256, 256))
-            lvlnom = usrdata[3]
-            lvl = usrdata[2]
-            lvldenom = usrdata[4]
-            h, w = avatar.size
-            avmask = Image.new("L", (h, w), 0)
-            clear = Image.new("RGBA", (h, w), 1)
-            draw = ImageDraw.Draw(avmask)
-            draw.ellipse((0, 0, 256, 256), fill=255)
-            masked = Image.composite(avatar, clear, mask=avmask)
-            font = ImageFont.truetype(
-                "ui/fonts/Inter-Regular.ttf",
-                size=100,
-                layout_engine=ImageFont.Layout.BASIC,
-            )
-            fontbig = ImageFont.truetype(
-                "ui/fonts/Inter-Regular.ttf",
-                size=150,
-                layout_engine=ImageFont.Layout.BASIC,
-            )
-            img.paste(
-                masked.resize((612, 612)), (49, 82), mask=masked.resize((612, 612))
-            )
-            with Pilmoji(img) as pilmoji:
-                pilmoji.text(
-                    (860, 120), str(user.name), fill=(255, 255, 255), font=fontbig
-                )
-                pilmoji.text(
-                    (2310, 120),
-                    f"#{user.discriminator}",
-                    fill=(200, 200, 200),
-                    font=fontbig,
-                    emoji_position_offset=(0, 10),
-                )
-                pilmoji.text(
-                    (900, 380),
-                    f"LVL: {n.numerize(int(lvl))}",
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 10),
-                )
-                x3, y3 = x1, y1
-                x4, y4 = x1 + ((x2 - x1) * (int(lvlnom) / int(lvldenom))), y2
-                pilmoji.text(
-                    (2000, 380),
-                    f"XP: {n.numerize(int(lvlnom))} / {n.numerize(int(lvldenom))}",
-                    fill=(255, 255, 255),
-                    font=font,
-                    emoji_position_offset=(0, 10),
-                )
-            bar = Image.new("RGBA", img.size, 1)
-            I3 = ImageDraw.ImageDraw(bar)
-            I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(0),
-            )
-            I3.ellipse(
-                (x2 - ((y2 - y1) / 2), y1, x2 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(0),
-            )
-            I3.rectangle((x1, y1, x2, y2), fill=self.userlevel_color(0))
-            I3.rectangle((x3, y3, x4, y4), fill=self.userlevel_color(1))
-            I3.ellipse(
-                (x1 - ((y2 - y1) / 2), y1, x1 + ((y2 - y1) / 2), y2),
-                fill=self.userlevel_color(1),
-            )
-            I3.ellipse(
-                (x4 - ((y2 - y1) / 2), y1, x4 + ((y2 - y1) / 2), y4),
-                fill=self.userlevel_color(1),
-            )
-            img.paste(bar, mask=bar)
-            with io.BytesIO() as output:
-                img.save(output, format="PNG")
-                output.seek(0)
-                file = discord.File(output, filename="userlevel.png")
-            embed = discord.Embed(color=self.bot.color())
-            embed.set_image(url=f"attachment://userlevel.png")
-            await ctx.respond(embed=embed, file=file)
-        else:
+        result = await self.generate_image(user)
+
+        if not result[0]:
             if user.bot == True:
                 embed = discord.Embed(
                     title="No data found",
@@ -292,7 +198,12 @@ class LevelingCommands(discord.Cog):
                         description=f"This most probably means that {user.mention} never sent a message in this server.",
                         color=self.bot.color(1),
                     )
-                await ctx.respond(embed=embed)
+                await ctx.respond(embed=embed)  
+            return
+
+        embed = discord.Embed(color=self.bot.color())
+        embed.set_image(url=f"attachment://userlevel.png")
+        await ctx.respond(embed=embed, file=result[1])
 
     @leveling.command(
         name="leaderboard", description="📊 See the leaderboard of the whole server."
