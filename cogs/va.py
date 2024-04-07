@@ -59,13 +59,13 @@ def is_allowed_check():
 def calculate_distance(
     loc1: tuple[float, float], loc2: tuple[float, float], unit: str = "NM"
 ) -> float:
+    if loc1[0] > 90 or loc1[1] > 180 or loc2[0] > 90 or loc2[1] > 180:
+        return -1
+
     lat1 = math.radians(loc1[0])
     lon1 = math.radians(loc1[1])
     lat2 = math.radians(loc2[0])
     lon2 = math.radians(loc2[1])
-
-    if loc1[0] > 180 or loc1[1] > 90 or loc2[0] > 180 or loc2[1] > 90:
-        return -1
 
     radius_values = {
         "NM": 3634.4492440605,
@@ -166,7 +166,8 @@ class VACommands(discord.Cog):
         self.col = self.db["SAReportUsers"]
 
     va = discord.SlashCommandGroup(
-        name="va", description="🛬 All commands related to the ClearFly Virtual Airline."
+        name="va",
+        description="🛬 All commands related to the ClearFly Virtual Airline.",
     )
 
     vadmin = va.create_subgroup(
