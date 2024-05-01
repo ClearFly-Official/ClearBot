@@ -298,76 +298,15 @@ The ClearFly Team
             cur = await db.execute("SELECT * FROM flights WHERE is_completed=0")
             flights = await cur.fetchall()
 
+            REM1 = 60*60*12
+            REM2 = 60*60*18
+            REM3 = 60*60*23
+            TOO_LATE = 60*60*24
+
             for flight in flights:
-                if (round(time.time() - int(flight[6])) >= 82_800) and (
-                    round(time.time() - int(flight[6])) <= 83_400
-                ):
-                    user = self.bot.get_user(int(flight[1]))
-                    if not user:
-                        return
-                    fbo = self.bot.sendable_channel(
-                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
-                    )
-                    embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
-                        colour=self.bot.color(2),
-                        description=f"""
-Hey {user.name}! 
+                delta_t = round(time.time() - int(flight[6]))
 
-We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. 
-
-**THIS IS YOUR __LAST__ REMINDER**
-                                """,
-                    )
-                    if fbo:
-                        await fbo.send(user.mention, embed=embed)
-
-                if (round(time.time() - int(int(flight[6]))) >= 64_800) and (
-                    round(time.time() - int(flight[6])) <= 65_400
-                ):
-                    user = self.bot.get_user(int(flight[1]))
-                    if not user:
-                        return
-                    fbo = self.bot.sendable_channel(
-                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
-                    )
-                    embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
-                        colour=self.bot.color(2),
-                        description=f"""
-Hey {user.name}! 
-
-We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. You will be reminded one last time before it's too late <t:{int(flight[6])+82_800}:R>
-                                """,
-                    )
-                    if fbo:
-                        await fbo.send(user.mention, embed=embed)
-
-                if (round(time.time() - int(flight[6])) >= 43_200) and (
-                    round(time.time() - int(flight[6])) <= 43_800
-                ):
-                    user = self.bot.get_user(int(flight[1]))
-                    if not user:
-                        return
-                    fbo = self.bot.sendable_channel(
-                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
-                    )
-                    embed = discord.Embed(
-                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
-                        colour=self.bot.color(2),
-                        description=f"""
-Hey {user.name}! 
-
-We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
-Your flight will be cancelled if you fail to do so <t:{int(flight[6])+86_400}:R>. Another reminder will be sent <t:{int(flight[6])+64_800}:R> if you haven't completed it yet.
-                                """,
-                    )
-                    if fbo:
-                        await fbo.send(user.mention, embed=embed)
-
-                if (round(time.time()) - int(flight[6])) > 86_400:
+                if (delta_t > TOO_LATE):
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
                     await db.execute(
                         "DELETE FROM reports WHERE flight_id=?", (flight[0],)
@@ -386,6 +325,65 @@ Hi there {user.name},
 
 Around <t:{int(flight[6])}:R> you filed a flight, but never marked it as completed. To prevent people filing a flight, but never actually completing it, we automatically cancel it after 24 hours. 
 This sadly happened to your last flight. Please remember to mark your flight as completed next time!
+                                """,
+                    )
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
+                elif (delta_t > REM3):
+                    user = self.bot.get_user(int(flight[1]))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
+                    embed = discord.Embed(
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+86_400}:R>.",
+                        colour=self.bot.color(2),
+                        description=f"""
+Hey {user.name}! 
+
+We have noticed that you still have not completed your last flight yet after 2 reminders. Please mark your flight as completed with the command </va flight complete:1016059999056826479>.
+Your flight will be cancelled permanently if you fail to do so <t:{int(flight[6])+86_400}:R>. 
+
+**THIS IS YOUR __LAST__ REMINDER**
+                                """,
+                    )
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
+                elif (delta_t > REM2):
+                    user = self.bot.get_user(int(flight[1]))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
+                    embed = discord.Embed(
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+TOO_LATE}:R>.",
+                        colour=self.bot.color(2),
+                        description=f"""
+Hey {user.name}! 
+
+We have noticed that you still haven't completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
+Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:R>. You will be reminded one last time before it's too late <t:{int(flight[6])+REM3}:R>
+                                """,
+                    )
+                    if fbo:
+                        await fbo.send(user.mention, embed=embed)
+                elif (delta_t > REM1):
+                    user = self.bot.get_user(int(flight[1]))
+                    if not user:
+                        return
+                    fbo = self.bot.sendable_channel(
+                        self.bot.get_channel(self.bot.channels.get("fbo", 0))
+                    )
+                    embed = discord.Embed(
+                        title=f"Your last filed flight will be cancelled <t:{int(flight[6])+TOO_LATE}:R>.",
+                        colour=self.bot.color(2),
+                        description=f"""
+Hey {user.name}! 
+
+We have noticed that you have not completed your last flight yet. Please remember to mark your flight as completed with the command </va flight complete:1016059999056826479>.
+Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:R>. Another reminder will be sent <t:{int(flight[6])+64_800}:R> if you haven't completed it yet.
                                 """,
                     )
                     if fbo:
