@@ -3,6 +3,7 @@ import datetime
 import io
 import json
 import math
+from pickle import TRUE
 import sqlite3
 import textwrap
 import aiohttp
@@ -157,6 +158,301 @@ class VAReportModal(discord.ui.Modal):
             await interaction.response.send_message(embed=embed)
 
 
+class VAFlightSelectView(discord.ui.View):
+    def __init__(
+        self,
+        bot: ClearBot,
+        *,
+        flights: list[list[discord.SelectOption]],
+        flight_list_number: int,
+        author: discord.Member | discord.User,
+        auto_zoom: bool,
+    ):
+        self.flights = flights
+        self.flight_list_number = flight_list_number
+        self.bot = bot
+        self.author = author
+        self.auto_zoom = auto_zoom
+        super().__init__(timeout=30.0, disable_on_timeout=True)
+
+        self.edit_children()
+
+    def edit_children(self):
+        for child in self.children:
+            if str(child.type) == "ComponentType.string_select" and isinstance(
+                child, discord.ui.Select
+            ):
+                child.options = self.flights[self.flight_list_number]
+            elif isinstance(child, discord.ui.Button):
+                if ">" in str(child.label):
+                    if child.label == ">" and (
+                        self.flight_list_number == (len(self.flights) - 1)
+                    ):
+                        child.disabled = True
+                    elif child.label == ">>" and (
+                        self.flight_list_number >= (len(self.flights) - 2)
+                    ):
+                        child.disabled = True
+                    else:
+                        child.disabled = False
+                elif "<" in str(child.label):
+                    if child.label == "<" and (self.flight_list_number == 0):
+                        child.disabled = True
+                    elif child.label == "<<" and (self.flight_list_number < 2):
+                        child.disabled = True
+                    else:
+                        child.disabled = False
+                elif child.custom_id == "page_button":
+                    child.label = f"{self.flight_list_number+1}/{len(self.flights)}"
+                else:
+                    child.disabled = True
+
+    async def reload_children(self, interaction: discord.Interaction):
+        self.edit_children()
+
+        await interaction.response.edit_message(view=self)
+
+    @discord.ui.select(
+        placeholder="CF12345",
+        max_values=1,
+    )
+    async def select_callback(
+        self, select: discord.ui.Select, interaction: discord.Interaction
+    ):
+        if not self.bot.is_interaction_owner(interaction, self.author.id):
+            await interaction.response.send_message(
+                "Run the command yourself to use it!", ephemeral=True
+            )
+            return
+        if not isinstance(select.values[0], str):
+            return
+
+        await interaction.response.edit_message(
+            embed=discord.Embed(title="Loading...", color=self.bot.color()), files=[]
+        )
+        async with aiosqlite.connect("va.db") as db:
+            cursor = await db.execute(
+                "SELECT * FROM flights WHERE id=?",
+                (int(select.values[0]),),
+            )
+            flight_data = await cursor.fetchone()
+            if not flight_data:
+                return
+            cursor = await db.execute(
+                "SELECT crz_speed, type FROM aircraft WHERE icao=?",
+                (flight_data[3],),
+            )
+            aircraft_data = await cursor.fetchone()
+            if not aircraft_data:
+                raise Exception("No aircraft data available.")
+
+        airports_data = self.bot.airports
+
+        waypoints = []
+        fig = go.Figure()
+
+        origin_data = airports_data.get(flight_data[4])
+        dest_data = airports_data.get(flight_data[5])
+
+        if origin_data and dest_data:
+            origin_coords = (origin_data["lat"], origin_data["lon"])
+            dest_coords = (dest_data["lat"], dest_data["lon"])
+            waypoints.append((origin_coords, dest_coords))
+        else:
+            raise Exception("No origin/destination data available.")
+
+        for waypoint in waypoints:
+            fig.add_trace(
+                go.Scattergeo(
+                    lat=[wayp[0] for wayp in waypoint],
+                    lon=[wayp[1] for wayp in waypoint],
+                    mode="lines",
+                    line=dict(color="#6db2d9", width=2),
+                )
+            )
+
+            for i, coords in enumerate(waypoint, 4):
+                fig.add_trace(
+                    go.Scattergeo(
+                        lat=[coords[0]],
+                        lon=[coords[1]],
+                        mode="markers",
+                        marker=dict(
+                            symbol="circle",
+                            color="#ffffff",
+                            size=5,
+                            line=dict(color="#6db2d9", width=5),
+                        ),
+                    )
+                )
+                fig.add_trace(
+                    go.Scattergeo(
+                        lat=[coords[0]],
+                        lon=[coords[1]],
+                        mode="text",
+                        text=flight_data[i],
+                        textfont=dict(
+                            color="#ffffff",
+                            size=32 if self.auto_zoom else 12,
+                        ),
+                        textposition=["top center"],
+                        line=dict(color="#6db2d9", width=5),
+                    )
+                )
+
+        if self.auto_zoom:
+            fig.update_geos(
+                resolution=50,
+                projection_type="natural earth",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showrivers=True,
+                rivercolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
+                showframe=False,
+                coastlinecolor="#2681b4",
+                fitbounds="locations",
+            )
+        else:
+            fig.update_geos(
+                resolution=50,
+                projection_type="equirectangular",
+                showland=True,
+                landcolor="#093961",
+                showocean=True,
+                oceancolor="#142533",
+                showrivers=True,
+                rivercolor="#142533",
+                showcountries=True,
+                countrycolor="#2681b4",
+                showlakes=True,
+                lakecolor="#142533",
+                showframe=False,
+                coastlinecolor="#2681b4",
+            )
+        fig.update_layout(showlegend=False)
+
+        if self.auto_zoom:
+            image_bytes = fig.to_image(format="png", width=2048, height=2048)
+        else:
+            image_bytes = fig.to_image(format="png", width=2048, height=2048)
+
+        image = Image.open(BytesIO(image_bytes))
+
+        grayscale_image = image.convert("L")
+
+        left, upper, right, lower = image.size[0], image.size[1], 0, 0
+        pixels = grayscale_image.load()
+
+        for x in range(image.size[0]):
+            for y in range(image.size[1]):
+                if pixels[x, y] < 255:
+                    left = min(left, x)
+                    upper = min(upper, y)
+                    right = max(right, x)
+                    lower = max(lower, y)
+
+        cropped_image = image.crop((left, upper + 1, right, lower))
+
+        if (flight_data[8] == "") or (flight_data[9] == ""):
+            notes = "*No Notes*"
+        else:
+            notes = flight_data[8] + "\n" + flight_data[9]
+
+        flight_time = str(
+            datetime.timedelta(
+                hours=calculate_time(origin_coords, dest_coords, aircraft_data[0])
+            )
+        ).split(":")
+
+        flight_time = f"{flight_time[0]}:{flight_time[1]}"
+
+        with io.BytesIO() as output:
+            output_filename = f"flight_{self.author.id}_{select.values[0]}.png"
+            cropped_image.save(output, format="PNG")
+            output.seek(0)
+            map_file = discord.File(output, filename=output_filename)
+            embed = (
+                discord.Embed(
+                    title=f"Flight {flight_data[2]}",
+                    description=f"""
+Flight number: **{flight_data[2]}**
+Aircraft: **{flight_data[3]}**
+Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
+Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
+Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
+Estimated flight time: **{flight_time}** (with CRZ speed(TAS) {aircraft_data[0]}kts)
+Filed at: **<t:{flight_data[6]}:F>**
+Notes:
+{notes}
+                """,
+                    colour=self.bot.color(),
+                )
+                .set_image(url=f"attachment://{output_filename}")
+                .set_author(
+                    name=f"Flown by {self.author.name}",
+                    icon_url=self.author.display_avatar.url,
+                )
+            )
+            if self.auto_zoom:
+                embed.set_footer(
+                    text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
+                )
+            await interaction.edit_original_response(embed=embed, file=map_file)
+
+    @discord.ui.button(label="<<", style=discord.ButtonStyle.secondary, disabled=True)
+    async def first_button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        self.flight_list_number = 0
+
+        await self.reload_children(interaction)
+
+    @discord.ui.button(label="<", style=discord.ButtonStyle.danger, disabled=True)
+    async def back_button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        self.flight_list_number -= 1
+        if self.flight_list_number < 0:
+            return
+
+        await self.reload_children(interaction)
+
+    @discord.ui.button(
+        label=f"0/0",
+        style=discord.ButtonStyle.secondary,
+        disabled=True,
+        custom_id="page_button",
+    )
+    async def page_button(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        pass
+
+    @discord.ui.button(label=">", style=discord.ButtonStyle.primary, disabled=True)
+    async def next_button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        self.flight_list_number += 1
+        if self.flight_list_number > len(self.flights) - 1:
+            return
+
+        await self.reload_children(interaction)
+
+    @discord.ui.button(label=">>", style=discord.ButtonStyle.secondary, disabled=True)
+    async def last_button_callback(
+        self, button: discord.Button, interaction: discord.Interaction
+    ):
+        self.flight_list_number = len(self.flights) - 1
+
+        await self.reload_children(interaction)
+
+
 class VACommands(discord.Cog):
     def __init__(self, bot: ClearBot):
         self.bot = bot
@@ -298,15 +594,20 @@ The ClearFly Team
             cur = await db.execute("SELECT * FROM flights WHERE is_completed=0")
             flights = await cur.fetchall()
 
-            REM1 = 60*60*12
-            REM2 = 60*60*18
-            REM3 = 60*60*23
-            TOO_LATE = 60*60*24
+            REM1 = 60 * 60 * 12
+            REM2 = 60 * 60 * 18
+            REM3 = 60 * 60 * 23
+            TOO_LATE = 60 * 60 * 24
+            BUF = 60 * (
+                self.completed_flight_check.minutes
+                if self.completed_flight_check.minutes
+                else 10
+            )
 
             for flight in flights:
                 delta_t = round(time.time() - int(flight[6]))
 
-                if (delta_t > TOO_LATE):
+                if delta_t > TOO_LATE:
                     await db.execute("DELETE FROM flights WHERE id=?", (flight[0],))
                     await db.execute(
                         "DELETE FROM reports WHERE flight_id=?", (flight[0],)
@@ -329,7 +630,7 @@ This sadly happened to your last flight. Please remember to mark your flight as 
                     )
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
-                elif (delta_t > REM3):
+                elif delta_t > REM3 and delta_t < REM3 + BUF:
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
                         return
@@ -350,7 +651,7 @@ Your flight will be cancelled permanently if you fail to do so <t:{int(flight[6]
                     )
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
-                elif (delta_t > REM2):
+                elif delta_t > REM2 and delta_t < REM2 + BUF:
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
                         return
@@ -369,7 +670,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
                     )
                     if fbo:
                         await fbo.send(user.mention, embed=embed)
-                elif (delta_t > REM1):
+                elif delta_t > REM1 and delta_t < REM1 + BUF:
                     user = self.bot.get_user(int(flight[1]))
                     if not user:
                         return
@@ -1194,339 +1495,17 @@ Destination: **{flight_id2[5]}**
 
         flight_list_number = 0
 
-        def get_flights():
-            return flights[flight_list_number]
-
-        def is_disabled():
-            if len(flights) > 1:
-                return False
-            else:
-                return True
-
-        class VAFlightSelectView(discord.ui.View):
-            def __init__(
-                self,
-                bot: ClearBot,
-                flights: list[list[str]],
-                flight_list_number: int,
-            ):
-                self.flights = flights
-                self.flight_list_number = flight_list_number
-                self.bot = bot
-                super().__init__(timeout=120.0)
-
-            async def on_timeout(self):
-                for child in self.children:
-                    if isinstance(child, discord.ui.Select) or isinstance(
-                        child, discord.ui.Button
-                    ):
-                        child.disabled = True
-                await ctx.edit(view=self)
-
-            async def reload_children(self, interaction: discord.Interaction):
-                for child in self.children:
-                    if str(child.type) == "ComponentType.string_select" and isinstance(
-                        child, discord.ui.Select
-                    ):
-                        child.options = self.flights[self.flight_list_number]  # type: ignore
-                    elif isinstance(child, discord.ui.Button):
-                        # if (self.flight_list_number == (len(self.flights) - 1)) and (
-                        #     child.label == ">"
-                        # ):
-                        #     child.disabled = True
-                        # elif (self.flight_list_number >= (len(self.flights) - 2)) and (
-                        #     child.label == ">>"
-                        # ):
-                        #     child.disabled = True
-                        # elif str(child.label).endswith(str(len(self.flights))):
-                        #     child.label = (
-                        #         f"{self.flight_list_number+1}/{len(self.flights)}"
-                        #     )
-                        # else:
-                        #     child.disabled = False
-
-                        if ">" in str(child.label):
-                            if child.label == ">" and (
-                                self.flight_list_number == (len(self.flights) - 1)
-                            ):
-                                child.disabled = True
-                            elif child.label == ">>" and (
-                                self.flight_list_number >= (len(self.flights) - 2)
-                            ):
-                                child.disabled = True
-                            else:
-                                child.disabled = False
-                        elif "<" in str(child.label):
-                            if child.label == "<" and (self.flight_list_number == 0):
-                                child.disabled = True
-                            elif child.label == "<<" and (self.flight_list_number < 2):
-                                child.disabled = True
-                            else:
-                                child.disabled = False
-                        elif str(child.label).endswith(str(len(self.flights))):
-                            child.label = (
-                                f"{self.flight_list_number+1}/{len(self.flights)}"
-                            )
-                        else:
-                            child.disabled = True
-
-                await interaction.response.edit_message(view=self)
-
-            @discord.ui.select(
-                placeholder="CF12345",
-                max_values=1,
-                options=get_flights(),
-            )
-            async def select_callback(
-                self, select: discord.ui.Select, interaction: discord.Interaction
-            ):
-                if not self.bot.is_interaction_owner(interaction, ctx.author.id):
-                    await interaction.response.send_message(
-                        "Run the command yourself to use it!", ephemeral=True
-                    )
-                    return
-                if not isinstance(select.values[0], str):
-                    return
-
-                await interaction.response.defer()
-                async with aiosqlite.connect("va.db") as db:
-                    cursor = await db.execute(
-                        "SELECT * FROM flights WHERE id=?",
-                        (int(select.values[0]),),
-                    )
-                    flight_data = await cursor.fetchone()
-                    if not flight_data:
-                        return
-                    cursor = await db.execute(
-                        "SELECT crz_speed, type FROM aircraft WHERE icao=?",
-                        (flight_data[3],),
-                    )
-                    aircraft_data = await cursor.fetchone()
-                    if not aircraft_data:
-                        raise Exception("No aircraft data available.")
-
-                airports_data = self.bot.airports
-
-                waypoints = []
-                fig = go.Figure()
-
-                origin_data = airports_data.get(flight_data[4])
-                dest_data = airports_data.get(flight_data[5])
-
-                if origin_data and dest_data:
-                    origin_coords = (origin_data["lat"], origin_data["lon"])
-                    dest_coords = (dest_data["lat"], dest_data["lon"])
-                    waypoints.append((origin_coords, dest_coords))
-                else:
-                    raise Exception("No origin/destination data available.")
-
-                for waypoint in waypoints:
-                    fig.add_trace(
-                        go.Scattergeo(
-                            lat=[wayp[0] for wayp in waypoint],
-                            lon=[wayp[1] for wayp in waypoint],
-                            mode="lines",
-                            line=dict(color="#6db2d9", width=2),
-                        )
-                    )
-
-                    for i, coords in enumerate(waypoint, 4):
-                        fig.add_trace(
-                            go.Scattergeo(
-                                lat=[coords[0]],
-                                lon=[coords[1]],
-                                mode="markers",
-                                marker=dict(
-                                    symbol="circle",
-                                    color="#ffffff",
-                                    size=5,
-                                    line=dict(color="#6db2d9", width=5),
-                                ),
-                            )
-                        )
-                        fig.add_trace(
-                            go.Scattergeo(
-                                lat=[coords[0]],
-                                lon=[coords[1]],
-                                mode="text",
-                                text=flight_data[i],
-                                textfont=dict(
-                                    color="#ffffff",
-                                    size=32 if auto_zoom else 12,
-                                ),
-                                textposition=["top center"],
-                                line=dict(color="#6db2d9", width=5),
-                            )
-                        )
-
-                if auto_zoom:
-                    fig.update_geos(
-                        resolution=50,
-                        projection_type="natural earth",
-                        showland=True,
-                        landcolor="#093961",
-                        showocean=True,
-                        oceancolor="#142533",
-                        showrivers=True,
-                        rivercolor="#142533",
-                        showcountries=True,
-                        countrycolor="#2681b4",
-                        showlakes=True,
-                        lakecolor="#142533",
-                        showframe=False,
-                        coastlinecolor="#2681b4",
-                        fitbounds="locations",
-                    )
-                else:
-                    fig.update_geos(
-                        resolution=50,
-                        projection_type="equirectangular",
-                        showland=True,
-                        landcolor="#093961",
-                        showocean=True,
-                        oceancolor="#142533",
-                        showrivers=True,
-                        rivercolor="#142533",
-                        showcountries=True,
-                        countrycolor="#2681b4",
-                        showlakes=True,
-                        lakecolor="#142533",
-                        showframe=False,
-                        coastlinecolor="#2681b4",
-                    )
-                fig.update_layout(showlegend=False)
-
-                if auto_zoom:
-                    image_bytes = fig.to_image(format="png", width=2048, height=2048)
-                else:
-                    image_bytes = fig.to_image(format="png", width=2048, height=2048)
-
-                image = Image.open(BytesIO(image_bytes))
-
-                grayscale_image = image.convert("L")
-
-                left, upper, right, lower = image.size[0], image.size[1], 0, 0
-                pixels = grayscale_image.load()
-
-                for x in range(image.size[0]):
-                    for y in range(image.size[1]):
-                        if pixels[x, y] < 255:
-                            left = min(left, x)
-                            upper = min(upper, y)
-                            right = max(right, x)
-                            lower = max(lower, y)
-
-                cropped_image = image.crop((left, upper + 1, right, lower))
-
-                if (flight_data[8] == "") or (flight_data[9] == ""):
-                    notes = "*No Notes*"
-                else:
-                    notes = flight_data[8] + "\n" + flight_data[9]
-
-                flight_time = str(
-                    datetime.timedelta(
-                        hours=calculate_time(
-                            origin_coords, dest_coords, aircraft_data[0]
-                        )
-                    )
-                ).split(":")
-
-                flight_time = f"{flight_time[0]}:{flight_time[1]}"
-
-                with io.BytesIO() as output:
-                    output_filename = f"flight_{user.id}_{select.values[0]}.png"
-                    cropped_image.save(output, format="PNG")
-                    output.seek(0)
-                    map_file = discord.File(output, filename=output_filename)
-                    embed = (
-                        discord.Embed(
-                            title=f"Flight {flight_data[2]}",
-                            description=f"""
-Flight number: **{flight_data[2]}**
-Aircraft: **{flight_data[3]}**
-Origin: **{flight_data[4]}** - **{airports_data.get(flight_data[4]).get('name', 'Unnamed')}**
-Destination: **{flight_data[5]}** - **{airports_data.get(flight_data[5]).get('name', 'Unnamed')}**
-Distance: **{round(calculate_distance(origin_coords, dest_coords), 1)}** nm, **{round(calculate_distance(origin_coords, dest_coords, unit='KM'), 1)}**km, **{round(calculate_distance(origin_coords, dest_coords, unit='MI'), 1)}** mi
-Estimated flight time: **{flight_time}** (with CRZ speed(TAS) {aircraft_data[0]}kts)
-Filed at: **<t:{flight_data[6]}:F>**
-Notes:
-{notes}
-                        """,
-                            colour=self.bot.color(),
-                        )
-                        .set_image(url=f"attachment://{output_filename}")
-                        .set_author(
-                            name=f"Flown by {user.name}",
-                            icon_url=user.display_avatar.url,
-                        )
-                    )
-                    if auto_zoom:
-                        embed.set_footer(
-                            text="Can't figure out where this is on the map? Try running the command with auto_zoom disabled."
-                        )
-                    await ctx.edit(embed=embed, file=map_file)
-
-            @discord.ui.button(
-                label="<<", style=discord.ButtonStyle.secondary, disabled=True
-            )
-            async def first_button_callback(
-                self, button: discord.Button, interaction: discord.Interaction
-            ):
-                self.flight_list_number = 0
-
-                await self.reload_children(interaction)
-
-            @discord.ui.button(
-                label="<", style=discord.ButtonStyle.danger, disabled=True
-            )
-            async def back_button_callback(
-                self, button: discord.Button, interaction: discord.Interaction
-            ):
-                self.flight_list_number -= 1
-                if self.flight_list_number < 0:
-                    return
-
-                await self.reload_children(interaction)
-
-            @discord.ui.button(
-                label=f"{flight_list_number+1}/{len(flights)}",
-                style=discord.ButtonStyle.secondary,
-                disabled=True,
-            )
-            async def page_button(
-                self, button: discord.Button, interaction: discord.Interaction
-            ):
-                pass
-
-            @discord.ui.button(
-                label=">", style=discord.ButtonStyle.primary, disabled=is_disabled()
-            )
-            async def next_button_callback(
-                self, button: discord.Button, interaction: discord.Interaction
-            ):
-                self.flight_list_number += 1
-                if self.flight_list_number > len(self.flights) - 1:
-                    return
-
-                await self.reload_children(interaction)
-
-            @discord.ui.button(
-                label=">>", style=discord.ButtonStyle.secondary, disabled=is_disabled()
-            )
-            async def last_button_callback(
-                self, button: discord.Button, interaction: discord.Interaction
-            ):
-                self.flight_list_number = len(self.flights) - 1
-
-                await self.reload_children(interaction)
-
         embed = discord.Embed(
             title=f"Select one of {user.name}'s flights!", colour=self.bot.color()
         )
         await ctx.respond(
             embed=embed,
             view=VAFlightSelectView(
-                bot=self.bot, flights=flights, flight_list_number=flight_list_number
+                bot=self.bot,
+                flights=flights,
+                flight_list_number=flight_list_number,
+                author=ctx.author,
+                auto_zoom=auto_zoom,
             ),
         )
 

@@ -165,7 +165,7 @@ class ClearBot(discord.Bot):
         self.channels = {
             "info": 1002194493304479784,
             "arrivals": 965600413376200726,
-            "fbo": 1013934267966967848,
+            "fbo": 1013934267966967848 if not self.dev_mode else 1001401783689678868,
             "va-overview": 1099712642916044881,
             "va-liveries": 1041057335449227314,
             "news": 1066124540318588928,
@@ -438,7 +438,8 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             ) as f:
                 data = await f.read()
                 await guild.edit(icon=data)
-                await self.user.edit(avatar=data)
+                if self.user:
+                    await self.user.edit(avatar=data)
 
             guild_success = await self.setup_server()
 
