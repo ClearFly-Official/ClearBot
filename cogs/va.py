@@ -166,14 +166,16 @@ class VAFlightSelectView(discord.ui.View):
         flights: list[list[discord.SelectOption]],
         flight_list_number: int,
         author: discord.Member | discord.User,
+        user: discord.Member | discord.User,
         auto_zoom: bool,
     ):
         self.flights = flights
         self.flight_list_number = flight_list_number
         self.bot = bot
         self.author = author
+        self.user = user
         self.auto_zoom = auto_zoom
-        super().__init__(timeout=30.0, disable_on_timeout=True)
+        super().__init__(timeout=120.0, disable_on_timeout=True)
 
         self.edit_children()
 
@@ -373,7 +375,7 @@ class VAFlightSelectView(discord.ui.View):
         flight_time = f"{flight_time[0]}:{flight_time[1]}"
 
         with io.BytesIO() as output:
-            output_filename = f"flight_{self.author.id}_{select.values[0]}.png"
+            output_filename = f"flight_{self.user.id}_{select.values[0]}.png"
             cropped_image.save(output, format="PNG")
             output.seek(0)
             map_file = discord.File(output, filename=output_filename)
@@ -395,8 +397,8 @@ Notes:
                 )
                 .set_image(url=f"attachment://{output_filename}")
                 .set_author(
-                    name=f"Flown by {self.author.name}",
-                    icon_url=self.author.display_avatar.url,
+                    name=f"Flown by {self.user.name}",
+                    icon_url=self.user.display_avatar.url,
                 )
             )
             if self.auto_zoom:
@@ -1505,6 +1507,7 @@ Destination: **{flight_id2[5]}**
                 flights=flights,
                 flight_list_number=flight_list_number,
                 author=ctx.author,
+                user=user,
                 auto_zoom=auto_zoom,
             ),
         )
