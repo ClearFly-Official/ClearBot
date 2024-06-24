@@ -49,12 +49,12 @@ class Listeners(discord.Cog):
     async def on_ready(self):
         if not self.presence.is_running():
             self.presence.start()
-        if not self.rssfeedtres1.is_running() and not self.bot.dev_mode:
-            self.rssfeedtres1.start()
-        if not self.rssfeedtres2.is_running() and not self.bot.dev_mode:
-            self.rssfeedtres2.start()
-        if not self.rssfeedtres3.is_running() and not self.bot.dev_mode:
-            self.rssfeedtres3.start()
+        # if not self.rssfeedtres1.is_running() and not self.bot.dev_mode:
+        #     self.rssfeedtres1.start()
+        # if not self.rssfeedtres2.is_running() and not self.bot.dev_mode:
+        #     self.rssfeedtres2.start()
+        # if not self.rssfeedtres3.is_running() and not self.bot.dev_mode:
+        #     self.rssfeedtres3.start()
         if not self.check_theme.is_running() and not self.bot.dev_mode:
             self.check_theme.start()
         if not self.join_stats_loop.is_running() and not self.bot.dev_mode:
