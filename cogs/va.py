@@ -22,6 +22,93 @@ from main import ClearBot, get_airports
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
 
+PROJECTION_TYPES = [
+    "airy",
+    "aitoff",
+    "albers",
+    # "albers usa",
+    "august",
+    "azimuthal equal area",
+    "azimuthal equidistant",
+    "baker",
+    "bertin1953",
+    "boggs",
+    "bonne",
+    "bottomley",
+    "bromley",
+    "collignon",
+    "conic conformal",
+    "conic equal area",
+    "conic equidistant",
+    "craig",
+    "craster",
+    "cylindrical equal area",
+    "cylindrical stereographic",
+    "eckert1",
+    "eckert2",
+    "eckert3",
+    "eckert4",
+    "eckert5",
+    "eckert6",
+    "eisenlohr",
+    "equal earth",
+    "equirectangular",
+    "fahey",
+    "foucaut",
+    "foucaut sinusoidal",
+    "ginzburg4",
+    "ginzburg5",
+    "ginzburg6",
+    "ginzburg8",
+    "ginzburg9",
+    "gnomonic",
+    "gringorten",
+    "gringorten quincuncial",
+    "guyou",
+    "hammer",
+    "hill",
+    "homolosine",
+    "hufnagel",
+    "hyperelliptical",
+    "kavrayskiy7",
+    "lagrange",
+    "larrivee",
+    "laskowski",
+    "loximuthal",
+    "mercator",
+    "miller",
+    "mollweide",
+    "mt flat polar parabolic",
+    "mt flat polar quartic",
+    "mt flat polar sinusoidal",
+    "natural earth",
+    "natural earth1",
+    "natural earth2",
+    "nell hammer",
+    "nicolosi",
+    "orthographic",
+    "patterson",
+    "peirce quincuncial",
+    "polyconic",
+    "rectangular polyconic",
+    "robinson",
+    "satellite",
+    "sinu mollweide",
+    "sinusoidal",
+    "stereographic",
+    "times",
+    "transverse mercator",
+    "van der grinten",
+    "van der grinten2",
+    "van der grinten3",
+    "van der grinten4",
+    "wagner4",
+    "wagner6",
+    "wiechel",
+    "winkel tripel",
+    "winkel3",
+]
+
 
 async def get_aircraft(ctx: discord.AutocompleteContext):
     async with aiosqlite.connect("va.db") as db:
@@ -1272,6 +1359,11 @@ Destination: **{flight_id2[5]}**
     @discord.option(
         name="auto_zoom", description="Zoom automatically to fit the flights."
     )
+    @discord.option(
+        name="projection_type",
+        description="The projection type to use for the map.",
+        autocomplete=discord.utils.basic_autocomplete(PROJECTION_TYPES),  # type: ignore
+    )
     @commands.cooldown(1, 10, commands.BucketType.user)
     @is_allowed_check()
     async def va_flight_map(
@@ -1280,6 +1372,7 @@ Destination: **{flight_id2[5]}**
         user: discord.Member | discord.User,
         version: str = "All",
         auto_zoom: bool = True,
+        projection_type: str = "equirectangular",
     ):
         await ctx.defer()
 
@@ -1293,6 +1386,16 @@ Destination: **{flight_id2[5]}**
                 colour=self.bot.color(1),
             )
             await ctx.respond(embed=embed)
+            return
+
+        if projection_type not in PROJECTION_TYPES:
+            await ctx.respond(
+                embed=discord.Embed(
+                    title="Invalid projection type",
+                    description="Please select a valid projection type from the list.",
+                    colour=self.bot.color(1),
+                )
+            )
             return
 
         async with aiosqlite.connect("va.db") as db:
@@ -1353,47 +1456,27 @@ Destination: **{flight_id2[5]}**
                     )
                 )
 
-        if auto_zoom:
-            fig.update_geos(
-                resolution=50,
-                projection_type="natural earth",
-                showland=True,
-                landcolor="#093961",
-                showocean=True,
-                oceancolor="#142533",
-                showrivers=True,
-                rivercolor="#142533",
-                showcountries=True,
-                countrycolor="#2681b4",
-                showlakes=True,
-                lakecolor="#142533",
-                showframe=False,
-                coastlinecolor="#2681b4",
-                fitbounds="locations",
-            )
-        else:
-            fig.update_geos(
-                resolution=50,
-                projection_type="equirectangular",
-                showland=True,
-                landcolor="#093961",
-                showocean=True,
-                oceancolor="#142533",
-                showrivers=True,
-                rivercolor="#142533",
-                showcountries=True,
-                countrycolor="#2681b4",
-                showlakes=True,
-                lakecolor="#142533",
-                showframe=False,
-                coastlinecolor="#2681b4",
-            )
+        fig.update_geos(
+            resolution=50,
+            projection_type=projection_type,
+            showland=True,
+            landcolor="#093961",
+            showocean=True,
+            oceancolor="#142533",
+            showrivers=True,
+            rivercolor="#142533",
+            showcountries=True,
+            countrycolor="#2681b4",
+            showlakes=True,
+            lakecolor="#142533",
+            showframe=False,
+            coastlinecolor="#2681b4",
+            fitbounds="locations" if auto_zoom else None,
+        )
+
         fig.update_layout(showlegend=False)
 
-        if auto_zoom:
-            image_bytes = fig.to_image(format="png", width=2048, height=2048)
-        else:
-            image_bytes = fig.to_image(format="png", width=2048, height=2048)
+        image_bytes = fig.to_image(format="png", width=2048, height=2048)
 
         image = Image.open(BytesIO(image_bytes))
 
