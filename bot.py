@@ -355,7 +355,14 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         ).set_image(
             url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
         )
-        embs = [embm, emb1, emb2, emb3, emb4]
+        emb5 = discord.Embed(
+            title="Cessna 152 by ZL Simulation",
+            color=self.color(),
+            url="https://drive.google.com/file/d/1JPrYuTcR7k2iga_mQwDz1uvvB95Xygi4/view?usp=sharing",
+        ).set_image(
+            url="https://cdn.discordapp.com/attachments/997062476472524840/1256312614103941268/c152_icon11.png"
+        )
+        embs = [embm, emb1, emb2, emb3, emb4, emb5]
         liv_channel = self.sendable_channel(
             self.get_channel(self.channels.get("va-liveries", 0))
         )
