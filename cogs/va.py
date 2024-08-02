@@ -3,7 +3,6 @@ import datetime
 import io
 import json
 import math
-from pickle import TRUE
 import sqlite3
 import textwrap
 import aiohttp
@@ -932,20 +931,11 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
                 raise Exception("Couldn't fetch aircraft data.")
 
         airport_data = self.bot.airports
-
+        now = datetime.datetime.now(datetime.timezone.utc)
+        time_str = now.strftime("%H:%M UTC | %d/%m/%Y")
         with Pilmoji(img) as pilmoji:
             colour = (255, 255, 255)
             x_padding = 40
-            date = str(datetime.datetime.utcnow().date()).split("-")
-            minute = (
-                f"{datetime.datetime.utcnow().minute}"
-                if datetime.datetime.utcnow().minute > 9
-                else f"{datetime.datetime.utcnow().minute}0"
-            )
-            date.reverse()
-            time_str = (
-                f"{datetime.datetime.utcnow().hour}:{minute} UTC | {'/'.join(date)}"
-            )
             flight_time = str(
                 datetime.timedelta(
                     hours=calculate_time(
