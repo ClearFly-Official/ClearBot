@@ -50,7 +50,7 @@ class VA:
 
     @classmethod
     async def generate_flight_number(
-        cls, aircraft_icao, origin_icao, destination_icao, prefix="CF"
+        cls, aircraft_icao, origin_icao, destination_icao, prefix="CR"
     ):
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT icao FROM aircraft")
