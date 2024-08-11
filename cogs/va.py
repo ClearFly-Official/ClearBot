@@ -1750,18 +1750,20 @@ Destination: **{flight_id2[5]}**
                 unit="MI",
             )
 
-        if total_distance_km > 0:
-            distance_compare_phrase = f"{round((total_distance_km/12742)*100 ,1)}% of the diameter of the Earth"
-        elif total_distance_km > 13000:
-            distance_compare_phrase = f"{round((total_distance_km/17964)*100 ,1)}% of the A350's maximum range"
-        elif total_distance_km > 18000:
+        if total_distance_km > 400_000:
+            distance_compare_phrase = f"{round((total_distance_km/1.5*10**6)*100 ,1)}% of the distance between [JWST](https://webb.nasa.gov/)/L1 and Earth."
+        elif total_distance_km > 140_000:
+            distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
+        elif total_distance_km > 60_000:
+            distance_compare_phrase = f"{round((total_distance_km/133000)*100 ,1)}% of the distance between [Chandra](https://chandra.harvard.edu/)'s apogee and Earth."
+        elif total_distance_km > 25_000:
             distance_compare_phrase = (
                 f"{round((total_distance_km/40075)*100 ,1)}% of the equator's length"
             )
-        elif total_distance_km > 384400:
-            distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
+        elif total_distance_km > 13_000:
+            distance_compare_phrase = f"{round((total_distance_km/17964)*100 ,1)}% of the A350's maximum range"
         else:
-            distance_compare_phrase = f""
+            distance_compare_phrase = f"{round((total_distance_km/12742)*100 ,1)}% of the diameter of the Earth"
 
         embed = discord.Embed(title="ClearFly VA Statistics", colour=self.bot.color())
         embed.add_field(
@@ -1770,7 +1772,9 @@ Destination: **{flight_id2[5]}**
             value=f"""
 Number of users: **{total_users}**
 Average flights per user: **{round(avg_flights_per_user)}**
-Total distance flown by users: **{round(total_distance_nm, 1)}**nm, **{round(total_distance_km, 1)}**km, **{round(total_distance_mi, 1)}**mi *that's {distance_compare_phrase}!*
+Total distance flown by users: **{round(total_distance_nm, 1)}**nm, **{round(total_distance_km, 1)}**km, **{round(total_distance_mi, 1)}**mi 
+-> *that's {distance_compare_phrase}!*
+
 *Check who has filed the most flights with the </va leaderboard:1016059999056826479> commmand!*
         """,
         )
