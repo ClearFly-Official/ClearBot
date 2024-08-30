@@ -642,7 +642,7 @@ Destination: **{flight_id2[5]}**
 
     @tasks.loop(minutes=10)
     async def trial_check(self):
-        users = await self.bot.va.get_users()
+        users = await self.bot.va.get_users("full")
         for user in users:
             if ((round(time.time()) - int(user[2])) > 86_400) and (user[3] == 1):
                 try:
@@ -1751,11 +1751,11 @@ Destination: **{flight_id2[5]}**
             )
 
         if total_distance_km > 400_000:
-            distance_compare_phrase = f"{round((total_distance_km/1.5*10**6)*100 ,1)}% of the distance between [JWST](https://webb.nasa.gov/)/L1 and Earth."
+            distance_compare_phrase = f"{round((total_distance_km/1.5*10**6)*100 ,1)}% of the distance between [JWST](https://webb.nasa.gov/)/L1 and Earth"
         elif total_distance_km > 140_000:
             distance_compare_phrase = f"{round((total_distance_km/384400)*100 ,1)}% of the distance between the Moon and the Earth"
         elif total_distance_km > 60_000:
-            distance_compare_phrase = f"{round((total_distance_km/133000)*100 ,1)}% of the distance between [Chandra](https://chandra.harvard.edu/)'s apogee and Earth."
+            distance_compare_phrase = f"{round((total_distance_km/133000)*100 ,1)}% of the distance between [Chandra](https://chandra.harvard.edu/)'s apogee and Earth"
         elif total_distance_km > 25_000:
             distance_compare_phrase = (
                 f"{round((total_distance_km/40075)*100 ,1)}% of the equator's length"
@@ -2076,55 +2076,6 @@ The distance between airports is **{distance}** with estimated flight time being
             title="Successfully unbanned user!", colour=self.bot.color()
         )
         await ctx.respond(embed=embed)
-
-    @va.command(
-        name="liveries",
-        description="🌄 Looking to fly for the ClearFly VA? Here are the liveries to get you started!",
-    )
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def va_livs(self, ctx: discord.ApplicationContext):
-        embm = discord.Embed(
-            title="ClearFly VA Official Liveries",
-            colour=self.bot.color(),
-            description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!",
-        )
-        emb1 = discord.Embed(
-            title="Boeing 737-800 by Zibo",
-            colour=self.bot.color(),
-            url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
-        )
-        emb2 = discord.Embed(
-            title="Cessna Citation X by Laminar Research",
-            colour=self.bot.color(),
-            url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
-        )
-        emb3 = discord.Embed(
-            title="Cessna 172SP by Laminar Research",
-            colour=self.bot.color(),
-            url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
-        )
-        emb4 = discord.Embed(
-            title="Cessna 172SP (G1000) by Laminar Research",
-            colour=self.bot.color(),
-            url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
-        )
-        emb5 = discord.Embed(
-            title="Cessna 152 by ZL Simulation",
-            color=self.bot.color(),
-            url="https://drive.google.com/file/d/1JPrYuTcR7k2iga_mQwDz1uvvB95Xygi4/view?usp=sharing"
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/997062476472524840/1256312614103941268/c152_icon11.png"
-        )
-        embs = [embm, emb1, emb2, emb3, emb4, emb5]
-        await ctx.respond(embeds=embs)
 
     @user.command(
         name="set_sa_id",
