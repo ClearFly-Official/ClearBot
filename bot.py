@@ -240,9 +240,6 @@ class ClearBot(discord.Bot):
         file1 = discord.File(
             f"ui/images/banners/{self.theme}/rules.png", filename="rules.png"
         )
-        file2 = discord.File(
-            f"ui/images/banners/{self.theme}/faq.png", filename="faq.png"
-        )
         rembed1 = discord.Embed(color=self.color()).set_image(
             url="attachment://rules.png"
         )
@@ -264,17 +261,7 @@ class ClearBot(discord.Bot):
 **7.** Use </report:1018970055972757506> to let us know about anyone breaking the rules.
         """,
         )
-        rembed3 = discord.Embed(colour=self.color()).set_image(
-            url="attachment://faq.png"
-        )
-        rembed4 = discord.Embed(
-            description="""
-**Q: What happened to the 737-100?**
-A: We decided that the project was announced way too early. It is still in active development and a "re-announcement" will be made when significant progress has been made by the team.
-        """,
-            color=self.color(),
-        )
-        rembed5 = discord.Embed(
+        rembed3 = discord.Embed(
             title="Links",
             description="""
 - [X-Plane.org Forums](https://forums.x-plane.org/index.php?/forums/topic/265735-clearfly-boeing-737-100/&page=99999999999)
@@ -322,47 +309,24 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
 **6.** That’s it! StableApproach will now download our custom aircraft profiles and send landing reports in <#1013934267966967848>.
         """,
         )
-        embm = discord.Embed(
+        emb = discord.Embed(
             title="ClearFly VA Official Liveries",
             colour=self.color(),
-            description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!",
+            description="Below you can find all official ClearFly liveries. Don't see the aircraft you want to fly? Someone might have made it in <#1087399445966110881>!\n\n",
         )
-        emb1 = discord.Embed(
-            title="Boeing 737-800 by Zibo",
-            colour=self.color(),
-            url="https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617326526606/icon.png"
-        )
-        emb2 = discord.Embed(
-            title="Cessna Citation X by Laminar Research",
-            colour=self.color(),
-            url="https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1100161617666252930/Cessna_CitationX_icon11.png"
-        )
-        emb3 = discord.Embed(
-            title="Cessna 172SP by Laminar Research",
-            colour=self.color(),
-            url="https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1054156349568729139/1099739093551829022/Cessna_172SP_icon11.png"
-        )
-        emb4 = discord.Embed(
-            title="Cessna 172SP (G1000) by Laminar Research",
-            colour=self.color(),
-            url="https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/1001401783689678868/1133803168115982396/Cessna_172SP_G1000_icon11.png"
-        )
-        emb5 = discord.Embed(
-            title="Cessna 152 by ZL Simulation",
-            color=self.color(),
-            url="https://drive.google.com/file/d/1JPrYuTcR7k2iga_mQwDz1uvvB95Xygi4/view?usp=sharing",
-        ).set_image(
-            url="https://cdn.discordapp.com/attachments/997062476472524840/1256312614103941268/c152_icon11.png"
-        )
-        embs = [embm, emb1, emb2, emb3, emb4, emb5]
+
+        livs = {
+            "Boeing 737-800 by Zibo": "https://drive.google.com/file/d/1bNXkHHlItE-MhfM6Nc-l5-W75zW9thYP/view?usp=share_link",
+            "Cessna Citation X by Laminar Research": "https://drive.google.com/file/d/1X4sShTh58rDucdeJQbX1VdkZtqvBXJIQ/view?usp=sharing",
+            "Cessna 172SP by Laminar Research": "https://drive.google.com/file/d/1wQgPFIhMJixk3xt2gNrvfa-okTLWIjgv/view?usp=share_link",
+            "Cessna 172SP (G1000) by Laminar Research": "https://drive.google.com/file/d/1jGElFWge_vb_6riAol6bnOIos-thwJJA/view?usp=share_link",
+            "Cessna 152 by ZL Simulation": "https://drive.google.com/file/d/1JPrYuTcR7k2iga_mQwDz1uvvB95Xygi4/view?usp=sharing",
+            "Airbus A330-900neo by X-Works": "https://drive.google.com/file/d/1kFsR6CYRa94e12uZDZ24QeIXX8A6rwiT/view?usp=sharing"
+        }
+
+        for name, link in livs.items():
+            emb.description += f"- [{name}]({link})\n"
+
         liv_channel = self.sendable_channel(
             self.get_channel(self.channels.get("va-liveries", 0))
         )
@@ -377,12 +341,11 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             await info.send(
                 embeds=[rembed1, rembed2], view=RulesView(bot=self), file=file1
             )
-            await info.send(embeds=[rembed3, rembed4], file=file2)
-            await info.send(embed=rembed5)
+            await info.send(embeds=[rembed3])
             await overv_channel.send(
                 embeds=[vembed, vembed2], view=VAStartView(bot=self)
             )
-            await liv_channel.send(embeds=embs)
+            await liv_channel.send(embed=emb)
             return True
         else:
             return False
