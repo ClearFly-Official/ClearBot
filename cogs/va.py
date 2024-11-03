@@ -806,7 +806,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
         destination: str,
     ):
         await ctx.defer()
-
+        icao = origin[:4].upper()
         usrs = await self.bot.va.get_users("id")
         if str(ctx.author.id) not in list(usrs):
             overv_channel = self.bot.get_channel(
@@ -835,7 +835,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
             await ctx.respond(embed=embed)
             return
 
-        if (origin[:4].upper()) not in self.bot.airports_icao:
+        if icao not in self.bot.airports_icao:
             embed = discord.Embed(
                 title="Invalid origin",
                 colour=self.bot.color(1),
@@ -851,20 +851,13 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
             )
             await ctx.respond(embed=embed)
             return
-        hdr = {"X-API-Key": os.getenv("CWX_KEY")}
-        timeout = aiohttp.ClientTimeout(total=10)
-        try:
-            async with aiohttp.ClientSession(timeout=timeout) as cs:
-                async with cs.get(
-                    f"https://api.checkwx.com/metar/{origin[:4].upper()}",
-                    headers=hdr,
-                ) as r:
-                    resp = await r.json()
-        except:
-            resp = {"results": []}
+
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(f"https://aviationweather.gov/api/data/metar?ids={icao}&format=json&taf=false") as resp:
+                metar_data = await resp.json()
 
         flight_num = await self.bot.va.generate_flight_number(
-            aircraft, origin[:4].upper(), destination[:4].upper()
+            aircraft, icao, destination[:4].upper()
         )
         embed = discord.Embed(
             title="Flight filed successfully!",
@@ -911,18 +904,12 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
         route_font = ImageFont.truetype("ui/fonts/RobotoMono-Regular.ttf", size=128)
         metar_font = ImageFont.truetype("ui/fonts/RobotoMono-Regular.ttf", size=36)
 
-        data = ""
-        if not resp["results"]:
-            data = "No METAR data found."
+        if len(metar_data) == 0:
+            metar = "No METAR found"
         else:
-            data = str(
-                resp.get(
-                    "data",
-                    [
-                        "N/A",
-                    ],
-                )[0]
-            )
+            metar = metar_data[0].get("rawOb")
+            if not metar:
+                metar = "No METAR found"
 
         async with aiosqlite.connect("va.db") as db:
             cur = await db.execute("SELECT * FROM aircraft WHERE icao=?", (aircraft,))
@@ -940,8 +927,8 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
                 datetime.timedelta(
                     hours=calculate_time(
                         (
-                            airport_data.get(origin[:4].upper()).get("lat", 181),
-                            airport_data.get(origin[:4].upper()).get("lon", 181),
+                            airport_data.get(icao).get("lat", 181),
+                            airport_data.get(icao).get("lon", 181),
                         ),
                         (
                             airport_data.get(destination[:4].upper()).get("lat", 181),
@@ -967,7 +954,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
                 fill=colour,
             )
             pilmoji.text(
-                (x_padding + 10, 135), origin[:4].upper(), font=route_font, fill=colour
+                (x_padding + 10, 135), icao, font=route_font, fill=colour
             )
             pilmoji.text(
                 (
@@ -1008,8 +995,8 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
                     round(
                         calculate_distance(
                             (
-                                airport_data.get(origin[:4].upper()).get("lat", 181),
-                                airport_data.get(origin[:4].upper()).get("lon", 181),
+                                airport_data.get(icao).get("lat", 181),
+                                airport_data.get(icao).get("lon", 181),
                             ),
                             (
                                 airport_data.get(destination[:4].upper()).get(
@@ -1028,7 +1015,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
             )
             pilmoji.text(
                 (x_padding + 5, 525 + x_padding // 6),
-                textwrap.fill(data, 42, max_lines=5),
+                textwrap.fill(metar, 42, max_lines=5),
                 font=metar_font,
                 fill=colour,
             )
@@ -1043,7 +1030,7 @@ Your flight will be cancelled if you fail to do so <t:{int(flight[6])+TOO_LATE}:
             "user_id": str(ctx.author.id),
             "flight_number": flight_num,
             "aircraft": aircraft,
-            "origin": origin[:4].upper(),
+            "origin": icao,
             "destination": destination[:4].upper(),
             "filed_at": round(time.time()),
             "is_completed": False,
