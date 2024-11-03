@@ -17,25 +17,26 @@ def return_numbers(string: str) -> int:
 def calculate_active_runways(
     runways: list[tuple[str, str]], wind_degree: int
 ) -> list[str]:
-    total_list = []
+    rwy_headings = []
     for runway in runways:
-        total_list.append(runway[0])
-        total_list.append(runway[1])
+        rwy_headings.append(int(runway[0])*10)
+        rwy_headings.append(int(runway[1])*10)
+    def to360(a):
+        if a > 360:
+            return a - 360
+        elif a < 0:
+            return 360 + a
+        else:
+            return a
     active_runways = []
-    for runway in runways:
-        adjusted_degrees = [(return_numbers(x) - wind_degree) % 360 for x in runway]
-        closest_degree = min(adjusted_degrees, key=lambda x: min(abs(x), abs(360 - x)))
-        closest_runways = [
-            runway[i] for i, x in enumerate(adjusted_degrees) if x == closest_degree
-        ]
-        active_runways.append(closest_runways[0])
-
-    for active_runway in active_runways:
-        if active_runway not in total_list:
-            active_runways.remove(active_runway)
-
-    return active_runways
-
+    offsets = []
+    for runway in rwy_headings:
+        offset = abs(wind_degree - runway)
+        if offset <= 90:
+            offsets.append((runway, offset))
+        
+    offsets = sorted(offsets, key=lambda x: x[1])
+    return [str(int(rwy[0]/10)) for rwy in offsets]
 
 class AvCommands(discord.Cog):
     def __init__(self, bot: ClearBot):
@@ -600,21 +601,26 @@ Elevation: **{elev[0]}**ft / **{elev[1]}**ft
 
                     runways = []
                     for i, runway in enumerate(json_resp["runways"]):
-                        runways.append(
-                            (
-                                json_resp["runways"][i]["le_ident"],
-                                json_resp["runways"][i]["he_ident"],
+                        if runway["closed"] == "0":
+                            runways.append(
+                                (
+                                    json_resp["runways"][i]["le_ident"],
+                                    json_resp["runways"][i]["he_ident"],
+                                )
                             )
-                        )
-
+                        
                     if metar_json["results"] == 1:
                         wind = json.dumps(
                             metar_json["data"][0]
                             .get("wind", {"degrees": -1})
                             .get("degrees")
                         )
+                        speed = (metar_json["data"][0]
+                            .get("wind", {"speed_kts": "N/A"})
+                            .get("speed_kts"))
                     else:
                         wind = "N/A"
+                        speed = "N/A"
 
                     if (wind == "N/A") or (wind == -1):
                         embed = discord.Embed(
@@ -633,7 +639,7 @@ Elevation: **{elev[0]}**ft / **{elev[1]}**ft
                         title=f"Active runways at {airport[:4].upper()}",
                         description="\n".join(ac_runways),
                         colour=self.bot.color(),
-                    ).set_footer(text="These are predictions, and not official data.")
+                    ).set_footer(text="Not for real-world use.")
                     await ctx.respond(embed=embed)
                 else:
                     embed = discord.Embed(
