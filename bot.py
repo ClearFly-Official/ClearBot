@@ -421,7 +421,7 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
             await logs.send(*args, **kwargs)
 
     def is_valid_url(self, url: str) -> bool:
-        pattern = "(http|https):\/\/([0-z]*)\..*"
+        pattern = "(http|https):\/\/([a-zA-Z-0-9]*)\..*"
 
         return True if re.search(pattern, url) else False
 
