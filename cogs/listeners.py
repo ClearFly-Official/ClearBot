@@ -58,6 +58,8 @@ class Listeners(discord.Cog):
             self.check_theme.start()
         if not self.join_stats_loop.is_running() and not self.bot.dev_mode:
             self.join_stats_loop.start()
+        if not self.update_airports_loop.is_running():
+            self.update_airports_loop.start()
 
         #         channel = self.bot.get_channel(1001405648828891187)
         #         now = discord.utils.format_dt(datetime.datetime.now())
@@ -524,6 +526,10 @@ Joins last week: **{join_stats[2]}**
                     "UPDATE stats SET last = now, now = 0 WHERE name = 'join'"
                 )
                 await db.commit()
+
+    @tasks.loop(hours=24*30)
+    async def update_airports_loop(self):
+        await self.bot.update_airports()
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):

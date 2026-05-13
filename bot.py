@@ -6,6 +6,7 @@ import time
 from typing import List, Literal
 
 import aiofiles
+import aiohttp
 import aiosqlite
 import discord
 import requests
@@ -120,25 +121,9 @@ class ClearBot(discord.Bot):
             x.split(".")[0] for x in os.listdir("cogs") if x.endswith(".py")
         ]
 
-        resp = requests.get("https://github.com/mwgg/Airports/raw/master/airports.json")
-        self.airports = resp.json()
-
-        self.airports_ac = []
-
-        for ap in self.airports:
-            icao = self.airports[ap].get("icao")
-            iata = self.airports[ap].get("iata")
-            name = self.airports[ap].get("name")
-
-            self.airports_ac.append(
-                f"{icao if icao else 'N/A'}, {iata if iata else 'N/A'}, {name if name else 'N/A'}"
-            )
-
-        self.airports_icao = [
-            self.airports[ap].get("icao")
-            for ap in self.airports
-            if self.airports[ap].get("icao")
-        ]
+        self.airports = dict()
+        self.airports_update = int()
+        self.airports_ac = list()
 
         con = sqlite3.connect(DB["main"])
         # 0 = normal
@@ -425,6 +410,35 @@ https://forums.x-plane.org/index.php?/files/file/76763-stableapproach-flight-dat
         pattern = "(http|https):\/\/([a-zA-Z-0-9]*)\..*"
 
         return True if re.search(pattern, url) else False
+
+    async def update_airports(self) -> None:
+        if time.time() - self.airports_update < 60*60*24:
+            return
+
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get("https://github.com/mwgg/Airports/raw/master/airports.json") as resp:
+                # Content-Type from GitHub is text/plain, so tell aiohttp not to raise
+                self.airports = await resp.json(content_type=None)
+                self.airports_update = time.time()
+
+        self.airports_ac = []
+
+        for ap in self.airports:
+            icao = self.airports[ap].get("icao")
+            iata = self.airports[ap].get("iata")
+            name = self.airports[ap].get("name")
+
+            self.airports_ac.append(
+                f"{icao if icao else 'N/A'}, {iata if iata else 'N/A'}, {name if name else 'N/A'}"
+            )
+
+        self.airports_icao = [
+            self.airports[ap].get("icao")
+            for ap in self.airports
+            if self.airports[ap].get("icao")
+        ]
+
+
 
     @property
     def theme_name(self):

@@ -52,6 +52,8 @@ async def on_ready():
     if bot.dev_mode:
         print("| DEV MODE")
 
+    await bot.update_airports()
+
 
 @bot.listen()
 async def on_application_command_error(
